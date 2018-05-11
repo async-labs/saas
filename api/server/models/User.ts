@@ -17,9 +17,6 @@ export interface IUserDocument extends mongoose.Document {
   isAdmin: boolean;
   displayName: string;
   avatarUrl: string;
-
-  isGithubConnected: boolean;
-  githubAccessToken: string;
 }
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -74,19 +71,12 @@ const mongoSchema = new mongoose.Schema({
     unique: true,
   },
   teamIds: [String],
-  projectIds: [String],
   isAdmin: {
     type: Boolean,
     default: false,
   },
   displayName: String,
   avatarUrl: String,
-
-  isGithubConnected: {
-    type: Boolean,
-    default: false,
-  },
-  githubAccessToken: String,
 });
 
 // mongoSchema.pre('save', function(next) {
@@ -103,7 +93,6 @@ class UserClass extends mongoose.Model {
       'avatarUrl',
       'slug',
       'isAdmin',
-      'isGithubConnected',
       'teamId',
     ];
   }

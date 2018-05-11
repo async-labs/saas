@@ -148,9 +148,6 @@ function withLayout(BaseComponent) {
               </MenuDrop>
               <hr />
               <div>
-                <Link prefetch href="/projects">
-                  <a>Projects</a>
-                </Link>
                 <p />
                 <Link prefetch href="/knowledge">
                   <a>Knowledge</a>

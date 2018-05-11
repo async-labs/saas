@@ -8,7 +8,6 @@ import * as helmet from 'helmet';
 import * as path from 'path';
 
 import auth from './google';
-import { setupGithub as github } from './github';
 import api from './api';
 
 import logger from './logs';
@@ -59,7 +58,6 @@ if (!dev) {
 server.use(session(sess));
 
 auth({ server, ROOT_URL });
-github({ server });
 api(server);
 
 server.get('/robots.txt', (req, res) => {
