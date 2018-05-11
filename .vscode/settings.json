@@ -1,0 +1,25 @@
+{
+  "files.watcherExclude": {
+    "**/.next/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true
+  },
+  "search.exclude": {
+    "**/.next": true,
+    "**/yarn.lock": true,
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/.meteor": true,
+    "**/bower_components": true
+  },
+  "editor.formatOnSave": true,
+  "prettier.eslintIntegration": true,
+  "editor.minimap.enabled": false,
+  "editor.wordWrap": "on",
+  "typescript.experimental.syntaxFolding": false,
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "git.enableSmartCommit": true,
+  "git.autofetch": true
+}

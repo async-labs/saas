@@ -1,0 +1,55 @@
+{
+  "name": "app-async",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "nodemon server/app.ts",
+    "build": "next build && tsc --project tsconfig.server.json",
+    "start": "node production-server/index.js",
+    "now": "now && now alias && now rm app-async --safe --yes",
+    "lint": "tslint components pages lib server",
+    "test": "jest --coverage"
+  },
+  "jest": {
+    "coverageDirectory": "./.coverage"
+  },
+  "dependencies": {
+    "downshift": "^1.31.12",
+    "express": "^4.16.3",
+    "helmet": "^3.12.0",
+    "htmlescape": "^1.1.1",
+    "isomorphic-unfetch": "^2.0.0",
+    "lodash": "^4.17.4",
+    "material-ui": "1.0.0-beta.45",
+    "mobx": "^4.2.0",
+    "mobx-react": "^5.0.0",
+    "mongoose": "^5.0.16",
+    "next": "^6.0.0",
+    "nprogress": "^0.2.0",
+    "prop-types": "^15.6.0",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-jss": "^8.4.0",
+    "react-stripe-checkout": "^2.6.3"
+  },
+  "devDependencies": {
+    "@types/helmet": "^0.0.37",
+    "@types/lodash": "^4.14.107",
+    "@types/next": "^2.4.9",
+    "@types/nprogress": "^0.0.29",
+    "@types/react": "^16.3.12",
+    "@types/react-dom": "^16.0.5",
+    "@zeit/next-typescript": "^0.1.1",
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.5.1",
+    "jest": "^22.4.3",
+    "nodemon": "^1.17.3",
+    "ts-node": "^6.0.0",
+    "tslint": "^5.9.1",
+    "typescript": "2.8.3"
+  }
+}
