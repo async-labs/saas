@@ -1,21 +1,110 @@
 import * as express from 'express';
 
+import { signRequestForUpload, signRequestForLoad } from '../aws-s3';
 import Team from '../models/Team';
 import Topic from '../models/Topic';
-import logger from '../logs';
+import User from '../models/User';
 import Discussion from '../models/Discussion';
-import Message from '../models/Message';
-import Notification from '../models/Notification';
+import Post from '../models/Post';
+import logger from '../logs';
 
 const router = express.Router();
 
 router.use((req, res, next) => {
+  console.log('team member API', req.path);
   if (!req.user) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }
 
   next();
+});
+
+async function loadTopicData(topic, userId, body) {
+  const { discussionSlug } = body;
+
+  const { discussions, totalCount } = await Discussion.getList({
+    userId,
+    topicId: topic._id,
+    initialDiscussionSlug: discussionSlug,
+  });
+
+  const data: any = { initialDiscussions: discussions, totalDiscussionCount: totalCount };
+
+  for (let i = 0; i < discussions.length; i++) {
+    const discussion = discussions[i];
+
+    if (discussion.slug === discussionSlug) {
+      Object.assign(discussion, {
+        initialPosts: await Post.getList({
+          userId: userId,
+          discussionId: discussion._id,
+        }),
+      });
+
+      break;
+    }
+  }
+
+  if (discussionSlug) {
+    data.currentDiscussionSlug = discussionSlug;
+  }
+
+  return data;
+}
+
+async function loadTeamData(team, userId, body) {
+  const initialTopics = await Topic.getList({ userId, teamId: team._id });
+  const initialMembers = await User.getTeamMemberList({
+    userId,
+    teamId: team._id,
+  });
+
+  const { topicSlug } = body;
+
+  if (topicSlug) {
+    for (let i = 0; i < initialTopics.length; i++) {
+      const topic = initialTopics[i];
+
+      if (topic.slug === topicSlug) {
+        Object.assign(topic, await loadTopicData(topic, userId, body));
+        break;
+      }
+    }
+  }
+
+  const data: any = { initialTopics, initialMembers };
+
+  if (topicSlug) {
+    data.currentTopicSlug = topicSlug;
+  }
+
+  return data;
+}
+
+router.post('/get-initial-data', async (req, res) => {
+  try {
+    const teams = await Team.getList(req.user.id);
+
+    let selectedTeamSlug = req.body.teamSlug;
+    if (!selectedTeamSlug && teams && teams.length > 0) {
+      selectedTeamSlug = teams[0].slug;
+    }
+
+    for (let i = 0; i < teams.length; i++) {
+      const team = teams[i];
+
+      if (team.slug === selectedTeamSlug) {
+        Object.assign(team, await loadTeamData(team, req.user.id, req.body));
+        break;
+      }
+    }
+
+    res.json({ teams });
+  } catch (err) {
+    logger.error(err);
+    res.json({ error: err.post || err.toString() });
+  }
 });
 
 router.get('/teams', async (req, res) => {
@@ -25,7 +114,7 @@ router.get('/teams', async (req, res) => {
     res.json({ teams });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
@@ -36,33 +125,39 @@ router.get('/topics/list', async (req, res) => {
     res.json({ topics });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
 router.post('/discussions/add', async (req, res) => {
   try {
-    const { name, topicId, memberIds } = req.body;
+    const { name, topicId, memberIds = [], isPrivate = false } = req.body;
 
-    const discussion = await Discussion.add({ userId: req.user.id, name, topicId, memberIds });
+    const discussion = await Discussion.add({
+      userId: req.user.id,
+      name,
+      topicId,
+      memberIds,
+      isPrivate,
+    });
 
     res.json({ discussion });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
 router.post('/discussions/edit', async (req, res) => {
   try {
-    const { name, id, memberIds } = req.body;
+    const { name, id, memberIds = [], isPrivate = false } = req.body;
 
-    await Discussion.edit({ userId: req.user.id, name, id, memberIds });
+    await Discussion.edit({ userId: req.user.id, name, id, memberIds, isPrivate });
 
     res.json({ done: 1 });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
@@ -75,7 +170,7 @@ router.post('/discussions/delete', async (req, res) => {
     res.json({ done: 1 });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
@@ -88,7 +183,7 @@ router.post('/discussions/toggle-pin', async (req, res) => {
     res.json({ done: 1 });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
@@ -118,86 +213,77 @@ router.get('/discussions/list', async (req, res) => {
     res.json({ discussions, totalCount });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
-router.post('/messages/add', async (req, res) => {
+router.post('/posts/add', async (req, res) => {
   try {
     const { content, discussionId } = req.body;
 
-    const message = await Message.add({ userId: req.user.id, content, discussionId });
+    const post = await Post.add({ userId: req.user.id, content, discussionId });
 
-    res.json({ message });
+    res.json({ post });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
-router.post('/messages/edit', async (req, res) => {
+router.post('/posts/edit', async (req, res) => {
   try {
     const { content, id } = req.body;
 
-    await Message.edit({ userId: req.user.id, content, id });
+    await Post.edit({ userId: req.user.id, content, id });
 
     res.json({ done: 1 });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
-router.post('/messages/delete', async (req, res) => {
+router.post('/posts/delete', async (req, res) => {
   try {
     const { id } = req.body;
 
-    await Message.delete({ userId: req.user.id, id });
+    await Post.delete({ userId: req.user.id, id });
 
     res.json({ done: 1 });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
-router.get('/messages/list', async (req, res) => {
+router.get('/posts/list', async (req, res) => {
   try {
-    const messages = await Message.getList({
+    const posts = await Post.getList({
       userId: req.user.id,
       discussionId: req.query.discussionId,
     });
 
-    res.json({ messages });
+    res.json({ posts });
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 
-router.get('/notifications/list', async (req, res) => {
-  try {
-    const notifications = await Notification.getList({
-      userId: req.user.id,
-    });
+// Upload file to S3
 
-    res.json({ notifications });
+router.get('/posts/get-signed-request-for-upload-to-s3', async (req, res) => {
+  try {
+    const { fileName, fileType, prefix } = req.query;
+    // console.log(fileName, fileType);
+
+    const returnData = await signRequestForUpload(fileName, fileType, prefix);
+    // console.log(returnData);
+
+    res.json(returnData);
   } catch (err) {
     logger.error(err);
-    res.json({ error: err.message || err.toString() });
-  }
-});
-
-router.post('/notifications/bulk-delete', async (req, res) => {
-  try {
-    const { ids } = req.body;
-
-    await Notification.bulkDelete({ userId: req.user.id, ids });
-
-    res.json({ done: 1 });
-  } catch (err) {
-    logger.error(err);
-    res.json({ error: err.message || err.toString() });
+    res.json({ error: err.post || err.toString() });
   }
 });
 

@@ -1,9 +1,10 @@
 import * as mongoose from 'mongoose';
 
 import Team from './Team';
+import User, { IUserDocument } from './User';
 import getEmailTemplate from './EmailTemplate';
 import logger from '../logs';
-import sendEmail from '../aws';
+import sendEmail from '../aws-ses';
 
 const dev = process.env.NODE_ENV !== 'production';
 const ROOT_URL = dev ? `http://localhost:3000` : 'https://app1.async-await.com';
@@ -20,17 +21,23 @@ const mongoSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     required: true,
+    default: Date.now,
+    expires: 60 * 60 * 24, // delete doc after 24 hours
   },
-  isPending: Boolean,
-  isAccepted: Boolean,
+  token: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 });
+
+mongoSchema.index({ teamId: 1, email: 1 }, { unique: true });
 
 interface IInvitationDocument extends mongoose.Document {
   teamId: string;
   email: string;
   createdAt: Date;
-  isPending: boolean;
-  isAccepted: boolean;
+  token: string;
 }
 
 interface IInvitationModel extends mongoose.Model<IInvitationDocument> {
@@ -44,27 +51,17 @@ interface IInvitationModel extends mongoose.Model<IInvitationDocument> {
     email: string;
   }): IInvitationDocument;
 
-  getByTeamSlug({
-    userId,
-    userEmail,
-    teamSlug,
-  }: {
-    userId: string;
-    userEmail: string;
-    teamSlug: string;
-  }): { teamName: string; invitationId: string };
+  getTeamByToken({ token }: { token: string });
+  addUserToTeam({ token, user }: { token: string; user: IUserDocument });
+}
 
-  acceptOrCancel({
-    userId,
-    userEmail,
-    teamSlug,
-    isAccepted,
-  }: {
-    userId: string;
-    userEmail: string;
-    teamSlug: string;
-    isAccepted: boolean;
-  }): Promise<void>;
+function generateToken() {
+  const gen = () =>
+    Math.random()
+      .toString(36)
+      .substring(2, 15);
+
+  return `${gen()}-${gen()}`;
 }
 
 class InvitationClass extends mongoose.Model {
@@ -73,29 +70,43 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    if (await this.findOne({ teamId, email, isPending: true }).select('id')) {
-      throw new Error('Invitation duplicated');
-    }
-
     const team = await Team.findById(teamId).lean();
     if (!team || team.teamLeaderId !== userId) {
       throw new Error('Team does not exist');
     }
 
-    if (team.memberIds.includes(userId)) {
-      throw new Error('Already team member');
+    const registeredUser = await User.findOne({ email }).lean();
+    if (registeredUser) {
+      if (team.memberIds.includes(registeredUser._id)) {
+        throw new Error('Already team member');
+      } else {
+        await Team.update({ _id: team._id }, { $addToSet: { memberIds: registeredUser._id } });
+      }
     }
 
-    await this.create({
-      teamId,
-      email,
-      isPending: true,
-      createdAt: new Date(),
-    });
+    let token;
+    const invitation = await this.findOne({ teamId, email })
+      .select('token')
+      .lean();
+
+    if (invitation) {
+      token = invitation.token;
+    } else {
+      token = generateToken();
+      while ((await this.find({ token }).count()) > 0) {
+        token = generateToken();
+      }
+
+      await this.create({
+        teamId,
+        email,
+        token,
+      });
+    }
 
     const template = await getEmailTemplate('invitation', {
       teamName: team.name,
-      invitationURL: `${ROOT_URL}/invitation/${team.slug}`,
+      invitationURL: `${ROOT_URL}/invitation?token=${token}`,
     });
 
     sendEmail({
@@ -108,64 +119,48 @@ class InvitationClass extends mongoose.Model {
     });
   }
 
-  static async getByTeamSlug({ userId, userEmail, teamSlug }) {
-    if (!teamSlug || !userId) {
+  static async getTeamByToken({ token }) {
+    if (!token) {
       throw new Error('Bad data');
     }
 
-    const team = await Team.findBySlug(teamSlug);
-    if (!team) {
-      throw new Error('Team does not exist');
-    }
-
-    const invitation = await this.findOne({
-      teamId: team._id,
-      email: userEmail,
-      isPending: true,
-    }).lean();
+    const invitation = await this.findOne({ token }).lean();
 
     if (!invitation) {
       throw new Error('Invitation not found');
     }
 
-    return { teamName: team.name, invitationId: invitation._id };
+    const team = await Team.findById(invitation.teamId)
+      .select('name slug avatarUrl memberIds')
+      .lean();
+
+    if (!team) {
+      throw new Error('Team does not exist');
+    }
+
+    return team;
   }
 
-  static async acceptOrCancel({ userId, userEmail, teamSlug, isAccepted }) {
-    if (!teamSlug || !userId) {
+  static async addUserToTeam({ token, user }) {
+    if (!token || !user) {
       throw new Error('Bad data');
     }
 
-    const team = await Team.findBySlug(teamSlug);
-    if (!team) {
-      throw new Error('Team does not exist');
-    }
+    const invitation = await this.findOne({ token }).lean();
 
-    if (team.memberIds.includes(userId)) {
-      throw new Error('Already team member');
-    }
-
-    const invitation = await this.findOne({
-      teamId: team._id,
-      email: userEmail,
-      isPending: true,
-    }).lean();
-
-    if (!invitation) {
+    if (!invitation || invitation.email !== user.email) {
       throw new Error('Invitation not found');
     }
 
-    if (isAccepted) {
-      await Team.findByIdAndUpdate(team._id, { $addToSet: { memberIds: userId } });
-    }
+    await this.remove({ token });
 
-    await this.updateOne(
-      { _id: invitation._id },
-      {
-        isPending: false,
-        isAccepted: !!isAccepted,
-      },
-    );
+    const team = await Team.findById(invitation.teamId)
+      .select('memberIds')
+      .lean();
+
+    if (team && !team.memberIds.includes(user._id)) {
+      await Team.update({ _id: team._id }, { $addToSet: { memberIds: user._id } });
+    }
   }
 }
 

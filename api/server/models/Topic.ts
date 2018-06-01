@@ -3,8 +3,9 @@ import { uniq } from 'lodash';
 
 import { generateNumberSlug } from '../utils/slugify';
 import Team from './Team';
+import Discussion from './Discussion';
+import Post from './Post';
 
-// rename createdUserId to teamLeaderId
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
@@ -22,12 +23,6 @@ const mongoSchema = new mongoose.Schema({
   slug: {
     type: String,
     required: true,
-    unique: true,
-  },
-  memberIds: [String],
-  isPrivate: {
-    type: Boolean,
-    default: false,
   },
   createdAt: {
     type: Date,
@@ -41,8 +36,6 @@ interface ITopicDocument extends mongoose.Document {
   teamId: string;
   name: string;
   slug: string;
-  memberIds: string[];
-  isPrivate: boolean;
   createdAt: Date;
   lastUpdatedAt: Date;
 }
@@ -53,29 +46,13 @@ interface ITopicModel extends mongoose.Model<ITopicDocument> {
     name,
     userId,
     teamId,
-    isPrivate,
-    memberIds,
   }: {
     name: string;
     userId: string;
     teamId: string;
-    isPrivate: boolean;
-    memberIds: string[];
   }): Promise<ITopicDocument>;
 
-  edit({
-    name,
-    userId,
-    id,
-    isPrivate,
-    memberIds,
-  }: {
-    name: string;
-    userId: string;
-    id: string;
-    isPrivate: boolean;
-    memberIds: string[];
-  }): Promise<string>;
+  edit({ name, userId, id }: { name: string; userId: string; id: string }): Promise<string>;
 
   delete({ userId, topicId }: { userId: string; topicId: string }): Promise<void>;
 }
@@ -87,33 +64,33 @@ class TopicClass extends mongoose.Model {
     }
 
     const team = await Team.findById(teamId)
-      .select('memberIds')
+      .select('memberIds teamLeaderId')
       .lean();
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');
     }
 
-    if (topic && topic.isPrivate && topic.memberIds.indexOf(userId) === -1) {
-      throw new Error('Permission denied');
-    }
+    return { team };
   }
 
   static async getList({ userId, teamId }) {
     await this.checkPermission({ userId, teamId });
 
-    return this.find({
-      teamId,
-      $or: [{ isPrivate: false }, { memberIds: userId }],
-    }).sort({ createdAt: -1 });
+    return this.find({ teamId })
+      .sort({ createdAt: -1 })
+      .lean();
   }
 
-  static async add({ name, userId, teamId, isPrivate = false, memberIds = [] }) {
+  static async add({ name, userId, teamId }) {
     if (!name) {
       throw new Error('Bad data');
     }
 
-    await this.checkPermission({ userId, teamId });
+    const { team } = await this.checkPermission({ userId, teamId });
+    if (team.teamLeaderId !== userId) {
+      throw new Error('Permission denied. Only team leader can create topic');
+    }
 
     const slug = await generateNumberSlug(this, { teamId });
 
@@ -122,30 +99,29 @@ class TopicClass extends mongoose.Model {
       teamId,
       name,
       slug,
-      memberIds: uniq([userId, ...memberIds]),
-      isPrivate: !!isPrivate,
       createdAt: new Date(),
       lastUpdatedAt: new Date(),
     });
   }
 
-  static async edit({ name, userId, id, isPrivate = false, memberIds = [] }) {
+  static async edit({ name, userId, id }) {
     if (!id) {
       throw new Error('Bad data');
     }
 
     const topic = await this.findById(id)
-      .select('memberIds isPrivate teamId')
+      .select('teamId')
       .lean();
 
-    await this.checkPermission({ userId, teamId: topic.teamId, topic });
+    const { team } = await this.checkPermission({ userId, teamId: topic.teamId, topic });
+    if (team.teamLeaderId !== userId) {
+      throw new Error('Permission denied. Only team leader can edit topic');
+    }
 
     await this.updateOne(
       { _id: id },
       {
         name,
-        isPrivate: !!isPrivate,
-        memberIds: uniq([userId, ...memberIds]),
         lastUpdatedAt: new Date(),
       },
     );
@@ -157,10 +133,20 @@ class TopicClass extends mongoose.Model {
     }
 
     const topic = await this.findById(topicId)
-      .select('memberIds isPrivate teamId')
+      .select('teamId')
       .lean();
 
-    await this.checkPermission({ userId, teamId: topic.teamId, topic });
+    const { team } = await this.checkPermission({ userId, teamId: topic.teamId, topic });
+    if (team.teamLeaderId !== userId) {
+      throw new Error('Permission denied. Only team leader can delete topic');
+    }
+
+    const discussions = await Discussion.find({topicId: topicId}, '_id');
+
+    const discussionIds = discussions.map(d => d._id);
+
+    await Post.remove({ discussionId: discussionIds });
+    await Discussion.remove({ _id: discussionIds });
 
     await this.remove({ _id: topicId });
   }

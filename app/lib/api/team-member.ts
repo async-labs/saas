@@ -2,6 +2,17 @@ import sendRequestAndGetResponse from './sendRequestAndGetResponse';
 
 const BASE_PATH = '/api/v1/team-member';
 
+export const getInitialData = (options: any = {}) =>
+  sendRequestAndGetResponse(
+    `${BASE_PATH}/get-initial-data`,
+    Object.assign(
+      {
+        body: JSON.stringify(options.data || {}),
+      },
+      options,
+    ),
+  );
+
 export const getTopicList = (teamId: string) =>
   sendRequestAndGetResponse(`${BASE_PATH}/topics/list`, {
     method: 'GET',
@@ -43,33 +54,38 @@ export const toggleDiscussionPin = ({ id, isPinned }: { id: string; isPinned: bo
     body: JSON.stringify({ id, isPinned }),
   });
 
-export const getMessageList = (discussionId: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/messages/list`, {
+export const getPostList = (discussionId: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/list`, {
     method: 'GET',
     qs: { discussionId },
   });
 
-export const addMessage = data =>
-  sendRequestAndGetResponse(`${BASE_PATH}/messages/add`, {
+export const addPost = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/add`, {
     body: JSON.stringify(data),
   });
 
-export const editMessage = data =>
-  sendRequestAndGetResponse(`${BASE_PATH}/messages/edit`, {
+export const editPost = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/edit`, {
     body: JSON.stringify(data),
   });
 
-export const deleteMessage = (id: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/messages/delete`, {
+export const deletePost = (id: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/delete`, {
     body: JSON.stringify({ id }),
   });
 
-export const getNotificationList = () =>
-  sendRequestAndGetResponse(`${BASE_PATH}/notifications/list`, {
+// Uploading file to S3
+
+export const getSignedRequestForUpload = (file, prefix) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/get-signed-request-for-upload-to-s3`, {
     method: 'GET',
+    qs: { fileName: file.name, fileType: file.type, prefix: prefix },
   });
 
-export const deleteNotifications = (ids: string[]) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/notifications/bulk-delete`, {
-    body: JSON.stringify({ ids }),
+export const uploadFileUsingSignedPutRequest = (file, signedRequest) =>
+  sendRequestAndGetResponse(signedRequest, {
+    externalServer: true,
+    method: 'PUT',
+    body: file,
   });

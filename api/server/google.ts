@@ -2,6 +2,7 @@ import * as passport from 'passport';
 import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
 
 import User, { IUserDocument } from './models/User';
+import Invitation from './models/Invitation';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -36,6 +37,7 @@ export default function auth({ ROOT_URL, server }) {
       console.log(err); // eslint-disable-line
     }
   };
+
   passport.use(
     new Strategy(
       {
@@ -72,6 +74,12 @@ export default function auth({ ROOT_URL, server }) {
       req.session.next_url = null;
     }
 
+    if (req.query && req.query.invitationToken) {
+      req.session.invitationToken = req.query.invitationToken;
+    } else {
+      req.session.invitationToken = null;
+    }
+
     passport.authenticate('google', options)(req, res, next);
   });
 
@@ -81,17 +89,22 @@ export default function auth({ ROOT_URL, server }) {
       failureRedirect: '/login',
     }),
     (req, res) => {
-      // console.log(req.user);
+      if (req.user && req.session.invitationToken) {
+        Invitation.addUserToTeam({ token: req.session.invitationToken, user: req.user }).catch(
+          err => console.log(err),
+        );
+      }
+
       if (req.user && req.user.isAdmin) {
         res.redirect(dev ? 'http://localhost:3000/admin' : 'https://app1.async-await.com/admin');
       } else if (req.session.next_url) {
-        res.redirect(dev
-          ? `http://localhost:3000${req.session.next_url}`
-          : `https://app1.async-await.com${req.session.next_url}`);
+        res.redirect(
+          dev
+            ? `http://localhost:3000${req.session.next_url}`
+            : `https://app1.async-await.com${req.session.next_url}`,
+        );
       } else {
-        res.redirect(dev
-          ? 'http://localhost:3000/'
-          : 'https://app1.async-await.com/');
+        res.redirect(dev ? 'http://localhost:3000/' : 'https://app1.async-await.com/');
       }
     },
   );

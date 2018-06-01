@@ -12,12 +12,12 @@ const env = { GA_TRACKING_ID, StripePublishableKey };
 class MyDocument extends Document {
   render() {
     return (
-      <html lang="en" style={{ height: '100%' }}>
+      <html lang="en" style={{ height: '100%', overflowY: 'scroll' }}>
         <Head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta name="google" content="notranslate" />
-          <meta name="theme-color" content="#1976D2" />
+          <meta name="theme-color" content="#303030" />
 
           <link
             rel="shortcut icon"
@@ -32,7 +32,7 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="https://storage.googleapis.com/async-await/nprogress.min.css?v=1"
           />
-          <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs.min.css" />
+          <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
 
           <style>
             {`
@@ -40,7 +40,7 @@ class MyDocument extends Document {
                 height: 100% !important;
               }
               a, a:focus {
-                font-weight: 300;
+                font-weight: 600;
                 color: #fff;
                 text-decoration: none;
                 outline: none
@@ -57,21 +57,24 @@ class MyDocument extends Document {
                 border: 0.5px #aaa solid;
               }
               blockquote {
-                padding: 0 1em;
-                color: #555;
+                padding: 0 0.5em;
+                margin: 20px 1em;
+                color: #fff;
                 border-left: 0.25em solid #dfe2e5;
               }
               pre {
                 display: block;
                 overflow-x: auto;
                 padding: 0.5em;
-                background: #FFF;
+                background: #303030;
+                color: #fff;
                 border: 1px solid #ddd;
                 font-size: 14px;
               }
               code {
                 font-size: 14px;
-                background: #FFF;
+                background: #303030;
+                color: #fff;
               }
               mark {
                 background-color: #ffff0060;
@@ -101,6 +104,11 @@ class MyDocument extends Document {
             fontWeight: 300,
             lineHeight: '1.5em',
             height: '100%',
+            overflowY: 'scroll',
+            right: '-15px',
+            left: 0,
+            position: 'absolute',
+            overflow: 'auto !important'
           }}
         >
           <Main />

@@ -1,12 +1,10 @@
 import React from 'react';
 import NProgress from 'nprogress';
 import { observer } from 'mobx-react';
-import { MuiThemeProvider } from 'material-ui/styles';
-import CssBaseline from 'material-ui/CssBaseline';
-import Grid from 'material-ui/Grid';
-import Icon from 'material-ui/Icon';
-import Avatar from 'material-ui/Avatar';
-import Tooltip from 'material-ui/Tooltip';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar';
 import Router from 'next/router';
 import Link from 'next/link';
 
@@ -14,9 +12,10 @@ import TopicList from '../components/topics/TopicList';
 import getContext from '../lib/context';
 import Notifier from '../components/common/Notifier';
 import Confirm from '../components/common/Confirm';
-import MenuDrop from '../components/common/MenuDrop';
-import { getStore } from './store';
+import MenuWithLinks from '../components/common/MenuWithLinks';
+import ActiveLink from '../components/common/ActiveLink';
 import * as gtag from './gtag';
+import { Store } from './store';
 
 Router.onRouteChangeStart = () => {
   NProgress.start();
@@ -29,30 +28,17 @@ Router.onRouteChangeComplete = url => {
 
 Router.onRouteChangeError = () => NProgress.done();
 
-const dev = process.env.NODE_ENV !== 'production';
-const LOG_OUT_URL = dev ? 'http://localhost:8000' : 'https://api1.async-await.com';
+const getTeamOptionsMenuWithLinks = teams =>
+  teams.map(t => ({
+    text: t.name,
+    avatarUrl: t.avatarUrl,
+    href: `/projects?teamSlug=${t.slug}`,
+    as: `/team/${t.slug}/projects`,
+  }));
 
-const getTeamOptionsMenu = team => [
-  {
-    text: 'Main page',
-    href: '/',
-  },
-  {
-    text: 'Settings',
-    href: `/settings?teamSlug=${team.slug}`,
-    as: `/team/${team.slug}/settings`,
-  },
-  {
-    text: 'Log out',
-    href: `${LOG_OUT_URL}/logout`,
-    noPrefetch: true,
-  },
-];
-
-const store = getStore();
 function withLayout(BaseComponent) {
   @observer
-  class App extends React.Component<{ pageContext: object }> {
+  class App extends React.Component<{ pageContext: object; store: Store }> {
     public static defaultProps: { pageContext: null };
 
     constructor(props, context) {
@@ -78,8 +64,10 @@ function withLayout(BaseComponent) {
     pageContext = null;
 
     render() {
+      const { store } = this.props;
+
       if (store.isLoggingIn) {
-        return <div>1-loading...</div>;
+        return <div style={{ color: 'black' }}>1-loading...</div>;
       }
 
       if (!store.currentUser) {
@@ -108,12 +96,17 @@ function withLayout(BaseComponent) {
       }
 
       if (store.isLoadingTeams || !store.isInitialTeamsLoaded) {
-        return <div>2-loading...</div>;
+        return <div style={{ color: 'black' }}>2-loading...</div>;
       }
 
       if (!store.currentTeam) {
-        Router.push('/settings/add-team');
-        return <div>3-loading...</div>;
+        return (
+          <div>
+            <Link href="/settings/add-team">
+              <a style={{ color: 'black' }}>Add team</a>
+            </Link>
+          </div>
+        );
       }
 
       return (
@@ -127,10 +120,10 @@ function withLayout(BaseComponent) {
             direction="row"
             justify="flex-start"
             alignItems="stretch"
-            style={{ padding: '20px', height: '100%' }}
+            style={{ padding: '20px 10px', height: '100%' }}
           >
             <Grid item sm={1} xs={12} style={{ borderRight: '0.5px #aaa solid' }}>
-              <MenuDrop options={getTeamOptionsMenu(store.currentTeam)}>
+              <MenuWithLinks options={getTeamOptionsMenuWithLinks(store.teams)}>
                 <Avatar
                   src={`${store.currentTeam.avatarUrl ||
                     'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
@@ -142,40 +135,34 @@ function withLayout(BaseComponent) {
                   }}
                 />
 
-                <Icon color="action" style={{ verticalAlign: 'super' }}>
+                <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
                   arrow_drop_down
-                </Icon>
-              </MenuDrop>
+                </i>
+              </MenuWithLinks>
               <hr />
               <div>
                 <p />
-                <Link prefetch href="/knowledge">
-                  <a>Knowledge</a>
-                </Link>
+                <ActiveLink
+                  linkText="Projects"
+                  href={`/projects?teamSlug=${store.currentTeam.slug}&topicSlug=projects`}
+                  as={`/team/${store.currentTeam.slug}/projects`}
+                />
                 <p />
                 <hr />
                 <TopicList />
                 <hr />
-                <p />
-                <p style={{ display: 'inline' }}>Private</p>
-                <Tooltip title="Add new Topic" placement="right">
-                  <a href="#" style={{ float: 'right', padding: '0px 10px' }}>
-                    <Icon color="action" style={{ fontSize: 14, opacity: 0.7 }}>
-                      add_circle
-                    </Icon>{' '}
-                  </a>
-                </Tooltip>
-                <ul>
-                  <p />
-                  <Link prefetch href="/tima">
-                    <a>Tima</a>
-                  </Link>
-                  <p />
-                  <Link prefetch href="/kelly">
-                    <a>Kelly</a>
-                  </Link>
-                  <p />
-                </ul>
+                <div
+                  style={{
+                    position: 'fixed',
+                    bottom: '40px',
+                  }}
+                >
+                  <ActiveLink
+                    linkText="Settings"
+                    href={`/settings?teamSlug=${store.currentTeam.slug}`}
+                    as={`/team/${store.currentTeam.slug}/settings`}
+                  />
+                </div>
               </div>
             </Grid>
 

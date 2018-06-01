@@ -1,18 +1,24 @@
 import React from 'react';
 import keycode from 'keycode';
 import Downshift from 'downshift';
-import { withStyles } from 'material-ui/styles';
-import TextField from 'material-ui/TextField';
-import Paper from 'material-ui/Paper';
-import { MenuItem } from 'material-ui/Menu';
-import Chip from 'material-ui/Chip';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import MenuItem from '@material-ui/core/MenuItem';
+import Chip from '@material-ui/core/Chip';
 
 function renderInput(inputProps) {
-  const { helperText, InputProps, classes, ref, ...other } = inputProps;
+  const { helperText, label, InputProps, classes, ref, ...other } = inputProps;
+
+  // Fixing labeling transition bug.
+  if (!InputProps.startAdornment || InputProps.startAdornment.length === 0) {
+    delete InputProps.startAdornment;
+  }
 
   return (
     <TextField
       helperText={helperText}
+      label={label}
       InputProps={{
         inputRef: ref,
         classes: {
@@ -36,7 +42,7 @@ function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, sele
       selected={isHighlighted}
       component="div"
       style={{
-        fontWeight: isSelected ? 500 : 400,
+        fontWeight: isSelected ? 600 : 300,
       }}
     >
       {suggestion.label}
@@ -53,7 +59,7 @@ function getSuggestions(suggestions, inputValue, selectedItems) {
       (!inputValue ||
         (selectedValues.indexOf(suggestion.value) === -1 &&
           suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1)) &&
-      count < 5;
+      count < 20;
 
     if (keep) {
       count += 1;
@@ -68,8 +74,8 @@ class DownshiftMultiple extends React.Component<{
   onChange: Function;
   suggestions: [{ label: string; value: string }];
   selectedItems: [{ label: string; value: string }];
-  placeholder: string;
   helperText: string;
+  label: string;
 }> {
   state = {
     inputValue: '',
@@ -124,7 +130,7 @@ class DownshiftMultiple extends React.Component<{
   };
 
   render() {
-    const { classes, suggestions, placeholder, helperText } = this.props;
+    const { classes, suggestions, helperText, label } = this.props;
     const { inputValue, selectedItems } = this.state;
 
     return (
@@ -145,9 +151,10 @@ class DownshiftMultiple extends React.Component<{
           }) => (
             <div className={classes.container}>
               {renderInput({
-                // fullWidth: true,
+                fullWidth: true,
                 classes,
                 helperText,
+                label,
                 InputProps: getInputProps({
                   startAdornment: selectedItems.map(item => (
                     <Chip
@@ -160,7 +167,6 @@ class DownshiftMultiple extends React.Component<{
                   )),
                   onChange: this.handleInputChange,
                   onKeyDown: this.handleKeyDown,
-                  placeholder,
                   id: 'integration-downshift-multiple',
                 }),
               })}

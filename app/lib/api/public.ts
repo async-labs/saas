@@ -12,3 +12,9 @@ export const getUser = (options = {}) =>
       options,
     ),
   );
+
+export const getInvitedTeamByToken = (token: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/invitations/get-team-by-token`, {
+    method: 'GET',
+    qs: { token },
+  });

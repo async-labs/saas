@@ -1,15 +1,13 @@
 import Head from 'next/head';
-import { observer } from 'mobx-react';
 import Link from 'next/link';
 
 import withLayout from '../lib/withLayout';
 import withAuth from '../lib/withAuth';
-import { getStore } from '../lib/store';
-import { Button } from 'material-ui';
+import Button from '@material-ui/core/Button';
+import { observer } from 'mobx-react';
 
-const store = getStore();
-const Index = () => (
-  <div style={{padding: '0px 0px 0px 20px'}}>
+const Index = ({ store }) => (
+  <div style={{ padding: '0px 0px 0px 20px' }}>
     <Head>
       <title>Async</title>
       <meta name="description" content="description" />

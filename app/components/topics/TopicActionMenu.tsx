@@ -1,9 +1,8 @@
 import React from 'react';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import Icon from 'material-ui/Icon';
-import Tooltip from 'material-ui/Tooltip';
-import { observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import NProgress from 'nprogress';
+
+import MenuWithMenuItems from '../common/MenuWithMenuItems';
 
 import notify from '../../lib/notifier';
 import confirm from '../../lib/confirm';
@@ -11,11 +10,29 @@ import { Topic } from '../../lib/store';
 
 import TopicForm from './TopicForm';
 
+const getMenuOptions = topic => ({
+  dataId: topic._id,
+  id: `topic-menu-${topic._id}`,
+});
+
+const getMenuItemOptions = (topic, component) => [
+  {
+    text: 'Edit',
+    dataId: topic._id,
+    onClick: component.editTopic,
+  },
+  {
+    text: 'Delete',
+    dataId: topic._id,
+    onClick: component.deleteTopic,
+  },
+];
+
+@inject('store')
 @observer
 class TopicActionMenu extends React.Component<{ topic: Topic }> {
   state = {
     topicFormOpen: false,
-    topicMenuElm: null,
   };
 
   handleTopicFormClose = () => {
@@ -23,16 +40,15 @@ class TopicActionMenu extends React.Component<{ topic: Topic }> {
   };
 
   editTopic = () => {
-    this.setState({ topicMenuElm: null, topicFormOpen: true });
+    this.setState({ topicFormOpen: true });
   };
 
   deleteTopic = async () => {
     const { topic } = this.props;
 
-    this.setState({ topicMenuElm: null });
-
     confirm({
-      message: 'Are you sure?',
+      title: 'Are you sure?',
+      message: '',
       onAnswer: async answer => {
         if (!answer) {
           return;
@@ -43,7 +59,7 @@ class TopicActionMenu extends React.Component<{ topic: Topic }> {
         try {
           await topic.team.deleteTopic(topic._id);
 
-          notify('Deleted');
+          notify('You successfully deleted Topic');
           NProgress.done();
         } catch (error) {
           console.log(error);
@@ -54,43 +70,15 @@ class TopicActionMenu extends React.Component<{ topic: Topic }> {
     });
   };
 
-  showTopicMenu = event => {
-    this.setState({ topicMenuElm: event.currentTarget });
-  };
-
-  handleTopicMenuClose = () => {
-    this.setState({ topicMenuElm: null });
-  };
-
   render() {
     const { topic } = this.props;
-    const { topicMenuElm } = this.state;
 
     return (
       <span>
-        <Tooltip title="Settings" placement="right">
-          <a href="#" style={{ float: 'right', padding: '0px 10px' }}>
-            <Icon
-              aria-owns={topicMenuElm ? 'topic-menu' : null}
-              aria-haspopup="true"
-              onClick={this.showTopicMenu}
-              color="action"
-              style={{ fontSize: 14, opacity: 0.7 }}
-            >
-              more_vert
-            </Icon>
-          </a>
-        </Tooltip>
-
-        <Menu
-          id="topic-menu"
-          anchorEl={topicMenuElm}
-          open={!!topicMenuElm}
-          onClose={this.handleTopicMenuClose}
-        >
-          <MenuItem onClick={this.editTopic}>Edit</MenuItem>
-          <MenuItem onClick={this.deleteTopic}>Delete</MenuItem>
-        </Menu>
+        <MenuWithMenuItems
+          menuOptions={getMenuOptions(topic)}
+          itemOptions={getMenuItemOptions(topic, this)}
+        />
 
         <TopicForm
           open={this.state.topicFormOpen}

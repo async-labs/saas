@@ -1,4 +1,5 @@
 import { observable, action, IObservableArray, runInAction } from 'mobx';
+import Router from 'next/router';
 
 import {
   getTeamMemberList,
@@ -12,8 +13,11 @@ import { getTopicList } from '../api/team-member';
 
 import { Topic } from './topic';
 import { User } from './user';
+import { Store } from './index';
 
 export class Team {
+  store: Store;
+
   @observable private isLoadingTopics = false;
   @observable isInitialTopicsLoaded = false;
 
@@ -23,7 +27,9 @@ export class Team {
   @observable slug: string;
   @observable name: string;
   @observable avatarUrl: string;
+  @observable memberIds: string[];
   @observable topics: IObservableArray<Topic> = <IObservableArray>[];
+  @observable privateTopics: IObservableArray<Topic> = <IObservableArray>[];
   @observable currentTopic?: Topic;
 
   @observable currentTopicSlug?: string;
@@ -31,9 +37,64 @@ export class Team {
 
   @observable members: Map<string, User> = new Map();
   @observable private isLoadingMembers = false;
+  @observable private isInitialMembersLoaded = false;
 
   constructor(params) {
     Object.assign(this, params);
+
+    if (params.initialTopics) {
+      this.setInitialTopics(params.initialTopics);
+    }
+
+    if (params.initialMembers) {
+      this.setInitialMembers(params.initialMembers);
+    }
+  }
+
+  @action
+  setInitialTopics(topics: any[]) {
+    this.topics.clear();
+
+    const topicObjs = topics.map(t => new Topic({ team: this, ...t }));
+
+    this.topics.replace(topicObjs);
+
+    if (this.currentTopicSlug) {
+      this.setCurrentTopic(this.currentTopicSlug);
+    }
+
+    this.isInitialTopicsLoaded = true;
+  }
+
+  @action
+  async loadInitialTopics() {
+    if (this.isLoadingTopics || this.isInitialTopicsLoaded) {
+      return;
+    }
+
+    this.isLoadingTopics = true;
+
+    try {
+      const { topics = [] } = await getTopicList(this._id);
+      const topicObjs = topics.map(t => new Topic({ team: this, ...t }));
+
+      runInAction(() => {
+        this.topics.replace(topicObjs);
+
+        if (this.currentTopicSlug) {
+          this.setCurrentTopic(this.currentTopicSlug);
+        }
+
+        this.isLoadingTopics = false;
+        this.isInitialTopicsLoaded = true;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.isLoadingTopics = false;
+      });
+
+      throw error;
+    }
   }
 
   @action
@@ -61,55 +122,27 @@ export class Team {
 
   @action
   setCurrentTopic(slug: string) {
-    this.currentTopicSlug = slug;
-
+    let found = false;
     for (let i = 0; i < this.topics.length; i++) {
       const topic = this.topics[i];
+      // console.log(topic);
       if (topic.slug === slug) {
+        this.currentTopicSlug = slug;
         if (this.currentDiscussionSlug) {
           topic.setInitialDiscussionSlug(this.currentDiscussionSlug);
           topic.currentDiscussionSlug = this.currentDiscussionSlug;
         }
 
-        topic.loadInitialDiscussions();
+        topic.loadInitialDiscussions().catch(err => console.log(err));
         this.currentTopic = topic;
+        found = true;
         break;
       }
     }
-  }
 
-  @action
-  async loadTopics() {
-    if (this.isLoadingTopics) {
-      return;
-    }
-
-    this.isLoadingTopics = true;
-
-    try {
-      const { topics = [] } = await getTopicList(this._id);
-      const topicObjs = topics.map(t => new Topic({ team: this, ...t }));
-
-      runInAction(() => {
-        this.topics.replace(topicObjs);
-
-        if (!this.currentTopicSlug && topics.length > 0) {
-          this.currentTopicSlug = topicObjs[0].slug;
-        }
-
-        if (this.currentTopicSlug) {
-          this.setCurrentTopic(this.currentTopicSlug);
-        }
-
-        this.isLoadingTopics = false;
-        this.isInitialTopicsLoaded = true;
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.isLoadingTopics = false;
-      });
-
-      throw error;
+    if (!found) {
+      this.currentTopic = null;
+      this.currentTopicSlug = null;
     }
   }
 
@@ -120,6 +153,11 @@ export class Team {
 
     runInAction(() => {
       this.topics.unshift(topicObj);
+
+      Router.push(
+        `/topics/detail?teamSlug=${this.slug}&topicSlug=${topic.slug}`,
+        `/team/${this.slug}/t/${topic.slug}`,
+      );
     });
   }
 
@@ -128,14 +166,39 @@ export class Team {
     const topic = this.topics.find(t => t._id === topicId);
 
     await deleteTopic(topicId);
+
     runInAction(() => {
       this.topics.remove(topic);
+
+      if (this.store.currentTeam === this && this.currentTopic === topic) {
+        if (this.topics.length > 0) {
+          Router.push(
+            `/topics/detail?teamSlug=${this.slug}&topicSlug=${this.topics[0].slug}`,
+            `/team/${this.slug}/t/${this.topics[0].slug}`,
+          );
+        } else {
+          Router.push('/');
+          this.currentTopic = null;
+          this.currentTopicSlug = null;
+        }
+      }
     });
   }
 
   @action
-  async loadMembers() {
-    if (this.isLoadingMembers) {
+  setInitialMembers(users) {
+    this.members.clear();
+
+    for (let i = 0; i < users.length; i++) {
+      this.members.set(users[i]._id, new User(users[i]));
+    }
+
+    this.isInitialMembersLoaded = true;
+  }
+
+  @action
+  async loadInitialMembers() {
+    if (this.isLoadingMembers || this.isInitialMembersLoaded) {
       return;
     }
 

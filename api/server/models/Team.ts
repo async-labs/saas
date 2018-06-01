@@ -1,5 +1,7 @@
 import * as mongoose from 'mongoose';
 
+import Topic from './Topic';
+
 import generateSlug from '../utils/slugify';
 
 const mongoSchema = new mongoose.Schema({
@@ -57,13 +59,16 @@ class TeamClass extends mongoose.Model {
 
     const slug = await generateSlug(this, name);
 
-    return this.create({
+    const team = await this.create({
       teamLeaderId: userId,
       name,
       slug,
       memberIds: [userId],
+      avatarUrl: '',
       createdAt: new Date(),
     });
+
+    return team;
   }
 
   static findBySlug(slug: string) {

@@ -2,17 +2,17 @@ import * as express from 'express';
 import * as path from 'path';
 import * as next from 'next';
 import * as helmet from 'helmet';
+import * as mobxReact from 'mobx-react';
 
 import { getUser } from '../lib/api/public';
+
 import routesWithSlug from './routesWithSlug';
+
+mobxReact.useStaticRendering(true);
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 3000;
 const ROOT_URL = dev ? `http://localhost:${port}` : 'https://app1.async-await.com';
-
-const URL_MAP = {
-  '/terms': '/public/terms',
-};
 
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -47,8 +47,12 @@ app.prepare().then(() => {
       headers.cookie = req.headers.cookie;
     }
 
-    const { user } = await getUser({ headers });
-    req.user = user;
+    try {
+      const { user } = await getUser({ headers });
+      req.user = user;
+    } catch (error) {
+      console.log(error);
+    }
 
     nextfn();
   });
@@ -56,12 +60,7 @@ app.prepare().then(() => {
   routesWithSlug({ server, app });
 
   server.get('*', (req, res) => {
-    const url = URL_MAP[req.path];
-    if (url) {
-      app.render(req, res, url);
-    } else {
-      handle(req, res);
-    }
+    handle(req, res);
   });
 
   server.listen(port, err => {

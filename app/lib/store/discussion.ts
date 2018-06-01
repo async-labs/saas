@@ -1,8 +1,9 @@
 import { observable, action, IObservableArray, runInAction } from 'mobx';
 
-import { getMessageList, editDiscussion, addMessage, deleteMessage } from '../api/team-member';
+import { getPostList, editDiscussion, addPost, deletePost } from '../api/team-member';
 
-import { Message } from './message';
+import { Post } from './post';
+import { Topic } from './topic';
 
 export class Discussion {
   _id: string;
@@ -11,37 +12,54 @@ export class Discussion {
   @observable isPinned = false;
   @observable name: string;
   @observable slug: string;
+  @observable isPrivate: boolean;
   @observable memberIds: IObservableArray<string> = <IObservableArray>[];
-  @observable messages: IObservableArray<Message> = <IObservableArray>[];
-  @observable isInitialMessagesLoaded = false;
+  @observable posts: IObservableArray<Post> = <IObservableArray>[];
+  @observable isInitialPostsLoaded = false;
 
-  @observable private isLoadingMessages = false;
+  @observable private isLoadingPosts = false;
+
+  topic: Topic;
 
   constructor(params) {
     Object.assign(this, params);
+
+    if (params.initialPosts) {
+      this.setInitialPosts(params.initialPosts);
+    }
   }
 
   @action
-  async loadMessages() {
-    if (this.isLoadingMessages) {
+  setInitialPosts(posts) {
+    const postObjs = posts.map(t => new Post({ discussion: this, ...t }));
+
+    runInAction(() => {
+      this.posts.replace(postObjs);
+      this.isInitialPostsLoaded = true;
+    });
+  }
+
+  @action
+  async loadInitialPosts() {
+    if (this.isLoadingPosts || this.isInitialPostsLoaded) {
       return;
     }
 
-    this.isLoadingMessages = true;
+    this.isLoadingPosts = true;
 
     try {
-      const { messages = [] } = await getMessageList(this._id);
-      const messageObjs = messages.map(t => new Message({ discussion: this, ...t }));
+      const { posts = [] } = await getPostList(this._id);
+      const postObjs = posts.map(t => new Post({ discussion: this, ...t }));
 
       runInAction(() => {
-        this.messages.replace(messageObjs);
-        this.isLoadingMessages = false;
-        this.isInitialMessagesLoaded = true;
+        this.posts.replace(postObjs);
+        this.isLoadingPosts = false;
+        this.isInitialPostsLoaded = true;
       });
     } catch (error) {
       console.error(error);
       runInAction(() => {
-        this.isLoadingMessages = false;
+        this.isLoadingPosts = false;
       });
 
       throw error;
@@ -55,6 +73,7 @@ export class Discussion {
 
       runInAction(() => {
         this.name = data.name;
+        this.isPrivate = !!data.isPrivate;
       });
     } catch (error) {
       console.error(error);
@@ -63,21 +82,21 @@ export class Discussion {
   }
 
   @action
-  async addMessage(data) {
-    const { message } = await addMessage({ discussionId: this._id, ...data });
-    const messageObj = new Message(message);
+  async addPost(data) {
+    const { post } = await addPost({ discussionId: this._id, ...data });
+    const postObj = new Post({ discussion: this, ...post });
 
     runInAction(() => {
-      this.messages.push(messageObj);
+      this.posts.push(postObj);
     });
   }
 
   @action
-  async deleteMessage(message: Message) {
-    await deleteMessage(message._id);
+  async deletePost(post: Post) {
+    await deletePost(post._id);
 
     runInAction(() => {
-      this.messages.remove(message);
+      this.posts.remove(post);
     });
   }
 }

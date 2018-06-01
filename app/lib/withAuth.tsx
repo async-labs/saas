@@ -1,18 +1,16 @@
 import React from 'react';
 import Router from 'next/router';
 
-import { getStore, User } from './store';
+import { Store } from './store';
+import withStore from './withStore';
 
 export default function withAuth(
   BaseComponent,
   { loginRequired = true, logoutRequired = false, adminRequired = false } = {},
 ) {
-  class App extends React.PureComponent<{ user: User; isFromServer: boolean; teamSlug: string }> {
+  class App extends React.Component<{ store: Store; teamSlug: string }> {
     static async getInitialProps(ctx) {
-      const isFromServer = !!ctx.req;
-      const user = ctx.req ? ctx.req.user && ctx.req.user : getStore().currentUser;
-
-      const props = { user, isFromServer };
+      const props: any = {};
 
       if (BaseComponent.getInitialProps) {
         Object.assign(props, (await BaseComponent.getInitialProps(ctx)) || {});
@@ -22,16 +20,11 @@ export default function withAuth(
     }
 
     componentDidMount() {
-      const { user, teamSlug } = this.props;
+      const { store } = this.props;
 
-      if (this.props.isFromServer) {
-        const store = getStore();
-
-        store.changeUserState(user, teamSlug);
-      }
-
+      const user = store.currentUser;
       if (loginRequired && !logoutRequired && !user) {
-        Router.push('/public/login', '/login');
+        Router.push('/login');
         return;
       }
 
@@ -45,7 +38,8 @@ export default function withAuth(
     }
 
     render() {
-      const { user } = this.props;
+      const { store } = this.props;
+      const user = store.currentUser;
 
       if (loginRequired && !logoutRequired && !user) {
         return null;
@@ -63,5 +57,5 @@ export default function withAuth(
     }
   }
 
-  return App;
+  return withStore(App);
 }

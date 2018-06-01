@@ -1,13 +1,21 @@
 import React from 'react';
-import Button from 'material-ui/Button';
-import Dialog, { DialogActions, DialogContent, DialogContentText } from 'material-ui/Dialog';
+import Button from '@material-ui/core/Button';
+import {
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+} from '@material-ui/core';
 
 let openConfirmDialogFn;
 
 class Confirm extends React.Component {
   state = {
     open: false,
-    message: 'Are you sure?',
+    title: 'Are you sure?',
+    message: '',
+    successMessage: '',
     onAnswer: a => a,
   };
 
@@ -25,8 +33,8 @@ class Confirm extends React.Component {
     this.state.onAnswer(true);
   };
 
-  openConfirmDialog = ({ message, onAnswer }) => {
-    this.setState({ open: true, message, onAnswer });
+  openConfirmDialog = ({ title, message, onAnswer }) => {
+    this.setState({ open: true, title, message, onAnswer });
   };
 
   render() {
@@ -37,22 +45,33 @@ class Confirm extends React.Component {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
+        <DialogTitle id="alert-dialog-title">{this.state.title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">{this.state.message}</DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={this.handleYes} color="primary">
+        <DialogActions style={{ padding: '10px' }}>
+          <Button onClick={this.handleClose} variant="outlined" color="primary" autoFocus>
+            Cancel
+          </Button>
+          <Button onClick={this.handleYes} variant="raised" color="primary">
             OK
           </Button>
-          <Button onClick={this.handleClose}>Cancel</Button>
         </DialogActions>
       </Dialog>
     );
   }
 }
 
-export function openConfirmDialog({ message, onAnswer }: { message: string; onAnswer: Function }) {
-  openConfirmDialogFn({ message, onAnswer });
+export function openConfirmDialog({
+  title,
+  message,
+  onAnswer,
+}: {
+  title: string;
+  message: string;
+  onAnswer: Function;
+}) {
+  openConfirmDialogFn({ title, message, onAnswer });
 }
 
 export default Confirm;

@@ -1,14 +1,15 @@
 import * as React from 'react';
-import Grid from 'material-ui/Grid';
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 
 import withLayout from '../../lib/withLayout';
 import withAuth from '../../lib/withAuth';
-import { getStore } from '../../lib/store';
+import { Store } from '../../lib/store';
 import DiscussionList from '../../components/discussions/DiscussionList';
-import MessageForm from '../../components/messages/MessageForm';
-import MessageDetail from '../../components/messages/MessageDetail';
+import PostForm from '../../components/posts/PostForm';
+import PostDetail from '../../components/posts/PostDetail';
 
 const styleGrid = {
   height: '100%',
@@ -19,18 +20,24 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-const store = getStore();
-
 @observer
 class Discussion extends React.Component<{
+  store: Store;
   teamSlug: string;
   topicSlug: string;
   discussionSlug: string;
+  isServer: boolean;
 }> {
-  static async getInitialProps({ query }) {
-    const { teamSlug, topicSlug, discussionSlug } = query;
+  state = {
+    drawerState: false,
+    isEditing: false,
+    selectedPost: null,
+  };
 
-    return { teamSlug, topicSlug, discussionSlug };
+  static getInitialProps(ctx) {
+    const { teamSlug, topicSlug, discussionSlug } = ctx.query;
+
+    return { teamSlug, topicSlug, discussionSlug, isServer: !!ctx.req };
   }
 
   componentDidMount() {
@@ -42,7 +49,7 @@ class Discussion extends React.Component<{
   }
 
   changeDiscussion(props) {
-    const { teamSlug, topicSlug, discussionSlug } = props;
+    const { teamSlug, topicSlug, discussionSlug, store } = props;
     const { currentTeam } = store;
 
     if (!currentTeam || currentTeam.slug !== teamSlug) {
@@ -62,6 +69,7 @@ class Discussion extends React.Component<{
   }
 
   componentDidUpdate() {
+    const { store, isServer } = this.props;
     const { currentTeam } = store;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
@@ -73,16 +81,21 @@ class Discussion extends React.Component<{
     if (!currentTopic) {
       return;
     }
-
-    store.deleteNotification({ topicId: currentTopic._id });
-    const { currentDiscussion } = currentTopic;
-    if (currentDiscussion) {
-      store.deleteNotification({ discussionId: currentDiscussion._id });
-    }
   }
 
+  showFormToAddNewPost = () => {
+    this.setState({ drawerState: true, isEditing: false });
+  };
+
+  onEditClickCallback = post => {
+    this.setState({ selectedPost: post, drawerState: true, isEditing: true });
+    console.log(`Page: ${this.state.selectedPost}`);
+  };
+
   render() {
+    const { store, isServer } = this.props;
     const { currentTeam } = store;
+    const { selectedPost, drawerState, isEditing } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return <div>Team not selected</div>;
@@ -102,13 +115,15 @@ class Discussion extends React.Component<{
           </Grid>
 
           <Grid item sm={10} xs={12}>
-            <p>Select or add topic.</p>
+            <div style={{ padding: '0px 0px 0px 20px' }}>Select or add topic.</div>
           </Grid>
         </Grid>
       );
     }
 
-    NProgress.start();
+    if (!isServer) {
+      NProgress.start();
+    }
 
     if (!currentTopic.isInitialDiscussionsLoaded) {
       return (
@@ -141,7 +156,7 @@ class Discussion extends React.Component<{
       );
     }
 
-    if (!currentDiscussion.isInitialMessagesLoaded) {
+    if (!currentDiscussion.isInitialPostsLoaded) {
       return (
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
@@ -155,27 +170,50 @@ class Discussion extends React.Component<{
       );
     }
 
-    NProgress.done();
+    if (!isServer) {
+      NProgress.done();
+    }
 
     return (
-      <Grid container style={styleGrid}>
-        <Grid item sm={2} xs={12} style={styleGridItem}>
-          <DiscussionList />
-        </Grid>
+      <div style={{ height: '100%' }}>
+        <Grid container style={styleGrid}>
+          <Grid item sm={2} xs={12} style={styleGridItem}>
+            <DiscussionList />
+          </Grid>
 
-        <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-          {currentDiscussion.messages.length > 0 ? (
-            <div>
-              <h3>Messages</h3>
-              {currentDiscussion.messages.map(m => <MessageDetail key={m._id} message={m} />)}
-            </div>
-          ) : (
-            <p>Empty discussion.</p>
-          )}
-
-          <MessageForm />
+          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
+            <Button
+              onClick={this.showFormToAddNewPost}
+              variant="outlined"
+              color="primary"
+              style={{ float: 'right' }}
+            >
+              Add new post
+            </Button>{' '}
+            {currentDiscussion.posts.length > 0 ? (
+              <div>
+                <h3>{currentDiscussion.name}</h3>
+                {currentDiscussion.posts.map(p => (
+                  <PostDetail key={p._id} post={p} onEditClick={this.onEditClickCallback} />
+                ))}
+              </div>
+            ) : (
+              <div>
+                <p> Empty discussion </p>
+              </div>
+            )}
+            <br />
+            <PostForm
+              post={selectedPost}
+              open={drawerState}
+              isEditing={isEditing}
+              onFinished={() => {
+                this.setState({ drawerState: false });
+              }}
+            />
+          </Grid>
         </Grid>
-      </Grid>
+      </div>
     );
   }
 }

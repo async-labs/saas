@@ -1,35 +1,42 @@
 import React from 'react';
-import Button from 'material-ui/Button';
-import Dialog, { DialogTitle } from 'material-ui/Dialog';
-import TextField from 'material-ui/TextField';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
 import NProgress from 'nprogress';
+import { inject, observer } from 'mobx-react';
 
 import notify from '../../lib/notifier';
-import { getStore } from '../../lib/store';
-
-const store = getStore();
+import { Store } from '../../lib/store';
 
 interface Props {
+  store: Store;
   onClose: Function;
   open: boolean;
 }
 
 interface State {
   email: string;
+  disabled: boolean;
 }
 
+@inject('store')
+@observer
 class InviteMember extends React.Component<Props, State> {
   state = {
     email: '',
+    disabled: false,
   };
 
   handleClose = () => {
-    this.setState({ email: '' });
+    this.setState({ email: '', disabled: false });
     this.props.onClose();
   };
 
   onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const { store } = this.props;
 
     if (!store.currentTeam) {
       notify('Team have not selected');
@@ -45,17 +52,19 @@ class InviteMember extends React.Component<Props, State> {
 
     NProgress.start();
     try {
+      this.setState({ disabled: true });
       await store.currentTeam.inviteMember(email);
 
       this.setState({ email: '' });
-      notify('Added');
+      notify('Invited');
       this.props.onClose();
       NProgress.done();
     } catch (error) {
       console.log(error);
       notify(error);
-      this.props.onClose();
+    } finally {
       NProgress.done();
+      this.setState({ disabled: false });
     }
   };
 
@@ -65,7 +74,7 @@ class InviteMember extends React.Component<Props, State> {
     return (
       <Dialog onClose={this.handleClose} aria-labelledby="invite-memter-dialog-title" open={open}>
         <DialogTitle id="invite-memter-dialog-title">Invite member</DialogTitle>
-        <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
           <TextField
             value={this.state.email}
             placeholder="Email"
@@ -73,8 +82,11 @@ class InviteMember extends React.Component<Props, State> {
               this.setState({ email: event.target.value });
             }}
           />
-
-          <Button type="submit" variant="raised" color="primary">
+          <p />
+          <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
+            Cancel
+          </Button>{' '}
+          <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
             Invite
           </Button>
         </form>

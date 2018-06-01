@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
 import generateSlug from '../utils/slugify';
-import sendEmail from '../aws';
+import sendEmail from '../aws-ses';
 import logger from '../logs';
 import getEmailTemplate from './EmailTemplate';
 import Team from './Team';
@@ -17,6 +17,9 @@ export interface IUserDocument extends mongoose.Document {
   isAdmin: boolean;
   displayName: string;
   avatarUrl: string;
+
+  isGithubConnected: boolean;
+  githubAccessToken: string;
 }
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -71,12 +74,19 @@ const mongoSchema = new mongoose.Schema({
     unique: true,
   },
   teamIds: [String],
+  projectIds: [String],
   isAdmin: {
     type: Boolean,
     default: false,
   },
   displayName: String,
   avatarUrl: String,
+
+  isGithubConnected: {
+    type: Boolean,
+    default: false,
+  },
+  githubAccessToken: String,
 });
 
 // mongoSchema.pre('save', function(next) {
@@ -87,12 +97,14 @@ const mongoSchema = new mongoose.Schema({
 class UserClass extends mongoose.Model {
   static publicFields(): string[] {
     return [
+      '_id',
       'id',
       'displayName',
       'email',
       'avatarUrl',
       'slug',
       'isAdmin',
+      'isGithubConnected',
       'teamId',
     ];
   }

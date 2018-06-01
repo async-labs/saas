@@ -9,8 +9,10 @@ import * as path from 'path';
 
 import auth from './google';
 import api from './api';
+import { signRequestForLoad } from './aws-s3';
 
 import logger from './logs';
+import Team from './models/Team';
 
 require('dotenv').config();
 
@@ -24,10 +26,12 @@ mongoose.connect(MONGO_URL);
 
 const server = express();
 
-server.use(cors({
-  origin: dev ? 'http://localhost:3000' : 'https://app.builderbook.org',
-  credentials: true,
-}));
+server.use(
+  cors({
+    origin: dev ? 'http://localhost:3000' : 'https://app.builderbook.org',
+    credentials: true,
+  }),
+);
 
 server.use(helmet());
 server.use(compression());
@@ -59,6 +63,39 @@ server.use(session(sess));
 
 auth({ server, ROOT_URL });
 api(server);
+
+server.get('/uploaded-file', async (req, res) => {
+  if (!req.user) {
+    res.redirect(dev ? 'http://localhost:3000/login' : 'https://app1.async-await.com/login');
+    return;
+  }
+
+  const { path } = req.query;
+  if (!path) {
+    res.status(401).end('Bad request');
+    return;
+  }
+
+  const teamSlug = path.split('/')[0];
+  if (!teamSlug) {
+    res.status(401).end('Bad request');
+    return;
+  }
+
+  const team = await Team.findOne({ slug: teamSlug })
+    .select('memberIds')
+    .lean();
+
+  if (!team || !team.memberIds.includes(req.user.id)) {
+    res.status(401).end('Bad request');
+    // TODO: show more informative error
+    return;
+  }
+
+  const data: any = await signRequestForLoad(req.query.path);
+
+  res.redirect(data.signedRequest);
+});
 
 server.get('/robots.txt', (req, res) => {
   res.sendFile(path.join(__dirname, '../static', 'robots.txt'));

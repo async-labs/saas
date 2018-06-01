@@ -1,5 +1,8 @@
 import * as stripe from 'stripe';
 
+// TODO: below is code from builderbook repo (single payments)
+// TODO: add recurring subscription code here instead
+
 export function charge({ amount, token, buyerEmail }) {
   const dev = process.env.NODE_ENV !== 'production';
 

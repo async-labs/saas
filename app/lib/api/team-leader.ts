@@ -8,22 +8,6 @@ const BASE_PATH = '/api/v1/team-leader';
 //     body: JSON.stringify({ id, stripeToken }),
 //   });
 
-export const getInvitationTeamBySlug = (teamSlug: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/invitations/get-by-team-slug`, {
-    method: 'GET',
-    qs: { teamSlug },
-  });
-
-export const acceptInvitation = (teamSlug: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/invitations/accept-or-cancel`, {
-    body: JSON.stringify({ teamSlug, isAccepted: true }),
-  });
-
-export const cancelInvitation = (teamSlug: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/invitations/accept-or-cancel`, {
-    body: JSON.stringify({ teamSlug, isAccepted: false }),
-  });
-
 export const addTeam = data =>
   sendRequestAndGetResponse(`${BASE_PATH}/teams/add`, {
     body: JSON.stringify(data),

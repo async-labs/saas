@@ -1,24 +1,28 @@
 import React from 'react';
-import Button from 'material-ui/Button';
-import Dialog, {
+import Button from '@material-ui/core/Button';
+import {
+  Radio,
+  RadioGroup,
+  FormLabel,
+  FormControl,
+  FormControlLabel,
+  Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
-} from 'material-ui/Dialog';
-import TextField from 'material-ui/TextField';
-import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
+} from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import { inject } from 'mobx-react';
 
 import NProgress from 'nprogress';
 
 import notify from '../../lib/notifier';
-import { getStore, Discussion } from '../../lib/store';
+import { Store, Discussion } from '../../lib/store';
 import AutoComplete from '../common/AutoComplete';
 
-const store = getStore();
-
 interface Props {
+  store?: Store;
   onClose: Function;
   open: boolean;
   discussion?: Discussion;
@@ -27,32 +31,41 @@ interface Props {
 interface State {
   name: string;
   memberIds: string[];
+  privacy: string;
+  disabled: boolean;
 }
 
+@inject('store')
 class DiscussionForm extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-
-    const { discussion } = props;
-
-    this.state = {
-      name: (discussion && discussion.name) || '',
-      memberIds: (discussion && discussion.memberIds) || [],
-    };
-  }
+  state = {
+    name: '',
+    memberIds: [],
+    privacy: 'public',
+    disabled: false,
+    topicIsPrivate: false,
+  };
 
   static getDerivedStateFromProps(nextProps) {
-    const { discussion } = nextProps;
+    const { discussion, store } = nextProps;
+    const { currentTeam } = store;
+    const { currentTopicSlug } = currentTeam;
+    const topicIsPrivate = currentTopicSlug === 'private';
 
     return {
       name: (discussion && discussion.name) || '',
       memberIds: (discussion && discussion.memberIds) || [],
+      privacy: (discussion && discussion.isPrivate) || topicIsPrivate ? 'private' : 'public',
+      topicIsPrivate: topicIsPrivate,
     };
   }
 
   handleClose = () => {
-    this.setState({ name: '', memberIds: [] });
+    this.setState({ name: '', memberIds: [], privacy: 'public', disabled: false });
     this.props.onClose();
+  };
+
+  handlePrivacyChange = event => {
+    this.setState({ privacy: event.target.value });
   };
 
   handleAutoCompleteChange = selectedItems => {
@@ -62,32 +75,7 @@ class DiscussionForm extends React.Component<Props, State> {
   onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { discussion } = this.props;
-    const { name, memberIds } = this.state;
-    if (!name) {
-      notify('Name is required');
-      return;
-    }
-
-    if (discussion) {
-      NProgress.start();
-      try {
-        await discussion.edit({ name, memberIds });
-
-        this.setState({ name: '', memberIds: [] });
-        notify('Edited');
-        this.props.onClose();
-        NProgress.done();
-      } catch (error) {
-        console.log(error);
-        notify(error);
-        this.props.onClose();
-        NProgress.done();
-      }
-
-      return;
-    }
-
+    const { discussion, store } = this.props;
     const { currentTeam } = store;
     if (!currentTeam) {
       notify('Team have not selected');
@@ -100,37 +88,60 @@ class DiscussionForm extends React.Component<Props, State> {
       return;
     }
 
+    const { name, memberIds, privacy } = this.state;
+    const isPrivate = privacy === 'private';
+    if (!name) {
+      notify('Name is required');
+      return;
+    }
+
     NProgress.start();
     try {
-      await currentTopic.addDiscussion({ name, memberIds });
+      this.setState({ disabled: true });
 
-      this.setState({ name: '', memberIds: [] });
-      notify('Added');
-      this.props.onClose();
-      NProgress.done();
+      if (discussion) {
+        await discussion.edit({ name, memberIds: isPrivate ? memberIds : [], isPrivate });
+      } else {
+        await currentTopic.addDiscussion({
+          name,
+          memberIds: isPrivate ? memberIds : [],
+          isPrivate,
+        });
+      }
+
+      this.setState({ name: '', memberIds: [], privacy: 'public' });
+      notify(
+        discussion ? 'You successfully edited Discussion' : 'You successfully created Discussion',
+      );
     } catch (error) {
       console.log(error);
       notify(error);
+    } finally {
       this.props.onClose();
       NProgress.done();
+      this.setState({ disabled: false });
     }
   };
 
   renderAutoComplete() {
-    const { discussion } = this.props;
+    const { discussion, store } = this.props;
+    const { currentUser } = store;
     const memberIds: string[] = (discussion && discussion.memberIds) || [];
 
-    const suggestions = Array.from(store.currentTeam.members.values()).map(user => ({
-      label: user.displayName,
-      value: user._id,
-    }));
+    const suggestions = Array.from(store.currentTeam.members.values())
+      .filter(user => user._id !== currentUser._id)
+      .map(user => ({
+        label: user.displayName,
+        value: user._id,
+      }));
 
     const selectedItems = suggestions.filter(s => memberIds.indexOf(s.value) !== -1);
 
     return (
       <AutoComplete
-        placeholder="Start typing person's name"
-        helperText="Only selected people will be notified"
+        label="Type name of Team Member"
+        helperText="These members will see all posts and be notified about unread posts in this discussion."
+        topicIsPrivate={this.state.topicIsPrivate}
         onChange={this.handleAutoCompleteChange}
         suggestions={suggestions}
         selectedItems={selectedItems}
@@ -140,52 +151,62 @@ class DiscussionForm extends React.Component<Props, State> {
 
   render() {
     const { open, discussion } = this.props;
+    const { privacy, topicIsPrivate } = this.state;
+
+    const privateDialogTitle =
+      privacy === 'private' ? 'Create Private Discussion' : 'Create Discussion';
+    const privateDialogContent =
+      privacy === 'private' ? 'Explain Private Discussion' : 'Explain Discussion';
+    const privateButtonText =
+      privacy === 'private' ? 'Create Private Discussion' : 'Create Discussion';
 
     return (
       <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open}>
         <DialogTitle id="simple-dialog-title">
-          {discussion ? 'Edit discussion' : 'Add new discussion'}
+          {discussion ? 'Edit discussion' : privateDialogTitle}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>Explain this feature briefly.</DialogContentText>
+          <DialogContentText>{privateDialogContent}</DialogContentText>
           <hr />
+          <TextField
+            label="Type name of Discussion"
+            value={this.state.name}
+            onChange={event => {
+              this.setState({ name: event.target.value });
+            }}
+          />
           <br />
           <form onSubmit={this.onSubmit}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Notify people:</FormLabel>
-              <RadioGroup
-                aria-label="privacy"
-                name="privacy"
-                value={this.state.privacy}
-                onChange={this.handlePrivacyChange}
-              >
-                <FormControlLabel
-                  value="private"
-                  control={<Radio />}
-                  label="Select people manually"
-                />
-                <FormControlLabel
-                  value="public"
-                  control={<Radio />}
-                  label="Add all people in this topic"
-                />
-              </RadioGroup>
-            </FormControl>
-            <p />
-            <TextField
-              value={this.state.name}
-              placeholder="Name"
-              onChange={event => {
-                this.setState({ name: event.target.value });
-              }}
-            />
-            <p />
+            <div style={{ display: topicIsPrivate ? 'none' : 'block' }}>
+              <br />
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Privacy setting:</FormLabel>
+                <RadioGroup
+                  aria-label="privacy"
+                  name="privacy"
+                  value={this.state.privacy}
+                  onChange={this.handlePrivacyChange}
+                >
+                  <FormControlLabel value="public" control={<Radio />} label="Public" />
+                  <FormControlLabel value="private" control={<Radio />} label="Private" />
+                </RadioGroup>
+              </FormControl>
+            </div>
             <br />
-            {this.renderAutoComplete()}
+
+            {this.state.privacy === 'private' ? this.renderAutoComplete() : null}
             <br />
             <DialogActions>
-              <Button type="submit" variant="raised" color="primary">
-                {discussion ? 'Save' : 'Add'}
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={this.handleClose}
+                disabled={this.state.disabled}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
+                {discussion ? 'Update Discussion' : privateButtonText}
               </Button>
             </DialogActions>
           </form>

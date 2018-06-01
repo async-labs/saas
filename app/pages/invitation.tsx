@@ -1,126 +1,82 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import Button from 'material-ui/Button';
-import Link from 'next/link';
+import Avatar from '@material-ui/core/Avatar';
+import Error from 'next/error';
 import Router from 'next/router';
 
-import { getStore } from '../lib/store';
-import {
-  getInvitationTeamBySlug,
-  acceptInvitation,
-  cancelInvitation,
-} from '../lib/api/team-leader';
+import LoginButton from '../components/common/LoginButton';
+import { getInvitedTeamByToken } from '../lib/api/public';
+import { Store, Team } from '../lib/store';
 import withAuth from '../lib/withAuth';
+import withLayout from '../lib/withLayout';
 
-const store = getStore();
-class Invitation extends React.Component<{ url: { asPath: string; query: { teamSlug: string } } }> {
-  state = {
-    isLoading: true,
-    teamName: null,
-    invitationId: null,
-    error: '',
-  };
-
-  async componentWillReact() {
-    const { url } = this.props;
-    const { currentUser } = store;
-    const { teamName, isLoading } = this.state;
-
-    if (teamName || !isLoading || !currentUser || !currentUser.email) {
-      return;
-    }
-
-    if (!url || !url.query || !url.query.teamSlug) {
-      return;
+@observer
+class Invitation extends React.Component<{ store: Store; team: Team; token: string }> {
+  static async getInitialProps({ query }) {
+    const { token } = query;
+    if (!token) {
+      return {};
     }
 
     try {
-      const res = await getInvitationTeamBySlug(url.query.teamSlug);
-      const { teamName, invitationId } = res;
-      this.setState({ teamName, invitationId, isLoading: false });
+      const { team } = await getInvitedTeamByToken(token);
+
+      return { team, token };
     } catch (error) {
-      console.error(error);
-      this.setState({ isLoading: false, error: error.message || error.toString() });
+      console.log(error);
+      return {};
     }
   }
 
-  accept = async () => {
-    const { url } = this.props;
-    if (!url || !url.query || !url.query.teamSlug) {
-      return;
-    }
+  componentDidMount() {
+    const { store, team } = this.props;
 
-    try {
-      await acceptInvitation(url.query.teamSlug);
-      store.loadTeams();
-      Router.push('/');
-    } catch (error) {
-      console.error(error);
-      this.setState({ isLoading: false, error: error.message || error.toString() });
-    }
-  };
+    const user = store.currentUser;
 
-  cancel = async () => {
-    const { url } = this.props;
-    if (!url || !url.query || !url.query.teamSlug) {
-      return;
+    if (user && team) {
+      if (team.memberIds.includes(user._id)) {
+        Router.push(`/projects?teamSlug=${team.slug}`, `/team/${team.slug}/projects`);
+      } else {
+        Router.push(`/`);
+      }
     }
-
-    try {
-      await cancelInvitation(url.query.teamSlug);
-      Router.push('/');
-    } catch (error) {
-      console.error(error);
-      this.setState({ isLoading: false, error: error.message || error.toString() });
-    }
-  };
-
-  handleInviteMemberClose = () => {
-    this.setState({ inviteMemberOpen: false });
-  };
+  }
 
   render() {
-    const { currentUser, isLoggingIn } = store;
-    const { asPath } = this.props.url;
-    const { isLoading, error, teamName } = this.state;
+    const { team, token, store } = this.props;
 
-    if (isLoggingIn) {
-      return 'logging in';
+    if (!team) {
+      return <Error statusCode={404} />;
     }
 
-    if (!currentUser) {
-      return (
-        <div>
-          <Link
-            href={{ pathname: '/public/login', query: { next: asPath } }}
-            as={{ pathname: '/login', query: { next: asPath } }}
-          >
-            <a>Signup or Login</a>
-          </Link>{' '}
-          to accept invitation
-        </div>
-      );
-    }
+    const user = store.currentUser;
 
-    if (isLoading) {
-      return 'loading...';
-    }
-
-    if (error) {
-      return <span style={{ color: 'red' }}>{error}</span>;
+    if (user) {
+      return null;
     }
 
     return (
-      <div>
-        <h2>You are invited to "{teamName}" team.</h2>
+      <div style={{ textAlign: 'center', margin: '0 20px' }}>
+        <h2>
+          <Avatar
+            src={`${team.avatarUrl ||
+              'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
+            alt="Team logo"
+            style={{
+              margin: '10px auto 20px 0px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+            }}
+          />{' '}
+          {team.name}
+        </h2>
 
-        <Button variant="raised" color="primary" onClick={this.accept}>
-          Accept
-        </Button>
-        <Button onClick={this.cancel}>Cancel</Button>
+        <p>Join {team.name} logging in with your Google account.</p>
+
+        <LoginButton next={`/team/${team.slug}/projects`} invitationToken={token} />
       </div>
     );
   }
 }
 
-export default withAuth(observer(Invitation), { loginRequired: false });
+export default withAuth(withLayout(Invitation), { loginRequired: false });

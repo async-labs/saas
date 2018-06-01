@@ -54,7 +54,8 @@ class Topic extends React.Component<{
     const { currentTopic } = currentTeam;
 
     if (!currentTopic || currentTopic.slug !== topicSlug) {
-      store.currentTeam.setCurrentTopic(topicSlug);
+      store.currentTeam.setPrivateTopic(topicSlug);
+      // console.log('set');
       return;
     }
 
@@ -82,6 +83,8 @@ class Topic extends React.Component<{
     }
 
     const { currentTopic } = store.currentTeam;
+
+    // console.log(currentTeam);
 
     if (!currentTopic) {
       return (

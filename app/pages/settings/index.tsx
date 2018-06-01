@@ -1,17 +1,21 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import Link from 'next/link';
 import { observer } from 'mobx-react';
-import Button from 'material-ui/Button';
+import Router from 'next/router';
 
 import withLayout from '../../lib/withLayout';
 import withAuth from '../../lib/withAuth';
-import { getStore } from '../../lib/store';
+import { Store } from '../../lib/store';
 import notify from '../../lib/notifier';
 import confirm from '../../lib/confirm';
 import InviteMember from '../../components/teams/InviteMember';
 
-const store = getStore();
+const dev = process.env.NODE_ENV !== 'production';
+const LOG_OUT_URL = dev ? 'http://localhost:8000' : 'https://api1.async-await.com';
 
-class Settings extends React.Component<{ teamSlug: string }> {
+@observer
+class Settings extends React.Component<{ teamSlug: string; store: Store }> {
   state = {
     inviteMemberOpen: false,
   };
@@ -31,7 +35,7 @@ class Settings extends React.Component<{ teamSlug: string }> {
   }
 
   checkTeam() {
-    const { teamSlug } = this.props;
+    const { teamSlug, store } = this.props;
     const { currentTeam } = store;
 
     if (!currentTeam || currentTeam.slug !== teamSlug) {
@@ -44,7 +48,7 @@ class Settings extends React.Component<{ teamSlug: string }> {
   };
 
   inviteMember = () => {
-    const { currentTeam } = store;
+    const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('Team have not selected');
       return;
@@ -54,7 +58,7 @@ class Settings extends React.Component<{ teamSlug: string }> {
   };
 
   removeMember = event => {
-    const { currentTeam } = store;
+    const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('Team have not selected');
       return;
@@ -67,7 +71,8 @@ class Settings extends React.Component<{ teamSlug: string }> {
     }
 
     confirm({
-      message: 'Are you sure?',
+      title: 'Are you sure?',
+      message: '',
       onAnswer: async answer => {
         if (answer) {
           try {
@@ -80,7 +85,12 @@ class Settings extends React.Component<{ teamSlug: string }> {
     });
   };
 
+  logout = () => {
+    Router.push(`${LOG_OUT_URL}/logout`);
+  };
+
   render() {
+    const { store } = this.props;
     const { currentTeam, currentUser } = store;
     const isTL = currentUser._id === currentTeam.teamLeaderId;
 
@@ -90,17 +100,39 @@ class Settings extends React.Component<{ teamSlug: string }> {
 
     return (
       <div style={{ padding: '0px 0px 0px 20px' }}>
-        <h2>Setting for "{currentTeam.name}" team</h2>
+        <h2>All Teams</h2>
+
+        <Link href="/settings/add-team">
+          <Button variant="raised">Add team</Button>
+        </Link>
+
+        <ul>
+          {store.teams.map(t => (
+            <li key={t._id}>
+              <a>{t.name}</a>
+            </li>
+          ))}
+        </ul>
+
+        <hr />
+
+        <h2>"{currentTeam.name}" Team</h2>
 
         <p>TODO: Edit team info (name, avatar)</p>
 
         <h4>Team members</h4>
+
+        <p>
+          <Button variant="outlined" onClick={this.inviteMember}>
+            Invite member
+          </Button>
+        </p>
         <ul>
           {Array.from(currentTeam.members.values()).map(m => (
-            <li key={m._id}>
+            <li key={m._id} style={{ padding: '10px' }}>
               {m.displayName}{' '}
               {isTL && m._id !== currentUser._id ? (
-                <Button data-userid={m._id} variant="raised" onClick={this.removeMember}>
+                <Button data-userid={m._id} variant="outlined" onClick={this.removeMember}>
                   Remove member
                 </Button>
               ) : null}
@@ -109,16 +141,21 @@ class Settings extends React.Component<{ teamSlug: string }> {
         </ul>
 
         <p>TODO: Show pending invitations</p>
-        <p>
-          <Button variant="raised" color="primary" onClick={this.inviteMember}>
-            Invite member
-          </Button>
-        </p>
 
         <InviteMember open={this.state.inviteMemberOpen} onClose={this.handleInviteMemberClose} />
+
+        <p />
+        <hr />
+        <h3>Payments</h3>
+        <hr />
+        <br />
+
+        <Button variant="outlined" onClick={this.logout}>
+          Log out
+        </Button>
       </div>
     );
   }
 }
 
-export default withAuth(withLayout(observer(Settings)));
+export default withAuth(withLayout(Settings));

@@ -1,65 +1,56 @@
 import React from 'react';
-import Button from 'material-ui/Button';
-import Dialog, {
+import Button from '@material-ui/core/Button';
+import {
+  Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
   withMobileDialog,
-} from 'material-ui/Dialog';
-import Radio, { RadioGroup } from 'material-ui/Radio';
+} from '@material-ui/core';
 import NProgress from 'nprogress';
-import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
-import TextField from 'material-ui/TextField';
+import TextField from '@material-ui/core/TextField';
+import { inject } from 'mobx-react';
 
 import notify from '../../lib/notifier';
-import { getStore, Topic } from '../../lib/store';
-import AutoComplete from '../common/AutoComplete';
-
-const store = getStore();
+import { Topic, Store } from '../../lib/store';
 
 interface Props {
   onClose: Function;
   open: boolean;
   topic?: Topic;
   fullScreen: boolean;
+  store: Store;
 }
 
 interface State {
   name: string;
-  privacy: string;
-  memberIds: string[];
+  disabled: boolean;
 }
 
+@inject('store')
 class TopicForm extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-    const { topic } = props;
-
-    this.state = {
-      name: (topic && topic.name) || '',
-      privacy: (topic && topic.isPrivate && 'public') || 'private',
-      memberIds: (topic && topic.memberIds) || [],
-    };
-  }
+  state = {
+    name: '',
+    disabled: false,
+  };
 
   static getDerivedStateFromProps(nextProps) {
     const { topic } = nextProps;
 
     return {
       name: (topic && topic.name) || '',
-      privacy: (topic && topic.isPrivate && 'public') || 'private',
-      memberIds: (topic && topic.memberIds) || [],
     };
   }
 
   handleClose = () => {
-    this.setState({ privacy: 'public', name: '', memberIds: [] });
+    this.setState({ name: '', disabled: false });
     this.props.onClose();
   };
 
   onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const { store } = this.props;
 
     if (!store.currentTeam) {
       notify('Team have not selected');
@@ -67,90 +58,40 @@ class TopicForm extends React.Component<Props, State> {
     }
 
     const { topic } = this.props;
-    const { name, privacy, memberIds } = this.state;
+    const { name } = this.state;
 
     if (!name) {
       notify('Name is required');
       return;
     }
 
-    if (topic) {
-      NProgress.start();
-      try {
-        await topic.edit({
-          name,
-          isPrivate: privacy === 'private',
-          memberIds,
-        });
-
-        notify('Saved successfully.');
-        this.props.onClose();
-        NProgress.done();
-      } catch (error) {
-        console.log(error);
-        notify(error);
-        this.props.onClose();
-        NProgress.done();
-      }
-
-      return;
-    }
-
     NProgress.start();
     try {
-      await store.currentTeam.addTopic({
-        name,
-        isPrivate: privacy === 'private',
-        memberIds,
-      });
+      this.setState({ disabled: true });
+      if (topic) {
+        await topic.edit({ name });
+      } else {
+        await store.currentTeam.addTopic({ name });
+      }
 
-      this.setState({ privacy: 'public', name: '', memberIds: [] });
-      notify('Added successfully.');
-      this.props.onClose();
-      NProgress.done();
+      notify(topic ? 'You successfully edited Topic' : 'You successfully created Topic');
+      this.setState({ name: '' });
     } catch (error) {
       console.log(error);
       notify(error);
+    } finally {
+      this.setState({ disabled: false });
       this.props.onClose();
       NProgress.done();
     }
   };
-
-  handlePrivacyChange = event => {
-    this.setState({ privacy: event.target.value });
-  };
-
-  handleAutoCompleteChange = selectedItems => {
-    this.setState({ memberIds: selectedItems.map(i => i.value) });
-  };
-
-  renderAutoComplete() {
-    const { topic } = this.props;
-    const memberIds: string[] = (topic && topic.memberIds) || [];
-
-    const suggestions = Array.from(store.currentTeam.members.values()).map(user => ({
-      label: user.displayName,
-      value: user._id,
-    }));
-
-    const selectedItems = suggestions.filter(s => memberIds.indexOf(s.value) !== -1);
-
-    return (
-      <AutoComplete
-        placeholder="Start typing person's name"
-        helperText="Topic will be only visible to selected people"
-        onChange={this.handleAutoCompleteChange}
-        suggestions={suggestions}
-        selectedItems={selectedItems}
-      />
-    );
-  }
 
   render() {
     const { open, topic, fullScreen } = this.props;
 
     return (
       <Dialog
+        maxWidth="xs"
         onClose={this.handleClose}
         aria-labelledby="simple-dialog-title"
         open={open}
@@ -164,23 +105,6 @@ class TopicForm extends React.Component<Props, State> {
           <hr />
           <br />
           <form onSubmit={this.onSubmit}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Add people to the topic:</FormLabel>
-              <RadioGroup
-                aria-label="privacy"
-                name="privacy"
-                value={this.state.privacy}
-                onChange={this.handlePrivacyChange}
-              >
-                <FormControlLabel
-                  value="private"
-                  control={<Radio />}
-                  label="Select people manually"
-                />
-                <FormControlLabel value="public" control={<Radio />} label="Add all team members" />
-              </RadioGroup>
-            </FormControl>
-            <p />
             <TextField
               helperText="Give an informative name to the topic"
               value={this.state.name}
@@ -189,13 +113,22 @@ class TopicForm extends React.Component<Props, State> {
                 this.setState({ name: event.target.value });
               }}
             />
-            <p />
-            <br />
-            {this.renderAutoComplete()}
+            <p style={{ fontSize: '13px' }}>
+              All Topics are public. Everyone on the team will see this Topic. Dicussions within a
+              Topic can be private.
+            </p>
             <br />
             <DialogActions>
-              <Button type="submit" variant="raised" color="primary">
-                {topic ? 'Save' : 'Add'}
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={this.handleClose}
+                disabled={this.state.disabled}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
+                {topic ? 'Update Topic' : 'Add Topic'}
               </Button>
             </DialogActions>
           </form>
@@ -206,3 +139,5 @@ class TopicForm extends React.Component<Props, State> {
 }
 
 export default withMobileDialog()(TopicForm);
+
+// TODO: research above TS warning

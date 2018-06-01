@@ -1,33 +1,29 @@
 import React from 'react';
-import Icon from 'material-ui/Icon';
-import Button from 'material-ui/Button';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import TextField from 'material-ui/TextField';
-import Tooltip from 'material-ui/Tooltip';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
+import Paper from '@material-ui/core/Paper';
 import Link from 'next/link';
-import { observer } from 'mobx-react';
-import NProgress from 'nprogress';
+import { observer, inject } from 'mobx-react';
 
 import notify from '../../lib/notifier';
-import confirm from '../../lib/confirm';
-import { getStore } from '../../lib/store';
+import { Store } from '../../lib/store';
 
-import TopicActionMenu from '../topics/TopicActionMenu';
+import DiscussionActionMenu from '../discussions/DiscussionActionMenu';
 import DiscussionForm from './DiscussionForm';
 
-const store = getStore();
+const stylePaper = {
+  margin: '10px 5px',
+  padding: '10px 5px',
+};
 
+@inject('store')
 @observer
-class DiscussionList extends React.Component {
+class DiscussionList extends React.Component<{ store?: Store }> {
   state = {
     discussionFormOpen: false,
-    discussionMenuElm: null,
     selectedDiscussion: null,
     searchQuery: '',
-  };
-
-  handleDiscussionFormClose = () => {
-    this.setState({ discussionFormOpen: false, selectedDiscussion: null });
   };
 
   addDiscussion = event => {
@@ -35,9 +31,13 @@ class DiscussionList extends React.Component {
     this.setState({ discussionFormOpen: true });
   };
 
+  handleDiscussionFormClose = () => {
+    this.setState({ discussionFormOpen: false, selectedDiscussion: null });
+  };
+
   search = event => {
     event.preventDefault();
-    const { currentTeam } = store;
+    const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('Team have not selected');
       return;
@@ -52,106 +52,8 @@ class DiscussionList extends React.Component {
     currentTopic.searchDiscussion(this.state.searchQuery);
   };
 
-  editDiscussion = event => {
-    const { currentTeam } = store;
-    if (!currentTeam) {
-      notify('Team have not selected');
-      return;
-    }
-
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('Topic have not selected');
-      return;
-    }
-
-    const id = event.currentTarget.dataset.id;
-    if (!id) {
-      return;
-    }
-
-    const selectedDiscussion = currentTopic.discussions.find(d => d._id === id);
-
-    this.setState({ discussionMenuElm: null, discussionFormOpen: true, selectedDiscussion });
-  };
-
-  deleteDiscussion = async event => {
-    const { currentTeam } = store;
-    if (!currentTeam) {
-      notify('Team have not selected');
-      return;
-    }
-
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('Topic have not selected');
-      return;
-    }
-
-    const id = event.currentTarget.dataset.id;
-    this.setState({ discussionMenuElm: null });
-
-    confirm({
-      message: 'Are you sure?',
-      onAnswer: async answer => {
-        if (!answer) {
-          return;
-        }
-
-        NProgress.start();
-
-        try {
-          await currentTopic.deleteDiscussion(id);
-
-          notify('Deleted');
-          NProgress.done();
-        } catch (error) {
-          console.error(error);
-          notify(error);
-          NProgress.done();
-        }
-      },
-    });
-  };
-
-  togglePin = async event => {
-    const { currentTeam } = store;
-    if (!currentTeam) {
-      notify('Team have not selected');
-      return;
-    }
-
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('Topic have not selected');
-      return;
-    }
-
-    const id = event.currentTarget.dataset.id;
-    const isPinned = event.currentTarget.dataset.ispinned === '1';
-    this.setState({ discussionMenuElm: null });
-
-    NProgress.start();
-
-    try {
-      await currentTopic.toggleDiscussionPin({ id: id, isPinned: !isPinned });
-      NProgress.done();
-    } catch (error) {
-      console.error(error);
-      notify(error);
-      NProgress.done();
-    }
-  };
-
-  showDiscussionMenu = event => {
-    this.setState({ discussionMenuElm: event.currentTarget });
-  };
-
-  handleDiscussionMenuClose = () => {
-    this.setState({ discussionMenuElm: null });
-  };
-
   render() {
+    const { store } = this.props;
     const { currentTeam } = store;
 
     if (!currentTeam) {
@@ -159,27 +61,25 @@ class DiscussionList extends React.Component {
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {
-      return <div>loading...</div>;
+      return <div style={{ padding: '0px 0px 0px 20px' }}>loading...</div>;
     }
 
-    const { currentTopic } = store.currentTeam;
+    const { currentTopic, currentTopicSlug } = store.currentTeam;
+    const { currentDiscussionSlug } = currentTopic;
 
-    const { discussionMenuElm, selectedDiscussion } = this.state;
+    const { selectedDiscussion } = this.state;
 
     return (
       <div>
-        <h3>
-          {currentTopic.name}
-          <TopicActionMenu topic={currentTopic} />
-        </h3>
+        <h3>{currentTopic.name}</h3>
 
         <p style={{ display: 'inline' }}>All Discussions:</p>
 
-        <Tooltip title="Add Discussion" placement="right">
+        <Tooltip title="Add Discussion" placement="right" disableFocusListener disableTouchListener>
           <a onClick={this.addDiscussion} style={{ float: 'right', padding: '0px 10px' }}>
-            <Icon color="action" style={{ fontSize: 14, opacity: 0.7 }}>
-              add_circle
-            </Icon>{' '}
+            <i className="material-icons" color="action" style={{ fontSize: 14, opacity: 0.7 }}>
+              add_circle_outline
+            </i>{' '}
           </a>
         </Tooltip>
 
@@ -198,65 +98,38 @@ class DiscussionList extends React.Component {
 
         <ul>
           {currentTopic &&
-            currentTopic.discussions.map(d => (
-              <li key={d._id}>
-                <Link
-                  href={`/discussions/detail?teamSlug=${currentTeam.slug}&topicSlug=${
-                    currentTopic.slug
-                  }&discussionSlug=${d.slug}`}
-                  as={`/team/${currentTeam.slug}/t/${currentTopic.slug}/${d.slug}`}
+            currentTopic.discussions.map(d => {
+
+              return (
+                <Paper
+                  key={d._id}
+                  style={stylePaper}
+                  elevation={currentDiscussionSlug === d.slug ? 8 : 2}
                 >
-                  <a>
-                    {store.hasNotification({ discussionId: d._id }) ? (
-                      <Icon color="action" style={{ fontSize: 14, opacity: 0.7 }}>
-                        lens
-                      </Icon>
-                    ) : null}
-                    {d.name}
-                  </a>
-                </Link>
-
-                {d.isPinned ? ' Pinned' : null}
-
-                <Tooltip title="Settings" placement="right">
-                  <a href="#" style={{ float: 'right', padding: '0px 10px' }}>
-                    <Icon
-                      aria-owns={discussionMenuElm ? `discussion-menu-${d._id}` : null}
-                      aria-haspopup="true"
-                      data-id={d._id}
-                      onClick={this.showDiscussionMenu}
-                      color="action"
-                      style={{ fontSize: 14, opacity: 0.7 }}
+                  <li key={d._id}>
+                    <Link
+                      href={`/discussions/detail?teamSlug=${currentTeam.slug}&topicSlug=${
+                        currentTopic.slug
+                      }&discussionSlug=${d.slug}`}
+                      as={`/team/${currentTeam.slug}/t/${currentTopicSlug}/${d.slug}`}
                     >
-                      more_vert
-                    </Icon>
-                  </a>
-                </Tooltip>
+                      <a
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: currentDiscussionSlug === d.slug ? 600 : 300,
+                        }}
+                      >
+                        {d.name}
+                      </a>
+                    </Link>
 
-                <Menu
-                  id={`discussion-menu-${d._id}`}
-                  anchorEl={discussionMenuElm}
-                  open={!!discussionMenuElm && discussionMenuElm.dataset.id === d._id}
-                  onClose={this.handleDiscussionMenuClose}
-                >
-                  <MenuItem data-id={d._id} onClick={this.editDiscussion}>
-                    Edit
-                  </MenuItem>
-                  <MenuItem
-                    data-ispinned={d.isPinned ? '1' : '0'}
-                    data-id={d._id}
-                    onClick={this.togglePin}
-                  >
-                    {d.isPinned ? 'Unpin' : 'Pin'}
-                  </MenuItem>
-                  <MenuItem data-id={d._id} onClick={this.deleteDiscussion}>
-                    Delete
-                  </MenuItem>
-                  <MenuItem onClick={this.handleDiscussionMenuClose}>Copy URL</MenuItem>
-                </Menu>
-                <hr />
-              </li>
-            ))}
+                    {d.isPinned ? ' Pinned' : null}
+
+                    <DiscussionActionMenu discussion={d} />
+                  </li>
+                </Paper>
+              );
+            })}
         </ul>
 
         {currentTopic.hasMoreDiscussion ? (
