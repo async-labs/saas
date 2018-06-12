@@ -51,6 +51,7 @@ interface IInvitationModel extends mongoose.Model<IInvitationDocument> {
     email: string;
   }): IInvitationDocument;
 
+  getTeamInvitedUsers({ userId, teamId }: { userId: string; teamId: string });
   getTeamByToken({ token }: { token: string });
   addUserToTeam({ token, user }: { token: string; user: IUserDocument });
 }
@@ -59,9 +60,12 @@ function generateToken() {
   const gen = () =>
     Math.random()
       .toString(36)
-      .substring(2, 15);
+      .substring(2, 12) +
+    Math.random()
+      .toString(36)
+      .substring(2, 12);
 
-  return `${gen()}-${gen()}`;
+  return `${gen()}`;
 }
 
 class InvitationClass extends mongoose.Model {
@@ -117,6 +121,20 @@ class InvitationClass extends mongoose.Model {
     }).catch(err => {
       logger.error('Email sending error:', err);
     });
+  }
+
+  static async getTeamInvitedUsers({ userId, teamId }) {
+    const team = await Team.findOne({ _id: teamId })
+      .select('teamLeaderId')
+      .lean();
+
+    if (userId !== team.teamLeaderId) {
+      throw new Error('You have no permission.');
+    }
+
+    return this.find({ teamId: teamId })
+      .select('email')
+      .lean();
   }
 
   static async getTeamByToken({ token }) {

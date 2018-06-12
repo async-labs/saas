@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Grid from '@material-ui/core/Grid';
+import { Grid } from '@material-ui/core';
 import Router from 'next/router';
 import { observer } from 'mobx-react';
 
@@ -24,18 +24,22 @@ class Topic extends React.Component<{
   isServer: boolean;
   store: Store;
 }> {
-  static getInitialProps({ query, req }) {
-    const { teamSlug, topicSlug } = query;
-
-    return { teamSlug, topicSlug, isServer: !!req };
-  }
-
   componentDidMount() {
     this.changeTopic();
   }
 
   componentDidUpdate() {
     this.changeTopic();
+  }
+
+  componentWillUnmount() {
+    const { store } = this.props;
+
+    const { currentTopic } = store.currentTeam;
+
+    if (currentTopic) {
+      currentTopic.leaveSocketRoom();
+    }
   }
 
   changeTopic() {
@@ -54,7 +58,12 @@ class Topic extends React.Component<{
     const { currentTopic } = currentTeam;
 
     if (!currentTopic || currentTopic.slug !== topicSlug) {
-      store.currentTeam.setCurrentTopic(topicSlug);
+      if (currentTopic) {
+        currentTopic.leaveSocketRoom();
+      }
+
+      currentTeam.setCurrentTopic(topicSlug);
+
       return;
     }
 
@@ -66,6 +75,8 @@ class Topic extends React.Component<{
         }`,
         `/team/${teamSlug}/t/${currentTopic.slug}/${currentDiscussion.slug}`,
       );
+    } else {
+      currentTopic.joinSocketRoom();
     }
   }
 
@@ -91,7 +102,7 @@ class Topic extends React.Component<{
           </Grid>
 
           <Grid item sm={10} xs={12}>
-            <div style={{ padding: '0px 0px 0px 20px' }}>Select or add topic.</div>
+            <div style={{ padding: '20px 0px 0px 20px' }}>Add topic.</div>
           </Grid>
         </Grid>
       );
@@ -101,11 +112,11 @@ class Topic extends React.Component<{
       return (
         <Grid container direction="row" justify="flex-start" alignItems="stretch" style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <DiscussionList />
+            <DiscussionList topic={currentTopic} />
           </Grid>
 
           <Grid item sm={10} xs={12}>
-            <div style={{ padding: '0px 0px 0px 20px' }}>loading...</div>
+            <div style={{ padding: '20px 0px 0px 20px' }}>loading...</div>
           </Grid>
         </Grid>
       );
@@ -117,11 +128,11 @@ class Topic extends React.Component<{
       return (
         <Grid container direction="row" justify="flex-start" alignItems="stretch" style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <DiscussionList />
+            <DiscussionList topic={currentTopic} />
           </Grid>
 
           <Grid item sm={10} xs={12}>
-            <div style={{ padding: '0px 0px 0px 20px' }}>No discussions found</div>
+            <div style={{ padding: '20px 0px 0px 20px' }}>No discussions found</div>
           </Grid>
         </Grid>
       );
@@ -130,13 +141,11 @@ class Topic extends React.Component<{
     return (
       <Grid container direction="row" justify="flex-start" alignItems="stretch" style={styleGrid}>
         <Grid item sm={2} xs={12} style={styleGridItem}>
-          <DiscussionList />
+          <DiscussionList topic={currentTopic} />
         </Grid>
 
         <Grid item sm={10} xs={12}>
-          <div style={{ padding: '0px 0px 0px 20px' }}>
-            loading {currentDiscussion.name}...
-          </div>
+          <div style={{ padding: '20px 0px 0px 20px' }}>loading {currentDiscussion.name}...</div>
         </Grid>
       </Grid>
     );

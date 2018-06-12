@@ -1,7 +1,27 @@
 import * as aws from 'aws-sdk';
-import * as fs from 'fs';
 
-export function signRequestForUpload(fileName, fileType, prefix) {
+import Team from './models/Team';
+
+async function checkPrefix(prefix, user) {
+  // Prefix must be either user slug or user's team slug
+  if (prefix === user.slug) {
+    return;
+  }
+
+  const teams: any[] = await Team.find({ memberIds: user.id })
+    .select('slug')
+    .lean();
+
+  if (!teams.find(t => t.slug === prefix)) {
+    throw new Error('Wrong prefix');
+  }
+}
+
+async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, acl = 'private' }) {
+  if (prefix !== 'temporary') {
+    await checkPrefix(prefix, user);
+  }
+
   aws.config.update({
     region: 'us-west-1',
     accessKeyId: process.env.Amazon_accessKeyId,
@@ -9,8 +29,6 @@ export function signRequestForUpload(fileName, fileType, prefix) {
   });
 
   const s3 = new aws.S3({ apiVersion: 'latest' });
-  const bucket = 'async-posts'; // TODO: move to .env
-  const teamPrefix = prefix;
   const randomStringForPrefix =
     Math.random()
       .toString(36)
@@ -19,29 +37,27 @@ export function signRequestForUpload(fileName, fileType, prefix) {
       .toString(36)
       .substring(2, 12);
 
-  console.log(fileName);
-  console.log(fileType);
-  const key = `${teamPrefix}/${randomStringForPrefix}/${fileName}`;
+  const key = `${prefix}/${randomStringForPrefix}/${fileName}`;
 
-  const params = {
+  const params: any = {
     Bucket: bucket,
     Key: key,
-    // Expires: 60,
+    Expires: 60,
     ContentType: fileType,
-    ACL: 'private',
+    ACL: acl,
   };
 
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putObject-property
   // About Key: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
 
-  // TODO: rewrite
+  // > You must ensure that you have static or previously resolved credentials
+  // > if you call this method synchronously (with no callback), otherwise it may not properly sign the request
   return new Promise((resolve, reject) => {
-    // > You must ensure that you have static or previously resolved credentials
-    // > if you call this method synchronously (with no callback), otherwise it may not properly sign the request
     s3.getSignedUrl('putObject', params, (err, data) => {
       const returnData = {
         signedRequest: data,
         path: key,
+        url: `https://${bucket}.s3.amazonaws.com/${key}`,
       };
 
       if (err) {
@@ -49,14 +65,12 @@ export function signRequestForUpload(fileName, fileType, prefix) {
         reject(err);
       } else {
         resolve(returnData);
-        // console.log(returnData);
-        return returnData;
       }
     });
   });
 }
 
-export function signRequestForLoad(path) {
+function signRequestForLoad(path, bucket) {
   aws.config.update({
     region: 'us-west-1',
     accessKeyId: process.env.Amazon_accessKeyId,
@@ -64,14 +78,6 @@ export function signRequestForLoad(path) {
   });
 
   const s3 = new aws.S3({ apiVersion: 'latest' });
-  const bucket = 'async-posts'; // TODO: move to .env
-  // const destination = fileUrl
-  //   .split('.com/')
-  //   .pop()
-  //   .split('?')
-  //   .shift();
-  // console.log(`destination:${destination}`);
-  // console.log(`fileUrl:${fileUrl}`);
 
   const params = {
     Bucket: bucket,
@@ -79,7 +85,6 @@ export function signRequestForLoad(path) {
     Expires: 60,
   };
 
-  // TODO: rewrite
   return new Promise((resolve, reject) => {
     s3.getSignedUrl('getObject', params, (err, data) => {
       const returnData = {
@@ -91,9 +96,9 @@ export function signRequestForLoad(path) {
         reject(err);
       } else {
         resolve(returnData);
-        // console.log(returnData);
-        return returnData;
       }
     });
   });
 }
+
+export { signRequestForUpload, signRequestForLoad };

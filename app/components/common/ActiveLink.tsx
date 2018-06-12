@@ -2,11 +2,17 @@ import { withRouter } from 'next/router';
 import Link from 'next/link';
 import Avatar from '@material-ui/core/Avatar';
 
-const ActiveLink = ({ linkText, router, href, as, teamLogo }) => {
-  const style = {
+const ActiveLink = ({ linkText, router, href, as, teamLogo, simple, highlighterSlug }) => {
+  const style1 = {
     display: 'inline',
-    fontWeight: router.asPath.includes(as) ? 600 : 300,
-    fontSize: '14px'
+    fontWeight: 300,
+    fontSize: '14px',
+  };
+
+  const style2 = {
+    display: 'inline',
+    fontWeight: router.asPath.includes(highlighterSlug) ? 600 : 300,
+    fontSize: '14px',
   };
 
   const handleClick = e => {
@@ -15,9 +21,15 @@ const ActiveLink = ({ linkText, router, href, as, teamLogo }) => {
   };
 
   // TODO: solve TS warning
-  return (
+  return simple ? (
     <Link prefetch href={href} as={as}>
-      <a onClick={handleClick} style={style}>
+      <a onClick={handleClick} style={style1}>
+        {linkText}
+      </a>
+    </Link>
+  ) : (
+    <Link prefetch href={href} as={as}>
+      <a onClick={handleClick} style={style2}>
         {teamLogo ? (
           <Avatar
             src={`${teamLogo || 'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
@@ -43,4 +55,6 @@ export default withRouter<{
   href?: string;
   as?: string;
   teamLogo?: string;
+  simple?: boolean;
+  highlighterSlug?: string;
 }>(ActiveLink);

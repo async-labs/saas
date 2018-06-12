@@ -1,6 +1,5 @@
 import * as React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import { Button, Grid } from '@material-ui/core';
 import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 
@@ -20,35 +19,56 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-@observer
-class Discussion extends React.Component<{
+interface Props {
   store: Store;
   teamSlug: string;
   topicSlug: string;
   discussionSlug: string;
   isServer: boolean;
-}> {
+}
+
+@observer
+class Discussion extends React.Component<Props> {
   state = {
     drawerState: false,
     isEditing: false,
     selectedPost: null,
   };
 
-  static getInitialProps(ctx) {
-    const { teamSlug, topicSlug, discussionSlug } = ctx.query;
-
-    return { teamSlug, topicSlug, discussionSlug, isServer: !!ctx.req };
-  }
-
   componentDidMount() {
     this.changeDiscussion(this.props);
+  }
+
+  componentWillUnmount() {
+    const { store } = this.props;
+
+    const { currentTopic } = store.currentTeam;
+
+    if (currentTopic) {
+      currentTopic.leaveSocketRoom();
+    }
+
+    if (currentTopic && currentTopic.currentDiscussion) {
+      currentTopic.currentDiscussion.leaveSocketRoom();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     this.changeDiscussion(nextProps);
   }
 
-  changeDiscussion(props) {
+  handlePostEvent = data => {
+    console.log('post realtime event', data);
+
+    const { store } = this.props;
+    const { currentTopic } = store.currentTeam;
+
+    if (currentTopic && currentTopic.currentDiscussion) {
+      currentTopic.currentDiscussion.handlePostRealtimeEvent(data);
+    }
+  };
+
+  changeDiscussion(props: Props) {
     const { teamSlug, topicSlug, discussionSlug, store } = props;
     const { currentTeam } = store;
 
@@ -60,16 +80,34 @@ class Discussion extends React.Component<{
     const { currentTopic } = store.currentTeam;
 
     if (!currentTopic || currentTopic.slug !== topicSlug) {
-      store.currentTeam.setCurrentTopicAndDiscussion({ topicSlug, discussionSlug });
-    } else {
-      if (currentTopic.currentDiscussionSlug !== discussionSlug) {
-        currentTopic.setCurrentDiscussion(discussionSlug);
+      if (currentTopic) {
+        currentTopic.leaveSocketRoom();
+
+        if (currentTopic.currentDiscussion) {
+          currentTopic.currentDiscussion.leaveSocketRoom();
+        }
+      }
+
+      currentTeam.setCurrentTopicAndDiscussion({ topicSlug, discussionSlug });
+    } else if (currentTopic.currentDiscussionSlug !== discussionSlug) {
+      if (currentTopic.currentDiscussion) {
+        currentTopic.currentDiscussion.leaveSocketRoom();
+      }
+
+      currentTopic.setCurrentDiscussion(discussionSlug);
+    }
+
+    if (currentTopic) {
+      currentTopic.joinSocketRoom();
+
+      if (currentTopic.currentDiscussion) {
+        currentTopic.currentDiscussion.joinSocketRoom();
       }
     }
   }
 
   componentDidUpdate() {
-    const { store, isServer } = this.props;
+    const { store } = this.props;
     const { currentTeam } = store;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
@@ -129,7 +167,7 @@ class Discussion extends React.Component<{
       return (
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <DiscussionList />
+            <DiscussionList topic={currentTopic} />
           </Grid>
 
           <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
@@ -146,7 +184,7 @@ class Discussion extends React.Component<{
       return (
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <DiscussionList />
+            <DiscussionList topic={currentTopic} />
           </Grid>
 
           <Grid item sm={10} xs={12}>
@@ -160,7 +198,7 @@ class Discussion extends React.Component<{
       return (
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <DiscussionList />
+            <DiscussionList topic={currentTopic} />
           </Grid>
           <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
             <div />
@@ -178,31 +216,45 @@ class Discussion extends React.Component<{
       <div style={{ height: '100%' }}>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <DiscussionList />
+            <DiscussionList topic={currentTopic} />
           </Grid>
 
           <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-            <Button
-              onClick={this.showFormToAddNewPost}
-              variant="outlined"
-              color="primary"
-              style={{ float: 'right' }}
-            >
-              Add new post
-            </Button>{' '}
             {currentDiscussion.posts.length > 0 ? (
               <div>
-                <h3>{currentDiscussion.name}</h3>
+                <h3 style={{ marginRight: 20, display: 'inline-flex' }}>
+                  {currentDiscussion.name}
+                </h3>
+                <Button
+                  onClick={this.showFormToAddNewPost}
+                  variant="outlined"
+                  color="primary"
+                  style={{ verticalAlign: 'baseline' }}
+                >
+                  Add new post
+                </Button>
+                <br />
                 {currentDiscussion.posts.map(p => (
                   <PostDetail key={p._id} post={p} onEditClick={this.onEditClickCallback} />
                 ))}
               </div>
             ) : (
               <div>
-                <p> Empty discussion </p>
+                <h3 style={{ marginRight: 20, display: 'inline-flex' }}>
+                  {currentDiscussion.name}
+                </h3>
+                <Button
+                  onClick={this.showFormToAddNewPost}
+                  variant="outlined"
+                  color="primary"
+                  style={{ verticalAlign: 'baseline' }}
+                >
+                  Add new post
+                </Button>
+                <p>Empty discussion</p>
               </div>
             )}
-            <br />
+
             <PostForm
               post={selectedPost}
               open={drawerState}

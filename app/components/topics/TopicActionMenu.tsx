@@ -13,6 +13,7 @@ import TopicForm from './TopicForm';
 const getMenuOptions = topic => ({
   dataId: topic._id,
   id: `topic-menu-${topic._id}`,
+  tooltipTitle: 'Settings for Topic',
 });
 
 const getMenuItemOptions = (topic, component) => [
@@ -80,11 +81,13 @@ class TopicActionMenu extends React.Component<{ topic: Topic }> {
           itemOptions={getMenuItemOptions(topic, this)}
         />
 
-        <TopicForm
-          open={this.state.topicFormOpen}
-          onClose={this.handleTopicFormClose}
-          topic={topic}
-        />
+        {this.state.topicFormOpen ? (
+          <TopicForm
+            open={this.state.topicFormOpen}
+            onClose={this.handleTopicFormClose}
+            topic={topic}
+          />
+        ) : null}
       </span>
     );
   }

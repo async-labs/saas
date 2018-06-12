@@ -13,8 +13,19 @@ export const addTeam = data =>
     body: JSON.stringify(data),
   });
 
-export const getTeamMemberList = (teamId: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/teams/get-member-list`, {
+export const updateTeam = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/update-team`, {
+    body: JSON.stringify(data),
+  });
+
+export const getTeamMembers = (teamId: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/teams/get-members`, {
+    method: 'GET',
+    qs: { teamId },
+  });
+
+export const getTeamInvitedUsers = (teamId: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/teams/get-invited-users`, {
     method: 'GET',
     qs: { teamId },
   });
@@ -39,7 +50,7 @@ export const editTopic = data =>
     body: JSON.stringify(data),
   });
 
-export const deleteTopic = (topicId: string) =>
+export const deleteTopic = data =>
   sendRequestAndGetResponse(`${BASE_PATH}/topics/delete`, {
-    body: JSON.stringify({ topicId }),
+    body: JSON.stringify(data),
   });

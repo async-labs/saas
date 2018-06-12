@@ -18,7 +18,7 @@ require('dotenv').config();
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 8000;
-const ROOT_URL = dev ? `http://localhost:${port}` : 'https://app1.async-await.com';
+const ROOT_URL = dev ? `http://localhost:${port}` : 'https://api1.async-await.com';
 
 let MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
 
@@ -26,19 +26,16 @@ mongoose.connect(MONGO_URL);
 
 const server = express();
 
-server.use(
-  cors({
-    origin: dev ? 'http://localhost:3000' : 'https://app.builderbook.org',
-    credentials: true,
-  }),
-);
+const appPort = process.env.APP_PORT || 3000;
+const origin = dev ? `http://localhost:${appPort}` : 'https://app1.async-await.com';
+server.use(cors({ origin, credentials: true }));
 
 server.use(helmet());
 server.use(compression());
 server.use(express.json());
 
 const MongoStore = mongoSessionStore(session);
-const sess = {
+const sessionOptions = {
   name: 'async-await.sid',
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({
@@ -56,10 +53,11 @@ const sess = {
 
 if (!dev) {
   server.set('trust proxy', 1); // sets req.hostname, req.ip
-  sess.cookie.secure = true; // sets cookie over HTTPS only
+  sessionOptions.cookie.secure = true; // sets cookie over HTTPS only
 }
 
-server.use(session(sess));
+const sessionMiddleware = session(sessionOptions);
+server.use(sessionMiddleware);
 
 auth({ server, ROOT_URL });
 api(server);
@@ -70,29 +68,30 @@ server.get('/uploaded-file', async (req, res) => {
     return;
   }
 
-  const { path } = req.query;
+  const { path, bucket, teamSlug } = req.query;
+
   if (!path) {
-    res.status(401).end('Bad request');
+    res.status(401).end('Missing required data');
     return;
   }
 
-  const teamSlug = path.split('/')[0];
-  if (!teamSlug) {
-    res.status(401).end('Bad request');
+  if (!bucket) {
+    res.status(401).end('Missing required data');
     return;
   }
 
-  const team = await Team.findOne({ slug: teamSlug })
-    .select('memberIds')
-    .lean();
+  if (teamSlug && teamSlug !== 'temporary') {
+    const team = await Team.findOne({ slug: teamSlug })
+      .select('memberIds')
+      .lean();
 
-  if (!team || !team.memberIds.includes(req.user.id)) {
-    res.status(401).end('Bad request');
-    // TODO: show more informative error
-    return;
+    if (!team || !team.memberIds.includes(req.user.id)) {
+      res.status(401).end('You do not have permission.');
+      return;
+    }
   }
 
-  const data: any = await signRequestForLoad(req.query.path);
+  const data: any = await signRequestForLoad(path, bucket);
 
   res.redirect(data.signedRequest);
 });

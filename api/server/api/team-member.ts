@@ -1,12 +1,13 @@
 import * as express from 'express';
 
-import { signRequestForUpload, signRequestForLoad } from '../aws-s3';
+import { signRequestForUpload } from '../aws-s3';
 import Team from '../models/Team';
 import Topic from '../models/Topic';
 import User from '../models/User';
 import Discussion from '../models/Discussion';
 import Post from '../models/Post';
 import logger from '../logs';
+import Invitation from '../models/Invitation';
 
 const router = express.Router();
 
@@ -23,13 +24,12 @@ router.use((req, res, next) => {
 async function loadTopicData(topic, userId, body) {
   const { discussionSlug } = body;
 
-  const { discussions, totalCount } = await Discussion.getList({
+  const { discussions } = await Discussion.getList({
     userId,
     topicId: topic._id,
-    initialDiscussionSlug: discussionSlug,
   });
 
-  const data: any = { initialDiscussions: discussions, totalDiscussionCount: totalCount };
+  const data: any = { initialDiscussions: discussions };
 
   for (let i = 0; i < discussions.length; i++) {
     const discussion = discussions[i];
@@ -55,10 +55,18 @@ async function loadTopicData(topic, userId, body) {
 
 async function loadTeamData(team, userId, body) {
   const initialTopics = await Topic.getList({ userId, teamId: team._id });
-  const initialMembers = await User.getTeamMemberList({
+  const initialMembers = await User.getTeamMembers({
     userId,
     teamId: team._id,
   });
+
+  let initialInvitations = [];
+  if (userId === team.teamLeaderId) {
+    initialInvitations = await Invitation.getTeamInvitedUsers({
+      userId,
+      teamId: team._id,
+    });
+  }
 
   const { topicSlug } = body;
 
@@ -73,7 +81,7 @@ async function loadTeamData(team, userId, body) {
     }
   }
 
-  const data: any = { initialTopics, initialMembers };
+  const data: any = { initialTopics, initialMembers, initialInvitations };
 
   if (topicSlug) {
     data.currentTopicSlug = topicSlug;
@@ -129,6 +137,21 @@ router.get('/topics/list', async (req, res) => {
   }
 });
 
+router.get('/topics/private-topic', async (req, res) => {
+  try {
+    const topic = await Topic.getPrivateTopic({
+      userId: req.user.id,
+      teamId: req.query.teamId,
+      topicSlug: req.query.topicSlug,
+    });
+
+    res.json({ topic });
+  } catch (err) {
+    logger.error(err);
+    res.json({ error: err.post || err.toString() });
+  }
+});
+
 router.post('/discussions/add', async (req, res) => {
   try {
     const { name, topicId, memberIds = [], isPrivate = false } = req.body;
@@ -152,7 +175,13 @@ router.post('/discussions/edit', async (req, res) => {
   try {
     const { name, id, memberIds = [], isPrivate = false } = req.body;
 
-    await Discussion.edit({ userId: req.user.id, name, id, memberIds, isPrivate });
+    const { topicId } = await Discussion.edit({
+      userId: req.user.id,
+      name,
+      id,
+      memberIds,
+      isPrivate,
+    });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -163,22 +192,9 @@ router.post('/discussions/edit', async (req, res) => {
 
 router.post('/discussions/delete', async (req, res) => {
   try {
-    const { discussionId } = req.body;
+    const { id } = req.body;
 
-    await Discussion.delete({ userId: req.user.id, id: discussionId });
-
-    res.json({ done: 1 });
-  } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
-  }
-});
-
-router.post('/discussions/toggle-pin', async (req, res) => {
-  try {
-    const { id, isPinned } = req.body;
-
-    await Discussion.togglePin({ userId: req.user.id, id, isPinned });
+    const { topicId } = await Discussion.delete({ userId: req.user.id, id });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -189,28 +205,14 @@ router.post('/discussions/toggle-pin', async (req, res) => {
 
 router.get('/discussions/list', async (req, res) => {
   try {
-    const {
-      topicId,
-      searchQuery = '',
-      skip,
-      limit,
-      pinnedDiscussionCount,
-      initialDiscussionSlug = '',
-      isInitialDiscussionLoaded = false,
-    } = req.query;
+    const { topicId } = req.query;
 
-    const { discussions, totalCount } = await Discussion.getList({
+    const { discussions } = await Discussion.getList({
       userId: req.user.id,
       topicId,
-      searchQuery,
-      skip: Number(skip) || 0,
-      limit: Number(limit) || 10,
-      pinnedDiscussionCount: Number(pinnedDiscussionCount) || 0,
-      initialDiscussionSlug,
-      isInitialDiscussionLoaded,
     });
 
-    res.json({ discussions, totalCount });
+    res.json({ discussions });
   } catch (err) {
     logger.error(err);
     res.json({ error: err.post || err.toString() });
@@ -234,7 +236,7 @@ router.post('/posts/edit', async (req, res) => {
   try {
     const { content, id } = req.body;
 
-    await Post.edit({ userId: req.user.id, content, id });
+    const { discussionId, htmlContent } = await Post.edit({ userId: req.user.id, content, id });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -245,7 +247,7 @@ router.post('/posts/edit', async (req, res) => {
 
 router.post('/posts/delete', async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id, discussionId } = req.body;
 
     await Post.delete({ userId: req.user.id, id });
 
@@ -272,15 +274,37 @@ router.get('/posts/list', async (req, res) => {
 
 // Upload file to S3
 
-router.get('/posts/get-signed-request-for-upload-to-s3', async (req, res) => {
+router.get('/aws/get-signed-request-for-upload-to-s3', async (req, res) => {
   try {
-    const { fileName, fileType, prefix } = req.query;
-    // console.log(fileName, fileType);
+    const { fileName, fileType, prefix, bucket, acl = 'private' } = req.query;
 
-    const returnData = await signRequestForUpload(fileName, fileType, prefix);
-    // console.log(returnData);
+    const returnData = await signRequestForUpload({
+      fileName,
+      fileType,
+      prefix,
+      bucket,
+      user: req.user,
+      acl,
+    });
 
     res.json(returnData);
+  } catch (err) {
+    logger.error(err);
+    res.json({ error: err.post || err.toString() });
+  }
+});
+
+router.post('/user/update-profile', async (req, res) => {
+  try {
+    const { name, avatarUrl } = req.body;
+
+    const user = await User.updateProfile({
+      userId: req.user.id,
+      name,
+      avatarUrl,
+    });
+
+    res.json(user);
   } catch (err) {
     logger.error(err);
     res.json({ error: err.post || err.toString() });

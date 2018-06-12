@@ -28,15 +28,16 @@ const mongoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  isPinned: {
-    type: Boolean,
-    default: false,
-  },
   createdAt: {
     type: Date,
     required: true,
+    default: Date.now,
   },
-  lastUpdatedAt: Date,
+  lastActivityDate: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
 });
 
 mongoSchema.index({ name: 'text' });
@@ -49,31 +50,18 @@ interface IDiscussionDocument extends mongoose.Document {
   slug: string;
   memberIds: string[];
   isPrivate: boolean;
-  isPinned: boolean;
   createdAt: Date;
-  lastUpdatedAt: Date;
+  lastActivityDate: Date;
 }
 
 interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
   getList({
     userId,
     topicId,
-    searchQuery,
-    skip,
-    limit,
-    pinnedDiscussionCount,
-    initialDiscussionSlug,
-    isInitialDiscussionLoaded,
   }: {
     userId: string;
     topicId: string;
-    searchQuery?: string;
-    skip?: number;
-    limit?: number;
-    pinnedDiscussionCount?: number;
-    initialDiscussionSlug?: string;
-    isInitialDiscussionLoaded?: boolean;
-  }): Promise<{ discussions: IDiscussionDocument[]; totalCount: number }>;
+  }): Promise<{ discussions: IDiscussionDocument[] }>;
 
   add({
     name,
@@ -101,18 +89,9 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
     name: string;
     isPrivate: boolean;
     memberIds: string[];
-  }): Promise<string>;
+  }): Promise<{ topicId: string }>;
 
-  delete({ userId, id }: { userId: string; id: string }): Promise<void>;
-  togglePin({
-    userId,
-    id,
-    isPinned,
-  }: {
-    userId: string;
-    id: string;
-    isPinned: boolean;
-  }): Promise<void>;
+  delete({ userId, id }: { userId: string; id: string }): Promise<{ topicId: string }>;
 }
 
 class DiscussionClass extends mongoose.Model {
@@ -147,60 +126,16 @@ class DiscussionClass extends mongoose.Model {
     return { team };
   }
 
-  static async getList({
-    userId,
-    topicId,
-    searchQuery = '',
-    skip = 0,
-    limit = 10,
-    pinnedDiscussionCount = 0,
-    initialDiscussionSlug = '',
-    isInitialDiscussionLoaded = false,
-  }) {
+  static async getList({ userId, topicId }) {
     await this.checkPermission({ userId, topicId });
 
-    const initialFilter: any = { topicId, $or: [{ isPrivate: false }, { memberIds: userId }] };
-    const filter: any = { ...initialFilter };
+    const filter: any = { topicId, $or: [{ isPrivate: false }, { memberIds: userId }] };
 
-    if (searchQuery) {
-      filter.$text = { $search: searchQuery };
-    }
-
-    let discussions: any[] = await this.find({ ...filter, isPinned: true })
-      .sort({ createdAt: -1 })
-      .skip(pinnedDiscussionCount)
-      .limit(limit)
+    const discussions: any[] = await this.find(filter)
+      .sort({ lastActivityDate: -1 })
       .lean();
 
-    if (
-      !isInitialDiscussionLoaded &&
-      initialDiscussionSlug &&
-      !discussions.some(d => d.slug === initialDiscussionSlug)
-    ) {
-      const d = await this.findOne({ ...initialFilter, slug: initialDiscussionSlug }).lean();
-      if (d) {
-        discussions.push(d);
-      }
-    }
-
-    let skip2 = skip - pinnedDiscussionCount;
-    if (isInitialDiscussionLoaded && skip2 > 0) {
-      skip2--;
-    }
-
-    if (discussions.length < limit) {
-      discussions = discussions.concat(
-        await this.find({ ...filter, isPinned: false, slug: { $ne: initialDiscussionSlug } })
-          .sort({ createdAt: -1 })
-          .skip(skip2)
-          .limit(limit - discussions.length)
-          .lean(),
-      );
-    }
-
-    const totalCount = await this.find(filter).count();
-
-    return { discussions, totalCount };
+    return { discussions };
   }
 
   static async add({ name, userId, topicId, isPrivate = false, memberIds = [] }) {
@@ -248,9 +183,10 @@ class DiscussionClass extends mongoose.Model {
         name,
         isPrivate,
         memberIds: (isPrivate && uniq([userId, ...memberIds])) || [],
-        lastUpdatedAt: new Date(),
       },
     );
+
+    return { topicId: discussion.topicId };
   }
 
   static async delete({ userId, id }) {
@@ -267,26 +203,8 @@ class DiscussionClass extends mongoose.Model {
     await Post.remove({ discussionId: id });
 
     await this.remove({ _id: id });
-  }
 
-  static async togglePin({ userId, id, isPinned }) {
-    if (!id) {
-      throw new Error('Bad data');
-    }
-
-    const discussion = await this.findById(id)
-      .select('topicId')
-      .lean();
-
-    await this.checkPermission({ userId, topicId: discussion.topicId });
-
-    await this.updateOne(
-      { _id: id },
-      {
-        isPinned: !!isPinned,
-        lastUpdatedAt: new Date(),
-      },
-    );
+    return { topicId: discussion.topicId };
   }
 
   static findBySlug(topicId: string, slug: string) {
@@ -299,3 +217,4 @@ mongoSchema.loadClass(DiscussionClass);
 const Discussion = mongoose.model<IDiscussionDocument, IDiscussionModel>('Discussion', mongoSchema);
 
 export default Discussion;
+export { IDiscussionDocument };

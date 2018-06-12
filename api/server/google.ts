@@ -68,12 +68,6 @@ export default function auth({ ROOT_URL, server }) {
       prompt: 'select_account',
     };
 
-    if (req.query && req.query.next && req.query.next.startsWith('/')) {
-      req.session.next_url = req.query.next;
-    } else {
-      req.session.next_url = null;
-    }
-
     if (req.query && req.query.invitationToken) {
       req.session.invitationToken = req.query.invitationToken;
     } else {
@@ -97,14 +91,13 @@ export default function auth({ ROOT_URL, server }) {
 
       if (req.user && req.user.isAdmin) {
         res.redirect(dev ? 'http://localhost:3000/admin' : 'https://app1.async-await.com/admin');
-      } else if (req.session.next_url) {
+      } else {
+        const { defaultTeamSlug } = req.user;
         res.redirect(
           dev
-            ? `http://localhost:3000${req.session.next_url}`
-            : `https://app1.async-await.com${req.session.next_url}`,
+            ? `http://localhost:3000/team/${defaultTeamSlug}/t/projects`
+            : `https://app1.async-await.com/team/${defaultTeamSlug}/t/projects`,
         );
-      } else {
-        res.redirect(dev ? 'http://localhost:3000/' : 'https://app1.async-await.com/');
       }
     },
   );

@@ -1,8 +1,14 @@
 import * as mobx from 'mobx';
 import { observable, action, IObservableArray, runInAction } from 'mobx';
+import isMatch from 'lodash/isMatch';
+
+import getRootUrl from '../api/getRootUrl';
 
 import {
   getTeamList,
+  getNotificationList,
+  deleteNotifications,
+  createNotification,
 } from '../api/team-member';
 
 import { Post } from './post';
@@ -13,17 +19,25 @@ import { User } from './user';
 
 mobx.configure({ enforceActions: true });
 
+// TODO: Remove cached data at some point. Otherwise memory can become very big.
+//       Consider removing all data when Team changed and
+//       when page changed remove previous page's data after some delay.
+
 class Store {
   @observable teams: IObservableArray<Team> = <IObservableArray>[];
+  @observable notifications: IObservableArray<Notification> = <IObservableArray>[];
 
   @observable isLoadingTeams = false;
   @observable isInitialTeamsLoaded = false;
+  @observable isLoadingNotifications = false;
+  @observable isInitialNotificationsLoaded = false;
 
   @observable currentUser?: User = null;
   @observable currentTeam?: Team;
   @observable isLoggingIn = true;
 
   constructor(initialState: any = {}) {
+
     if (initialState.teams) {
       this.setTeams(initialState.teams, initialState.teamSlug);
     }
@@ -49,6 +63,7 @@ class Store {
   @action
   changeUserState(user?, selectedTeamSlug?: string) {
     this.teams.clear();
+    this.notifications.clear();
 
     this.isInitialTeamsLoaded = false;
     this.setCurrentUser(user, selectedTeamSlug);
@@ -96,14 +111,30 @@ class Store {
 
   @action
   setCurrentTeam(slug: string) {
+    if (this.currentTeam) {
+      if (this.currentTeam.slug === slug) {
+        return;
+      } else {
+        this.currentTeam.leaveSocketRoom();
+      }
+    }
+
+    let found = false;
+
     for (let i = 0; i < this.teams.length; i++) {
       const team = this.teams[i];
       if (team.slug === slug) {
+        found = true;
         team.loadInitialTopics().catch(err => console.log(err));
         team.loadInitialMembers().catch(err => console.log(err));
         this.currentTeam = team;
+        team.joinSocketRoom();
         break;
       }
+    }
+
+    if (!found) {
+      this.currentTeam = null;
     }
   }
 

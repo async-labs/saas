@@ -110,6 +110,7 @@ class DownshiftMultiple extends React.Component<{
     let { selectedItems } = this.state;
 
     if (selectedItems.indexOf(item) === -1) {
+      // TODO: Del, please review my code in this file and DiscussionForm
       selectedItems = [...selectedItems, item];
     }
 

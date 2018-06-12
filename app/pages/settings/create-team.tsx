@@ -1,0 +1,175 @@
+import * as React from 'react';
+import Head from 'next/head';
+import { TextField, Button, Grid, Avatar } from '@material-ui/core';
+
+import { Store } from '../../lib/store';
+import withAuth from '../../lib/withAuth';
+import withLayout from '../../lib/withLayout';
+import SettingList from '../../components/common/SettingList';
+import notify from '../../lib/notifier';
+import { addTeam, updateTeam } from '../../lib/api/team-leader';
+import {
+  getSignedRequestForUpload,
+  uploadFileUsingSignedPutRequest,
+} from '../../lib/api/team-member';
+
+const styleGrid = {
+  height: '100%',
+};
+
+const styleGridItem = {
+  padding: '0px 20px',
+  borderRight: '0.5px #aaa solid',
+};
+
+type MyProps = { store: Store };
+
+class CreateTeam extends React.Component<MyProps> {
+  state = {
+    newName: '',
+    newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
+    disabled: false,
+  };
+
+  onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const { newName } = this.state;
+
+    if (!newName) {
+      notify('Team name is required.');
+      return;
+    }
+
+    const file = document.getElementById('upload-file').files[0];
+    if (file == null) {
+      notify('Team logo is required.');
+      return;
+    }
+
+    try {
+      this.setState({ disabled: true });
+
+      const defaultAvatarUrl = 'https://storage.googleapis.com/async-await/default-user.png?v=1';
+      const { id, name, slug } = await addTeam({ name: newName, avatarUrl: defaultAvatarUrl });
+
+      console.log(`Returned to client: ${id}, ${name}, ${slug}`);
+
+      const bucket = 'async-teams-avatars';
+      const prefix = slug;
+
+      const responseFromApiServerForUpload = await getSignedRequestForUpload({
+        file,
+        prefix,
+        bucket,
+        acl: 'public-read',
+      });
+      await uploadFileUsingSignedPutRequest(file, responseFromApiServerForUpload.signedRequest, {
+        'Cache-Control': 'max-age=259200',
+      });
+
+      const properAvatarUrl = responseFromApiServerForUpload.url;
+
+      await updateTeam({ teamId: id, name: name, avatarUrl: properAvatarUrl });
+
+      this.setState({
+        newName: '',
+        newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
+      });
+
+      document.getElementById('upload-file').value = '';
+
+      // TODO: MobX instead of Router.push
+      notify('You successfully created Team.');
+    } catch (error) {
+      console.log(error);
+      notify(error);
+    } finally {
+      this.setState({ disabled: false });
+    }
+  };
+
+  previewAvatar = () => {
+    const file = document.getElementById('upload-file').files[0];
+    if (!file) {
+      return;
+    }
+
+    var reader = new FileReader();
+
+    reader.onload = e => {
+      this.setState({
+        newAvatarUrl: e.target.result,
+      });
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  render() {
+    const { newAvatarUrl } = this.state;
+
+    return (
+      <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+        <Head>
+          <title>Create Team</title>
+          <meta name="description" content="description" />
+        </Head>
+        <Grid container style={styleGrid}>
+          <Grid item sm={2} xs={12} style={styleGridItem}>
+            <SettingList store={this.props.store} />
+          </Grid>
+          <Grid item sm={10} xs={12} style={styleGridItem}>
+            <h3>Create team</h3>
+            <p />
+            <form onSubmit={this.onSubmit}>
+              <h4>Team name</h4>
+              <TextField
+                value={this.state.newName}
+                label="Type team's name"
+                helperText="Team name as seen by your team members"
+                onChange={event => {
+                  this.setState({ newName: event.target.value });
+                }}
+              />
+              <p />
+              <br />
+              <h4>Team logo</h4>
+              <Avatar
+                src={newAvatarUrl}
+                style={{
+                  display: 'inline-flex',
+                  verticalAlign: 'middle',
+                  marginRight: 20,
+                  width: 60,
+                  height: 60,
+                }}
+              />
+              <label htmlFor="upload-file">
+                <Button variant="outlined" color="primary" component="span">
+                  Select team logo
+                </Button>
+              </label>
+              <input
+                accept="image/*"
+                name="upload-file"
+                id="upload-file"
+                type="file"
+                style={{ display: 'none' }}
+                onChange={this.previewAvatar}
+              />
+              <br />
+              <br />
+              <br />
+              <Button variant="raised" color="primary" type="submit" disabled={this.state.disabled}>
+                Create new team
+              </Button>
+            </form>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  }
+}
+
+export default withAuth(withLayout(CreateTeam, { teamRequired: false }));

@@ -6,7 +6,6 @@ import Team from './Team';
 import Discussion from './Discussion';
 import Post from './Post';
 
-
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
     type: String,
@@ -28,6 +27,16 @@ const mongoSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  isProjects: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  isKnowledge: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   lastUpdatedAt: Date,
 });
 
@@ -42,6 +51,15 @@ interface ITopicDocument extends mongoose.Document {
 
 interface ITopicModel extends mongoose.Model<ITopicDocument> {
   getList({ userId, teamId }: { userId: string; teamId: string }): Promise<ITopicDocument[]>;
+  getPrivateTopic({
+    userId,
+    teamId,
+    topicSlug,
+  }: {
+    userId: string;
+    teamId: string;
+    topicSlug: string;
+  }): Promise<ITopicDocument[]>;
   add({
     name,
     userId,
@@ -52,9 +70,17 @@ interface ITopicModel extends mongoose.Model<ITopicDocument> {
     teamId: string;
   }): Promise<ITopicDocument>;
 
-  edit({ name, userId, id }: { name: string; userId: string; id: string }): Promise<string>;
+  edit({
+    name,
+    userId,
+    id,
+  }: {
+    name: string;
+    userId: string;
+    id: string;
+  }): Promise<{ teamId: string }>;
 
-  delete({ userId, topicId }: { userId: string; topicId: string }): Promise<void>;
+  delete({ userId, id }: { userId: string; id: string }): Promise<{ teamId: string }>;
 }
 
 class TopicClass extends mongoose.Model {
@@ -80,6 +106,12 @@ class TopicClass extends mongoose.Model {
     return this.find({ teamId })
       .sort({ createdAt: -1 })
       .lean();
+  }
+
+  static async getPrivateTopic({ userId, teamId, topicSlug }) {
+    await this.checkPermission({ userId, teamId });
+
+    return this.find({ teamId, slug: topicSlug }).lean();
   }
 
   static async add({ name, userId, teamId }) {
@@ -125,14 +157,16 @@ class TopicClass extends mongoose.Model {
         lastUpdatedAt: new Date(),
       },
     );
+
+    return { teamId: topic.teamId };
   }
 
-  static async delete({ userId, topicId }) {
-    if (!topicId) {
+  static async delete({ userId, id }) {
+    if (!id) {
       throw new Error('Bad data');
     }
 
-    const topic = await this.findById(topicId)
+    const topic = await this.findById(id)
       .select('teamId')
       .lean();
 
@@ -141,14 +175,16 @@ class TopicClass extends mongoose.Model {
       throw new Error('Permission denied. Only team leader can delete topic');
     }
 
-    const discussions = await Discussion.find({topicId: topicId}, '_id');
+    const discussions = await Discussion.find({ topicId: id }, '_id');
 
     const discussionIds = discussions.map(d => d._id);
 
     await Post.remove({ discussionId: discussionIds });
     await Discussion.remove({ _id: discussionIds });
 
-    await this.remove({ _id: topicId });
+    await this.remove({ _id: id });
+
+    return { teamId: topic.teamId };
   }
 
   static findBySlug(teamId: string, slug: string) {
@@ -162,3 +198,4 @@ mongoSchema.index({ teamId: 1, slug: 1 }, { unique: true });
 const Topic = mongoose.model<ITopicDocument, ITopicModel>('Topic', mongoSchema);
 
 export default Topic;
+export { ITopicDocument };

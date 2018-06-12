@@ -12,7 +12,7 @@ const env = { GA_TRACKING_ID, StripePublishableKey };
 class MyDocument extends Document {
   render() {
     return (
-      <html lang="en" style={{ height: '100%', overflowY: 'scroll' }}>
+      <html lang="en" style={{ height: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
         <Head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -36,7 +36,7 @@ class MyDocument extends Document {
 
           <style>
             {`
-              div#__next {
+              #__next {
                 height: 100% !important;
               }
               a, a:focus {

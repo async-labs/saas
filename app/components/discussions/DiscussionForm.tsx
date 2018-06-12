@@ -42,20 +42,15 @@ class DiscussionForm extends React.Component<Props, State> {
     memberIds: [],
     privacy: 'public',
     disabled: false,
-    topicIsPrivate: false,
   };
 
   static getDerivedStateFromProps(nextProps) {
-    const { discussion, store } = nextProps;
-    const { currentTeam } = store;
-    const { currentTopicSlug } = currentTeam;
-    const topicIsPrivate = currentTopicSlug === 'private';
+    const { discussion } = nextProps;
 
     return {
       name: (discussion && discussion.name) || '',
       memberIds: (discussion && discussion.memberIds) || [],
-      privacy: (discussion && discussion.isPrivate) || topicIsPrivate ? 'private' : 'public',
-      topicIsPrivate: topicIsPrivate,
+      privacy: (discussion && discussion.isPrivate) ? 'private' : 'public',
     };
   }
 
@@ -141,7 +136,6 @@ class DiscussionForm extends React.Component<Props, State> {
       <AutoComplete
         label="Type name of Team Member"
         helperText="These members will see all posts and be notified about unread posts in this discussion."
-        topicIsPrivate={this.state.topicIsPrivate}
         onChange={this.handleAutoCompleteChange}
         suggestions={suggestions}
         selectedItems={selectedItems}
@@ -151,22 +145,14 @@ class DiscussionForm extends React.Component<Props, State> {
 
   render() {
     const { open, discussion } = this.props;
-    const { privacy, topicIsPrivate } = this.state;
-
-    const privateDialogTitle =
-      privacy === 'private' ? 'Create Private Discussion' : 'Create Discussion';
-    const privateDialogContent =
-      privacy === 'private' ? 'Explain Private Discussion' : 'Explain Discussion';
-    const privateButtonText =
-      privacy === 'private' ? 'Create Private Discussion' : 'Create Discussion';
 
     return (
       <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open}>
         <DialogTitle id="simple-dialog-title">
-          {discussion ? 'Edit discussion' : privateDialogTitle}
+          {discussion ? 'Edit Discussion' : 'Create Discussion'}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>{privateDialogContent}</DialogContentText>
+          <DialogContentText>Explain discussion</DialogContentText>
           <hr />
           <TextField
             label="Type name of Discussion"
@@ -177,7 +163,7 @@ class DiscussionForm extends React.Component<Props, State> {
           />
           <br />
           <form onSubmit={this.onSubmit}>
-            <div style={{ display: topicIsPrivate ? 'none' : 'block' }}>
+            <div>
               <br />
               <FormControl component="fieldset">
                 <FormLabel component="legend">Privacy setting:</FormLabel>
@@ -206,7 +192,7 @@ class DiscussionForm extends React.Component<Props, State> {
                 Cancel
               </Button>
               <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
-                {discussion ? 'Update Discussion' : privateButtonText}
+                {discussion ? 'Update Discussion' : 'Create Discussion'}
               </Button>
             </DialogActions>
           </form>

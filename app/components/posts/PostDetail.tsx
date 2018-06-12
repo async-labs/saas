@@ -16,6 +16,7 @@ const stylePaper = {
 const getMenuOptions = post => ({
   dataId: post._id,
   id: `post-menu-${post._id}`,
+  tooltipTitle: 'Settings for Post',
 });
 
 const getMenuItemOptions = (post, component) => [
@@ -38,6 +39,53 @@ class PostDetail extends React.Component<{
   store?: Store;
   onEditClick: Function;
 }> {
+  postBodyElm: HTMLDivElement;
+
+  componentDidMount() {
+    this.addImageLoadEvent();
+  }
+
+  componentDidUpdate() {
+    this.addImageLoadEvent();
+  }
+
+  componentWillUnmount() {
+    const imgContainers = this.postBodyElm.getElementsByClassName('lazy-load-image');
+
+    for (let i = 0; i < imgContainers.length; i++) {
+      const elm = imgContainers.item(i);
+      elm.removeEventListener('toggle', this.lazyLoadImage);
+    }
+  }
+
+  addImageLoadEvent() {
+    const imgContainers = this.postBodyElm.getElementsByClassName('lazy-load-image');
+
+    for (let i = 0; i < imgContainers.length; i++) {
+      const elm = imgContainers.item(i);
+      elm.removeEventListener('toggle', this.lazyLoadImage);
+      elm.addEventListener('toggle', this.lazyLoadImage);
+    }
+  }
+
+  lazyLoadImage = event => {
+    const target: HTMLDetailsElement = event.currentTarget;
+
+    if (!target.open) {
+      return;
+    }
+
+    const images = target.getElementsByClassName('s3-image');
+
+    for (let i = 0; i < images.length; i++) {
+      const elm = images.item(i) as HTMLElement;
+      if (!elm.hasAttribute('loaded') && elm.dataset.src) {
+        elm.setAttribute('src', elm.dataset.src);
+        elm.setAttribute('loaded', '1');
+      }
+    }
+  };
+
   editPost = () => {
     const { post, onEditClick } = this.props;
     if (onEditClick) {
@@ -95,7 +143,10 @@ class PostDetail extends React.Component<{
             {(post.user && post.user.displayName) || 'User'} |{' '}
             {(post.createdAt && date) || 'no date'} {post.isEdited ? '| edited' : ''}
           </span>
-          <span
+
+          <div
+            ref={elm => (this.postBodyElm = elm)}
+            style={{ fontSize: '15px', lineHeight: '2em', fontWeight: 300 }}
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: post.htmlContent }}
           />

@@ -23,6 +23,23 @@ const styles = {
   },
 };
 
+function getImageDimension(file): Promise<{ width: number; height: number }> {
+  var reader = new FileReader();
+  var img = new Image();
+
+  return new Promise(resolve => {
+    reader.onload = e => {
+      img.onload = function() {
+        resolve({ width: img.width, height: img.height });
+      };
+
+      img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
 @inject('store')
 @observer
 class PostForm extends React.Component<
@@ -110,6 +127,7 @@ class PostForm extends React.Component<
 
     NProgress.start();
     this.setState({ disabled: true });
+
     try {
       await currentDiscussion.addPost({ content });
 
@@ -159,14 +177,10 @@ class PostForm extends React.Component<
         `;
       };
 
-      renderer.image = href => {
-        return `
-          <img
-            src="${href}"
-            id="s3-file"
-            alt="Async"
-          />
-        `;
+      renderer.html = html => {
+        // TODO: show image directly on preview (replace src with data-src)
+        // console.log(html);
+        return html;
       };
 
       marked.setOptions({
@@ -187,28 +201,47 @@ class PostForm extends React.Component<
     const { currentTeam } = store;
 
     const file = document.getElementById('upload-file').files[0];
-    document.getElementById('upload-file').value = '';
-    const prefix = currentTeam.slug;
-
-    // console.log(file);
 
     if (file == null) {
-      return notify('No file selected.');
+      notify('No file selected.');
+      return;
     }
+
+    document.getElementById('upload-file').value = '';
+
+    const bucket = 'async-posts';
+    const prefix = `${currentTeam.slug}`;
+
+    const { width, height } = await getImageDimension(file);
 
     NProgress.start();
 
     try {
-      const responseFromApiServerForUpload = await getSignedRequestForUpload(file, prefix);
+      const responseFromApiServerForUpload = await getSignedRequestForUpload({
+        file,
+        prefix,
+        bucket,
+      });
+
       await uploadFileUsingSignedPutRequest(file, responseFromApiServerForUpload.signedRequest);
 
-      const markdownImage = `<details><summary>Click to see <b>${file.name}</b></summary>\n\n![${
-        file.name
-      }](${getRootUrl()}/uploaded-file?path=${responseFromApiServerForUpload.path})\n\n</details>`;
+      const imgSrc = `${getRootUrl()}/uploaded-file?teamSlug=${
+        currentTeam.slug
+      }&bucket=${bucket}&path=${responseFromApiServerForUpload.path}`;
 
-      this.setState({ content: content.concat('\n', markdownImage) });
+      const markdownImage = `<details class="lazy-load-image">
+        <summary>Click to see <b>${file.name}</b></summary>
+        <p>
+          <img src="https://place-hold.it/${width}x${height}.png&text=loading...&fontsize=12"
+            data-src="${imgSrc}" alt="Async" class="s3-image"/>
+        </p>
+      </details>`;
 
-      // TODO: delete image if image is added but not saved to folder
+      this.setState({
+        content: content.concat('\n', markdownImage.replace(/\s+/g, ' ')),
+      });
+
+      // TODO: delete image if image is added but Post is not saved
       // TODO: see more on Github's issue
       NProgress.done();
       notify('You successfully uploaded file.');
@@ -223,7 +256,6 @@ class PostForm extends React.Component<
     const { classes, open, isEditing } = this.props;
 
     const { paper } = classes;
-
     const { content, htmlContent } = this.state;
 
     return (

@@ -19,12 +19,13 @@ export const getTopicList = (teamId: string) =>
     qs: { teamId },
   });
 
-export const getDiscussionList = (
-  params,
-): Promise<{
-  discussions: Array<any>;
-  totalCount: number;
-}> =>
+export const getPrivateTopic = (teamId: string, topicSlug: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/topics/private-topic`, {
+    method: 'GET',
+    qs: { teamId, topicSlug },
+  });
+
+export const getDiscussionList = (params): Promise<{ discussions: Array<any> }> =>
   sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
     method: 'GET',
     qs: params,
@@ -45,13 +46,9 @@ export const editDiscussion = data =>
     body: JSON.stringify(data),
   });
 
-export const deleteDiscussion = (discussionId: string) =>
+export const deleteDiscussion = data =>
   sendRequestAndGetResponse(`${BASE_PATH}/discussions/delete`, {
-    body: JSON.stringify({ discussionId }),
-  });
-export const toggleDiscussionPin = ({ id, isPinned }: { id: string; isPinned: boolean }) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/discussions/toggle-pin`, {
-    body: JSON.stringify({ id, isPinned }),
+    body: JSON.stringify(data),
   });
 
 export const getPostList = (discussionId: string) =>
@@ -70,22 +67,43 @@ export const editPost = data =>
     body: JSON.stringify(data),
   });
 
-export const deletePost = (id: string) =>
+export const deletePost = data =>
   sendRequestAndGetResponse(`${BASE_PATH}/posts/delete`, {
-    body: JSON.stringify({ id }),
+    body: JSON.stringify(data),
   });
 
 // Uploading file to S3
 
-export const getSignedRequestForUpload = (file, prefix) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/posts/get-signed-request-for-upload-to-s3`, {
+export const getSignedRequestForUpload = ({ file, prefix, bucket, acl = 'private' }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/aws/get-signed-request-for-upload-to-s3`, {
     method: 'GET',
-    qs: { fileName: file.name, fileType: file.type, prefix: prefix },
+    qs: { fileName: file.name, fileType: file.type, prefix, bucket, acl },
   });
 
-export const uploadFileUsingSignedPutRequest = (file, signedRequest) =>
+export const uploadFileUsingSignedPutRequest = (file, signedRequest, headers = {}) =>
   sendRequestAndGetResponse(signedRequest, {
     externalServer: true,
     method: 'PUT',
     body: file,
+    headers,
+  });
+
+export const getNotificationList = () =>
+  sendRequestAndGetResponse(`${BASE_PATH}/notifications/list`, {
+    method: 'GET',
+  });
+
+export const createNotification = params =>
+  sendRequestAndGetResponse(`${BASE_PATH}/notifications/create`, {
+    body: JSON.stringify({ params }),
+  });
+
+export const deleteNotifications = (ids: string[]) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/notifications/bulk-delete`, {
+    body: JSON.stringify({ ids }),
+  });
+
+export const updateProfile = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/user/update-profile`, {
+    body: JSON.stringify(data),
   });

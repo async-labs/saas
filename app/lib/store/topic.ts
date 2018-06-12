@@ -1,14 +1,10 @@
 import { observable, action, IObservableArray, runInAction, computed } from 'mobx';
 import Router from 'next/router';
 
-import {
-  getDiscussionList,
-  addDiscussion,
-  deleteDiscussion,
-  toggleDiscussionPin,
-} from '../api/team-member';
+import { getDiscussionList, addDiscussion, deleteDiscussion } from '../api/team-member';
 import { editTopic } from '../api/team-leader';
 
+import { Store } from './index';
 import { Discussion } from './discussion';
 import { Team } from './team';
 
@@ -16,22 +12,21 @@ export class Topic {
   _id: string;
 
   team: Team;
+  store: Store;
 
   @observable name: string;
   @observable slug: string;
-  @observable searchDiscussionQuery: string = '';
+  @observable isKnowledge: boolean;
+  @observable isProjects: boolean;
   @observable currentDiscussion?: Discussion;
   @observable currentDiscussionSlug?: string;
   @observable isInitialDiscussionsLoaded = false;
-
-  @observable totalDiscussionCount: number;
+  @observable discussions: IObservableArray<Discussion> = <IObservableArray>[];
 
   @observable private isLoadingDiscussions = false;
-  @observable private _discussions: Map<string, Discussion> = new Map();
-  @observable private discussionIds: IObservableArray<string> = <IObservableArray>[];
   @observable private initialDiscussionSlug: string = '';
 
-  limit = 5;
+  limit = 10;
 
   constructor(params) {
     Object.assign(this, params);
@@ -43,32 +38,27 @@ export class Topic {
 
   @action
   setInitialDiscussions(discussions) {
-    this.discussionIds.clear();
-    this._discussions.clear();
+    const discussionObjs = discussions.map(
+      t => new Discussion({ topic: this, store: this.store, ...t }),
+    );
 
-    discussions.forEach(d => {
-      if (this.discussionIds.indexOf(d._id) === -1) {
-        this.discussionIds.push(d._id);
-        this._discussions.set(d._id, new Discussion({ topic: this, ...d }));
-      }
-    });
+    this.discussions.replace(discussionObjs);
+    this.isInitialDiscussionsLoaded = true;
 
-    if (!this.currentDiscussionSlug && this.discussionIds.length > 0) {
-      this.currentDiscussionSlug = this._discussions.get(this.discussionIds[0]).slug;
+    if (!this.currentDiscussionSlug && this.discussions.length > 0) {
+      this.currentDiscussionSlug = this.discussions[0].slug;
     }
 
     if (this.currentDiscussionSlug) {
       this.setCurrentDiscussion(this.currentDiscussionSlug);
     }
-
-    this.isInitialDiscussionsLoaded = true;
   }
 
   @action
   setCurrentDiscussion(slug: string) {
     this.currentDiscussionSlug = slug;
-    for (let i = 0; i < this.discussionIds.length; i++) {
-      const discussion = this._discussions.get(this.discussionIds[i]);
+    for (let i = 0; i < this.discussions.length; i++) {
+      const discussion = this.discussions[i];
 
       if (discussion && discussion.slug === slug) {
         this.currentDiscussion = discussion;
@@ -86,106 +76,70 @@ export class Topic {
   }
 
   @action
-  async loadDiscussions() {
-    if (this.isLoadingDiscussions) {
+  async loadInitialDiscussions() {
+    if (this.isInitialDiscussionsLoaded || this.isLoadingDiscussions) {
       return;
     }
 
     this.isLoadingDiscussions = true;
 
-    let pinnedDiscussionCount = 0;
-    let isInitialDiscussionLoaded = false;
+    try {
+      const { discussions = [] } = await getDiscussionList({ topicId: this._id });
 
-    for (let i = 0; i < this.discussionIds.length; i++) {
-      const d = this._discussions.get(this.discussionIds[i]);
-      if (d.isPinned) {
-        pinnedDiscussionCount++;
-      }
-
-      if (d.slug === this.initialDiscussionSlug && this.initialDiscussionSlug) {
-        isInitialDiscussionLoaded = true;
-      }
+      runInAction(() => {
+        this.setInitialDiscussions(discussions);
+      });
+    } finally {
+      runInAction(() => {
+        this.isLoadingDiscussions = false;
+      });
     }
-
-    return new Promise(async (resolve, reject) => {
-      try {
-        const { discussions = [], totalCount } = await getDiscussionList({
-          topicId: this._id,
-          searchQuery: this.searchDiscussionQuery,
-          skip: this.discussionIds.length,
-          limit: this.limit,
-          pinnedDiscussionCount,
-          initialDiscussionSlug: this.initialDiscussionSlug,
-          isInitialDiscussionLoaded,
-        });
-
-        runInAction(() => {
-          this.totalDiscussionCount = totalCount;
-
-          discussions.forEach(d => {
-            if (this.discussionIds.indexOf(d._id) === -1) {
-              this.discussionIds.push(d._id);
-              this._discussions.set(d._id, new Discussion({ topic: this, ...d }));
-            }
-          });
-
-          this.isLoadingDiscussions = false;
-
-          resolve();
-        });
-      } catch (error) {
-        console.error(error);
-        runInAction(() => {
-          this.isLoadingDiscussions = false;
-          reject(error);
-        });
-      }
-    });
   }
 
   @action
-  async loadInitialDiscussions() {
-    if (this.isInitialDiscussionsLoaded) {
-      return;
+  handleDiscussionRealtimeEvent(data) {
+    const { action } = data;
+
+    if (action === 'added') {
+      this.addDiscussionToLocalCache(data.discussion);
+    } else if (action === 'edited') {
+      this.editDiscussionFromLocalCache(data);
+    } else if (action === 'deleted') {
+      this.removeDiscussionFromLocalCache(data.id);
     }
-
-    this.discussionIds.clear();
-    this._discussions.clear();
-
-    await this.loadDiscussions();
-
-    runInAction(() => {
-      if (!this.currentDiscussionSlug && this.discussionIds.length > 0) {
-        this.currentDiscussionSlug = this._discussions.get(this.discussionIds[0]).slug;
-      }
-
-      if (this.currentDiscussionSlug) {
-        this.setCurrentDiscussion(this.currentDiscussionSlug);
-      }
-
-      this.isInitialDiscussionsLoaded = true;
-    });
   }
 
   @action
-  loadMoreDiscussions() {
-    this.loadDiscussions();
+  addDiscussionToLocalCache(data) {
+    const obj = new Discussion({ topic: this, store: this.store, ...data });
+
+    if (!obj.isPrivate || obj.memberIds.includes(this.store.currentUser._id)) {
+      this.discussions.unshift(obj);
+    }
   }
 
   @action
-  async searchDiscussion(query: string) {
-    if (this.isLoadingDiscussions) {
-      throw new Error('Loading discussions. Try again later');
+  editDiscussionFromLocalCache(data) {
+    const discussion = this.discussions.find(item => item._id === data.id);
+    if (discussion) {
+      discussion.changeLocalCache(data);
     }
+  }
 
-    this.searchDiscussionQuery = query;
-    this.loadDiscussions();
+  @action
+  removeDiscussionFromLocalCache(discussionId: string) {
+    const discussion = this.discussions.find(item => item._id === discussionId);
+    this.discussions.remove(discussion);
   }
 
   @action
   async edit(data) {
     try {
-      await editTopic({ id: this._id, ...data });
+      await editTopic({
+        id: this._id,
+        socketId: (this.store.socket && this.store.socket.id) || null,
+        ...data,
+      });
 
       runInAction(() => {
         this.name = data.name;
@@ -198,12 +152,14 @@ export class Topic {
 
   @action
   async addDiscussion(data) {
-    const { discussion } = await addDiscussion({ topicId: this._id, ...data });
-    const discussionObj = new Discussion({ topic: this, ...discussion });
+    const { discussion } = await addDiscussion({
+      topicId: this._id,
+      socketId: (this.store.socket && this.store.socket.id) || null,
+      ...data,
+    });
 
     runInAction(() => {
-      this.discussionIds.unshift(discussionObj._id);
-      this._discussions.set(discussionObj._id, discussionObj);
+      this.addDiscussionToLocalCache(discussion);
 
       Router.push(
         `/discussions/detail?teamSlug=${this.team.slug}&topicSlug=${this.slug}&discussionSlug=${
@@ -216,21 +172,22 @@ export class Topic {
 
   @action
   async deleteDiscussion(id: string) {
-    await deleteDiscussion(id);
+    await deleteDiscussion({
+      id,
+      socketId: (this.store.socket && this.store.socket.id) || null,
+    });
 
     runInAction(() => {
-      const discussion = this._discussions.get(id);
+      const discussion = this.discussions.find(d => d._id === id);
 
-      this.discussionIds.remove(id);
-      this._discussions.delete(id);
-      this.totalDiscussionCount -= 1;
+      this.removeDiscussionFromLocalCache(id);
 
       if (this.currentDiscussion === discussion) {
         this.currentDiscussion = null;
         this.currentDiscussionSlug = null;
 
-        if (this.discussionIds.length > 0) {
-          const d = this._discussions.get(this.discussionIds[0]);
+        if (this.discussions.length > 0) {
+          const d = this.discussions[0];
 
           Router.push(
             `/discussions/detail?teamSlug=${this.team.slug}&topicSlug=${this.slug}&discussionSlug=${
@@ -249,22 +206,40 @@ export class Topic {
   }
 
   @action
-  async toggleDiscussionPin({ id, isPinned }: { id: string; isPinned: boolean }) {
-    const discussion = this._discussions.get(id);
+  leaveSocketRoom() {
+    if (this.store.socket) {
+      console.log('leaving socket topic room', this.name);
+      this.store.socket.emit('leaveTopic', this._id);
+    }
+  }
 
-    await toggleDiscussionPin({ id, isPinned });
-    runInAction(() => {
-      discussion.isPinned = isPinned;
+  @action
+  joinSocketRoom() {
+    if (this.store.socket) {
+      console.log('joining socket topic room', this.name);
+      this.store.socket.emit('joinTopic', this._id);
+    }
+  }
+
+  @computed
+  get orderedDiscussions() {
+    return this.discussions.sort((a, b) => {
+      const isStarredA = this.store.currentUser.starredDiscussionIds.indexOf(a._id);
+      const isStarredB = this.store.currentUser.starredDiscussionIds.indexOf(b._id);
+
+      if (isStarredA === -1 && isStarredB === -1) {
+        return b.lastActivityDate.getTime() - a.lastActivityDate.getTime();
+      }
+
+      if (isStarredA !== -1 && isStarredB !== -1) {
+        return isStarredA - isStarredB;
+      }
+
+      if (isStarredA !== -1) {
+        return -1;
+      }
+
+      return 1;
     });
-  }
-
-  @computed
-  get discussions(): Discussion[] {
-    return this.discussionIds.map(id => this._discussions.get(id));
-  }
-
-  @computed
-  get hasMoreDiscussion() {
-    return this.totalDiscussionCount > this.discussionIds.length;
   }
 }

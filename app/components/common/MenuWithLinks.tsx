@@ -44,17 +44,26 @@ class MenuWithLinks extends React.PureComponent<{ src?: string; alt?: string; op
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          {options.map(option => (
-            <MenuItem onClick={this.handleClose} key={option.href}>
-              <ActiveLink
-                teamLogo={option.avatarUrl}
-                linkText={option.text}
-                href={option.href}
-                as={option.as || option.href}
-              />
-              <p />
-            </MenuItem>
-          ))}
+          {options.map(
+            (option, i) =>
+              option.separator ? (
+                <hr
+                  style={{ width: '85%', margin: '20px auto 10px auto' }}
+                  key={`separated-${i}`}
+                />
+              ) : (
+                <MenuItem onClick={this.handleClose} key={option.href}>
+                  <ActiveLink
+                    teamLogo={option.avatarUrl}
+                    linkText={option.text}
+                    href={option.href}
+                    as={option.as || option.href}
+                    simple={option.simple}
+                    highlighterSlug={option.highlighterSlug}
+                  />
+                </MenuItem>
+              ),
+          )}
         </Menu>
       </div>
     );

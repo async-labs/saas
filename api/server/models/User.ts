@@ -7,48 +7,6 @@ import logger from '../logs';
 import getEmailTemplate from './EmailTemplate';
 import Team from './Team';
 
-export interface IUserDocument extends mongoose.Document {
-  googleId: string;
-  googleToken: { accessToken: string; refreshToken: string };
-  slug: string;
-  createdAt: Date;
-
-  email: string;
-  isAdmin: boolean;
-  displayName: string;
-  avatarUrl: string;
-
-  isGithubConnected: boolean;
-  githubAccessToken: string;
-}
-
-interface IUserModel extends mongoose.Model<IUserDocument> {
-  publicFields(): string[];
-  search(query: string): Promise<IUserDocument[]>;
-
-  getTeamMemberList({
-    userId,
-    teamId,
-  }: {
-    userId: string;
-    teamId: string;
-  }): Promise<IUserDocument[]>;
-
-  signInOrSignUp({
-    googleId,
-    email,
-    googleToken,
-    displayName,
-    avatarUrl,
-  }: {
-    googleId: string;
-    email: string;
-    displayName: string;
-    avatarUrl: string;
-    googleToken: { refreshToken?: string; accessToken?: string };
-  }): Promise<IUserDocument>;
-}
-
 const mongoSchema = new mongoose.Schema({
   googleId: {
     type: String,
@@ -73,8 +31,20 @@ const mongoSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+
+  defaultTeamSlug: {
+    type: String,
+    required: true,
+    default: '',
+  },
+
+  // TODO: Is this field really necessary? If so we need to maintain it.
+  //       There is no code that adding/removing teamId, when necessary
   teamIds: [String],
+
   projectIds: [String],
+  starredDiscussionIds: [String],
+
   isAdmin: {
     type: Boolean,
     default: false,
@@ -88,6 +58,71 @@ const mongoSchema = new mongoose.Schema({
   },
   githubAccessToken: String,
 });
+
+export interface IUserDocument extends mongoose.Document {
+  googleId: string;
+  googleToken: { accessToken: string; refreshToken: string };
+  slug: string;
+  createdAt: Date;
+
+  email: string;
+  isAdmin: boolean;
+  displayName: string;
+  avatarUrl: string;
+
+  defaultTeamSlug: string;
+
+  isGithubConnected: boolean;
+  githubAccessToken: string;
+
+  starredDiscussionIds: string[];
+}
+
+interface IUserModel extends mongoose.Model<IUserDocument> {
+  publicFields(): string[];
+
+  updateProfile({
+    userId,
+    name,
+    avatarUrl,
+  }: {
+    userId: string;
+    name: string;
+    avatarUrl: string;
+  }): Promise<IUserDocument[]>;
+
+  getTeamMembers({
+    userId,
+    teamId,
+  }: {
+    userId: string;
+    teamId: string;
+  }): Promise<IUserDocument[]>;
+
+  signInOrSignUp({
+    googleId,
+    email,
+    googleToken,
+    displayName,
+    avatarUrl,
+  }: {
+    googleId: string;
+    email: string;
+    displayName: string;
+    avatarUrl: string;
+    googleToken: { refreshToken?: string; accessToken?: string };
+  }): Promise<IUserDocument>;
+
+  starDiscussion({ userId, discussionId }: { userId: string; discussionId: string }): Promise<void>;
+  unstarDiscussion({
+    userId,
+    discussionId,
+  }: {
+    userId: string;
+    discussionId: string;
+  }): Promise<void>;
+}
+
 
 // mongoSchema.pre('save', function(next) {
 //   if (!this.createdAt) this.createdAt = new Date();
@@ -105,7 +140,9 @@ class UserClass extends mongoose.Model {
       'slug',
       'isAdmin',
       'isGithubConnected',
-      'teamId',
+      'teamIds',
+      'starredDiscussionIds',
+      'defaultTeamSlug'
     ];
   }
 
@@ -125,19 +162,24 @@ class UserClass extends mongoose.Model {
     return team;
   }
 
-  static search(query) {
-    return this.find(
-      {
-        $or: [
-          { displayName: { $regex: query, $options: 'i' } },
-          { email: { $regex: query, $options: 'i' } },
-        ],
-      },
-      this.publicFields().join(' '),
-    ).lean();
+  static async updateProfile({ userId, name, avatarUrl }) {
+    // TODO: If avatarUrl is changed and old is uploaded to our S3, delete it from S3
+
+    const user = await this.findById(userId, 'slug displayName');
+
+    const modifier = { displayName: user.displayName, avatarUrl, slug: user.slug };
+
+    if (name !== user.displayName) {
+      modifier.displayName = name;
+      modifier.slug = await generateSlug(this, name);
+    }
+
+    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true })
+      .select('name avatarUrl')
+      .lean();
   }
 
-  static async getTeamMemberList({ userId, teamId }) {
+  static async getTeamMembers({ userId, teamId }) {
     const team = await this.checkPermissionAndGetTeam({ userId, teamId });
 
     return this.find({ _id: { $in: team.memberIds } })
@@ -197,6 +239,14 @@ class UserClass extends mongoose.Model {
     }
 
     return _.pick(newUser, this.publicFields());
+  }
+
+  static starDiscussion({ userId, discussionId }) {
+    return this.updateOne({ _id: userId }, { $addToSet: { starredDiscussionIds: discussionId } });
+  }
+
+  static unstarDiscussion({ userId, discussionId }) {
+    return this.updateOne({ _id: userId }, { $pull: { starredDiscussionIds: discussionId } });
   }
 }
 

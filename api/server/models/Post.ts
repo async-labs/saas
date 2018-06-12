@@ -52,16 +52,6 @@ function markdownToHtml(content) {
     `;
   };
 
-  renderer.image = href => {
-    return `
-      <img
-        src="${href}"
-        id="s3-file"
-        alt="Async"
-      />
-    `;
-  };
-
   marked.setOptions({
     renderer,
     breaks: true,
@@ -105,7 +95,15 @@ interface IPostModel extends mongoose.Model<IPostDocument> {
     discussionId: string;
   }): Promise<IPostDocument>;
 
-  edit({ content, userId, id }: { content: string; userId: string; id: string }): Promise<void>;
+  edit({
+    content,
+    userId,
+    id,
+  }: {
+    content: string;
+    userId: string;
+    id: string;
+  }): Promise<{ discussionId: string; htmlContent: string }>;
 
   uploadFile({
     userId,
@@ -186,6 +184,8 @@ class PostClass extends mongoose.Model {
       createdAt: new Date(),
     });
 
+    Discussion.updateOne({ _id: discussion._id }, { lastActivityDate: new Date() }).exec();
+
     const memberIds: string[] = discussion.isPrivate
       ? discussion.memberIds.filter(id => id !== userId)
       : team.memberIds.filter(id => id !== userId);
@@ -197,6 +197,8 @@ class PostClass extends mongoose.Model {
     if (!content || !id) {
       throw new Error('Bad data');
     }
+
+    // TODO: old uploaded file deleted, delete it from S3
 
     const post = await this.findById(id)
       .select('createdUserId discussionId')
@@ -210,6 +212,8 @@ class PostClass extends mongoose.Model {
       { _id: id },
       { content, htmlContent, isEdited: true, lastUpdatedAt: new Date() },
     );
+
+    return { discussionId: post.discussionId, htmlContent };
   }
 
   static async delete({ userId, id }) {
@@ -232,3 +236,4 @@ mongoSchema.loadClass(PostClass);
 const Post = mongoose.model<IPostDocument, IPostModel>('Post', mongoSchema);
 
 export default Post;
+export { IPostDocument };

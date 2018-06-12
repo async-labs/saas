@@ -2,7 +2,8 @@ import { observable, action, IObservableArray, runInAction } from 'mobx';
 import Router from 'next/router';
 
 import {
-  getTeamMemberList,
+  getTeamMembers,
+  getTeamInvitedUsers,
   addTopic,
   deleteTopic,
   inviteMember,
@@ -13,7 +14,9 @@ import { getTopicList } from '../api/team-member';
 
 import { Topic } from './topic';
 import { User } from './user';
+import { Invitation } from './invitation';
 import { Store } from './index';
+// import invitation from 'pages/invitation';
 
 export class Team {
   store: Store;
@@ -36,6 +39,7 @@ export class Team {
   @observable currentDiscussionSlug?: string;
 
   @observable members: Map<string, User> = new Map();
+  @observable invitedUsers: Map<string, Invitation> = new Map();
   @observable private isLoadingMembers = false;
   @observable private isInitialMembersLoaded = false;
 
@@ -47,7 +51,7 @@ export class Team {
     }
 
     if (params.initialMembers) {
-      this.setInitialMembers(params.initialMembers);
+      this.setInitialMembers(params.initialMembers, params.initialInvitations);
     }
   }
 
@@ -55,7 +59,7 @@ export class Team {
   setInitialTopics(topics: any[]) {
     this.topics.clear();
 
-    const topicObjs = topics.map(t => new Topic({ team: this, ...t }));
+    const topicObjs = topics.map(t => new Topic({ team: this, store: this.store, ...t }));
 
     this.topics.replace(topicObjs);
 
@@ -76,7 +80,7 @@ export class Team {
 
     try {
       const { topics = [] } = await getTopicList(this._id);
-      const topicObjs = topics.map(t => new Topic({ team: this, ...t }));
+      const topicObjs = topics.map(t => new Topic({ team: this, store: this.store, ...t }));
 
       runInAction(() => {
         this.topics.replace(topicObjs);
@@ -147,12 +151,46 @@ export class Team {
   }
 
   @action
+  handleTopicRealtimeEvent(data) {
+    const { action } = data;
+
+    if (action === 'added') {
+      this.addTopicToLocalCache(data.topic);
+    } else if (action === 'edited') {
+      this.editTopicFromLocalCache(data.id, data.name);
+    } else if (action === 'deleted') {
+      this.removeTopicFromLocalCache(data.id);
+    }
+  }
+
+  @action
+  addTopicToLocalCache(data) {
+    const topicObj = new Topic({ team: this, store: this.store, ...data });
+    this.topics.unshift(topicObj);
+  }
+
+  @action
+  editTopicFromLocalCache(topicId: string, name: string) {
+    const topic = this.topics.find(t => t._id === topicId);
+    topic.name = name;
+  }
+
+  @action
+  removeTopicFromLocalCache(topicId: string) {
+    const topic = this.topics.find(t => t._id === topicId);
+    this.topics.remove(topic);
+  }
+
+  @action
   async addTopic(data) {
-    const { topic } = await addTopic({ teamId: this._id, ...data });
-    const topicObj = new Topic({ team: this, ...topic });
+    const { topic } = await addTopic({
+      teamId: this._id,
+      socketId: (this.store.socket && this.store.socket.id) || null,
+      ...data,
+    });
 
     runInAction(() => {
-      this.topics.unshift(topicObj);
+      this.addTopicToLocalCache(topic);
 
       Router.push(
         `/topics/detail?teamSlug=${this.slug}&topicSlug=${topic.slug}`,
@@ -165,10 +203,13 @@ export class Team {
   async deleteTopic(topicId: string) {
     const topic = this.topics.find(t => t._id === topicId);
 
-    await deleteTopic(topicId);
+    await deleteTopic({
+      id: topicId,
+      socketId: (this.store.socket && this.store.socket.id) || null,
+    });
 
     runInAction(() => {
-      this.topics.remove(topic);
+      this.removeTopicFromLocalCache(topicId);
 
       if (this.store.currentTeam === this && this.currentTopic === topic) {
         if (this.topics.length > 0) {
@@ -186,11 +227,16 @@ export class Team {
   }
 
   @action
-  setInitialMembers(users) {
+  setInitialMembers(users, invitations) {
     this.members.clear();
+    this.invitedUsers.clear();
 
     for (let i = 0; i < users.length; i++) {
       this.members.set(users[i]._id, new User(users[i]));
+    }
+
+    for (let i = 0; i < invitations.length; i++) {
+      this.invitedUsers.set(invitations[i]._id, new Invitation(invitations[i]));
     }
 
     this.isInitialMembersLoaded = true;
@@ -205,10 +251,14 @@ export class Team {
     this.isLoadingMembers = true;
 
     try {
-      const { users = [] } = await getTeamMemberList(this._id);
+      const { users = [] } = await getTeamMembers(this._id);
+      const { invitations = [] } = await getTeamInvitedUsers(this._id);
       runInAction(() => {
         for (let i = 0; i < users.length; i++) {
           this.members.set(users[i]._id, new User(users[i]));
+        }
+        for (let i = 0; i < invitations.length; i++) {
+          this.invitedUsers.set(invitations[i]._id, new Invitation(invitations[i]));
         }
         this.isLoadingMembers = false;
       });
@@ -233,5 +283,21 @@ export class Team {
     runInAction(() => {
       this.members.delete(userId);
     });
+  }
+
+  @action
+  leaveSocketRoom() {
+    if (this.store.socket) {
+      console.log('leaving socket team room', this.name);
+      this.store.socket.emit('leaveTeam', this._id);
+    }
+  }
+
+  @action
+  joinSocketRoom() {
+    if (this.store.socket) {
+      console.log('joining socket team room', this.name);
+      this.store.socket.emit('joinTeam', this._id);
+    }
   }
 }

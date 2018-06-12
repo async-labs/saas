@@ -25,7 +25,12 @@ class MenuWithMenuItems extends React.PureComponent<{
 
     return (
       <span>
-        <Tooltip title="Settings" placement="top" disableFocusListener disableTouchListener>
+        <Tooltip
+          title={menuOptions.tooltipTitle}
+          placement="top"
+          disableFocusListener
+          disableTouchListener
+        >
           <a href="#" style={{ float: 'right' }} onClick={this.handleClick}>
             <i
               // aria-owns={menuOptions.ariaOwns}
@@ -54,7 +59,6 @@ class MenuWithMenuItems extends React.PureComponent<{
                 this.setState({ menuElm: null });
                 option.onClick(e);
               }}
-              data-ispinned={option.dataIsPinned}
             >
               {option.text}
             </MenuItem>

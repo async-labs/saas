@@ -7,30 +7,10 @@ const mongoSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
-  bookId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-  },
   amount: {
     type: Number,
     required: true,
   },
-  bookmarks: [
-    {
-      chapterId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-      },
-      text: {
-        type: String,
-        required: true,
-      },
-      hash: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
   createdAt: {
     type: Date,
     required: true,
@@ -43,12 +23,6 @@ const mongoSchema = new mongoose.Schema({
     paid: Boolean,
     status: String,
   },
-
-  isPreorder: {
-    type: Boolean,
-    defaultValue: false,
-  },
-
   isFree: {
     type: Boolean,
     defaultValue: false,

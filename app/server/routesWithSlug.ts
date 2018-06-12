@@ -4,11 +4,6 @@ export default function routesWithSlug({ server, app }) {
     app.render(req, res, '/invitation', { teamSlug });
   });
 
-  server.get('/team/:teamSlug/settings', (req, res) => {
-    const { teamSlug } = req.params;
-    app.render(req, res, '/settings', { teamSlug });
-  });
-
   server.get('/team/:teamSlug/t/:topicSlug/:discussionSlug', (req, res) => {
     const { teamSlug, topicSlug, discussionSlug } = req.params;
     app.render(req, res, '/discussions/detail', { teamSlug, topicSlug, discussionSlug });
@@ -19,8 +14,28 @@ export default function routesWithSlug({ server, app }) {
     app.render(req, res, '/topics/detail', { teamSlug, topicSlug });
   });
 
-  server.get('/team/:teamSlug/projects', (req, res) => {
+  server.get('/team/:teamSlug/settings/team-members', (req, res) => {
     const { teamSlug } = req.params;
-    app.render(req, res, '/projects', { teamSlug });
+    app.render(req, res, '/settings/team-members', { teamSlug });
   });
+
+  server.get('/team/:teamSlug/settings/team-billing', (req, res) => {
+    const { teamSlug } = req.params;
+    app.render(req, res, '/settings/team-billing', { teamSlug });
+  });
+
+  server.get('/team/:teamSlug/settings/team-constraints', (req, res) => {
+    const { teamSlug } = req.params;
+    app.render(req, res, '/settings/team-constraints', { teamSlug });
+  });
+
+  server.get('/team/:teamSlug/settings/team-settings', (req, res) => {
+    const { teamSlug } = req.params;
+    app.render(req, res, '/settings/team-settings', { teamSlug });
+  });
+
+  // server.get('/team/:teamSlug/t/knowledge', (req, res) => {
+  //   const { teamSlug } = req.params;
+  //   app.render(req, res, '/topics/knowledgeDetail', { teamSlug, topicSlug: 'knowledge' });
+  // });
 }

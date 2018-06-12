@@ -37,6 +37,11 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   );
 
   const text = await response.text();
+  if (response.status >= 400) {
+    console.error(text);
+    throw new Error(response.statusText);
+  }
+
   try {
     const data = JSON.parse(text);
 

@@ -12,6 +12,7 @@ import DiscussionForm from './DiscussionForm';
 const getMenuOptions = discussion => ({
   dataId: discussion._id,
   id: `discussion-menu-${discussion._id}`,
+  tooltipTitle: 'Settings for Discussion',
 });
 
 const getMenuItemOptions = (discussion, component) => [
@@ -19,12 +20,6 @@ const getMenuItemOptions = (discussion, component) => [
     text: 'Copy URL',
     dataId: discussion._id,
     onClick: component.handleDiscussionMenuClose,
-  },
-  {
-    text: 'Pin discussion',
-    dataId: discussion._id,
-    onClick: component.togglePin,
-    dataIsPinned: discussion.isPinned ? '1' : '0',
   },
   {
     text: 'Edit',
@@ -109,34 +104,6 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
         }
       },
     });
-  };
-
-  togglePin = async event => {
-    const { currentTeam } = this.props.store;
-    if (!currentTeam) {
-      notify('Team have not selected');
-      return;
-    }
-
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('Topic have not selected');
-      return;
-    }
-
-    const id = event.currentTarget.dataset.id;
-    const isPinned = event.currentTarget.dataset.ispinned === '1';
-
-    NProgress.start();
-
-    try {
-      await currentTopic.toggleDiscussionPin({ id: id, isPinned: !isPinned });
-      NProgress.done();
-    } catch (error) {
-      console.error(error);
-      notify(error);
-      NProgress.done();
-    }
   };
 
   render() {

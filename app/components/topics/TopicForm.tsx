@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import {
   Dialog,
   DialogTitle,
@@ -7,9 +6,10 @@ import {
   DialogContentText,
   DialogActions,
   withMobileDialog,
+  Button,
+  TextField
 } from '@material-ui/core';
 import NProgress from 'nprogress';
-import TextField from '@material-ui/core/TextField';
 import { inject } from 'mobx-react';
 
 import notify from '../../lib/notifier';
@@ -139,5 +139,3 @@ class TopicForm extends React.Component<Props, State> {
 }
 
 export default withMobileDialog()(TopicForm);
-
-// TODO: research above TS warning

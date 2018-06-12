@@ -2,7 +2,7 @@ import { observable, computed, action, runInAction } from 'mobx';
 
 import { editPost } from '../api/team-member';
 
-import { User, Discussion } from './index';
+import { User, Discussion, Store } from './index';
 
 export class Post {
   _id: string;
@@ -11,6 +11,7 @@ export class Post {
   discussionId: string;
 
   discussion: Discussion;
+  store: Store;
 
   @observable isEdited: boolean;
   @observable content: string;
@@ -26,34 +27,27 @@ export class Post {
   }
 
   @action
+  changeLocalCache(data) {
+    this.content = data.content;
+    this.htmlContent = data.htmlContent;
+    this.isEdited = true;
+  }
+
+  @action
   async edit(data) {
     try {
-      await editPost({ id: this._id, ...data });
+      await editPost({
+        id: this._id,
+        socketId: (this.store.socket && this.store.socket.id) || null,
+        content: data.content,
+      });
 
       runInAction(() => {
-        this.content = data.content;
-        this.htmlContent = data.htmlContent;
-        this.isEdited = true;
+        this.changeLocalCache(data);
       });
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
-
-  // @action
-  // async uploadFile(data, file) {
-  //   try {
-  //     console.log(file);
-  //     await uploadFile({ id: this._id, ...data }, file);
-
-  //     runInAction(() => {
-  //       this.file = data.file;
-  //       this.isEdited = true;
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
 }

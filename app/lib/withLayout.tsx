@@ -2,9 +2,7 @@ import React from 'react';
 import NProgress from 'nprogress';
 import { observer } from 'mobx-react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
-import Avatar from '@material-ui/core/Avatar';
+import { Grid, CssBaseline, Avatar } from '@material-ui/core';
 import Router from 'next/router';
 import Link from 'next/link';
 
@@ -16,6 +14,9 @@ import MenuWithLinks from '../components/common/MenuWithLinks';
 import ActiveLink from '../components/common/ActiveLink';
 import * as gtag from './gtag';
 import { Store } from './store';
+
+const dev = process.env.NODE_ENV !== 'production';
+const LOG_OUT_URL = dev ? 'http://localhost:8000' : 'https://api1.async-await.com';
 
 Router.onRouteChangeStart = () => {
   NProgress.start();
@@ -32,13 +33,35 @@ const getTeamOptionsMenuWithLinks = teams =>
   teams.map(t => ({
     text: t.name,
     avatarUrl: t.avatarUrl,
-    href: `/projects?teamSlug=${t.slug}`,
-    as: `/team/${t.slug}/projects`,
+    href: `/team/${t.slug}/t/projects`,
+    as: `/team/${t.slug}/t/projects`,
+    simple: false,
+    highlighterSlug: `/${t.slug}`,
   }));
 
-function withLayout(BaseComponent) {
+const menuUnderTeamList = team => [
+  {
+    separator: true,
+  },
+  {
+    text: `Settings`,
+    href: `/team/${team.slug}/settings/team-members`,
+    as: `/team/${team.slug}/settings/team-members`,
+    simple: true,
+  },
+  {
+    text: 'Log out',
+    href: `${LOG_OUT_URL}/logout`,
+    as: `${LOG_OUT_URL}/logout`,
+    simple: true,
+  },
+];
+
+function withLayout(BaseComponent, { teamRequired = true } = {}) {
+  type MyProps = { pageContext: object; store: Store; teamSlug: string };
+
   @observer
-  class App extends React.Component<{ pageContext: object; store: Store }> {
+  class App extends React.Component<MyProps> {
     public static defaultProps: { pageContext: null };
 
     constructor(props, context) {
@@ -46,12 +69,24 @@ function withLayout(BaseComponent) {
       this.pageContext = this.props.pageContext || getContext();
     }
 
-    static getInitialProps(ctx) {
+    static async getInitialProps({ query, ctx, req }) {
+      let baseComponentProps = {};
+      let teamSlug = '';
+      let topicSlug = '';
+      let discussionSlug = '';
+
       if (BaseComponent.getInitialProps) {
-        return BaseComponent.getInitialProps(ctx);
+        baseComponentProps = await BaseComponent.getInitialProps(ctx);
       }
 
-      return {};
+      if (teamRequired) {
+        teamSlug = query.teamSlug;
+      }
+
+      topicSlug = query.topicSlug;
+      discussionSlug = query.discussionSlug;
+
+      return { baseComponentProps, teamSlug, topicSlug, discussionSlug, isServer: !!req };
     }
 
     componentDidMount() {
@@ -59,11 +94,33 @@ function withLayout(BaseComponent) {
       if (jssStyles && jssStyles.parentNode) {
         jssStyles.parentNode.removeChild(jssStyles);
       }
+
+      if (teamRequired) {
+        this.checkTeam();
+      }
+    }
+
+    componentDidUpdate() {
+      if (teamRequired) {
+        this.checkTeam();
+      }
+    }
+
+    checkTeam() {
+      const { teamSlug, store } = this.props;
+      const { currentTeam } = store;
+
+      if (!currentTeam || currentTeam.slug !== teamSlug) {
+        store.setCurrentTeam(teamSlug);
+      }
     }
 
     pageContext = null;
 
     render() {
+      // TODO: use teamRequired to check for Team
+      // Add teamRequired: false to some pages that don't require team
+
       const { store } = this.props;
 
       if (store.isLoggingIn) {
@@ -99,10 +156,11 @@ function withLayout(BaseComponent) {
         return <div style={{ color: 'black' }}>2-loading...</div>;
       }
 
-      if (!store.currentTeam) {
+      if (teamRequired && !store.currentTeam) {
+        console.log(store.currentTeam);
         return (
           <div>
-            <Link href="/settings/add-team">
+            <Link href="/settings/create-team">
               <a style={{ color: 'black' }}>Add team</a>
             </Link>
           </div>
@@ -120,16 +178,20 @@ function withLayout(BaseComponent) {
             direction="row"
             justify="flex-start"
             alignItems="stretch"
-            style={{ padding: '20px 10px', height: '100%' }}
+            style={{ padding: '0px 10px', height: '100%' }}
           >
             <Grid item sm={1} xs={12} style={{ borderRight: '0.5px #aaa solid' }}>
-              <MenuWithLinks options={getTeamOptionsMenuWithLinks(store.teams)}>
+              <MenuWithLinks
+                options={getTeamOptionsMenuWithLinks(store.teams).concat(
+                  menuUnderTeamList(store.currentTeam),
+                )}
+              >
                 <Avatar
                   src={`${store.currentTeam.avatarUrl ||
                     'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
                   alt="Team logo"
                   style={{
-                    margin: '10px auto 20px 0px',
+                    margin: '20px auto',
                     cursor: 'pointer',
                     display: 'inline-flex',
                   }}
@@ -144,25 +206,12 @@ function withLayout(BaseComponent) {
                 <p />
                 <ActiveLink
                   linkText="Projects"
-                  href={`/projects?teamSlug=${store.currentTeam.slug}&topicSlug=projects`}
-                  as={`/team/${store.currentTeam.slug}/projects`}
+                  href={`/team/${store.currentTeam.slug}/t/projects`}
+                  as={`/team/${store.currentTeam.slug}/t/projects`}
+                  highlighterSlug={`/projects`}
                 />
                 <p />
-                <hr />
-                <TopicList />
-                <hr />
-                <div
-                  style={{
-                    position: 'fixed',
-                    bottom: '40px',
-                  }}
-                >
-                  <ActiveLink
-                    linkText="Settings"
-                    href={`/settings?teamSlug=${store.currentTeam.slug}`}
-                    as={`/team/${store.currentTeam.slug}/settings`}
-                  />
-                </div>
+                <TopicList store={this.props.store} />
               </div>
             </Grid>
 

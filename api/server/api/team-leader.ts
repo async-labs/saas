@@ -8,7 +8,7 @@ import User from '../models/User';
 
 const router = express.Router();
 
-// check for Team Leader properly
+// TODO: check for Team Leader properly
 
 router.use((req, res, next) => {
   console.log('team leader API', req.path);
@@ -23,20 +23,33 @@ router.use((req, res, next) => {
 
 router.post('/teams/add', async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, avatarUrl } = req.body;
+    
+    console.log(`Express route: ${name}, ${avatarUrl}`);
 
-    const team = await Team.add({ userId: req.user.id, name });
+    const team = await Team.add({ userId: req.user.id, name, avatarUrl });
 
-    res.json({ slug: team.slug });
+    res.json({ id: team._id, name: team.name, slug: team.slug });
   } catch (err) {
     logger.error(err);
     res.json({ error: err.post || err.toString() });
   }
 });
 
-router.get('/teams/get-member-list', async (req, res) => {
+router.get('/teams/get-members', async (req, res) => {
   try {
-    const users = await User.getTeamMemberList({ userId: req.user.id, teamId: req.query.teamId });
+    const users = await User.getTeamMembers({ userId: req.user.id, teamId: req.query.teamId });
+
+    res.json({ users });
+  } catch (err) {
+    logger.error(err);
+    res.json({ error: err.post || err.toString() });
+  }
+});
+
+router.get('/teams/get-invited-users', async (req, res) => {
+  try {
+    const users = await Invitation.getTeamInvitedUsers({ userId: req.user.id, teamId: req.query.teamId });
 
     res.json({ users });
   } catch (err) {
@@ -73,7 +86,7 @@ router.post('/teams/remove-member', async (req, res) => {
 
 router.post('/topics/add', async (req, res) => {
   try {
-    const { name, teamId } = req.body;
+    const { name, teamId, socketId } = req.body;
 
     const topic = await Topic.add({ userId: req.user.id, name, teamId });
 
@@ -86,9 +99,9 @@ router.post('/topics/add', async (req, res) => {
 
 router.post('/topics/edit', async (req, res) => {
   try {
-    const { id, name } = req.body;
+    const { id, name, socketId } = req.body;
 
-    await Topic.edit({ userId: req.user.id, name, id });
+    const { teamId } = await Topic.edit({ userId: req.user.id, name, id });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -99,11 +112,30 @@ router.post('/topics/edit', async (req, res) => {
 
 router.post('/topics/delete', async (req, res) => {
   try {
-    const { topicId } = req.body;
+    const { id, socketId } = req.body;
 
-    await Topic.delete({ userId: req.user.id, topicId });
+    const { teamId } = await Topic.delete({ userId: req.user.id, id });
 
     res.json({ done: 1 });
+  } catch (err) {
+    logger.error(err);
+    res.json({ error: err.post || err.toString() });
+  }
+});
+
+router.post('/update-team', async (req, res) => {
+  try {
+    const { teamId, name, avatarUrl } = req.body;
+    console.log(name, avatarUrl);
+
+    const team = await Team.updateTeam({
+      userId: req.user.id,
+      teamId,
+      name,
+      avatarUrl,
+    });
+
+    res.json(team);
   } catch (err) {
     logger.error(err);
     res.json({ error: err.post || err.toString() });

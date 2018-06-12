@@ -1,15 +1,28 @@
 import * as React from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
-import { TextField, Button } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
+import SettingList from '../../components/common/SettingList';
+
 import notify from '../../lib/notifier';
 import { addTeam } from '../../lib/api/team-leader';
 
-class AddTeam extends React.Component<{ store: Store }> {
+const styleGrid = {
+  height: '100%',
+};
+
+const styleGridItem = {
+  padding: '0px 20px',
+  borderRight: '0.5px #aaa solid',
+};
+
+type MyProps = { store: Store; teamSlug: string };
+
+class TeamConstraints extends React.Component<MyProps> {
   state = {
     newName: '',
     disabled: false,
@@ -41,37 +54,26 @@ class AddTeam extends React.Component<{ store: Store }> {
     }
   };
 
-  handleCancel = () => {
-    const { currentTeam } = this.props.store;
-    Router.push(`/team/${currentTeam.slug}/settings`);
-  }
-
   render() {
+    // const { currentUser } = this.props.store;
     return (
-      <div style={{ padding: '0px 0px 0px 20px' }}>
+      <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
-          <title>Add Team</title>
+          <title>Team Constraints</title>
           <meta name="description" content="description" />
         </Head>
-        <h2>Add team</h2>
-        <form onSubmit={this.onSubmit}>
-          <TextField
-            value={this.state.newName}
-            label="Name"
-            helperText="Add team's name"
-            onChange={event => {
-              this.setState({ newName: event.target.value });
-            }}
-          />
-          <p />
-          <Button variant="outlined" onClick={this.handleCancel}>Cancel</Button>{' '}
-          <Button variant="raised" color="primary" type="submit" disabled={this.state.disabled}>
-            Add team
-          </Button>
-        </form>
+        <Grid container style={styleGrid}>
+          <Grid item sm={2} xs={12} style={styleGridItem}>
+            <SettingList store={this.props.store} />
+          </Grid>
+          <Grid item sm={10} xs={12} style={styleGridItem}>
+            <h3>Team Constraints</h3>
+            <br />
+          </Grid>
+        </Grid>
       </div>
     );
   }
 }
 
-export default withAuth(withLayout(AddTeam));
+export default withAuth(withLayout(TeamConstraints));
