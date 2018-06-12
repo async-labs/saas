@@ -92,11 +92,18 @@ export default function auth({ ROOT_URL, server }) {
       if (req.user && req.user.isAdmin) {
         res.redirect(dev ? 'http://localhost:3000/admin' : 'https://app1.async-await.com/admin');
       } else {
-        const { defaultTeamSlug } = req.user;
+        let redirectUrlAfterLogin;
+
+        if (req.user.defaultTeamSlug === '') {
+          redirectUrlAfterLogin = 'settings/create-team';
+        } else {
+          redirectUrlAfterLogin = `team/${req.user.defaultTeamSlug}/t/projects`;
+        }
+
         res.redirect(
           dev
-            ? `http://localhost:3000/team/${defaultTeamSlug}/t/projects`
-            : `https://app1.async-await.com/team/${defaultTeamSlug}/t/projects`,
+            ? `http://localhost:3000/${redirectUrlAfterLogin}`
+            : `https://app1.async-await.com/${redirectUrlAfterLogin}`,
         );
       }
     },
