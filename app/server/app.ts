@@ -57,6 +57,24 @@ app.prepare().then(() => {
     nextfn();
   });
 
+  server.get('/', async (req, res) => {
+    const headers: any = {};
+    if (req.headers && req.headers.cookie) {
+      headers.cookie = req.headers.cookie;
+    }
+
+    const { user } = await getUser({ headers });
+    let redirectUrl;
+
+    if (user.defaultTeamSlug === '') {
+      redirectUrl = 'settings/create-team';
+    } else {
+      redirectUrl = `team/${user.defaultTeamSlug}/t/projects`;
+    }
+
+    res.redirect(`${ROOT_URL}/${redirectUrl}`);
+  });
+
   routesWithSlug({ server, app });
 
   server.get('*', (req, res) => {
