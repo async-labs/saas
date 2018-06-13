@@ -114,8 +114,6 @@ class Store {
     if (this.currentTeam) {
       if (this.currentTeam.slug === slug) {
         return;
-      } else {
-        this.currentTeam.leaveSocketRoom();
       }
     }
 
@@ -128,7 +126,6 @@ class Store {
         team.loadInitialTopics().catch(err => console.log(err));
         team.loadInitialMembers().catch(err => console.log(err));
         this.currentTeam = team;
-        team.joinSocketRoom();
         break;
       }
     }

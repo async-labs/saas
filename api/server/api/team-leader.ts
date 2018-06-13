@@ -86,7 +86,7 @@ router.post('/teams/remove-member', async (req, res) => {
 
 router.post('/topics/add', async (req, res) => {
   try {
-    const { name, teamId, socketId } = req.body;
+    const { name, teamId } = req.body;
 
     const topic = await Topic.add({ userId: req.user.id, name, teamId });
 
@@ -99,7 +99,7 @@ router.post('/topics/add', async (req, res) => {
 
 router.post('/topics/edit', async (req, res) => {
   try {
-    const { id, name, socketId } = req.body;
+    const { id, name } = req.body;
 
     const { teamId } = await Topic.edit({ userId: req.user.id, name, id });
 
@@ -112,7 +112,7 @@ router.post('/topics/edit', async (req, res) => {
 
 router.post('/topics/delete', async (req, res) => {
   try {
-    const { id, socketId } = req.body;
+    const { id } = req.body;
 
     const { teamId } = await Topic.delete({ userId: req.user.id, id });
 
@@ -126,7 +126,6 @@ router.post('/topics/delete', async (req, res) => {
 router.post('/update-team', async (req, res) => {
   try {
     const { teamId, name, avatarUrl } = req.body;
-    console.log(name, avatarUrl);
 
     const team = await Team.updateTeam({
       userId: req.user.id,

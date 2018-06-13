@@ -78,7 +78,6 @@ export class Discussion {
     try {
       await editDiscussion({
         id: this._id,
-        socketId: (this.store.socket && this.store.socket.id) || null,
         ...data,
       });
 
@@ -126,7 +125,6 @@ export class Discussion {
   async addPost(data) {
     const { post } = await addPost({
       discussionId: this._id,
-      socketId: (this.store.socket && this.store.socket.id) || null,
       ...data,
     });
 
@@ -140,27 +138,10 @@ export class Discussion {
     await deletePost({
       id: post._id,
       discussionId: this._id,
-      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
       this.posts.remove(post);
     });
-  }
-
-  @action
-  leaveSocketRoom() {
-    if (this.store.socket) {
-      console.log('leaving socket discussion room', this.name);
-      this.store.socket.emit('leaveDiscussion', this._id);
-    }
-  }
-
-  @action
-  joinSocketRoom() {
-    if (this.store.socket) {
-      console.log('joining socket discussion room', this.name);
-      this.store.socket.emit('joinDiscussion', this._id);
-    }
   }
 }

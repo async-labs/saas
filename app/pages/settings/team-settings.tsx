@@ -71,7 +71,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
 
     const file = document.getElementById('upload-file').files[0];
     document.getElementById('upload-file').value = '';
-    const bucket = 'async-teams-avatars';
+    const bucket = 'saas-teams-avatars';
     const prefix = `${currentTeam.slug}`;
 
     if (file == null) {
@@ -91,7 +91,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
       });
 
       await uploadFileUsingSignedPutRequest(file, responseFromApiServerForUpload.signedRequest, {
-        'Cache-Control': 'max-age=259200',
+        'Cache-Control': 'max-age=259000',
       });
 
       this.setState({

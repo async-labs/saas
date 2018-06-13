@@ -55,7 +55,7 @@ class CreateTeam extends React.Component<MyProps> {
 
       console.log(`Returned to client: ${id}, ${name}, ${slug}`);
 
-      const bucket = 'async-teams-avatars';
+      const bucket = 'saas-teams-avatars';
       const prefix = slug;
 
       const responseFromApiServerForUpload = await getSignedRequestForUpload({
@@ -65,7 +65,7 @@ class CreateTeam extends React.Component<MyProps> {
         acl: 'public-read',
       });
       await uploadFileUsingSignedPutRequest(file, responseFromApiServerForUpload.signedRequest, {
-        'Cache-Control': 'max-age=259200',
+        'Cache-Control': 'max-age=259000',
       });
 
       const properAvatarUrl = responseFromApiServerForUpload.url;

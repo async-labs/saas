@@ -39,20 +39,6 @@ class Discussion extends React.Component<Props> {
     this.changeDiscussion(this.props);
   }
 
-  componentWillUnmount() {
-    const { store } = this.props;
-
-    const { currentTopic } = store.currentTeam;
-
-    if (currentTopic) {
-      currentTopic.leaveSocketRoom();
-    }
-
-    if (currentTopic && currentTopic.currentDiscussion) {
-      currentTopic.currentDiscussion.leaveSocketRoom();
-    }
-  }
-
   componentWillReceiveProps(nextProps) {
     this.changeDiscussion(nextProps);
   }
@@ -80,29 +66,9 @@ class Discussion extends React.Component<Props> {
     const { currentTopic } = store.currentTeam;
 
     if (!currentTopic || currentTopic.slug !== topicSlug) {
-      if (currentTopic) {
-        currentTopic.leaveSocketRoom();
-
-        if (currentTopic.currentDiscussion) {
-          currentTopic.currentDiscussion.leaveSocketRoom();
-        }
-      }
-
       currentTeam.setCurrentTopicAndDiscussion({ topicSlug, discussionSlug });
     } else if (currentTopic.currentDiscussionSlug !== discussionSlug) {
-      if (currentTopic.currentDiscussion) {
-        currentTopic.currentDiscussion.leaveSocketRoom();
-      }
-
       currentTopic.setCurrentDiscussion(discussionSlug);
-    }
-
-    if (currentTopic) {
-      currentTopic.joinSocketRoom();
-
-      if (currentTopic.currentDiscussion) {
-        currentTopic.currentDiscussion.joinSocketRoom();
-      }
     }
   }
 

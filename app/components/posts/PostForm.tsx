@@ -40,36 +40,47 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
   });
 }
 
+interface MyProps {
+  store?: Store;
+  post?: Post;
+  onFinished?: Function;
+  open?: boolean;
+  classes: { paper: string };
+}
+
+interface MyState {
+  postId: string | null;
+  content: string;
+  htmlContent: string;
+  disabled: boolean;
+  uploadedFileUrl: string;
+}
+
 @inject('store')
 @observer
-class PostForm extends React.Component<
-  {
-    store?: Store;
-    post?: Post;
-    onFinished?: Function;
-    open?: boolean;
-    isEditing?: boolean;
-    classes: { paper: string };
-  },
-  {
-    content: string;
-    htmlContent: string;
-    disabled: boolean;
-    uploadedFileUrl: string;
-  }
-> {
+class PostForm extends React.Component<MyProps, MyState> {
   state = {
+    postId: null,
     content: '',
     htmlContent: '',
     disabled: false,
     uploadedFileUrl: '',
   };
 
-  static getDerivedStateFromProps(nextProps) {
-    const { post, isEditing } = nextProps;
+  static getDerivedStateFromProps(props: MyProps, state) {
+    const { post } = props;
+
+    if (!post && !state.postId) {
+      return null;
+    }
+
+    if (post && post._id === state.postId) {
+      return null;
+    }
 
     return {
-      content: (isEditing && post.content) || '',
+      content: (post && post.content) || '',
+      postId: (post && post._id) || null,
     };
   }
 
@@ -78,7 +89,8 @@ class PostForm extends React.Component<
 
     const { content } = this.state;
     const htmlContent = marked(he.decode(content));
-    const { post, onFinished, store, isEditing } = this.props;
+    const { post, onFinished, store } = this.props;
+    const isEditing = !!post;
 
     if (!content) {
       notify('Add content to your Post');
@@ -209,7 +221,7 @@ class PostForm extends React.Component<
 
     document.getElementById('upload-file').value = '';
 
-    const bucket = 'async-posts';
+    const bucket = 'saas-posts';
     const prefix = `${currentTeam.slug}`;
 
     const { width, height } = await getImageDimension(file);
@@ -231,10 +243,11 @@ class PostForm extends React.Component<
 
       const markdownImage = `<details class="lazy-load-image">
         <summary>Click to see <b>${file.name}</b></summary>
-        <p>
-          <img src="https://place-hold.it/${width}x${height}.png&text=loading...&fontsize=12"
-            data-src="${imgSrc}" alt="Async" class="s3-image"/>
-        </p>
+
+        <img data-src="${imgSrc}" alt="Async" class="s3-image" style="display: none;" />
+        <div class="image-placeholder" style="width: ${width}px; height: ${height}px;">
+          <p class="image-placeholder-text">loading ...</p>
+        </div>
       </details>`;
 
       this.setState({
@@ -253,7 +266,8 @@ class PostForm extends React.Component<
   };
 
   render() {
-    const { classes, open, isEditing } = this.props;
+    const { classes, open } = this.props;
+    const isEditing = !!this.props.post;
 
     const { paper } = classes;
     const { content, htmlContent } = this.state;
@@ -375,5 +389,4 @@ export default withStyles(styles)<{
   post?: Post;
   onFinished?: Function;
   open?: boolean;
-  isEditing?: boolean;
 }>(PostForm);

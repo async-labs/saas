@@ -32,16 +32,6 @@ class Topic extends React.Component<{
     this.changeTopic();
   }
 
-  componentWillUnmount() {
-    const { store } = this.props;
-
-    const { currentTopic } = store.currentTeam;
-
-    if (currentTopic) {
-      currentTopic.leaveSocketRoom();
-    }
-  }
-
   changeTopic() {
     const { teamSlug, topicSlug, store, isServer } = this.props;
     const { currentTeam } = store;
@@ -58,12 +48,7 @@ class Topic extends React.Component<{
     const { currentTopic } = currentTeam;
 
     if (!currentTopic || currentTopic.slug !== topicSlug) {
-      if (currentTopic) {
-        currentTopic.leaveSocketRoom();
-      }
-
       currentTeam.setCurrentTopic(topicSlug);
-
       return;
     }
 
@@ -75,8 +60,6 @@ class Topic extends React.Component<{
         }`,
         `/team/${teamSlug}/t/${currentTopic.slug}/${currentDiscussion.slug}`,
       );
-    } else {
-      currentTopic.joinSocketRoom();
     }
   }
 

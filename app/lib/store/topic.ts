@@ -137,7 +137,6 @@ export class Topic {
     try {
       await editTopic({
         id: this._id,
-        socketId: (this.store.socket && this.store.socket.id) || null,
         ...data,
       });
 
@@ -154,7 +153,6 @@ export class Topic {
   async addDiscussion(data) {
     const { discussion } = await addDiscussion({
       topicId: this._id,
-      socketId: (this.store.socket && this.store.socket.id) || null,
       ...data,
     });
 
@@ -174,7 +172,6 @@ export class Topic {
   async deleteDiscussion(id: string) {
     await deleteDiscussion({
       id,
-      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
@@ -205,25 +202,9 @@ export class Topic {
     });
   }
 
-  @action
-  leaveSocketRoom() {
-    if (this.store.socket) {
-      console.log('leaving socket topic room', this.name);
-      this.store.socket.emit('leaveTopic', this._id);
-    }
-  }
-
-  @action
-  joinSocketRoom() {
-    if (this.store.socket) {
-      console.log('joining socket topic room', this.name);
-      this.store.socket.emit('joinTopic', this._id);
-    }
-  }
-
   @computed
   get orderedDiscussions() {
-    return this.discussions.sort((a, b) => {
+    return this.discussions.slice().sort((a, b) => {
       const isStarredA = this.store.currentUser.starredDiscussionIds.indexOf(a._id);
       const isStarredB = this.store.currentUser.starredDiscussionIds.indexOf(b._id);
 

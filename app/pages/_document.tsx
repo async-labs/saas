@@ -79,6 +79,22 @@ class MyDocument extends Document {
               mark {
                 background-color: #ffff0060;
               }
+              .image-placeholder {
+                background-color: #ddd;
+                display: flex;
+                margin-bottom: 10px;
+              }
+              .image-placeholder-text {
+                color: #111;
+                font-weight: 400;
+                align-self: center;
+                text-align: center;
+                width: 100%;
+                overflow: hidden;
+              }
+              summary:focus {
+                outline: none;
+              }
             `}
           </style>
           <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
@@ -104,11 +120,9 @@ class MyDocument extends Document {
             fontWeight: 300,
             lineHeight: '1.5em',
             height: '100%',
-            overflowY: 'scroll',
             right: '-15px',
             left: 0,
             position: 'absolute',
-            overflow: 'auto !important'
           }}
         >
           <Main />

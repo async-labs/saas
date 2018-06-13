@@ -185,7 +185,6 @@ export class Team {
   async addTopic(data) {
     const { topic } = await addTopic({
       teamId: this._id,
-      socketId: (this.store.socket && this.store.socket.id) || null,
       ...data,
     });
 
@@ -205,7 +204,6 @@ export class Team {
 
     await deleteTopic({
       id: topicId,
-      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
@@ -283,21 +281,5 @@ export class Team {
     runInAction(() => {
       this.members.delete(userId);
     });
-  }
-
-  @action
-  leaveSocketRoom() {
-    if (this.store.socket) {
-      console.log('leaving socket team room', this.name);
-      this.store.socket.emit('leaveTeam', this._id);
-    }
-  }
-
-  @action
-  joinSocketRoom() {
-    if (this.store.socket) {
-      console.log('joining socket team room', this.name);
-      this.store.socket.emit('joinTeam', this._id);
-    }
   }
 }

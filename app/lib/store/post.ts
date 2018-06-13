@@ -38,7 +38,6 @@ export class Post {
     try {
       await editPost({
         id: this._id,
-        socketId: (this.store.socket && this.store.socket.id) || null,
         content: data.content,
       });
 

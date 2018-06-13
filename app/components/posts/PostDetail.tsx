@@ -75,15 +75,22 @@ class PostDetail extends React.Component<{
       return;
     }
 
-    const images = target.getElementsByClassName('s3-image');
-
-    for (let i = 0; i < images.length; i++) {
-      const elm = images.item(i) as HTMLElement;
-      if (!elm.hasAttribute('loaded') && elm.dataset.src) {
-        elm.setAttribute('src', elm.dataset.src);
-        elm.setAttribute('loaded', '1');
-      }
+    const image = target.getElementsByClassName('s3-image').item(0) as HTMLImageElement;
+    if (!image || image.hasAttribute('loaded') || !image.dataset.src) {
+      return;
     }
+
+    const placeholder = target.getElementsByClassName('image-placeholder').item(0);
+    image.onload = function() {
+      if (placeholder) {
+        placeholder.remove();
+      }
+
+      image.style.display = 'inline';
+    };
+
+    image.setAttribute('src', image.dataset.src);
+    image.setAttribute('loaded', '1');
   };
 
   editPost = () => {
