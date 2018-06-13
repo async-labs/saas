@@ -86,7 +86,7 @@ class InvitationClass extends mongoose.Model {
       } else {
         await Team.update({ _id: team._id }, { $addToSet: { memberIds: registeredUser._id } });
 
-        if (registeredUser._id !== team.teamLeaderId && registeredUser.defaultTeamSlug === '') {
+        if (registeredUser._id !== team.teamLeaderId && !registeredUser.defaultTeamSlug) {
           await User.findByIdAndUpdate(registeredUser._id,  { $set: { defaultTeamSlug: team.slug }});
         }
       }
@@ -183,7 +183,7 @@ class InvitationClass extends mongoose.Model {
     if (team && !team.memberIds.includes(user._id)) {
       await Team.update({ _id: team._id }, { $addToSet: { memberIds: user._id } });
 
-      if (user._id !== team.teamLeaderId && user.defaultTeamSlug === '') {
+      if (user._id !== team.teamLeaderId && !user.defaultTeamSlug) {
         await User.findByIdAndUpdate(user._id,  { $set: { defaultTeamSlug: team.slug }});
       }
     }

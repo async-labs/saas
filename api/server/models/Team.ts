@@ -86,9 +86,9 @@ class TeamClass extends mongoose.Model {
 
     let defaultTeam = false;
     if ((await this.find({ teamLeaderId: userId }).count()) === 0) {
-      await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: slug }});
+      await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: slug } });
       defaultTeam = true;
-    };
+    }
 
     const team = await this.create({
       teamLeaderId: userId,
@@ -113,7 +113,11 @@ class TeamClass extends mongoose.Model {
   }
 
   static async updateTeam({ userId, teamId, name, avatarUrl }) {
-    const team = await this.findById(teamId, 'slug name defaultTeam');
+    const team = await this.findById(teamId, 'slug name defaultTeam teamLeaderId');
+
+    if (team.teamLeaderId !== userId) {
+      throw new Error('Permission denied');
+    }
 
     const modifier = { name: team.name, avatarUrl, slug: team.slug };
 
@@ -125,7 +129,7 @@ class TeamClass extends mongoose.Model {
     await this.updateOne({ _id: teamId }, { $set: modifier });
 
     if (team.defaultTeam) {
-      await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: modifier.slug }});
+      await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: modifier.slug } });
     }
 
     return this.findById(teamId, 'name avatarUrl slug defaultTeam').lean();
