@@ -74,7 +74,7 @@ class TeamProfile extends React.Component<MyProps, MyState> {
 
     const file = document.getElementById('upload-file').files[0];
     document.getElementById('upload-file').value = '';
-    const bucket = 'async-teams-avatars';
+    const bucket = 'saas-teams-avatars';
     const prefix = `${currentTeam.slug}`;
 
     if (file == null) {

@@ -61,7 +61,7 @@ class CreateTeam extends React.Component<MyProps> {
 
       console.log(`Returned to client: ${id}, ${name}, ${slug}`);
 
-      const bucket = 'async-teams-avatars';
+      const bucket = 'saas-teams-avatars';
       const prefix = slug;
 
       const responseFromApiServerForUpload = await getSignedRequestForUpload({

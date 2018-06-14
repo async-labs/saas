@@ -35,7 +35,6 @@ const mongoSchema = new mongoose.Schema({
 
   defaultTeamSlug: {
     type: String,
-    required: true,
     default: '',
   },
 
@@ -210,6 +209,7 @@ class UserClass extends mongoose.Model {
       displayName,
       avatarUrl,
       slug,
+      defaultTeamSlug: ''
     });
 
     const template = await getEmailTemplate('welcome', {

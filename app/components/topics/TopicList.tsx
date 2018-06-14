@@ -37,7 +37,7 @@ class TopicList extends React.Component<{ store: Store }> {
     const { currentTeam } = store;
 
     if (!currentTeam) {
-      return <div>Team not selected</div>;
+      return <div style={{ fontSize: '13px' }}>Create new team or select existing team.</div>;
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {

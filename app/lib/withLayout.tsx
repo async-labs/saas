@@ -1,12 +1,13 @@
 import React from 'react';
+import Router from 'next/router';
+import Link from 'next/link';
 import NProgress from 'nprogress';
 import { observer } from 'mobx-react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
-import Router from 'next/router';
-import Link from 'next/link';
+import Button from '@material-ui/core/Button';
 
 import TopicList from '../components/topics/TopicList';
 import getContext from '../lib/context';
@@ -185,16 +186,6 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
         return <div style={{ color: 'black' }}>2-loading...</div>;
       }
 
-      if (teamRequired && !store.currentTeam) {
-        return (
-          <div>
-            <Link href="/settings/create-team">
-              <a style={{ color: 'black' }}>Add team</a>
-            </Link>
-          </div>
-        );
-      }
-
       return (
         <MuiThemeProvider
           theme={this.pageContext.theme}
@@ -215,8 +206,11 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
                 )}
               >
                 <Avatar
-                  src={`${store.currentTeam.avatarUrl ||
-                    'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
+                  src={
+                    store.currentTeam
+                      ? store.currentTeam.avatarUrl
+                      : 'https://storage.googleapis.com/async-await/async-logo-40.svg'
+                  }
                   alt="Team logo"
                   style={{
                     margin: '20px auto',
@@ -237,9 +231,19 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
               </div>
             </Grid>
 
-            <Grid item sm={11} xs={12}>
-              <BaseComponent isTL={this.state.isTL} {...this.props} />
-            </Grid>
+            {teamRequired && !store.currentTeam ? (
+              <Grid item sm={11} xs={12}>
+                <Link prefetch href="/settings/create-team">
+                  <Button style={{ margin: '20px' }} variant="outlined">
+                    Create team
+                  </Button>
+                </Link>
+              </Grid>
+            ) : (
+              <Grid item sm={11} xs={12}>
+                <BaseComponent isTL={this.state.isTL} {...this.props} />
+              </Grid>
+            )}
           </Grid>
           <Notifier />
           <Confirm />

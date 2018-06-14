@@ -98,7 +98,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
 
     document.getElementById('upload-file').value = '';
 
-    const bucket = 'async-posts';
+    const bucket = 'saas-posts';
     const prefix = `${currentTeam.slug}`;
 
     const { width, height } = await getImageDimension(file);

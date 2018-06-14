@@ -72,7 +72,7 @@ class Discussion extends React.Component<Props> {
     const { selectedPost, drawerState } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return <div>Team not selected</div>;
+      return <div style={{ padding: '20px 0px 0px 0px' }}>Create new team or select existing team.</div>;
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {
