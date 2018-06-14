@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
 import generateSlug from '../utils/slugify';
+import { subscribe } from '../mailchimp';
 import sendEmail from '../aws-ses';
 import logger from '../logs';
 import getEmailTemplate from './EmailTemplate';
@@ -224,6 +225,15 @@ class UserClass extends mongoose.Model {
       });
     } catch (err) {
       logger.error('Email sending error:', err);
+    }
+
+    try {
+      await subscribe({
+        email,
+        listName: 'signups',
+      });
+    } catch (error) {
+      logger.error('Mailchimp error:', error);
     }
 
     return _.pick(newUser, this.publicFields());
