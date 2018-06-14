@@ -151,19 +151,6 @@ export class Team {
   }
 
   @action
-  handleTopicRealtimeEvent(data) {
-    const { action } = data;
-
-    if (action === 'added') {
-      this.addTopicToLocalCache(data.topic);
-    } else if (action === 'edited') {
-      this.editTopicFromLocalCache(data.id, data.name);
-    } else if (action === 'deleted') {
-      this.removeTopicFromLocalCache(data.id);
-    }
-  }
-
-  @action
   addTopicToLocalCache(data) {
     const topicObj = new Topic({ team: this, store: this.store, ...data });
     this.topics.unshift(topicObj);
@@ -250,7 +237,12 @@ export class Team {
 
     try {
       const { users = [] } = await getTeamMembers(this._id);
-      const { invitations = [] } = await getTeamInvitedUsers(this._id);
+
+      let invitations = [];
+      if (this.store.currentUser._id === this.teamLeaderId) {
+        invitations = await getTeamInvitedUsers(this._id);
+      }
+
       runInAction(() => {
         for (let i = 0; i < users.length; i++) {
           this.members.set(users[i]._id, new User(users[i]));
@@ -258,6 +250,7 @@ export class Team {
         for (let i = 0; i < invitations.length; i++) {
           this.invitedUsers.set(invitations[i]._id, new Invitation(invitations[i]));
         }
+
         this.isLoadingMembers = false;
       });
     } catch (error) {

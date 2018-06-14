@@ -2,13 +2,13 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper';
-import Link from 'next/link';
 import { observer, inject } from 'mobx-react';
 
 import { Store, Topic } from '../../lib/store';
 
+import ActiveLink from '../common/ActiveLink';
 import DiscussionActionMenu from '../discussions/DiscussionActionMenu';
-import DiscussionForm from './DiscussionForm';
+import CreateDiscussionForm from './CreateDiscussionForm';
 
 const stylePaper = {
   margin: '10px 5px',
@@ -20,13 +20,6 @@ const stylePaper = {
 class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
   state = {
     discussionFormOpen: false,
-    selectedDiscussion: null,
-  };
-
-  handleDiscussionEvent = data => {
-    console.log('discussion realtime event', data);
-    const { topic } = this.props;
-    topic.handleDiscussionRealtimeEvent(data);
   };
 
   addDiscussion = event => {
@@ -35,12 +28,11 @@ class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
   };
 
   handleDiscussionFormClose = () => {
-    this.setState({ discussionFormOpen: false, selectedDiscussion: null });
+    this.setState({ discussionFormOpen: false });
   };
 
   render() {
-    const { store, topic } = this.props;
-    const { selectedDiscussion } = this.state;
+    const { topic } = this.props;
 
     return (
       <div>
@@ -61,6 +53,7 @@ class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
         <ul>
           {topic &&
             topic.orderedDiscussions.map(d => {
+
               return (
                 <Paper
                   key={d._id}
@@ -68,21 +61,14 @@ class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
                   elevation={topic.currentDiscussionSlug === d.slug ? 8 : 2}
                 >
                   <li key={d._id}>
-                    <Link
+                    <ActiveLink
+                      linkText={d.name}
                       href={`/discussions/detail?teamSlug=${topic.team.slug}&topicSlug=${
                         topic.slug
                       }&discussionSlug=${d.slug}`}
                       as={`/team/${topic.team.slug}/t/${topic.slug}/${d.slug}`}
-                    >
-                      <a
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: topic.currentDiscussionSlug === d.slug ? 600 : 300,
-                        }}
-                      >
-                        {d.name}
-                      </a>
-                    </Link>
+                      highlighterSlug={`/team/${topic.team.slug}/t/${topic.slug}/${d.slug}`}
+                    />
 
                     <DiscussionActionMenu discussion={d} />
                   </li>
@@ -91,10 +77,9 @@ class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
             })}
         </ul>
 
-        <DiscussionForm
+        <CreateDiscussionForm
           open={this.state.discussionFormOpen}
           onClose={this.handleDiscussionFormClose}
-          discussion={selectedDiscussion}
         />
       </div>
     );

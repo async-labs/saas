@@ -7,7 +7,7 @@ import confirm from '../../lib/confirm';
 import { Discussion, Store } from '../../lib/store';
 
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
-import DiscussionForm from './DiscussionForm';
+import EditDiscussionForm from './EditDiscussionForm';
 
 const getMenuOptions = discussion => ({
   dataId: discussion._id,
@@ -116,11 +116,13 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
           itemOptions={getMenuItemOptions(discussion, this)}
         />
 
-        <DiscussionForm
-          open={this.state.discussionFormOpen}
-          onClose={this.handleDiscussionFormClose}
-          discussion={discussion}
-        />
+        {this.state.discussionFormOpen ? (
+          <EditDiscussionForm
+            open={true}
+            onClose={this.handleDiscussionFormClose}
+            discussion={discussion}
+          />
+        ) : null}
       </span>
     );
   }

@@ -2,7 +2,9 @@ import React from 'react';
 import NProgress from 'nprogress';
 import { observer } from 'mobx-react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import { Grid, CssBaseline, Avatar } from '@material-ui/core';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar';
 import Router from 'next/router';
 import Link from 'next/link';
 
@@ -11,7 +13,6 @@ import getContext from '../lib/context';
 import Notifier from '../components/common/Notifier';
 import Confirm from '../components/common/Confirm';
 import MenuWithLinks from '../components/common/MenuWithLinks';
-import ActiveLink from '../components/common/ActiveLink';
 import * as gtag from './gtag';
 import { Store } from './store';
 
@@ -33,22 +34,33 @@ const getTeamOptionsMenuWithLinks = teams =>
   teams.map(t => ({
     text: t.name,
     avatarUrl: t.avatarUrl,
-    href: `/team/${t.slug}/t/projects`,
+    href: `/topics/detail?teamSlug=${t.slug}&topicSlug=projects`,
     as: `/team/${t.slug}/t/projects`,
     simple: false,
     highlighterSlug: `/${t.slug}`,
   }));
 
-const menuUnderTeamList = team => [
+const menuUnderTeamList = (team, isTL) => [
   {
     separator: true,
   },
   {
-    text: `Settings`,
-    href: `/team/${team.slug}/settings/team-members`,
-    as: `/team/${team.slug}/settings/team-members`,
+    text: 'Create new team',
+    href: '/settings/create-team',
     simple: true,
   },
+  isTL
+    ? {
+        text: `Settings`,
+        href: `/settings/team-members?teamSlug=${team.slug}`,
+        as: `/team/${team.slug}/settings/team-members`,
+        simple: true,
+      }
+    : {
+        text: `Settings`,
+        href: `/settings/your-profile`,
+        simple: true,
+      },
   {
     text: 'Log out',
     href: `${LOG_OUT_URL}/logout`,
@@ -59,17 +71,25 @@ const menuUnderTeamList = team => [
 
 function withLayout(BaseComponent, { teamRequired = true } = {}) {
   type MyProps = { pageContext: object; store: Store; teamSlug: string };
+  type MyState = { isTL: boolean };
 
   @observer
-  class App extends React.Component<MyProps> {
+  class App extends React.Component<MyProps, MyState> {
     public static defaultProps: { pageContext: null };
 
     constructor(props, context) {
       super(props, context);
       this.pageContext = this.props.pageContext || getContext();
+
+      const { currentTeam, currentUser } = props.store;
+      this.state = {
+        isTL: (currentUser && currentTeam && currentUser._id === currentTeam.teamLeaderId) || false,
+      };
     }
 
-    static async getInitialProps({ query, ctx, req }) {
+    static async getInitialProps(ctx) {
+      const { query, req } = ctx;
+
       let baseComponentProps = {};
       let teamSlug = '';
       let topicSlug = '';
@@ -86,7 +106,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       topicSlug = query.topicSlug;
       discussionSlug = query.discussionSlug;
 
-      return { baseComponentProps, teamSlug, topicSlug, discussionSlug, isServer: !!req };
+      return { ...baseComponentProps, teamSlug, topicSlug, discussionSlug, isServer: !!req };
     }
 
     componentDidMount() {
@@ -112,6 +132,13 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
 
       if (!currentTeam || currentTeam.slug !== teamSlug) {
         store.setCurrentTeam(teamSlug);
+
+        const { currentTeam: newTeam, currentUser } = store;
+        const isTL = (currentUser && newTeam && currentUser._id === newTeam.teamLeaderId) || false;
+
+        if (this.state.isTL !== isTL) {
+          this.setState({ isTL });
+        }
       }
     }
 
@@ -122,6 +149,8 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       // Add teamRequired: false to some pages that don't require team
 
       const { store } = this.props;
+
+      //
 
       if (store.isLoggingIn) {
         return <div style={{ color: 'black' }}>1-loading...</div>;
@@ -157,7 +186,6 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       }
 
       if (teamRequired && !store.currentTeam) {
-        console.log(store.currentTeam);
         return (
           <div>
             <Link href="/settings/create-team">
@@ -183,7 +211,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
             <Grid item sm={1} xs={12} style={{ borderRight: '0.5px #aaa solid' }}>
               <MenuWithLinks
                 options={getTeamOptionsMenuWithLinks(store.teams).concat(
-                  menuUnderTeamList(store.currentTeam),
+                  menuUnderTeamList(store.currentTeam, this.state.isTL),
                 )}
               >
                 <Avatar
@@ -204,19 +232,13 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
               <hr />
               <div>
                 <p />
-                <ActiveLink
-                  linkText="Projects"
-                  href={`/team/${store.currentTeam.slug}/t/projects`}
-                  as={`/team/${store.currentTeam.slug}/t/projects`}
-                  highlighterSlug={`/projects`}
-                />
                 <p />
                 <TopicList store={this.props.store} />
               </div>
             </Grid>
 
             <Grid item sm={11} xs={12}>
-              <BaseComponent {...this.props} />
+              <BaseComponent isTL={this.state.isTL} {...this.props} />
             </Grid>
           </Grid>
           <Notifier />

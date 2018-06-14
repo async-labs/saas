@@ -1,7 +1,10 @@
 import * as React from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
-import { TextField, Button, Avatar, Grid } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar';
 import NProgress from 'nprogress';
 
 import { Store } from '../../lib/store';
@@ -24,7 +27,7 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-type MyProps = { store: Store };
+type MyProps = { store: Store, isTL: boolean };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class YourProfile extends React.Component<MyProps, MyState> {
@@ -70,7 +73,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
 
     const file = document.getElementById('upload-file').files[0];
     document.getElementById('upload-file').value = '';
-    const bucket = 'saas-teams-avatars';
+    const bucket = 'async-users-avatars';
     const prefix = `${currentUser.slug}`;
 
     if (file == null) {
@@ -90,7 +93,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
       });
 
       await uploadFileUsingSignedPutRequest(file, responseFromApiServerForUpload.signedRequest, {
-        'Cache-Control': 'max-age=259000',
+        'Cache-Control': 'max-age=2592000',
       });
 
       this.setState({
@@ -111,7 +114,10 @@ class YourProfile extends React.Component<MyProps, MyState> {
   };
 
   render() {
+    const { store, isTL } = this.props;
     const { newName, newAvatarUrl } = this.state;
+
+    
     return (
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
@@ -121,7 +127,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
 
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={this.props.store} />
+            <SettingList store={store} isTL={isTL} />
           </Grid>
           <Grid item sm={10} xs={12} style={styleGridItem}>
             <h3>Your profile</h3>

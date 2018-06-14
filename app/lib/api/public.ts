@@ -18,3 +18,8 @@ export const getInvitedTeamByToken = (token: string) =>
     method: 'GET',
     qs: { token },
   });
+
+export const removeInvitationIfMemberAdded = (token: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/invitations/remove-invitation-if-member-added`, {
+    body: JSON.stringify({ token }),
+  });

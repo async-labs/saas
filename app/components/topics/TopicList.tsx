@@ -22,12 +22,6 @@ class TopicList extends React.Component<{ store: Store }> {
     addPublicTopicOpen: false,
   };
 
-  handleTopicEvent = data => {
-    console.log('topic realtime event', data);
-    const { store } = this.props;
-    store.currentTeam.handleTopicRealtimeEvent(data);
-  };
-
   handleAddPublicTopicClose = () => {
     this.setState({ addPublicTopicOpen: false });
   };

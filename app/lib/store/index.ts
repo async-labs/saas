@@ -1,15 +1,7 @@
 import * as mobx from 'mobx';
 import { observable, action, IObservableArray, runInAction } from 'mobx';
-import isMatch from 'lodash/isMatch';
 
-import getRootUrl from '../api/getRootUrl';
-
-import {
-  getTeamList,
-  getNotificationList,
-  deleteNotifications,
-  createNotification,
-} from '../api/team-member';
+import { getTeamList } from '../api/team-member';
 
 import { Post } from './post';
 import { Discussion } from './discussion';
@@ -25,19 +17,15 @@ mobx.configure({ enforceActions: true });
 
 class Store {
   @observable teams: IObservableArray<Team> = <IObservableArray>[];
-  @observable notifications: IObservableArray<Notification> = <IObservableArray>[];
 
   @observable isLoadingTeams = false;
   @observable isInitialTeamsLoaded = false;
-  @observable isLoadingNotifications = false;
-  @observable isInitialNotificationsLoaded = false;
 
   @observable currentUser?: User = null;
   @observable currentTeam?: Team;
   @observable isLoggingIn = true;
 
   constructor(initialState: any = {}) {
-
     if (initialState.teams) {
       this.setTeams(initialState.teams, initialState.teamSlug);
     }
@@ -63,7 +51,6 @@ class Store {
   @action
   changeUserState(user?, selectedTeamSlug?: string) {
     this.teams.clear();
-    this.notifications.clear();
 
     this.isInitialTeamsLoaded = false;
     this.setCurrentUser(user, selectedTeamSlug);

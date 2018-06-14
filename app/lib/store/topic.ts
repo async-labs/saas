@@ -97,25 +97,14 @@ export class Topic {
   }
 
   @action
-  handleDiscussionRealtimeEvent(data) {
-    const { action } = data;
-
-    if (action === 'added') {
-      this.addDiscussionToLocalCache(data.discussion);
-    } else if (action === 'edited') {
-      this.editDiscussionFromLocalCache(data);
-    } else if (action === 'deleted') {
-      this.removeDiscussionFromLocalCache(data.id);
-    }
-  }
-
-  @action
-  addDiscussionToLocalCache(data) {
+  addDiscussionToLocalCache(data): Discussion {
     const obj = new Discussion({ topic: this, store: this.store, ...data });
 
     if (!obj.isPrivate || obj.memberIds.includes(this.store.currentUser._id)) {
       this.discussions.unshift(obj);
     }
+
+    return obj;
   }
 
   @action
@@ -150,21 +139,17 @@ export class Topic {
   }
 
   @action
-  async addDiscussion(data) {
+  async addDiscussion(data): Promise<Discussion> {
     const { discussion } = await addDiscussion({
       topicId: this._id,
       ...data,
     });
 
-    runInAction(() => {
-      this.addDiscussionToLocalCache(discussion);
-
-      Router.push(
-        `/discussions/detail?teamSlug=${this.team.slug}&topicSlug=${this.slug}&discussionSlug=${
-          discussion.slug
-        }`,
-        `/team/${this.team.slug}/t/${this.slug}/${discussion.slug}`,
-      );
+    return new Promise<Discussion>(resolve => {
+      runInAction(() => {
+        const obj = this.addDiscussionToLocalCache(discussion);
+        resolve(obj);
+      });
     });
   }
 
@@ -204,23 +189,6 @@ export class Topic {
 
   @computed
   get orderedDiscussions() {
-    return this.discussions.slice().sort((a, b) => {
-      const isStarredA = this.store.currentUser.starredDiscussionIds.indexOf(a._id);
-      const isStarredB = this.store.currentUser.starredDiscussionIds.indexOf(b._id);
-
-      if (isStarredA === -1 && isStarredB === -1) {
-        return b.lastActivityDate.getTime() - a.lastActivityDate.getTime();
-      }
-
-      if (isStarredA !== -1 && isStarredB !== -1) {
-        return isStarredA - isStarredB;
-      }
-
-      if (isStarredA !== -1) {
-        return -1;
-      }
-
-      return 1;
-    });
+    return this.discussions;
   }
 }

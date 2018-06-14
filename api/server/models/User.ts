@@ -43,7 +43,6 @@ const mongoSchema = new mongoose.Schema({
   teamIds: [String],
 
   projectIds: [String],
-  starredDiscussionIds: [String],
 
   isAdmin: {
     type: Boolean,
@@ -75,7 +74,6 @@ export interface IUserDocument extends mongoose.Document {
   isGithubConnected: boolean;
   githubAccessToken: string;
 
-  starredDiscussionIds: string[];
 }
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -112,15 +110,6 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     avatarUrl: string;
     googleToken: { refreshToken?: string; accessToken?: string };
   }): Promise<IUserDocument>;
-
-  starDiscussion({ userId, discussionId }: { userId: string; discussionId: string }): Promise<void>;
-  unstarDiscussion({
-    userId,
-    discussionId,
-  }: {
-    userId: string;
-    discussionId: string;
-  }): Promise<void>;
 }
 
 
@@ -141,7 +130,6 @@ class UserClass extends mongoose.Model {
       'isAdmin',
       'isGithubConnected',
       'teamIds',
-      'starredDiscussionIds',
       'defaultTeamSlug'
     ];
   }
@@ -239,14 +227,6 @@ class UserClass extends mongoose.Model {
     }
 
     return _.pick(newUser, this.publicFields());
-  }
-
-  static starDiscussion({ userId, discussionId }) {
-    return this.updateOne({ _id: userId }, { $addToSet: { starredDiscussionIds: discussionId } });
-  }
-
-  static unstarDiscussion({ userId, discussionId }) {
-    return this.updateOne({ _id: userId }, { $pull: { starredDiscussionIds: discussionId } });
   }
 }
 

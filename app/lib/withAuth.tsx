@@ -8,7 +8,7 @@ export default function withAuth(
   BaseComponent,
   { loginRequired = true, logoutRequired = false, adminRequired = false } = {},
 ) {
-  class App extends React.Component<{ store: Store; teamSlug: string }> {
+  class App extends React.Component<{ store: Store }> {
     static async getInitialProps(ctx) {
       const props: any = {};
 

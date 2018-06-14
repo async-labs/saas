@@ -88,21 +88,6 @@ export const uploadFileUsingSignedPutRequest = (file, signedRequest, headers = {
     headers,
   });
 
-export const getNotificationList = () =>
-  sendRequestAndGetResponse(`${BASE_PATH}/notifications/list`, {
-    method: 'GET',
-  });
-
-export const createNotification = params =>
-  sendRequestAndGetResponse(`${BASE_PATH}/notifications/create`, {
-    body: JSON.stringify({ params }),
-  });
-
-export const deleteNotifications = (ids: string[]) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/notifications/bulk-delete`, {
-    body: JSON.stringify({ ids }),
-  });
-
 export const updateProfile = data =>
   sendRequestAndGetResponse(`${BASE_PATH}/user/update-profile`, {
     body: JSON.stringify(data),

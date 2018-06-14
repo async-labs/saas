@@ -29,13 +29,8 @@ export default function routesWithSlug({ server, app }) {
     app.render(req, res, '/settings/team-constraints', { teamSlug });
   });
 
-  server.get('/team/:teamSlug/settings/team-settings', (req, res) => {
+  server.get('/team/:teamSlug/settings/team-profile', (req, res) => {
     const { teamSlug } = req.params;
-    app.render(req, res, '/settings/team-settings', { teamSlug });
+    app.render(req, res, '/settings/team-profile', { teamSlug });
   });
-
-  // server.get('/team/:teamSlug/t/knowledge', (req, res) => {
-  //   const { teamSlug } = req.params;
-  //   app.render(req, res, '/topics/knowledgeDetail', { teamSlug, topicSlug: 'knowledge' });
-  // });
 }

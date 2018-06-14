@@ -1,11 +1,15 @@
 import * as React from 'react';
+import { inject, observer } from 'mobx-react';
+
 import Head from 'next/head';
-import { TextField, Button, Grid, Avatar } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar';
 
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
-import SettingList from '../../components/common/SettingList';
 import notify from '../../lib/notifier';
 import { addTeam, updateTeam } from '../../lib/api/team-leader';
 import {
@@ -22,8 +26,10 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-type MyProps = { store: Store };
+type MyProps = { store: Store; isTL: boolean };
 
+@inject('store')
+@observer
 class CreateTeam extends React.Component<MyProps> {
   state = {
     newName: '',
@@ -55,7 +61,7 @@ class CreateTeam extends React.Component<MyProps> {
 
       console.log(`Returned to client: ${id}, ${name}, ${slug}`);
 
-      const bucket = 'saas-teams-avatars';
+      const bucket = 'async-teams-avatars';
       const prefix = slug;
 
       const responseFromApiServerForUpload = await getSignedRequestForUpload({
@@ -65,7 +71,7 @@ class CreateTeam extends React.Component<MyProps> {
         acl: 'public-read',
       });
       await uploadFileUsingSignedPutRequest(file, responseFromApiServerForUpload.signedRequest, {
-        'Cache-Control': 'max-age=259000',
+        'Cache-Control': 'max-age=2592000',
       });
 
       const properAvatarUrl = responseFromApiServerForUpload.url;
@@ -98,9 +104,7 @@ class CreateTeam extends React.Component<MyProps> {
     var reader = new FileReader();
 
     reader.onload = e => {
-      this.setState({
-        newAvatarUrl: e.target.result,
-      });
+      this.setState({ newAvatarUrl: e.target.result });
     };
 
     reader.readAsDataURL(file);
@@ -116,10 +120,7 @@ class CreateTeam extends React.Component<MyProps> {
           <meta name="description" content="description" />
         </Head>
         <Grid container style={styleGrid}>
-          <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={this.props.store} />
-          </Grid>
-          <Grid item sm={10} xs={12} style={styleGridItem}>
+          <Grid item sm={12} xs={12} style={styleGridItem}>
             <h3>Create team</h3>
             <p />
             <form onSubmit={this.onSubmit}>

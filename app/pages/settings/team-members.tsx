@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
-import {
-  Grid,
-  Button,
-  Paper,
-  Table,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableRow from '@material-ui/core/TableRow';
+import TableHead from '@material-ui/core/TableHead';
+import TableCell from '@material-ui/core/TableCell';
 
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
@@ -44,7 +43,7 @@ const getMenuItemOptions = (member, component) => [
   },
 ];
 
-type MyProps = { teamSlug: string; store: Store };
+type MyProps = { teamSlug: string; store: Store; isTL: boolean };
 type MyState = { inviteMemberOpen: boolean };
 
 @inject('store')
@@ -112,12 +111,40 @@ class TeamMembers extends React.Component<MyProps, MyState> {
   // TODO: MobX when member gets removed - already done
 
   render() {
-    const { store } = this.props;
+    const { store, isTL } = this.props;
     const { currentTeam, currentUser } = store;
-    const isTL = currentUser._id === currentTeam.teamLeaderId;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return <div>Team not selected</div>;
+      return (
+        <div style={{ padding: '20px' }}>
+          <p>You did not select any team.</p>
+          <p>
+            To access this page, please select existing team or create new team if you have no
+            teams.
+          </p>
+        </div>
+      );
+    }
+
+    if (!isTL) {
+      return (
+        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+          <Head>
+            <title>Team Members</title>
+            <meta name="description" content="description" />
+          </Head>
+          <Grid container style={styleGrid}>
+            <Grid item sm={2} xs={12} style={styleGridItem}>
+              <SettingList store={store} isTL={isTL} />
+            </Grid>
+            <Grid item sm={10} xs={12} style={styleGridItem}>
+              <h3>Team Members</h3>
+              <p>Only Team Leader can access this page.</p>
+              <p>Create your own team to become Team Leader.</p>
+            </Grid>
+          </Grid>
+        </div>
+      );
     }
 
     return (
@@ -128,7 +155,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={this.props.store} />
+            <SettingList store={store} isTL={isTL} />
           </Grid>
           <Grid item sm={10} xs={12} style={styleGridItem}>
             <h3>Team Members</h3>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
 import Router from 'next/router';
 import { observer } from 'mobx-react';
 
@@ -33,7 +33,7 @@ class Topic extends React.Component<{
   }
 
   changeTopic() {
-    const { teamSlug, topicSlug, store, isServer } = this.props;
+    const { teamSlug, topicSlug, store } = this.props;
     const { currentTeam } = store;
 
     if (currentTeam.slug !== teamSlug) {
@@ -53,6 +53,7 @@ class Topic extends React.Component<{
     }
 
     const { currentDiscussion } = currentTopic;
+
     if (currentDiscussion) {
       Router.push(
         `/discussions/detail?teamSlug=${teamSlug}&topicSlug=${topicSlug}&discussionSlug=${

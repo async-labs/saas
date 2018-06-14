@@ -1,7 +1,10 @@
 import * as React from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
-import { TextField, Button, Avatar, Grid } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar';
 import NProgress from 'nprogress';
 
 import { Store } from '../../lib/store';
@@ -24,10 +27,10 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-type MyProps = { store: Store; teamSlug: string };
+type MyProps = { store: Store; isTL: boolean; teamSlug: string };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
-class TeamSettings extends React.Component<MyProps, MyState> {
+class TeamProfile extends React.Component<MyProps, MyState> {
   constructor(props) {
     super(props);
 
@@ -71,7 +74,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
 
     const file = document.getElementById('upload-file').files[0];
     document.getElementById('upload-file').value = '';
-    const bucket = 'saas-teams-avatars';
+    const bucket = 'async-teams-avatars';
     const prefix = `${currentTeam.slug}`;
 
     if (file == null) {
@@ -91,7 +94,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
       });
 
       await uploadFileUsingSignedPutRequest(file, responseFromApiServerForUpload.signedRequest, {
-        'Cache-Control': 'max-age=259000',
+        'Cache-Control': 'max-age=2592000',
       });
 
       this.setState({
@@ -114,8 +117,42 @@ class TeamSettings extends React.Component<MyProps, MyState> {
   // TODO: Test Connect Github button when working on Projects
 
   render() {
-    const { currentUser, currentTeam } = this.props.store;
+    const { store, isTL } = this.props;
+    const { currentUser, currentTeam } = store;
     const { newName, newAvatarUrl } = this.state;
+
+    if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
+      return (
+        <div style={{ padding: '20px' }}>
+          <p>You did not select any team.</p>
+          <p>
+            To access this page, please select existing team or create new team if you have no
+            teams.
+          </p>
+        </div>
+      );
+    }
+
+    if (!isTL) {
+      return (
+        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+          <Head>
+            <title>Team Settings</title>
+            <meta name="description" content="description" />
+          </Head>
+          <Grid container style={styleGrid}>
+            <Grid item sm={2} xs={12} style={styleGridItem}>
+              <SettingList store={store} isTL={isTL} />
+            </Grid>
+            <Grid item sm={10} xs={12} style={styleGridItem}>
+              <h3>Team Settings</h3>
+              <p>Only Team Leader can access this page.</p>
+              <p>Create your own team to become Team Leader.</p>
+            </Grid>
+          </Grid>
+        </div>
+      );
+    }
     return (
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
@@ -124,7 +161,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={this.props.store} />
+            <SettingList store={store} isTL={isTL} />
           </Grid>
           <Grid item sm={10} xs={12} style={styleGridItem}>
             <h3>Team Settings</h3>
@@ -204,4 +241,4 @@ class TeamSettings extends React.Component<MyProps, MyState> {
   }
 }
 
-export default withAuth(withLayout(TeamSettings));
+export default withAuth(withLayout(TeamProfile));

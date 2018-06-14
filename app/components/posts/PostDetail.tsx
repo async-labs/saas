@@ -1,12 +1,15 @@
 import React from 'react';
 import moment from 'moment';
+import { inject, observer } from 'mobx-react';
+import Paper from '@material-ui/core/Paper';
+
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 import { Store, Post } from '../../lib/store';
 import confirm from '../../lib/confirm';
 import notify from '../../lib/notifier';
-import Paper from '@material-ui/core/Paper';
 import AvatarWithMenu from '../common/AvatarwithMenu';
-import { inject, observer } from 'mobx-react';
+
+import PostContent from './PostContent';
 
 const stylePaper = {
   margin: '10px 0px',
@@ -39,60 +42,6 @@ class PostDetail extends React.Component<{
   store?: Store;
   onEditClick: Function;
 }> {
-  postBodyElm: HTMLDivElement;
-
-  componentDidMount() {
-    this.addImageLoadEvent();
-  }
-
-  componentDidUpdate() {
-    this.addImageLoadEvent();
-  }
-
-  componentWillUnmount() {
-    const imgContainers = this.postBodyElm.getElementsByClassName('lazy-load-image');
-
-    for (let i = 0; i < imgContainers.length; i++) {
-      const elm = imgContainers.item(i);
-      elm.removeEventListener('toggle', this.lazyLoadImage);
-    }
-  }
-
-  addImageLoadEvent() {
-    const imgContainers = this.postBodyElm.getElementsByClassName('lazy-load-image');
-
-    for (let i = 0; i < imgContainers.length; i++) {
-      const elm = imgContainers.item(i);
-      elm.removeEventListener('toggle', this.lazyLoadImage);
-      elm.addEventListener('toggle', this.lazyLoadImage);
-    }
-  }
-
-  lazyLoadImage = event => {
-    const target: HTMLDetailsElement = event.currentTarget;
-
-    if (!target.open) {
-      return;
-    }
-
-    const image = target.getElementsByClassName('s3-image').item(0) as HTMLImageElement;
-    if (!image || image.hasAttribute('loaded') || !image.dataset.src) {
-      return;
-    }
-
-    const placeholder = target.getElementsByClassName('image-placeholder').item(0);
-    image.onload = function() {
-      if (placeholder) {
-        placeholder.remove();
-      }
-
-      image.style.display = 'inline';
-    };
-
-    image.setAttribute('src', image.dataset.src);
-    image.setAttribute('loaded', '1');
-  };
-
   editPost = () => {
     const { post, onEditClick } = this.props;
     if (onEditClick) {
@@ -133,7 +82,7 @@ class PostDetail extends React.Component<{
     );
   }
 
-  renderPostDetail(post) {
+  renderPostDetail(post: Post) {
     const date = moment(post.createdAt).format('MMM Do YYYY');
     return (
       <div>
@@ -151,12 +100,7 @@ class PostDetail extends React.Component<{
             {(post.createdAt && date) || 'no date'} {post.isEdited ? '| edited' : ''}
           </span>
 
-          <div
-            ref={elm => (this.postBodyElm = elm)}
-            style={{ fontSize: '15px', lineHeight: '2em', fontWeight: 300 }}
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: post.htmlContent }}
-          />
+          <PostContent html={post.htmlContent} />
         </div>
       </div>
     );

@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Button, Grid } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+
 import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 
@@ -31,7 +33,6 @@ interface Props {
 class Discussion extends React.Component<Props> {
   state = {
     drawerState: false,
-    isEditing: false,
     selectedPost: null,
   };
 
@@ -43,63 +44,32 @@ class Discussion extends React.Component<Props> {
     this.changeDiscussion(nextProps);
   }
 
-  handlePostEvent = data => {
-    console.log('post realtime event', data);
-
-    const { store } = this.props;
-    const { currentTopic } = store.currentTeam;
-
-    if (currentTopic && currentTopic.currentDiscussion) {
-      currentTopic.currentDiscussion.handlePostRealtimeEvent(data);
-    }
-  };
-
   changeDiscussion(props: Props) {
-    const { teamSlug, topicSlug, discussionSlug, store } = props;
+    const { teamSlug, discussionSlug, store } = props;
     const { currentTeam } = store;
 
     if (!currentTeam || currentTeam.slug !== teamSlug) {
-      store.setCurrentTeam(teamSlug);
       return;
     }
 
     const { currentTopic } = store.currentTeam;
 
-    if (!currentTopic || currentTopic.slug !== topicSlug) {
-      currentTeam.setCurrentTopicAndDiscussion({ topicSlug, discussionSlug });
-    } else if (currentTopic.currentDiscussionSlug !== discussionSlug) {
-      currentTopic.setCurrentDiscussion(discussionSlug);
-    }
-  }
-
-  componentDidUpdate() {
-    const { store } = this.props;
-    const { currentTeam } = store;
-
-    if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return;
-    }
-
-    const { currentTopic } = currentTeam;
-
-    if (!currentTopic) {
-      return;
-    }
+    currentTopic.setCurrentDiscussion(discussionSlug);
   }
 
   showFormToAddNewPost = () => {
-    this.setState({ drawerState: true, isEditing: false });
+    this.setState({ drawerState: true, selectedPost: null });
   };
 
   onEditClickCallback = post => {
-    this.setState({ selectedPost: post, drawerState: true, isEditing: true });
+    this.setState({ selectedPost: post, drawerState: true });
     console.log(`Page: ${this.state.selectedPost}`);
   };
 
   render() {
     const { store, isServer } = this.props;
     const { currentTeam } = store;
-    const { selectedPost, drawerState, isEditing } = this.state;
+    const { selectedPost, drawerState } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return <div>Team not selected</div>;
@@ -224,9 +194,8 @@ class Discussion extends React.Component<Props> {
             <PostForm
               post={selectedPost}
               open={drawerState}
-              isEditing={isEditing}
               onFinished={() => {
-                this.setState({ drawerState: false });
+                this.setState({ drawerState: false, selectedPost: null });
               }}
             />
           </Grid>

@@ -1,17 +1,15 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import {
-  Radio,
-  RadioGroup,
-  FormLabel,
-  FormControl,
-  FormControlLabel,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from '@material-ui/core';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import { inject } from 'mobx-react';
 
@@ -25,7 +23,7 @@ interface Props {
   store?: Store;
   onClose: Function;
   open: boolean;
-  discussion?: Discussion;
+  discussion: Discussion;
 }
 
 interface State {
@@ -33,6 +31,7 @@ interface State {
   memberIds: string[];
   privacy: string;
   disabled: boolean;
+  discussionId: string;
 }
 
 @inject('store')
@@ -42,15 +41,21 @@ class DiscussionForm extends React.Component<Props, State> {
     memberIds: [],
     privacy: 'public',
     disabled: false,
+    discussionId: '',
   };
 
-  static getDerivedStateFromProps(nextProps) {
-    const { discussion } = nextProps;
+  static getDerivedStateFromProps(props: Props, state: State) {
+    const { discussion } = props;
+
+    if (state.discussionId === discussion._id) {
+      return;
+    }
 
     return {
       name: (discussion && discussion.name) || '',
       memberIds: (discussion && discussion.memberIds) || [],
-      privacy: (discussion && discussion.isPrivate) ? 'private' : 'public',
+      privacy: discussion && discussion.isPrivate ? 'private' : 'public',
+      discussionId: discussion._id,
     };
   }
 
@@ -94,20 +99,10 @@ class DiscussionForm extends React.Component<Props, State> {
     try {
       this.setState({ disabled: true });
 
-      if (discussion) {
-        await discussion.edit({ name, memberIds: isPrivate ? memberIds : [], isPrivate });
-      } else {
-        await currentTopic.addDiscussion({
-          name,
-          memberIds: isPrivate ? memberIds : [],
-          isPrivate,
-        });
-      }
+      await discussion.edit({ name, memberIds: isPrivate ? memberIds : [], isPrivate });
 
       this.setState({ name: '', memberIds: [], privacy: 'public' });
-      notify(
-        discussion ? 'You successfully edited Discussion' : 'You successfully created Discussion',
-      );
+      notify('You successfully edited Discussion');
     } catch (error) {
       console.log(error);
       notify(error);
@@ -148,9 +143,7 @@ class DiscussionForm extends React.Component<Props, State> {
 
     return (
       <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open}>
-        <DialogTitle id="simple-dialog-title">
-          {discussion ? 'Edit Discussion' : 'Create Discussion'}
-        </DialogTitle>
+        <DialogTitle id="simple-dialog-title">Edit Discussion</DialogTitle>
         <DialogContent>
           <DialogContentText>Explain discussion</DialogContentText>
           <hr />
@@ -192,7 +185,7 @@ class DiscussionForm extends React.Component<Props, State> {
                 Cancel
               </Button>
               <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
-                {discussion ? 'Update Discussion' : 'Create Discussion'}
+                Update Discussion
               </Button>
             </DialogActions>
           </form>

@@ -53,6 +53,7 @@ interface IInvitationModel extends mongoose.Model<IInvitationDocument> {
 
   getTeamInvitedUsers({ userId, teamId }: { userId: string; teamId: string });
   getTeamByToken({ token }: { token: string });
+  removeIfMemberAdded({ token, userId }: { token: string; userId: string });
   addUserToTeam({ token, user }: { token: string; user: IUserDocument });
 }
 
@@ -87,7 +88,9 @@ class InvitationClass extends mongoose.Model {
         await Team.update({ _id: team._id }, { $addToSet: { memberIds: registeredUser._id } });
 
         if (registeredUser._id !== team.teamLeaderId && !registeredUser.defaultTeamSlug) {
-          await User.findByIdAndUpdate(registeredUser._id,  { $set: { defaultTeamSlug: team.slug }});
+          await User.findByIdAndUpdate(registeredUser._id, {
+            $set: { defaultTeamSlug: team.slug },
+          });
         }
       }
     }
@@ -163,6 +166,26 @@ class InvitationClass extends mongoose.Model {
     return team;
   }
 
+  static async removeIfMemberAdded({ token, userId }) {
+    if (!token) {
+      throw new Error('Bad data');
+    }
+
+    const invitation = await this.findOne({ token }).lean();
+
+    if (!invitation) {
+      throw new Error('Invitation not found');
+    }
+
+    const team = await Team.findById(invitation.teamId)
+      .select('name slug avatarUrl memberIds')
+      .lean();
+
+    if (team && team.memberIds.includes(userId)) {
+      this.remove({ token }).exec();
+    }
+  }
+
   static async addUserToTeam({ token, user }) {
     if (!token || !user) {
       throw new Error('Bad data');
@@ -184,7 +207,7 @@ class InvitationClass extends mongoose.Model {
       await Team.update({ _id: team._id }, { $addToSet: { memberIds: user._id } });
 
       if (user._id !== team.teamLeaderId && !user.defaultTeamSlug) {
-        await User.findByIdAndUpdate(user._id,  { $set: { defaultTeamSlug: team.slug }});
+        await User.findByIdAndUpdate(user._id, { $set: { defaultTeamSlug: team.slug } });
       }
     }
   }

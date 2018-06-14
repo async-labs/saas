@@ -91,19 +91,6 @@ export class Discussion {
   }
 
   @action
-  handlePostRealtimeEvent(data) {
-    const { action } = data;
-
-    if (action === 'added') {
-      this.addPostToLocalCache(data.post);
-    } else if (action === 'edited') {
-      this.editPostFromLocalCache(data);
-    } else if (action === 'deleted') {
-      this.removePostFromLocalCache(data.id);
-    }
-  }
-
-  @action
   addPostToLocalCache(data) {
     const postObj = new Post({ discussion: this, store: this.store, ...data });
     this.posts.push(postObj);
@@ -122,10 +109,10 @@ export class Discussion {
   }
 
   @action
-  async addPost(data) {
+  async addPost(content: string) {
     const { post } = await addPost({
       discussionId: this._id,
-      ...data,
+      content,
     });
 
     runInAction(() => {
