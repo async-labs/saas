@@ -30,24 +30,26 @@ async function insertTemplates() {
   const templates = [
     {
       name: 'welcome',
-      subject: 'Welcome to builderbook.org',
+      subject: 'Welcome to Async',
       message: `{{userName}},
         <p>
-          Thank you for signing up for Builder Book!
+          Thanks for signing up for Async!
         </p>
         <p>
-          In our book, we teach you how to build a production-ready web app from scratch.
-          Here is the introduction <a href="https://builderbook.org/books/builder-book/introduction" target="blank">chapter</a>.
+          We built Async for engineering teams to have meaningful communication and achieve deep work.
+        </p>
+        <p>
+          If you're building a SaaS product, check out our open source <a href="https://github.com/async-labs/saas-by-async" target="blank">SaaS boilerplate</a>.
         </p>
       
-        Kelly & Timur, Team Builder Book
+        Kelly & Timur, Team Async
       `,
     },
     {
       name: 'invitation',
-      subject: 'Async: team invitation',
-      message: `You have invited to {{teamName}}
-        <br/>Click here to accept: {{invitationURL}}
+      subject: 'Async: Team Invitation',
+      message: `You've been invited to join {{teamName}}.
+        <br/>Click here to accept the invitation: {{invitationURL}}
       `,
     },
   ];

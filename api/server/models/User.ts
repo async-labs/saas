@@ -218,7 +218,7 @@ class UserClass extends mongoose.Model {
 
     try {
       await sendEmail({
-        from: `Kelly from builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [email],
         subject: template.subject,
         body: template.message,
