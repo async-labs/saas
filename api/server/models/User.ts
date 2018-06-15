@@ -209,17 +209,15 @@ class UserClass extends mongoose.Model {
       userName: displayName,
     });
 
-    if ((await Invitation.find({ email: email }).count()) === 0) {
-      try {
-        await sendEmail({
-          from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
-          to: [email],
-          subject: template.subject,
-          body: template.message,
-        });
-      } catch (err) {
-        logger.error('Email sending error:', err);
-      }
+    try {
+      await sendEmail({
+        from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: template.subject,
+        body: template.message,
+      });
+    } catch (err) {
+      logger.error('Email sending error:', err);
     }
 
     try {
