@@ -14,6 +14,7 @@ import getContext from '../lib/context';
 import Notifier from '../components/common/Notifier';
 import Confirm from '../components/common/Confirm';
 import MenuWithLinks from '../components/common/MenuWithLinks';
+import ActiveLink from '../components/common/ActiveLink';
 import * as gtag from './gtag';
 import { Store } from './store';
 
