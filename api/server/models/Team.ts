@@ -115,6 +115,10 @@ class TeamClass extends mongoose.Model {
   static async updateTeam({ userId, teamId, name, avatarUrl }) {
     const team = await this.findById(teamId, 'slug name defaultTeam teamLeaderId');
 
+    if (!team) {
+      throw new Error('Team not found');
+    }
+
     if (team.teamLeaderId !== userId) {
       throw new Error('Permission denied');
     }
@@ -126,7 +130,7 @@ class TeamClass extends mongoose.Model {
       modifier.slug = await generateSlug(this, name);
     }
 
-    await this.updateOne({ _id: teamId }, { $set: modifier });
+    await this.updateOne({ _id: teamId }, { $set: modifier }, { runValidators: true });
 
     if (team.defaultTeam) {
       await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: modifier.slug } });

@@ -70,6 +70,17 @@ const menuUnderTeamList = (team, isTL) => [
   },
 ];
 
+function ThemeWrapper({ children, pageContext }) {
+  return (
+    <MuiThemeProvider theme={pageContext.theme} sheetsManager={pageContext.sheetsManager}>
+      <CssBaseline />
+      {children}
+      <Notifier />
+      <Confirm />
+    </MuiThemeProvider>
+  );
+}
+
 function withLayout(BaseComponent, { teamRequired = true } = {}) {
   type MyProps = { pageContext: object; store: Store; teamSlug: string };
   type MyState = { isTL: boolean };
@@ -93,8 +104,9 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
 
       let baseComponentProps = {};
       let teamSlug = '';
-      let topicSlug = '';
-      let discussionSlug = '';
+
+      const topicSlug = query.topicSlug;
+      const discussionSlug = query.discussionSlug;
 
       if (BaseComponent.getInitialProps) {
         baseComponentProps = await BaseComponent.getInitialProps(ctx);
@@ -103,9 +115,6 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       if (teamRequired) {
         teamSlug = query.teamSlug;
       }
-
-      topicSlug = query.topicSlug;
-      discussionSlug = query.discussionSlug;
 
       return { ...baseComponentProps, teamSlug, topicSlug, discussionSlug, isServer: !!req };
     }
@@ -146,12 +155,9 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
     pageContext = null;
 
     render() {
-      // TODO: use teamRequired to check for Team
-      // Add teamRequired: false to some pages that don't require team
+      // TODO: Add teamRequired: false to some pages that don't require team
 
       const { store } = this.props;
-
-      //
 
       if (store.isLoggingIn) {
         return <div style={{ color: 'black' }}>1-loading...</div>;
@@ -159,26 +165,19 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
 
       if (!store.currentUser) {
         return (
-          <MuiThemeProvider
-            theme={this.pageContext.theme}
-            sheetsManager={this.pageContext.sheetsManager}
-          >
-            <CssBaseline />
-            <div>
-              <Grid
-                container
-                direction="row"
-                justify="flex-start"
-                alignItems="stretch"
-                style={{ height: '100%' }}
-              >
-                <Grid item sm={12} xs={12}>
-                  <BaseComponent {...this.props} />
-                </Grid>
+          <ThemeWrapper pageContext={this.pageContext}>
+            <Grid
+              container
+              direction="row"
+              justify="flex-start"
+              alignItems="stretch"
+              style={{ height: '100%' }}
+            >
+              <Grid item sm={12} xs={12}>
+                <BaseComponent {...this.props} />
               </Grid>
-              <Notifier />
-            </div>
-          </MuiThemeProvider>
+            </Grid>
+          </ThemeWrapper>
         );
       }
 
@@ -186,12 +185,32 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
         return <div style={{ color: 'black' }}>2-loading...</div>;
       }
 
+      if (!store.currentTeam) {
+        if (teamRequired) {
+          return (
+            <ThemeWrapper pageContext={this.pageContext}>
+              <Grid item sm={11} xs={12}>
+                <Link prefetch href="/settings/create-team">
+                  <Button style={{ margin: '20px' }} variant="outlined">
+                    Create team
+                  </Button>
+                </Link>
+              </Grid>
+            </ThemeWrapper>
+          );
+        } else {
+          return (
+            <ThemeWrapper pageContext={this.pageContext}>
+              <Grid item sm={12} xs={12}>
+                <BaseComponent isTL={this.state.isTL} {...this.props} />
+              </Grid>
+            </ThemeWrapper>
+          );
+        }
+      }
+
       return (
-        <MuiThemeProvider
-          theme={this.pageContext.theme}
-          sheetsManager={this.pageContext.sheetsManager}
-        >
-          <CssBaseline />
+        <ThemeWrapper pageContext={this.pageContext}>
           <Grid
             container
             direction="row"
@@ -207,9 +226,9 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
               >
                 <Avatar
                   src={
-                    store.currentTeam
-                      ? store.currentTeam.avatarUrl
-                      : 'https://storage.googleapis.com/async-await/async-logo-40.svg'
+                    !store.currentTeam
+                      ? 'https://storage.googleapis.com/async-await/async-logo-40.svg'
+                      : store.currentTeam.avatarUrl
                   }
                   alt="Team logo"
                   style={{
@@ -226,28 +245,29 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
               <hr />
               <div>
                 <p />
+                <ActiveLink
+                  linkText="Projects"
+                  href={`/topics/detail?teamSlug=${store.currentTeam.slug}&topicSlug=projects`}
+                  as={`/team/${store.currentTeam.slug}/t/projects`}
+                  highlighterSlug={`/projects`}
+                />
+                <p />
+                <p />
+                <ActiveLink
+                  linkText="Knowledge"
+                  href={`/topics/detail?teamSlug=${store.currentTeam.slug}&topicSlug=knowledge`}
+                  as={`/team/${store.currentTeam.slug}/t/knowledge`}
+                  highlighterSlug={`/knowledge`}
+                />
                 <p />
                 <TopicList store={this.props.store} />
               </div>
             </Grid>
-
-            {teamRequired && !store.currentTeam ? (
-              <Grid item sm={11} xs={12}>
-                <Link prefetch href="/settings/create-team">
-                  <Button style={{ margin: '20px' }} variant="outlined">
-                    Create team
-                  </Button>
-                </Link>
-              </Grid>
-            ) : (
-              <Grid item sm={11} xs={12}>
-                <BaseComponent isTL={this.state.isTL} {...this.props} />
-              </Grid>
-            )}
+            <Grid item sm={11} xs={12}>
+              <BaseComponent isTL={this.state.isTL} {...this.props} />
+            </Grid>
           </Grid>
-          <Notifier />
-          <Confirm />
-        </MuiThemeProvider>
+        </ThemeWrapper>
       );
     }
   }

@@ -3,7 +3,7 @@
         "NODE_ENV": "production"
     },
     "dotenv": true,
-    "alias": "saas.api.async-await.com",
+    "alias": "saas-api.async-await.com",
     "scale": {
       "sfo1": {
         "min": 1,

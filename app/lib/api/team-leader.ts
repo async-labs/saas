@@ -14,7 +14,7 @@ export const addTeam = data =>
   });
 
 export const updateTeam = data =>
-  sendRequestAndGetResponse(`${BASE_PATH}/update-team`, {
+  sendRequestAndGetResponse(`${BASE_PATH}/teams/update`, {
     body: JSON.stringify(data),
   });
 

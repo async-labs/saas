@@ -24,12 +24,30 @@ router.use((req, res, next) => {
 router.post('/teams/add', async (req, res) => {
   try {
     const { name, avatarUrl } = req.body;
-    
+
     console.log(`Express route: ${name}, ${avatarUrl}`);
 
     const team = await Team.add({ userId: req.user.id, name, avatarUrl });
 
-    res.json({ id: team._id, name: team.name, slug: team.slug });
+    res.json(team);
+  } catch (err) {
+    logger.error(err);
+    res.json({ error: err.post || err.toString() });
+  }
+});
+
+router.post('/teams/update', async (req, res) => {
+  try {
+    const { teamId, name, avatarUrl } = req.body;
+
+    const team = await Team.updateTeam({
+      userId: req.user.id,
+      teamId,
+      name,
+      avatarUrl,
+    });
+
+    res.json(team);
   } catch (err) {
     logger.error(err);
     res.json({ error: err.post || err.toString() });
@@ -49,7 +67,10 @@ router.get('/teams/get-members', async (req, res) => {
 
 router.get('/teams/get-invited-users', async (req, res) => {
   try {
-    const users = await Invitation.getTeamInvitedUsers({ userId: req.user.id, teamId: req.query.teamId });
+    const users = await Invitation.getTeamInvitedUsers({
+      userId: req.user.id,
+      teamId: req.query.teamId,
+    });
 
     res.json({ users });
   } catch (err) {
@@ -117,24 +138,6 @@ router.post('/topics/delete', async (req, res) => {
     const { teamId } = await Topic.delete({ userId: req.user.id, id });
 
     res.json({ done: 1 });
-  } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
-  }
-});
-
-router.post('/update-team', async (req, res) => {
-  try {
-    const { teamId, name, avatarUrl } = req.body;
-
-    const team = await Team.updateTeam({
-      userId: req.user.id,
-      teamId,
-      name,
-      avatarUrl,
-    });
-
-    res.json(team);
   } catch (err) {
     logger.error(err);
     res.json({ error: err.post || err.toString() });

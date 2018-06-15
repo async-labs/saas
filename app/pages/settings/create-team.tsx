@@ -2,6 +2,7 @@ import * as React from 'react';
 import { inject, observer } from 'mobx-react';
 
 import Head from 'next/head';
+import Router from 'next/router';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -57,12 +58,15 @@ class CreateTeam extends React.Component<MyProps> {
       this.setState({ disabled: true });
 
       const defaultAvatarUrl = 'https://storage.googleapis.com/async-await/default-user.png?v=1';
-      const { id, name, slug } = await addTeam({ name: newName, avatarUrl: defaultAvatarUrl });
+      const team = await this.props.store.addTeam({
+        name: newName,
+        avatarUrl: defaultAvatarUrl,
+      });
 
-      console.log(`Returned to client: ${id}, ${name}, ${slug}`);
+      console.log(`Returned to client: ${team._id}, ${team.name}, ${team.slug}`);
 
-      const bucket = 'saas-teams-avatars';
-      const prefix = slug;
+      const bucket = 'async-teams-avatars';
+      const prefix = team.slug;
 
       const responseFromApiServerForUpload = await getSignedRequestForUpload({
         file,
@@ -76,7 +80,7 @@ class CreateTeam extends React.Component<MyProps> {
 
       const properAvatarUrl = responseFromApiServerForUpload.url;
 
-      await updateTeam({ teamId: id, name: name, avatarUrl: properAvatarUrl });
+      await team.edit({ name: team.name, avatarUrl: properAvatarUrl });
 
       this.setState({
         newName: '',

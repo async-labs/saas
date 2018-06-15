@@ -8,6 +8,7 @@ import {
   deleteTopic,
   inviteMember,
   removeMember,
+  updateTeam,
 } from '../api/team-leader';
 
 import { getTopicList } from '../api/team-member';
@@ -52,6 +53,26 @@ export class Team {
 
     if (params.initialMembers) {
       this.setInitialMembers(params.initialMembers, params.initialInvitations);
+    }
+  }
+
+  @action
+  async edit({ name, avatarUrl }: { name: string; avatarUrl: string }) {
+    try {
+      const { slug } = await updateTeam({
+        teamId: this._id,
+        name,
+        avatarUrl,
+      });
+
+      runInAction(() => {
+        this.name = name;
+        this.slug = slug;
+        this.avatarUrl = avatarUrl;
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 
@@ -129,7 +150,6 @@ export class Team {
     let found = false;
     for (let i = 0; i < this.topics.length; i++) {
       const topic = this.topics[i];
-      // console.log(topic);
       if (topic.slug === slug) {
         this.currentTopicSlug = slug;
         if (this.currentDiscussionSlug) {

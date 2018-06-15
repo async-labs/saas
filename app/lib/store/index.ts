@@ -2,6 +2,7 @@ import * as mobx from 'mobx';
 import { observable, action, IObservableArray, runInAction } from 'mobx';
 
 import { getTeamList } from '../api/team-member';
+import { addTeam } from '../../lib/api/team-leader';
 
 import { Post } from './post';
 import { Discussion } from './discussion';
@@ -74,6 +75,18 @@ class Store {
   }
 
   @action
+  async addTeam({ name, avatarUrl }: { name: string; avatarUrl: string }): Promise<Team> {
+    const data = await addTeam({ name, avatarUrl });
+    const team = new Team({ store: this, ...data });
+
+    runInAction(() => {
+      this.teams.push(team);
+    });
+
+    return team;
+  }
+
+  @action
   async loadTeams(selectedTeamSlug?: string) {
     if (this.isLoadingTeams || this.isInitialTeamsLoaded) {
       return;
@@ -120,10 +133,6 @@ class Store {
     if (!found) {
       this.currentTeam = null;
     }
-  }
-
-  getTeamBySlug(slug: string) {
-    return this.teams.find(e => e.slug === slug);
   }
 }
 

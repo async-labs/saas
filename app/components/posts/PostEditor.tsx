@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import TextArea from '@material-ui/core/Input/Textarea';
 import NProgress from 'nprogress';
 import { inject, observer } from 'mobx-react';
 import marked from 'marked';
@@ -98,7 +98,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
 
     document.getElementById('upload-file').value = '';
 
-    const bucket = 'saas-posts';
+    const bucket = 'async-posts';
     const prefix = `${currentTeam.slug}`;
 
     const { width, height } = await getImageDimension(file);
@@ -192,16 +192,17 @@ class PostEditor extends React.Component<MyProps, MyState> {
           {htmlContent ? (
             <PostContent html={htmlContent} />
           ) : (
-            <TextField
-              fullWidth
+            <TextArea
+              style={{
+                overflow: 'hidden !important',
+                font: '16px Muli',
+                color: '#fff',
+                fontWeight: 300,
+                lineHeight: '1.5em',
+              }}
               value={content}
               placeholder="Compose new post"
-              multiline
               rows={24} // TODO: add isMobile logic later
-              rowsMax={24}
-              InputProps={{
-                disableUnderline: true,
-              }}
               onChange={event => {
                 this.props.onChanged(event.target.value);
               }}

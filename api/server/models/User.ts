@@ -7,6 +7,7 @@ import sendEmail from '../aws-ses';
 import logger from '../logs';
 import getEmailTemplate from './EmailTemplate';
 import Team from './Team';
+import Invitation from './Invitation';
 
 const mongoSchema = new mongoose.Schema({
   googleId: {
@@ -73,7 +74,6 @@ export interface IUserDocument extends mongoose.Document {
 
   isGithubConnected: boolean;
   githubAccessToken: string;
-
 }
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -89,13 +89,7 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     avatarUrl: string;
   }): Promise<IUserDocument[]>;
 
-  getTeamMembers({
-    userId,
-    teamId,
-  }: {
-    userId: string;
-    teamId: string;
-  }): Promise<IUserDocument[]>;
+  getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<IUserDocument[]>;
 
   signInOrSignUp({
     googleId,
@@ -111,7 +105,6 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     googleToken: { refreshToken?: string; accessToken?: string };
   }): Promise<IUserDocument>;
 }
-
 
 // mongoSchema.pre('save', function(next) {
 //   if (!this.createdAt) this.createdAt = new Date();
@@ -130,7 +123,7 @@ class UserClass extends mongoose.Model {
       'isAdmin',
       'isGithubConnected',
       'teamIds',
-      'defaultTeamSlug'
+      'defaultTeamSlug',
     ];
   }
 
@@ -162,7 +155,7 @@ class UserClass extends mongoose.Model {
       modifier.slug = await generateSlug(this, name);
     }
 
-    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true })
+    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('name avatarUrl')
       .lean();
   }
@@ -209,22 +202,24 @@ class UserClass extends mongoose.Model {
       displayName,
       avatarUrl,
       slug,
-      defaultTeamSlug: ''
+      defaultTeamSlug: '',
     });
 
     const template = await getEmailTemplate('welcome', {
       userName: displayName,
     });
 
-    try {
-      await sendEmail({
-        from: `Kelly from builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
-        to: [email],
-        subject: template.subject,
-        body: template.message,
-      });
-    } catch (err) {
-      logger.error('Email sending error:', err);
+    if ((await Invitation.find({ email: email }).count()) === 0) {
+      try {
+        await sendEmail({
+          from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+          to: [email],
+          subject: template.subject,
+          body: template.message,
+        });
+      } catch (err) {
+        logger.error('Email sending error:', err);
+      }
     }
 
     try {
