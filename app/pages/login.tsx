@@ -9,7 +9,7 @@ function Login() {
   return (
     <div style={{ textAlign: 'center', margin: '0 20px' }}>
       <Head>
-        <title>Log in to Builder Book</title>
+        <title>Log in to SaaS by Async</title>
         <meta name="description" content="Login page for builderbook.org" />
       </Head>
       <br />

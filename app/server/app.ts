@@ -12,7 +12,7 @@ mobxReact.useStaticRendering(true);
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 3000;
-const ROOT_URL = dev ? `http://localhost:${port}` : 'https://app1.async-await.com';
+const ROOT_URL = dev ? `http://localhost:${port}` : 'https://saas-app.async-await.com';
 
 const app = next({ dev });
 const handle = app.getRequestHandler();

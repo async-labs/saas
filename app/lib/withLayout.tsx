@@ -19,7 +19,7 @@ import * as gtag from './gtag';
 import { Store } from './store';
 
 const dev = process.env.NODE_ENV !== 'production';
-const LOG_OUT_URL = dev ? 'http://localhost:8000' : 'https://api1.async-await.com';
+const LOG_OUT_URL = dev ? 'http://localhost:8000' : 'https://saas-api.async-await.com';
 
 Router.onRouteChangeStart = () => {
   NProgress.start();
@@ -251,14 +251,6 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
                   href={`/topics/detail?teamSlug=${store.currentTeam.slug}&topicSlug=projects`}
                   as={`/team/${store.currentTeam.slug}/t/projects`}
                   highlighterSlug={`/projects`}
-                />
-                <p />
-                <p />
-                <ActiveLink
-                  linkText="Knowledge"
-                  href={`/topics/detail?teamSlug=${store.currentTeam.slug}&topicSlug=knowledge`}
-                  as={`/team/${store.currentTeam.slug}/t/knowledge`}
-                  highlighterSlug={`/knowledge`}
                 />
                 <p />
                 <TopicList store={this.props.store} />

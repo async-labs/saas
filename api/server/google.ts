@@ -90,7 +90,7 @@ export default function auth({ ROOT_URL, server }) {
       }
 
       if (req.user && req.user.isAdmin) {
-        res.redirect(dev ? 'http://localhost:3000/admin' : 'https://app1.async-await.com/admin');
+        res.redirect(dev ? 'http://localhost:3000/admin' : 'https://saas-app.async-await.com/admin');
       } else {
         let redirectUrlAfterLogin;
 
@@ -103,7 +103,7 @@ export default function auth({ ROOT_URL, server }) {
         res.redirect(
           dev
             ? `http://localhost:3000/${redirectUrlAfterLogin}`
-            : `https://app1.async-await.com/${redirectUrlAfterLogin}`,
+            : `https://saas-app.async-await.com/${redirectUrlAfterLogin}`,
         );
       }
     },
@@ -111,6 +111,6 @@ export default function auth({ ROOT_URL, server }) {
 
   server.get('/logout', (req, res) => {
     req.logout();
-    res.redirect(dev ? 'http://localhost:3000/login' : 'https://app1.async-await.com/login');
+    res.redirect(dev ? 'http://localhost:3000/login' : 'https://saas-app.async-await.com/login');
   });
 }
