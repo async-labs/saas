@@ -2,7 +2,8 @@
 Open source boilerplate to build your own SaaS product. Launch in a few weeks instead of months. This boilerplate contains core features for any SaaS app: user log in, transactional emails, newsletters, and subscriptions.
 
 ## Live demo: 
-(in progress)
+app: https://saas-app.async-await.com
+api: https://saas-api.async-await.com
 
 
 ## Features
