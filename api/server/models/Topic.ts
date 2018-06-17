@@ -32,11 +32,6 @@ const mongoSchema = new mongoose.Schema({
     required: true,
     default: false,
   },
-  isKnowledge: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
   lastUpdatedAt: Date,
 });
 

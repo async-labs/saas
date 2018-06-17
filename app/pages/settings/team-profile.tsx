@@ -166,16 +166,6 @@ class TeamProfile extends React.Component<MyProps, MyState> {
           <Grid item sm={10} xs={12} style={styleGridItem}>
             <h3>Team Settings</h3>
             <p />
-            <h4>Connect Github profile</h4>
-            {currentUser && !currentUser.isGithubConnected ? (
-              <a href="/auth/github">
-                <Button variant="outlined" color="primary">
-                  Connect Github
-                </Button>
-              </a>
-            ) : null}
-            <br />
-            <br />
             <br />
             <form onSubmit={this.onSubmit}>
               <h4>Team name</h4>
@@ -197,7 +187,6 @@ class TeamProfile extends React.Component<MyProps, MyState> {
                 Update name
               </Button>
             </form>
-            <br />
             <br />
             <h4>Team logo</h4>
             <Avatar
@@ -223,15 +212,6 @@ class TeamProfile extends React.Component<MyProps, MyState> {
               style={{ display: 'none' }}
               onChange={this.uploadFile}
             />
-            <br />
-            <br />
-            <br />
-            <h4>Export your team's data</h4>
-            <a href={`/export/${currentTeam.slug}`}>
-              <Button variant="outlined" color="primary">
-                Export data
-              </Button>
-            </a>
             <br />
             <br />
           </Grid>

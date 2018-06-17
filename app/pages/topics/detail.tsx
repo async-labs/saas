@@ -87,7 +87,7 @@ class Topic extends React.Component<{
           </Grid>
 
           <Grid item sm={10} xs={12}>
-            <div style={{ padding: '20px 0px 0px 20px' }}>Add topic.</div>
+          <p style={{ padding: '0px 0px 0px 20px' }}>Select or create topic.</p>
           </Grid>
         </Grid>
       );

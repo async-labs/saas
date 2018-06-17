@@ -57,7 +57,7 @@ class TopicList extends React.Component<{ store: Store }> {
         <ul>
           {currentTeam.topics.map(
             t =>
-              t.slug !== 'knowledge' && t.slug !== 'projects' ? (
+              t.slug !== 'projects' ? (
                 <Paper
                   key={t._id}
                   style={stylePaper}

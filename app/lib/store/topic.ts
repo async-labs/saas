@@ -16,7 +16,6 @@ export class Topic {
 
   @observable name: string;
   @observable slug: string;
-  @observable isKnowledge: boolean;
   @observable isProjects: boolean;
   @observable currentDiscussion?: Discussion;
   @observable currentDiscussionSlug?: string;

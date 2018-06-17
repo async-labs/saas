@@ -2,7 +2,7 @@ import * as React from 'react';
 import { inject, observer } from 'mobx-react';
 
 import Head from 'next/head';
-// import Router from 'next/router';
+import Router from 'next/router';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -12,7 +12,6 @@ import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
 import notify from '../../lib/notifier';
-// import { addTeam, updateTeam } from '../../lib/api/team-leader';
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
@@ -89,8 +88,11 @@ class CreateTeam extends React.Component<MyProps> {
 
       document.getElementById('upload-file').value = '';
 
-      // TODO: MobX instead of Router.push
+      Router.push(`/team/${team.slug}/t/projects`);
+
       notify('You successfully created Team.');
+
+
     } catch (error) {
       console.log(error);
       notify(error);
