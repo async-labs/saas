@@ -1,4 +1,4 @@
-import request from 'request';
+import * as request from 'request';
 
 require('dotenv').config();
 
@@ -34,7 +34,7 @@ function callAPI({ path, method, data }) {
   });
 }
 
-export async function subscribe({ email, listName }) {
+async function subscribe({ email, listName }) {
   const data = {
     email_address: email,
     status: 'subscribed',
@@ -44,3 +44,5 @@ export async function subscribe({ email, listName }) {
 
   await callAPI({ path, method: 'POST', data });
 }
+
+export { subscribe };
