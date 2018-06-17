@@ -126,7 +126,7 @@ class TeamProfile extends React.Component<MyProps, MyState> {
         <div style={{ padding: '20px' }}>
           <p>You did not select any team.</p>
           <p>
-            To access this page, please select existing team or create new team if you have no
+            To access this page, please select an existing team or create a new team if you have no
             teams.
           </p>
         </div>
@@ -137,8 +137,8 @@ class TeamProfile extends React.Component<MyProps, MyState> {
       return (
         <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
           <Head>
-            <title>Team Settings</title>
-            <meta name="description" content="description" />
+            <title>Team Settings: ${currentTeam.name}</title>
+            <meta name="description" content="Only the Team Leader can access this page" />
           </Head>
           <Grid container style={styleGrid}>
             <Grid item sm={2} xs={12} style={styleGridItem}>
@@ -146,8 +146,8 @@ class TeamProfile extends React.Component<MyProps, MyState> {
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
               <h3>Team Settings</h3>
-              <p>Only Team Leader can access this page.</p>
-              <p>Create your own team to become Team Leader.</p>
+              <p>Only the Team Leader can access this page.</p>
+              <p>Create your own team to become a Team Leader.</p>
             </Grid>
           </Grid>
         </div>
@@ -156,8 +156,8 @@ class TeamProfile extends React.Component<MyProps, MyState> {
     return (
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
-          <title>Team Settings</title>
-          <meta name="description" content="description" />
+          <title>Team Settings: ${currentTeam.name}</title>
+          <meta name="description" content={`Settings for Team ${currentTeam.name}`} />
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
@@ -226,7 +226,7 @@ class TeamProfile extends React.Component<MyProps, MyState> {
             <br />
             <br />
             <br />
-            <h4>Export team's data</h4>
+            <h4>Export your team's data</h4>
             <a href={`/export/${currentTeam.slug}`}>
               <Button variant="outlined" color="primary">
                 Export data

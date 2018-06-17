@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Head from 'next/head';
 import Grid from '@material-ui/core/Grid';
 import Router from 'next/router';
 import { observer } from 'mobx-react';
@@ -69,7 +70,7 @@ class Topic extends React.Component<{
     const { currentTeam } = store;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return <div>Team is not selected</div>;
+      return <div>Team is not selected.</div>;
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {
@@ -116,22 +117,30 @@ class Topic extends React.Component<{
           </Grid>
 
           <Grid item sm={10} xs={12}>
-            <div style={{ padding: '20px 0px 0px 20px' }}>No discussions found</div>
+            <div style={{ padding: '20px 0px 0px 20px' }}>No discussions found.</div>
           </Grid>
         </Grid>
       );
     }
 
     return (
-      <Grid container direction="row" justify="flex-start" alignItems="stretch" style={styleGrid}>
-        <Grid item sm={2} xs={12} style={styleGridItem}>
-          <DiscussionList topic={currentTopic} />
+      <React.Fragment>
+        <Head>
+          <title>Topic: {currentTopic.name}</title>
+          <meta
+            name="description"
+            content={`Topic ${currentTopic.name} by Team ${currentTeam.name}`}
+          />
+        </Head>
+        <Grid container direction="row" justify="flex-start" alignItems="stretch" style={styleGrid}>
+          <Grid item sm={2} xs={12} style={styleGridItem}>
+            <DiscussionList topic={currentTopic} />
+          </Grid>
+          <Grid item sm={10} xs={12}>
+            <div style={{ padding: '20px 0px 0px 20px' }}>loading {currentDiscussion.name}...</div>
+          </Grid>
         </Grid>
-
-        <Grid item sm={10} xs={12}>
-          <div style={{ padding: '20px 0px 0px 20px' }}>loading {currentDiscussion.name}...</div>
-        </Grid>
-      </Grid>
+      </React.Fragment>
     );
   }
 }

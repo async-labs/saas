@@ -2,7 +2,7 @@ import * as React from 'react';
 import { inject, observer } from 'mobx-react';
 
 import Head from 'next/head';
-import Router from 'next/router';
+// import Router from 'next/router';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -12,7 +12,7 @@ import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
 import notify from '../../lib/notifier';
-import { addTeam, updateTeam } from '../../lib/api/team-leader';
+// import { addTeam, updateTeam } from '../../lib/api/team-leader';
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
@@ -121,7 +121,7 @@ class CreateTeam extends React.Component<MyProps> {
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
           <title>Create Team</title>
-          <meta name="description" content="description" />
+          <meta name="description" content="Create a new Team" />
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={12} xs={12} style={styleGridItem}>
@@ -131,8 +131,8 @@ class CreateTeam extends React.Component<MyProps> {
               <h4>Team name</h4>
               <TextField
                 value={this.state.newName}
-                label="Type team's name"
-                helperText="Team name as seen by your team members"
+                label="Type your team's name."
+                helperText="Team name as seen by your team members."
                 onChange={event => {
                   this.setState({ newName: event.target.value });
                 }}

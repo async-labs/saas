@@ -121,8 +121,8 @@ class YourProfile extends React.Component<MyProps, MyState> {
     return (
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
-          <title>Your profile at Async</title>
-          <meta name="description" content="description" />
+          <title>Your Profile</title>
+          <meta name="description" content="View or edit your Async profile" />
         </Head>
 
         <Grid container style={styleGrid}>

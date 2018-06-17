@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Head from 'next/head';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
@@ -72,7 +73,9 @@ class Discussion extends React.Component<Props> {
     const { selectedPost, drawerState } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return <div style={{ padding: '20px 0px 0px 0px' }}>Create new team or select existing team.</div>;
+      return (
+        <div style={{ padding: '20px 0px 0px 0px' }}>Create new team or select existing team.</div>
+      );
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {
@@ -150,11 +153,14 @@ class Discussion extends React.Component<Props> {
 
     return (
       <div style={{ height: '100%' }}>
+        <Head>
+          <title>Discussion: {currentDiscussion.name}</title>
+          <meta name="description" content={`Discussion ${currentDiscussion.name} in Topic ${currentTopic.name} by Team ${currentTeam.name}`} />
+        </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
             <DiscussionList topic={currentTopic} />
           </Grid>
-
           <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
             {currentDiscussion.posts.length > 0 ? (
               <div>

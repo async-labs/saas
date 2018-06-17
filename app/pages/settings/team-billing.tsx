@@ -77,7 +77,7 @@ class TeamBilling extends React.Component<MyProps> {
         <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
           <Head>
             <title>Team Billing</title>
-            <meta name="description" content="description" />
+            <meta name="description" content="Only the Team Leader can access this page" />
           </Head>
           <Grid container style={styleGrid}>
             <Grid item sm={2} xs={12} style={styleGridItem}>
@@ -85,8 +85,8 @@ class TeamBilling extends React.Component<MyProps> {
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
               <h3>Team Billing</h3>
-              <p>Only Team Leader can access this page.</p>
-              <p>Create your own team to become Team Leader.</p>
+              <p>Only the Team Leader can access this page.</p>
+              <p>Create your own team to become a Team Leader.</p>
             </Grid>
           </Grid>
         </div>
@@ -97,7 +97,7 @@ class TeamBilling extends React.Component<MyProps> {
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
           <title>Team Billing</title>
-          <meta name="description" content="description" />
+          <meta name="description" content="Your billing settings for Async" />
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>

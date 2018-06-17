@@ -60,7 +60,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
   inviteMember = () => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
-      notify('Team have not selected');
+      notify('You have not selected a Team.');
       return;
     }
 
@@ -70,7 +70,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
   removeMember = event => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
-      notify('Team have not selected');
+      notify('You have not selected a Team.');
       return;
     }
 
@@ -131,7 +131,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
         <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
           <Head>
             <title>Team Members</title>
-            <meta name="description" content="description" />
+            <meta name="description" content="Only the Team Leader can access this page" />
           </Head>
           <Grid container style={styleGrid}>
             <Grid item sm={2} xs={12} style={styleGridItem}>
@@ -139,8 +139,8 @@ class TeamMembers extends React.Component<MyProps, MyState> {
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
               <h3>Team Members</h3>
-              <p>Only Team Leader can access this page.</p>
-              <p>Create your own team to become Team Leader.</p>
+              <p>Only the Team Leader can access this page.</p>
+              <p>Create your own team to become a Team Leader.</p>
             </Grid>
           </Grid>
         </div>
@@ -151,7 +151,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
           <title>Team Members</title>
-          <meta name="description" content="description" />
+          <meta name="description" content={`Add or edit members for Team ${currentTeam.name}`} />
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>

@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import React from 'react';
 import { observer } from 'mobx-react';
 import Avatar from '@material-ui/core/Avatar';
@@ -57,6 +58,10 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
 
     return (
       <div style={{ textAlign: 'center', margin: '0 20px' }}>
+        <Head>
+          <title>Team Invitation: {team.name}</title>
+          <meta name="description" content={`Invitation to join ${team.name}`} />
+        </Head>
         <h2>
           <Avatar
             src={`${team.avatarUrl ||

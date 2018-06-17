@@ -63,7 +63,7 @@ class TeamConstraints extends React.Component<MyProps> {
         <div style={{ padding: '20px' }}>
           <p>You did not select any team.</p>
           <p>
-            To access this page, please select existing team or create new team if you have no
+            To access this page, please select an existing team or create a new team if you have no
             teams.
           </p>
         </div>
@@ -75,7 +75,7 @@ class TeamConstraints extends React.Component<MyProps> {
         <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
           <Head>
             <title>Team Constraints</title>
-            <meta name="description" content="description" />
+            <meta name="description" content="Only the Team Leader can access this page" />
           </Head>
           <Grid container style={styleGrid}>
             <Grid item sm={2} xs={12} style={styleGridItem}>
@@ -83,8 +83,8 @@ class TeamConstraints extends React.Component<MyProps> {
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
               <h3>Team Constraints</h3>
-              <p>Only Team Leader can access this page.</p>
-              <p>Create your own team to become Team Leader.</p>
+              <p>Only the Team Leader can access this page.</p>
+              <p>Create your own team to become a Team Leader.</p>
             </Grid>
           </Grid>
         </div>
@@ -95,7 +95,7 @@ class TeamConstraints extends React.Component<MyProps> {
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
           <title>Team Constraints</title>
-          <meta name="description" content="description" />
+          <meta name="description" content={`Constraints for your Team ${currentTeam.name}`} />
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
