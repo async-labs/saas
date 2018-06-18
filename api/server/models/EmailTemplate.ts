@@ -30,16 +30,18 @@ async function insertTemplates() {
   const templates = [
     {
       name: 'welcome',
-      subject: 'Welcome to Async',
+      subject: 'Welcome to SaaS by Async',
       message: `{{userName}},
         <p>
-          Thanks for signing up for Async!
+          Thanks for signing up on our <a href="https://saas-app.async-await.com" target="blank">demo app</a>!
         </p>
         <p>
-          We built Async for engineering teams to have meaningful communication and achieve deep work.
+          If you want to contribute to our SaaS boilerplate or report an issue, visit our <a href="https://github.com/async-labs/saas-by-async" target="blank">repo</a>. 
+        <br/> 
+          If you're interested in hiring our team to build custom SaaS features, please fill out our <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>
         </p>
         <p>
-          If you're building a SaaS product, check out our open source <a href="https://github.com/async-labs/saas-by-async" target="blank">SaaS boilerplate</a>.
+          <a href="https://youtu.be/QiLXx-0W8Q4?t=1m7s" target="blank">We hope you like pain</a>.
         </p>
       
         Kelly & Timur, Team Async
