@@ -35,7 +35,7 @@ interface State {
 }
 
 @inject('store')
-class DiscussionForm extends React.Component<Props, State> {
+class EditDiscussionForm extends React.Component<Props, State> {
   state = {
     name: '',
     memberIds: [],
@@ -195,4 +195,4 @@ class DiscussionForm extends React.Component<Props, State> {
   }
 }
 
-export default DiscussionForm;
+export default EditDiscussionForm;

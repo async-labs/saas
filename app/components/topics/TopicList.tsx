@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react';
 import Paper from '@material-ui/core/Paper';
 
 import TopicActionMenu from '../topics/TopicActionMenu';
-import TopicForm from './TopicForm';
+import CreateTopicForm from './CreateTopicForm';
 import ActiveLink from '../common/ActiveLink';
 import { Store } from '../../lib/store';
 
@@ -78,7 +78,7 @@ class TopicList extends React.Component<{ store: Store }> {
               ) : null,
           )}
         </ul>
-        <TopicForm open={this.state.addPublicTopicOpen} onClose={this.handleAddPublicTopicClose} />
+        <CreateTopicForm open={this.state.addPublicTopicOpen} onClose={this.handleAddPublicTopicClose} />
       </div>
     );
   }

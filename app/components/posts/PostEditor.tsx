@@ -98,7 +98,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
 
     document.getElementById('upload-file').value = '';
 
-    const bucket = 'async-posts';
+    const bucket = 'saas-posts';
     const prefix = `${currentTeam.slug}`;
 
     const { width, height } = await getImageDimension(file);
@@ -150,14 +150,16 @@ class PostEditor extends React.Component<MyProps, MyState> {
           <Button
             color="primary"
             onClick={this.showMarkdownContent}
-            variant={htmlContent ? 'flat' : 'outlined'}
+            varian="flat"
+            style={{ fontWeight: htmlContent ? 300 : 600 }}
           >
             Markdown
           </Button>{' '}
           <Button
             color="primary"
             onClick={this.showHtmlContent}
-            variant={htmlContent ? 'outlined' : 'flat'}
+            varian="flat"
+            style={{ fontWeight: htmlContent ? 600 : 300 }}
           >
             HTML
           </Button>

@@ -20,7 +20,7 @@ import PostEditor from '../posts/PostEditor';
 
 const styles = {
   paper: {
-    width: '75%', // TODO: should 100% when isMobile is true
+    width: '100%',
     padding: '0px 20px 20px 20px',
   },
 };
@@ -161,12 +161,18 @@ class CreateDiscussionForm extends React.Component<Props, State> {
         transitionDuration={{ enter: 500, exit: 500 }}
       >
         <div style={{ width: '100%', height: '100%', padding: '20px' }}>
-          <h3>Create Discussion</h3>
+          <h3>Create new Discussion</h3>
+          <div style={{ float: 'right' }}>
+            <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
+              Cancel
+            </Button>
+          </div>
           <form style={{ width: '100%', height: '60%' }} onSubmit={this.onSubmit}>
             <div>
               <TextField
                 autoFocus
                 label="Type name of Discussion"
+                helperText="Give a short and informative name to new Discussion"
                 value={this.state.name}
                 onChange={event => {
                   this.setState({ name: event.target.value });
@@ -197,14 +203,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
             {this.state.privacy === 'private' ? this.renderAutoComplete() : null}
             <br />
             <div style={{ float: 'right' }}>
-              <Button
-                // color="primary"
-                variant="outlined"
-                onClick={this.handleClose}
-                disabled={this.state.disabled}
-              >
-                Cancel
-              </Button>{' '}
               <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
                 Create Discussion
               </Button>

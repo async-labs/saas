@@ -8,7 +8,7 @@ import notify from '../../lib/notifier';
 import confirm from '../../lib/confirm';
 import { Topic } from '../../lib/store';
 
-import TopicForm from './TopicForm';
+import EditTopicForm from './EditTopicForm';
 
 const getMenuOptions = topic => ({
   dataId: topic._id,
@@ -82,7 +82,7 @@ class TopicActionMenu extends React.Component<{ topic: Topic }> {
         />
 
         {this.state.topicFormOpen ? (
-          <TopicForm
+          <EditTopicForm
             open={this.state.topicFormOpen}
             onClose={this.handleTopicFormClose}
             topic={topic}
