@@ -97,7 +97,7 @@ class TeamBilling extends React.Component<MyProps> {
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
           <title>Team Billing</title>
-          <meta name="description" content="Your billing settings for Async" />
+          <meta name="description" content={`Billing for ${currentTeam.name}`} />
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
