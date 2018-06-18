@@ -24,11 +24,6 @@ export default function routesWithSlug({ server, app }) {
     app.render(req, res, '/settings/team-billing', { teamSlug });
   });
 
-  server.get('/team/:teamSlug/settings/team-constraints', (req, res) => {
-    const { teamSlug } = req.params;
-    app.render(req, res, '/settings/team-constraints', { teamSlug });
-  });
-
   server.get('/team/:teamSlug/settings/team-profile', (req, res) => {
     const { teamSlug } = req.params;
     app.render(req, res, '/settings/team-profile', { teamSlug });

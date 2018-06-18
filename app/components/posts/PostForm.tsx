@@ -14,7 +14,7 @@ import PostEditor from './PostEditor';
 
 const styles = {
   paper: {
-    width: '75%', // TODO: should 100% when isMobile is true
+    width: '100%',
     padding: '0px 20px 20px 20px',
   },
 };

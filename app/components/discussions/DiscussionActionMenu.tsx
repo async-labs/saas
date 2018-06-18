@@ -9,6 +9,9 @@ import { Discussion, Store } from '../../lib/store';
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 import EditDiscussionForm from './EditDiscussionForm';
 
+const dev = process.env.NODE_ENV !== 'production';
+const ROOT_URL = dev ? `http://localhost:3000` : 'https://saas-app.async-await.com';
+
 const getMenuOptions = discussion => ({
   dataId: discussion._id,
   id: `discussion-menu-${discussion._id}`,
@@ -19,7 +22,7 @@ const getMenuItemOptions = (discussion, component) => [
   {
     text: 'Copy URL',
     dataId: discussion._id,
-    onClick: component.handleDiscussionMenuClose,
+    onClick: component.handleCopyUrl,
   },
   {
     text: 'Edit',
@@ -42,6 +45,29 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
 
   handleDiscussionFormClose = () => {
     this.setState({ discussionFormOpen: false, selectedDiscussion: null });
+  };
+
+  handleCopyUrl = async (event) => {
+    const { store } = this.props;
+    const { currentTeam } = store;
+    const { currentTopic } = currentTeam;
+
+    const id = event.currentTarget.dataset.id;
+    if (!id) {
+      return;
+    }
+
+    const selectedDiscussion = currentTopic.discussions.find(d => d._id === id);
+    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/t/${currentTopic.slug}/${selectedDiscussion.slug}`;
+
+    console.log(discussionUrl);
+
+    try {
+      await navigator.clipboard.writeText(discussionUrl);
+      notify('You successfully copied URL.');
+    } catch (err) {
+      notify(err);
+    }
   };
 
   editDiscussion = event => {

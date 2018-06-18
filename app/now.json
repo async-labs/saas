@@ -1,7 +1,7 @@
 {
     "env": {
         "NODE_ENV": "production",
-        "GA_TRACKING_ID": "UA-xxxxxxxxx-x"
+        "GA_TRACKING_ID": "UA-114984707-3"
     },
     "alias": "saas-app.async-await.com",
     "scale": {

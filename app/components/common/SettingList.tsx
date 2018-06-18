@@ -59,13 +59,6 @@ class SettingList extends React.Component<MyProps> {
             />
             <p />
             <ActiveLink
-              linkText="Team Constraints"
-              href={`/settings/team-constraints?teamSlug=${currentTeam.slug}`}
-              as={`/team/${currentTeam.slug}/settings/team-constraints`}
-              highlighterSlug={'/team-constraints'}
-            />
-            <p />
-            <ActiveLink
               linkText="Team Profile"
               href={`/settings/team-profile?teamSlug=${currentTeam.slug}`}
               as={`/team/${currentTeam.slug}/settings/team-profile`}
