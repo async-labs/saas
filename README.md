@@ -44,7 +44,11 @@ Check out [package.json for client code](https://github.com/async-labs/saas-by-a
 
 
 ## Screenshots
-(in progress)
+Dashboard with Topic and Discussion:
+![topic-and-discussion](https://user-images.githubusercontent.com/26158226/41570067-09fb94dc-7322-11e8-9c77-d28ca71102dd.png)
+
+Settings page for Team Leader:
+![settings](https://user-images.githubusercontent.com/26158226/41570224-b55f4652-7322-11e8-8803-4bd361c533c9.png)
 
 
 ## Project structure
