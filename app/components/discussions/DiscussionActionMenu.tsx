@@ -47,7 +47,7 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
     this.setState({ discussionFormOpen: false, selectedDiscussion: null });
   };
 
-  handleCopyUrl = async (event) => {
+  handleCopyUrl = async event => {
     const { store } = this.props;
     const { currentTeam } = store;
     const { currentTopic } = currentTeam;
@@ -58,13 +58,17 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
     }
 
     const selectedDiscussion = currentTopic.discussions.find(d => d._id === id);
-    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/t/${currentTopic.slug}/${selectedDiscussion.slug}`;
+    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/t/${currentTopic.slug}/${
+      selectedDiscussion.slug
+    }`;
 
     console.log(discussionUrl);
 
     try {
-      await navigator.clipboard.writeText(discussionUrl);
-      notify('You successfully copied URL.');
+      if (window.navigator) {
+        await window.navigator.clipboard.writeText(discussionUrl);
+        notify('You successfully copied URL.');
+      }
     } catch (err) {
       notify(err);
     }

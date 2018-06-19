@@ -1,12 +1,12 @@
 ## SaaS Boilerplate
-Open source boilerplate to build your own SaaS product. Launch in a few weeks instead of months. This boilerplate contains core features for any SaaS app: user log in, transactional emails, newsletters, and subscriptions.
+Open source boilerplate to build your own SaaS product. Launch in a few weeks instead of months.
 
 ## Live demo: 
-- app: https://saas-app.async-await.com
-- api: https://saas-api.async-await.com
+- https://saas-app.async-await.com
 
 
 ## Features
+(in progress)
 - Google login
 - AWS SES integration for transactional emails
 - MailChimp integration for newsletters
@@ -52,7 +52,7 @@ Check out [package.json for client code](https://github.com/async-labs/saas-by-a
 
 
 ## Contributing
-If you'd like to contribute, check out our [todo list](https://github.com/async-labs/saas-by-async/issues/1) for features you can add. For reporting bugs, create an [issue](https://github.com/async-labs/saas-by-async/issues/new).
+If you'd like to contribute, check out our [todo list](https://github.com/async-labs/saas/issues/1) for features you can add. For reporting bugs, create an [issue](https://github.com/async-labs/saas/issues/new).
 
 
 ## Team

@@ -15,6 +15,10 @@ const stylePaper = {
   padding: '5px',
 };
 
+const styleLoadingDiv = {
+  padding: '20px',
+}
+
 @inject('store')
 @observer
 class TopicList extends React.Component<{ store: Store }> {
@@ -37,11 +41,11 @@ class TopicList extends React.Component<{ store: Store }> {
     const { currentTeam } = store;
 
     if (!currentTeam) {
-      return <div style={{ fontSize: '13px' }}>Create new team or select existing team.</div>;
+      return <div style={styleLoadingDiv}>No team is found.</div>;
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {
-      return <div>loading...</div>;
+      return <div style={styleLoadingDiv}>loading Topics ...</div>;
     }
 
     return (

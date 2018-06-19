@@ -18,6 +18,10 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
+const styleLoadingDiv = {
+  padding: '20px',
+};
+
 @observer
 class Topic extends React.Component<{
   teamSlug: string;
@@ -70,11 +74,11 @@ class Topic extends React.Component<{
     const { currentTeam } = store;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return <div>Team is not selected.</div>;
+      return <div style={styleLoadingDiv}>You have not selected Team.</div>;
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {
-      return <div>loading...</div>;
+      return <div style={styleLoadingDiv}>loading Topics ...</div>;
     }
 
     const { currentTopic } = store.currentTeam;
@@ -83,11 +87,11 @@ class Topic extends React.Component<{
       return (
         <Grid container direction="row" justify="flex-start" alignItems="stretch" style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <h2>No topic</h2>
+            <div style={styleLoadingDiv}>No topic is found.</div>
           </Grid>
 
-          <Grid item sm={10} xs={12}>
-          <p style={{ padding: '0px 0px 0px 20px' }}>Select or create topic.</p>
+          <Grid item sm={10} xs={12} style={styleGrid}>
+            <div style={styleLoadingDiv}>Select or create topic.</div>
           </Grid>
         </Grid>
       );
@@ -100,8 +104,8 @@ class Topic extends React.Component<{
             <DiscussionList topic={currentTopic} />
           </Grid>
 
-          <Grid item sm={10} xs={12}>
-            <div style={{ padding: '20px 0px 0px 20px' }}>loading...</div>
+          <Grid item sm={10} xs={12} style={styleGrid}>
+            <div style={styleLoadingDiv}>loading Discussions ...</div>
           </Grid>
         </Grid>
       );
@@ -116,8 +120,8 @@ class Topic extends React.Component<{
             <DiscussionList topic={currentTopic} />
           </Grid>
 
-          <Grid item sm={10} xs={12}>
-            <div style={{ padding: '20px 0px 0px 20px' }}>No discussions found.</div>
+          <Grid item sm={10} xs={12} style={styleGrid}>
+            <div style={styleLoadingDiv}>No discussion is found.</div>
           </Grid>
         </Grid>
       );
@@ -136,8 +140,8 @@ class Topic extends React.Component<{
           <Grid item sm={2} xs={12} style={styleGridItem}>
             <DiscussionList topic={currentTopic} />
           </Grid>
-          <Grid item sm={10} xs={12}>
-            <div style={{ padding: '20px 0px 0px 20px' }}>loading {currentDiscussion.name}...</div>
+          <Grid item sm={10} xs={12} style={styleGridItem}>
+            <div style={styleLoadingDiv}>loading {currentDiscussion.name} ...</div>
           </Grid>
         </Grid>
       </React.Fragment>

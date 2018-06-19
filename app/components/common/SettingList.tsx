@@ -9,6 +9,10 @@ const styleTeamAvatar = {
   margin: '0px auto',
 };
 
+const styleLoadingDiv = {
+  padding: '20px',
+};
+
 type MyProps = { store: Store; isTL: boolean };
 
 @inject('store')
@@ -23,11 +27,11 @@ class SettingList extends React.Component<MyProps> {
     const { currentTeam, currentUser } = store;
 
     if (!currentTeam) {
-      return <div style={{ padding: '20px 0px 0px 0px' }}>Create new team or select existing team.</div>;
+      return <div style={styleLoadingDiv}>Create new team or select existing team.</div>;
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {
-      return <div>loading...</div>;
+      return <div style={styleLoadingDiv}>loading Topics ...</div>;
     }
 
     return (

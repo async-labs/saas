@@ -21,6 +21,10 @@ import { Store } from './store';
 const dev = process.env.NODE_ENV !== 'production';
 const LOG_OUT_URL = dev ? 'http://localhost:8000' : 'https://saas-api.async-await.com';
 
+const styleLoadingDiv = {
+  padding: '20px',
+}
+
 Router.onRouteChangeStart = () => {
   NProgress.start();
 };
@@ -161,7 +165,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       const { store } = this.props;
 
       if (store.isLoggingIn) {
-        return <div style={{ color: 'black' }}>1-loading...</div>;
+        return <div style={styleLoadingDiv}>loading User ...</div>;
       }
 
       if (!store.currentUser) {
@@ -183,7 +187,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       }
 
       if (store.isLoadingTeams || !store.isInitialTeamsLoaded) {
-        return <div style={{ color: 'black' }}>2-loading...</div>;
+        return <div style={styleLoadingDiv}>loading Teams ...</div>;
       }
 
       if (!store.currentTeam) {

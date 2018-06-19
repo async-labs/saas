@@ -22,6 +22,10 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
+const styleLoadingDiv = {
+  padding: '20px',
+}
+
 interface Props {
   store: Store;
   teamSlug: string;
@@ -74,12 +78,12 @@ class Discussion extends React.Component<Props> {
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
-        <div style={{ padding: '20px 0px 0px 0px' }}>Create new team or select existing team.</div>
+        <div style={styleLoadingDiv}>Create new team or select existing team.</div>
       );
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {
-      return <div />; // loading
+      return <div style={styleLoadingDiv}>loading Topics ...</div>;
     }
 
     const { currentTopic } = store.currentTeam;
@@ -88,11 +92,11 @@ class Discussion extends React.Component<Props> {
       return (
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <h2>No topic</h2>
+          <div style={styleLoadingDiv}>No topic found.</div>
           </Grid>
 
           <Grid item sm={10} xs={12}>
-            <p style={{ padding: '0px 0px 0px 20px' }}>Select or create topic.</p>
+            <div style={styleLoadingDiv}>Select or create topic.</div>
           </Grid>
         </Grid>
       );
@@ -109,9 +113,8 @@ class Discussion extends React.Component<Props> {
             <DiscussionList topic={currentTopic} />
           </Grid>
 
-          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-            <div />
-            {/* 1-loading */}
+          <Grid item sm={10} xs={12} style={styleGridItem}>
+            <div style={styleLoadingDiv}>loading Discussions ...</div>
           </Grid>
         </Grid>
       );
@@ -126,8 +129,8 @@ class Discussion extends React.Component<Props> {
             <DiscussionList topic={currentTopic} />
           </Grid>
 
-          <Grid item sm={10} xs={12}>
-            <p>Empty topic.</p>
+          <Grid item sm={10} xs={12} style={styleGridItem}>
+            <div style={styleLoadingDiv}>Empty topic.</div>
           </Grid>
         </Grid>
       );
@@ -139,9 +142,8 @@ class Discussion extends React.Component<Props> {
           <Grid item sm={2} xs={12} style={styleGridItem}>
             <DiscussionList topic={currentTopic} />
           </Grid>
-          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-            <div />
-            {/* 2-loading */}
+          <Grid item sm={10} xs={12} style={styleGridItem}>
+            <div style={styleLoadingDiv}>loading Posts ...</div>
           </Grid>
         </Grid>
       );
