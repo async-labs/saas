@@ -5,9 +5,8 @@ import htmlescape from 'htmlescape';
 
 import getContext from '../lib/context';
 
-const { GA_TRACKING_ID, StripePublishableKey } = process.env;
-const env = { GA_TRACKING_ID, StripePublishableKey };
-// console.log(GA_TRACKING_ID);
+const { GA_TRACKING_ID, PRODUCTION_URL_APP, PRODUCTION_URL_API, StripePublishableKey } = process.env;
+const env = { GA_TRACKING_ID, PRODUCTION_URL_APP, PRODUCTION_URL_API, StripePublishableKey };
 
 class MyDocument extends Document {
   render() {

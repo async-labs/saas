@@ -5,6 +5,8 @@ import User, { IUserDocument } from './models/User';
 import Invitation from './models/Invitation';
 
 const dev = process.env.NODE_ENV !== 'production';
+const { PRODUCTION_URL_APP } = process.env;
+const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
 export default function auth({ ROOT_URL, server }) {
   const clientID = process.env.Google_clientID;
@@ -90,7 +92,7 @@ export default function auth({ ROOT_URL, server }) {
       }
 
       if (req.user && req.user.isAdmin) {
-        res.redirect(dev ? 'http://localhost:3000/admin' : 'https://saas-app.async-await.com/admin');
+        res.redirect(`${URL_APP}/admin`);
       } else {
         let redirectUrlAfterLogin;
 
@@ -100,17 +102,13 @@ export default function auth({ ROOT_URL, server }) {
           redirectUrlAfterLogin = `team/${req.user.defaultTeamSlug}/t/projects`;
         }
 
-        res.redirect(
-          dev
-            ? `http://localhost:3000/${redirectUrlAfterLogin}`
-            : `https://saas-app.async-await.com/${redirectUrlAfterLogin}`,
-        );
+        res.redirect(`${URL_APP}/${redirectUrlAfterLogin}`);
       }
     },
   );
 
   server.get('/logout', (req, res) => {
     req.logout();
-    res.redirect(dev ? 'http://localhost:3000/login' : 'https://saas-app.async-await.com/login');
+    res.redirect(`${URL_APP}/login`);
   });
 }

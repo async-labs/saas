@@ -8,9 +8,11 @@ import { Discussion, Store } from '../../lib/store';
 
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 import EditDiscussionForm from './EditDiscussionForm';
+import env from '../../lib/env';
 
 const dev = process.env.NODE_ENV !== 'production';
-const ROOT_URL = dev ? `http://localhost:3000` : 'https://saas-app.async-await.com';
+const { PRODUCTION_URL_APP } = env;
+const ROOT_URL = dev ? `http://localhost:3000` : PRODUCTION_URL_APP;
 
 const getMenuOptions = discussion => ({
   dataId: discussion._id,
@@ -71,13 +73,15 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
       }
     } catch (err) {
       notify(err);
+    } finally {
+      this.setState({ discussionFormOpen: false, selectedDiscussion: null });
     }
   };
 
   editDiscussion = event => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
-      notify('You have not selected Team');
+      notify('You have not selected Team.');
       return;
     }
 
@@ -100,13 +104,13 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
   deleteDiscussion = async event => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
-      notify('Team have not selected');
+      notify('You have not selected Team.');
       return;
     }
 
     const { currentTopic } = currentTeam;
     if (!currentTopic) {
-      notify('Topic have not selected');
+      notify('You have not selected Topic.');
       return;
     }
 
@@ -125,7 +129,7 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
         try {
           await currentTopic.deleteDiscussion(id);
 
-          notify('You successfully deleted Discussion');
+          notify('You successfully deleted Discussion.');
           NProgress.done();
         } catch (error) {
           console.error(error);

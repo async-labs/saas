@@ -5,14 +5,15 @@ import * as helmet from 'helmet';
 import * as mobxReact from 'mobx-react';
 
 import { getUser } from '../lib/api/public';
-
 import routesWithSlug from './routesWithSlug';
+import env from '../lib/env';
 
 mobxReact.useStaticRendering(true);
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 3000;
-const ROOT_URL = dev ? `http://localhost:${port}` : 'https://saas-app.async-await.com';
+const { PRODUCTION_URL_APP } = env;
+const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_APP;
 
 const app = next({ dev });
 const handle = app.getRequestHandler();

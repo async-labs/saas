@@ -18,7 +18,8 @@ require('dotenv').config();
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 8000;
-const ROOT_URL = dev ? `http://localhost:${port}` : 'https://saas-api.async-await.com';
+const { PRODUCTION_URL_API } = process.env;
+const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_API;
 
 let MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
 

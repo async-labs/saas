@@ -7,7 +7,8 @@ import logger from '../logs';
 import sendEmail from '../aws-ses';
 
 const dev = process.env.NODE_ENV !== 'production';
-const ROOT_URL = dev ? `http://localhost:3000` : 'https://saas-app.async-await.com';
+const { PRODUCTION_URL_API } = process.env;
+const ROOT_URL = dev ? `http://localhost:3000` : PRODUCTION_URL_API;
 
 const mongoSchema = new mongoose.Schema({
   teamId: {
