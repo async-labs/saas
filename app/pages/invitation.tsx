@@ -6,7 +6,7 @@ import Error from 'next/error';
 import Router from 'next/router';
 
 import LoginButton from '../components/common/LoginButton';
-import { getInvitedTeamByToken } from '../lib/api/public';
+import { getInvitedTeamByToken, removeInvitationIfMemberAdded } from '../lib/api/public';
 import { Store, Team } from '../lib/store';
 import withAuth from '../lib/withAuth';
 import withLayout from '../lib/withLayout';
@@ -30,13 +30,17 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
   }
 
   componentDidMount() {
-    const { store, team } = this.props;
+    const { store, team, token } = this.props;
 
     const user = store.currentUser;
 
     if (user && team) {
       if (team.memberIds.includes(user._id)) {
-        Router.push(`/projects?teamSlug=${team.slug}`, `/team/${team.slug}/projects`);
+        removeInvitationIfMemberAdded(token);
+        Router.push(
+          `/topics/detail?teamSlug=${team.slug}&topicSlug=projects`,
+          `/team/${team.slug}/t/projects`,
+        );
       } else {
         Router.push(`/`);
       }
@@ -62,23 +66,23 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
           <title>Team Invitation: {team.name}</title>
           <meta name="description" content={`Invitation to join ${team.name}`} />
         </Head>
-        <h2>
-          <Avatar
-            src={`${team.avatarUrl ||
-              'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
-            alt="Team logo"
-            style={{
-              margin: '10px auto 20px 0px',
-              cursor: 'pointer',
-              display: 'inline-flex',
-            }}
-          />{' '}
-          {team.name}
-        </h2>
-
-        <p>Join {team.name} logging in with your Google account.</p>
-
-        <LoginButton next={`/team/${team.slug}/projects`} invitationToken={token} />
+        <br />
+        <br />
+        <Avatar
+          src={`${team.avatarUrl ||
+            'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
+          alt="Team logo"
+          style={{
+            verticalAlign: 'middle',
+            display: 'inline-flex',
+          }}
+        />{' '}
+        <h2>{team.name}</h2>
+        <p>
+          Join <b>{team.name}</b> by logging in with your Google account.
+        </p>
+        <br />
+        <LoginButton next={`/team/${team.slug}/t/projects`} invitationToken={token} />
       </div>
     );
   }

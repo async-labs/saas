@@ -41,7 +41,7 @@ async function insertTemplates() {
           If you're interested in hiring our team to build custom SaaS features, please fill out our <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>
         </p>
         <p>
-          <a href="https://youtu.be/QiLXx-0W8Q4?t=1m7s" target="blank">We hope you like pain</a>.
+          <a href="https://youtu.be/QiLXx-0W8Q4?t=1m7s" target="blank">We hope you don't like pain</a>.
         </p>
       
         Kelly & Timur, Team Async
@@ -49,8 +49,8 @@ async function insertTemplates() {
     },
     {
       name: 'invitation',
-      subject: 'Async: Team Invitation',
-      message: `You've been invited to join {{teamName}}.
+      subject: 'You are invited to join a team at async-await.com',
+      message: `You've been invited to join <b>{{teamName}}</b>.
         <br/>Click here to accept the invitation: {{invitationURL}}
       `,
     },

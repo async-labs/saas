@@ -1,13 +1,15 @@
 import React from 'react';
 
 import Button from '@material-ui/core/Button';
+import env from '../../lib/env';
 
 import { styleLoginButton } from '../../lib/sharedStyles';
 
 // TS errors: https://github.com/mui-org/material-ui/issues/8198
 
 const dev = process.env.NODE_ENV !== 'production';
-const LOGIN_URL = dev ? 'http://localhost:8000' : 'https://saas-api.async-await.com';
+const { PRODUCTION_URL_API } = env;
+const LOGIN_URL = dev ? 'http://localhost:8000' : PRODUCTION_URL_API;
 
 class LoginButton extends React.PureComponent<{ next?: string; invitationToken?: string }> {
   render() {
@@ -16,9 +18,7 @@ class LoginButton extends React.PureComponent<{ next?: string; invitationToken?:
     let url = `${LOGIN_URL}/auth/google`;
 
     if (next && invitationToken) {
-      url += `?next=${url}&invitationToken=${invitationToken}`;
-    } else if (next) {
-      url += `?next=${url}`;
+      url += `?next=${next}&invitationToken=${invitationToken}`;
     }
 
     return (

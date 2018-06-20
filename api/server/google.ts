@@ -70,6 +70,12 @@ export default function auth({ ROOT_URL, server }) {
       prompt: 'select_account',
     };
 
+    if (req.query && req.query.next && req.query.next.startsWith('/')) {
+      req.session.next_url = req.query.next;
+    } else {
+      req.session.next_url = null;
+    }
+
     if (req.query && req.query.invitationToken) {
       req.session.invitationToken = req.query.invitationToken;
     } else {
@@ -93,15 +99,17 @@ export default function auth({ ROOT_URL, server }) {
 
       if (req.user && req.user.isAdmin) {
         res.redirect(`${URL_APP}/admin`);
+      } else if (req.session.next_url) {
+        let redirectUrlAfterLogin;
+        redirectUrlAfterLogin = req.session.next_url;
+        res.redirect(`${URL_APP}${redirectUrlAfterLogin}`);
       } else {
         let redirectUrlAfterLogin;
-
         if (!req.user.defaultTeamSlug) {
           redirectUrlAfterLogin = 'settings/create-team';
         } else {
           redirectUrlAfterLogin = `team/${req.user.defaultTeamSlug}/t/projects`;
         }
-
         res.redirect(`${URL_APP}/${redirectUrlAfterLogin}`);
       }
     },

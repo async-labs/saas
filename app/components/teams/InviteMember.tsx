@@ -56,7 +56,7 @@ class InviteMember extends React.Component<Props, State> {
       await store.currentTeam.inviteMember(email);
 
       this.setState({ email: '' });
-      notify('Invited');
+      notify('You successfully sent invitation.');
       this.props.onClose();
       NProgress.done();
     } catch (error) {
