@@ -44,7 +44,18 @@ Check out [package.json for client code](https://github.com/async-labs/saas-by-a
 
 
 ## Screenshots
-(in progress)
+Dashboard showing Topic > Discussion > Post:
+![saas-dashboard](https://user-images.githubusercontent.com/26158226/41631311-c5e23cca-73e8-11e8-900a-04ff5bf386e7.png)
+
+Adding a Post, Markdown vs. HTML view:
+![saas-addpost-markdown](https://user-images.githubusercontent.com/26158226/41631310-c5c5f3a8-73e8-11e8-93b3-a3400e7d1a3b.png)
+![saas-addpost-html](https://user-images.githubusercontent.com/26158226/41631309-c5a4e1e0-73e8-11e8-937b-79e9df6c2e60.png)
+
+Settings for Team Members:
+![saas-teammembers](https://user-images.githubusercontent.com/26158226/41631312-c5fe775a-73e8-11e8-87f8-a66b5d59eba9.png)
+
+Settings for Personal Profile:
+![saas-yourprofile](https://user-images.githubusercontent.com/26158226/41631313-c61e0df4-73e8-11e8-808d-b6d1f8042817.png)
 
 
 ## Project structure
