@@ -1,46 +1,146 @@
 ## SaaS Boilerplate
-Open source boilerplate to build your own SaaS product. Launch in a few weeks instead of months.
+Open source web app that saves you weeks of work when building your own SaaS product. 
+
+The boilerplate app comes with many basic features (see `Features` below) so you are able to focus on features that actually differentiate your product.
+
+We built this boilerplate for ourselves to focus better on what matters and successfully used it to quickly launch multiple SaaS web app.
+
+We used this boilerplate to build [async](https://async-await.com), [builderbook](https://builderbook.org) and other real-world web apps.
+
 
 ## Live demo: 
 - https://saas-app.async-await.com
 
+## Contents
+- [Features](#features)
+- [Run locally](#run-locally)
+- [Deploy](#deploy)
+- [Built with](#built-with)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+- [Other projects](#other-projects)
+- [Team](#team)
+- [License](#license)
+- [Project structure](#project-structure)
 
 ## Features
-(in progress)
-- Google login
-- AWS SES integration for transactional emails
-- MailChimp integration for newsletters
-- Stripe integration for subscriptions
-- File upload to AWS S3
+- User authentication with Google, cookie, session, compression, parses and helmet.
+- Transactional emails (AWS SES): welcome, team invitation, payment.
+- Adding email addresses to newsletter lists (Mailchimp): new users, paying users.
+- File upload, load, deletion (AWS S3) with pre-signed request for: Posts, Team Profile, User Profile.
+- Team creation.
+- Team member invitation.
+- Settings for Team and User.
+- Opinionated architecture: 
+  - keeping babel and webpack configurations under the hood,
+  - striving to minimize number of configurations,
+  - `withAuth` HOC to pass user prop and control user access to pages,
+  - `withLayout` HOC for shared layout and to pass additional data to pages,
+  - `withStore` HOC, developer-friendly state management with `MobX`,
+  - server-side rendering with `Material-UI`,
+  - model-specific components in addition to common components,
+- Universally-available environmental variables at runtime.
+- Server-side environmental variables managed with `dotenv`.
+- Custom logger (configure what not to print in production)
+- Many useful components for any web app: `ActiveLink`, `AutoComplete`, `Confirm`, `Notifier`, `MenuWithLinks` and more.
+- Analytics with `Google Analytics`
+- Production-ready, scalable, architecture:
+  - `app` - user-facing web app with Next/Express server, responsible for rendering of pages (either client-side and server-side). `app` sends requests via API methods and fetch to `api` server's Express routes.
+  - `api` - server-only web app with Express server, responsible for processing of requests for internal and external APIs.
+  - we prepared both apps for easy deployment to `now` by Zeit.
+
+
+- (upcoming) Subscribing to plan, managing subscription and card information.
 
 
 ## Run locally
-(in progress)
+
+Below are instructions on how to run two apps (`app` and `api`).
+
+To run `app`, inside `app` folder, run below command and navigate to `http://localhost:3000`:
+```
+GA_TRACKING_ID=UA-xxxxxxxxx-x yarn dev
+```
+
+You are welcome to remove GA integration or pass universally available variable inside code. If you do so, your command for `app` will become:
+```
+yarn dev
+```
+
+To run `api`, inside `api` folder, run below command:
+```
+yarn dev
+```
+
+Internal and external API requests will be sent from `http://localhost:3000` to `http://localhost:8000`.
+
+All environmental variables in `api` are avaialable on server only and kept in `.env` file that you should create, add environmental variables to it and keep this file in `.gitignore`.
 
 
 ## Deploy
-(in progress)
+
+To run two apps (`app` and `api`) at the same time.
+Find instructions below.
+
+- Inside `app` folder, create `now.json` file with following content:
+  ```
+  {
+    "env": {
+        "NODE_ENV": "production",
+        "GA_TRACKING_ID": "UA-xxxxxxxxx-x",
+        "PRODUCTION_URL_APP": "https://saas-app.async-await.com",
+        "PRODUCTION_URL_API": "https://saas-api.async-await.com"
+    },
+    "alias": "saas-app.async-await.com",
+    "scale": {
+      "sfo1": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  }
+  ```
+  Remember to edit `now.json` so it reflects your `GA_TRACKING_ID` and domains.
+
+- Inside `api` folder, create `now.json` file with following content:
+  ```
+  {
+    "env": {
+        "NODE_ENV": "production"
+    },
+    "dotenv": true,
+    "alias": "saas-api.async-await.com",
+    "scale": {
+      "sfo1": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  }
+  ```
+  Remember to edit `now.json` so it reflects your 
+
+Follow [these simple steps](https://github.com/builderbook/builderbook#deploy) to deploy each app to `Now` by Zeit.
+
+Learn how to configure and scale your deployment: [Now docs](https://zeit.co/docs/features/configuration).
+
+You are welcome to deploy to any cloud provider, we plan to publish tutorial for AWS Elastic Beanstalk.
 
 
 ## Built with
 
-#### Core stack
 - [React](https://github.com/facebook/react)
+- [Material-UI](https://github.com/mui-org/material-ui)
 - [Next](https://github.com/zeit/next.js)
 - [MobX](https://github.com/mobxjs/mobx)
 - [Express](https://github.com/expressjs/express)
 - [Mongoose](https://github.com/Automattic/mongoose)
 - [MongoDB](https://github.com/mongodb/mongo)
-- [Material-UI](https://github.com/mui-org/material-ui)
 - [Typescript](https://github.com/Microsoft/TypeScript)
 
-#### Third party APIs
-- Google OAuth
-- AWS SES
-- MailChimp
-- Stripe
+For more detail, check up `package.json` files in both `app` and `api` folders.
 
-Check out [package.json for client code](https://github.com/async-labs/saas-by-async/blob/master/app/package.json) and [package.json for server code](https://github.com/async-labs/saas-by-async/blob/master/api/package.json)
+To customize styles, check up [this guide](https://github.com/builderbook/builderbook#add-your-own-styles).
 
 
 ## Screenshots
@@ -58,12 +158,15 @@ Settings for Personal Profile:
 ![saas-yourprofile](https://user-images.githubusercontent.com/26158226/41631313-c61e0df4-73e8-11e8-808d-b6d1f8042817.png)
 
 
-## Project structure
-(in progress)
-
-
 ## Contributing
-If you'd like to contribute, check out our [todo list](https://github.com/async-labs/saas/issues/1) for features you can add. For reporting bugs, create an [issue](https://github.com/async-labs/saas/issues/new).
+If you'd like to contribute, check out our [todo list](https://github.com/async-labs/saas/issues/1) for features you can discuss and add.
+
+To report bug, create an [issue](https://github.com/async-labs/saas/issues/new).
+
+
+## Other projects
+Want to support this project?
+Sign up at [async](https://async-await.com) and/or [buy book](https://builderbook.org).
 
 
 ## Team
@@ -74,3 +177,7 @@ If you'd like to contribute, check out our [todo list](https://github.com/async-
 
 ## License
 All code in this repository is provided under the MIT License.
+
+
+## Project structure
+(in progress)
