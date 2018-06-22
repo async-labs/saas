@@ -12,6 +12,7 @@ npm-debug.log
 node_modules/
 .coverage
 .env
+now.json
 
 compiled/
 production-server/
