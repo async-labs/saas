@@ -81,7 +81,7 @@ server.get('/uploaded-file', async (req, res) => {
     return;
   }
 
-  if (teamSlug && teamSlug !== 'temporary') {
+  if (teamSlug) {
     const team = await Team.findOne({ slug: teamSlug })
       .select('memberIds')
       .lean();

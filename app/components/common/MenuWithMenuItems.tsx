@@ -25,15 +25,14 @@ class MenuWithMenuItems extends React.PureComponent<{
 
     return (
       <span>
-        {/* <Tooltip
+        <Tooltip
           title={menuOptions.tooltipTitle}
           placement="top"
           disableFocusListener
           disableTouchListener
-        > */}
+        >
           <a href="#" style={{ float: 'right' }} onClick={this.handleClick}>
             <i
-              // aria-owns={menuOptions.ariaOwns}
               data-id={menuOptions.dataId}
               aria-haspopup="true"
               color="action"
@@ -43,9 +42,7 @@ class MenuWithMenuItems extends React.PureComponent<{
               more_vert
             </i>
           </a>
-        {/* </Tooltip> */}
-
-        {/* Bug of MUI: https://github.com/mui-org/material-ui/issues/11913 */}
+        </Tooltip>
 
         <Menu
           id={menuOptions.id}

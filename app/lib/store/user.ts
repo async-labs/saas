@@ -7,7 +7,7 @@ export class User {
   @observable email: string | null;
   @observable displayName: string | null;
   @observable avatarUrl: string | null;
-  @observable isGithubConnected: boolean;
+  @observable defaultTeamSlug: string;
 
   constructor(params) {
     Object.assign(this, params);

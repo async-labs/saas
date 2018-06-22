@@ -4,7 +4,7 @@ import { uniq } from 'lodash';
 import { generateNumberSlug } from '../utils/slugify';
 import Topic from './Topic';
 import Team from './Team';
-import Post from './Post';
+import Post, { deletePostFiles } from './Post';
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
@@ -199,6 +199,12 @@ class DiscussionClass extends mongoose.Model {
       .lean();
 
     await this.checkPermission({ userId, topicId: discussion.topicId });
+
+    deletePostFiles(
+      await Post.find({ discussionId: id })
+        .select('content')
+        .lean(),
+    );
 
     await Post.remove({ discussionId: id });
 

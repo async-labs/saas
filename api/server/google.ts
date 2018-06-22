@@ -97,21 +97,21 @@ export default function auth({ ROOT_URL, server }) {
         );
       }
 
+      let redirectUrlAfterLogin;
+
       if (req.user && req.user.isAdmin) {
-        res.redirect(`${URL_APP}/admin`);
+        redirectUrlAfterLogin = `/admin`;
       } else if (req.session.next_url) {
-        let redirectUrlAfterLogin;
         redirectUrlAfterLogin = req.session.next_url;
-        res.redirect(`${URL_APP}${redirectUrlAfterLogin}`);
       } else {
-        let redirectUrlAfterLogin;
         if (!req.user.defaultTeamSlug) {
-          redirectUrlAfterLogin = 'settings/create-team';
+          redirectUrlAfterLogin = '/settings/create-team';
         } else {
-          redirectUrlAfterLogin = `team/${req.user.defaultTeamSlug}/t/projects`;
+          redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/t/projects`;
         }
-        res.redirect(`${URL_APP}/${redirectUrlAfterLogin}`);
       }
+
+      res.redirect(`${URL_APP}${redirectUrlAfterLogin}`);
     },
   );
 

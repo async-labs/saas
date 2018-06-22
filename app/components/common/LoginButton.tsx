@@ -2,6 +2,7 @@ import React from 'react';
 
 import Button from '@material-ui/core/Button';
 import env from '../../lib/env';
+import { makeQueryString } from '../../lib/api/makeQueryString';
 
 import { styleLoginButton } from '../../lib/sharedStyles';
 
@@ -16,9 +17,10 @@ class LoginButton extends React.PureComponent<{ next?: string; invitationToken?:
     const { next, invitationToken } = this.props;
 
     let url = `${LOGIN_URL}/auth/google`;
+    const qs = makeQueryString({ next, invitationToken });
 
-    if (next && invitationToken) {
-      url += `?next=${next}&invitationToken=${invitationToken}`;
+    if (qs) {
+      url += `?${qs}`;
     }
 
     return (

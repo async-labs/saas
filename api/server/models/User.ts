@@ -39,10 +39,6 @@ const mongoSchema = new mongoose.Schema({
     default: '',
   },
 
-  // TODO: Is this field really necessary? If so we need to maintain it.
-  //       There is no code that adding/removing teamId, when necessary
-  teamIds: [String],
-
   projectIds: [String],
 
   isAdmin: {
@@ -122,7 +118,6 @@ class UserClass extends mongoose.Model {
       'slug',
       'isAdmin',
       'isGithubConnected',
-      'teamIds',
       'defaultTeamSlug',
     ];
   }

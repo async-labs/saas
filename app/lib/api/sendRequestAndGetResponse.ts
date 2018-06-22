@@ -2,14 +2,7 @@ import 'isomorphic-unfetch';
 
 import getRootUrl from './getRootUrl';
 
-function makeQueryString(params) {
-  const esc = encodeURIComponent;
-  const query = Object.keys(params)
-    .map(k => `${esc(k)}=${params[k] ? esc(params[k]) : ''}`)
-    .join('&');
-
-  return query;
-}
+import { makeQueryString } from './makeQueryString';
 
 export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   const { externalServer } = opts;

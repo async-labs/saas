@@ -4,7 +4,7 @@ import { uniq } from 'lodash';
 import { generateNumberSlug } from '../utils/slugify';
 import Team from './Team';
 import Discussion from './Discussion';
-import Post from './Post';
+import Post, { deletePostFiles } from './Post';
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
@@ -173,6 +173,12 @@ class TopicClass extends mongoose.Model {
     const discussions = await Discussion.find({ topicId: id }, '_id');
 
     const discussionIds = discussions.map(d => d._id);
+
+    deletePostFiles(
+      await Post.find({ discussionId: { $in: discussionIds } })
+        .select('content')
+        .lean(),
+    );
 
     await Post.remove({ discussionId: discussionIds });
     await Discussion.remove({ _id: discussionIds });

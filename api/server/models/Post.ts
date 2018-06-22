@@ -4,10 +4,46 @@ import * as marked from 'marked';
 import * as he from 'he';
 import * as hljs from 'highlight.js';
 
+import * as url from 'url';
+import * as qs from 'querystring';
+import { chunk } from 'lodash';
+
 import Topic from './Topic';
 import Team from './Team';
 import Discussion from './Discussion';
-import logger from '../logs';
+import { deleteFiles } from '../aws-s3';
+// import logger from '../logs';
+
+function deletePostFiles(posts: IPostDocument[]) {
+  const imgRegEx = /\<img.+data-src=[\"|\'](.+?)[\"|\']/g;
+  const files: { [key: string]: string[] } = {};
+
+  posts.forEach(post => {
+    let res = imgRegEx.exec(post.content);
+
+    while (res) {
+      const { bucket, path } = qs.parse(url.parse(res[1]).query);
+
+      if (typeof bucket !== 'string' || typeof path !== 'string') {
+        continue;
+      }
+
+      if (!files[bucket]) {
+        files[bucket] = [];
+      }
+
+      files[bucket].push(path);
+
+      res = imgRegEx.exec(post.content);
+    }
+  });
+
+  Object.keys(files).forEach(bucket => {
+    chunk(files[bucket], 1000).forEach(fileList =>
+      deleteFiles(bucket, fileList).catch(err => console.log(err)),
+    );
+  });
+}
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
@@ -222,10 +258,12 @@ class PostClass extends mongoose.Model {
     }
 
     const post = await this.findById(id)
-      .select('createdUserId discussionId')
+      .select('createdUserId discussionId content')
       .lean();
 
     await this.checkPermission({ userId, discussionId: post.discussionId, post });
+
+    deletePostFiles([post]);
 
     await this.remove({ _id: id });
   }
@@ -236,4 +274,4 @@ mongoSchema.loadClass(PostClass);
 const Post = mongoose.model<IPostDocument, IPostModel>('Post', mongoSchema);
 
 export default Post;
-export { IPostDocument };
+export { IPostDocument, deletePostFiles };

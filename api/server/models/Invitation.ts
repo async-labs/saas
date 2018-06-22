@@ -81,10 +81,13 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Team does not exist or you have no permission');
     }
 
-    const registeredUser = await User.findOne({ email }).lean();
+    const registeredUser = await User.findOne({ email })
+      .select('defaultTeamSlug')
+      .lean();
+
     if (registeredUser) {
-      if (team.memberIds.includes(registeredUser._id)) {
-        throw new Error('Already team member');
+      if (team.memberIds.includes(registeredUser._id.toString())) {
+        throw new Error('This user is already Team Member.');
       } else {
         await Team.update({ _id: team._id }, { $addToSet: { memberIds: registeredUser._id } });
 

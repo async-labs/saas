@@ -23,17 +23,30 @@ export default function withAuth(
       const { store } = this.props;
 
       const user = store.currentUser;
+
       if (loginRequired && !logoutRequired && !user) {
         Router.push('/login');
         return;
       }
 
+      let redirectUrl = '/login';
+      let asUrl = '/login';
+      if (user) {
+        if (!user.defaultTeamSlug) {
+          redirectUrl = '/settings/create-team';
+          asUrl = '/settings/create-team';
+        } else {
+          redirectUrl = `/topics/detail?teamSlug=${user.defaultTeamSlug}&topicSlug=projects`;
+          asUrl = `/team/${user.defaultTeamSlug}/t/projects`;
+        }
+      }
+
       if (adminRequired && (!user || !user.isAdmin)) {
-        Router.push('/');
+        Router.push(redirectUrl, asUrl);
       }
 
       if (logoutRequired && user) {
-        Router.push('/');
+        Router.push(redirectUrl, asUrl);
       }
     }
 
