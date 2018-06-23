@@ -1,11 +1,8 @@
 ## SaaS Boilerplate
 Open source web app that saves you weeks of work when building your own SaaS product. 
-
-The boilerplate app comes with many basic SaaS features (see `Features` below) so that you are able to focus on features that differentiate your product.
-
-We built this boilerplate for ourselves to focus more on what matters and successfully used it to quickly launch multiple SaaS web apps.
-
-We used this boilerplate to build [async](https://async-await.com), [builderbook](https://builderbook.org), and other real-world web apps.
+- The boilerplate app comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you are able to focus on features that differentiate your product.
+- We built this boilerplate for ourselves to focus more on what matters and successfully used it to quickly launch multiple SaaS web apps.
+- We used this boilerplate to build [async](https://async-await.com), [builderbook](https://builderbook.org), and other real-world web apps.
 
 
 ## Live demo: 
@@ -24,13 +21,11 @@ We used this boilerplate to build [async](https://async-await.com), [builderbook
 - [Project structure](#project-structure)
 
 ## Features
-- User authentication with Google, cookie, session, compression, parses and helmet.
-- Transactional emails (AWS SES): welcome, team invitation, payment.
-- Adding email addresses to newsletter lists (Mailchimp): new users, paying users.
-- File upload, load, deletion (AWS S3) with pre-signed request for: Posts, Team Profile, User Profile.
-- Team creation.
-- Team member invitation.
-- Settings for Team and User.
+- User authentication with Google, cookie, session, compression, parser, and helmet.
+- Transactional emails (`AWS SES`): welcome, team invitation, and payment.
+- Adding email addresses to newsletter lists (`Mailchimp`): new users, paying users.
+- File upload, load, and deletion (`AWS S3`) with pre-signed request for: Posts, Team Profile, and User Profile.
+- Team creation, Team Member invitation, and settings for Team and User.
 - Opinionated architecture: 
   - keeping babel and webpack configurations under the hood,
   - striving to minimize number of configurations,
@@ -38,50 +33,104 @@ We used this boilerplate to build [async](https://async-await.com), [builderbook
   - `withLayout` HOC for shared layout and to pass additional data to pages,
   - `withStore` HOC, developer-friendly state management with `MobX`,
   - server-side rendering with `Material-UI`,
-  - model-specific components in addition to common components,
+  - model-specific components in addition to common components.
 - Universally-available environmental variables at runtime.
 - Server-side environmental variables managed with `dotenv`.
-- Custom logger (configure what not to print in production)
-- Many useful components for any web app: `ActiveLink`, `AutoComplete`, `Confirm`, `Notifier`, `MenuWithLinks` and more.
-- Analytics with `Google Analytics`
-- Production-ready, scalable, architecture:
-  - `app` - user-facing web app with Next/Express server, responsible for rendering of pages (either client-side and server-side). `app` sends requests via API methods and fetch to `api` server's Express routes.
-  - `api` - server-only web app with Express server, responsible for processing of requests for internal and external APIs.
+- Custom logger (configure what _not_ to print in production).
+- Many useful components for any web app: `ActiveLink`, `AutoComplete`, `Confirm`, `Notifier`, `MenuWithLinks`, and more.
+- Analytics with `Google Analytics`.
+- Production-ready, scalable architecture:
+  - `app` - user-facing web app with Next/Express server, responsible for rendering pages (either client-side or server-side). `app` sends requests via API methods and fetch to `api` server's Express routes.
+  - `api` - server-only web app with Express server, responsible for processing requests for internal and external APIs.
   - we prepared both apps for easy deployment to `now` by Zeit.
-
-
-- (upcoming) Subscribing to plan, managing subscription and card information.
+- (upcoming) Payments with `Stripe`: subscribing to plan, managing subscription and card information.
 
 
 ## Run locally
 
-Below are instructions on how to run two apps (`app` and `api`).
+To run locally, you will need to run two apps: `api` and `app`.
 
-To run `app`, inside `app` folder, run below command and navigate to `http://localhost:3000`:
-```
-GA_TRACKING_ID=UA-xxxxxxxxx-x yarn dev
-```
+#### Running `api` app:
 
-You are welcome to remove GA integration or pass universally available variable inside code. If you do so, your command for `app` will become:
-```
-yarn dev
-```
+- Before running, create a `.env` file inside the `api` folder with the environmental variables listed below.<br/> 
+  This file _must_ have values for the `required` variables.<br/>
+  To use all features and third-party integrations, also add the `optional` variables. <br/>
+  
+  `.env`:
+  ```
+  # Used in api/server/app.ts, REQUIRED
+  MONGO_URL="xxxxxx"
+  MONGO_URL_TEST="xxxxxx"
+  SESSION_SECRET="xxxxxx"
 
-To run `api`, inside `api` folder, run below command:
-```
-yarn dev
-```
+  # Used in api/server/google.ts, REQUIRED
+  Google_clientID="xxxxxx"
+  Google_clientSecret="xxxxxx"
+
+  # Used in api/server/aws-s3.ts and api/server/aws-ses.ts, OPTIONAL
+  Amazon_accessKeyId="xxxxxx"
+  Amazon_secretAccessKey="xxxxxx"
+
+  # Used in api/server/models/Invitation.ts and api/server/models/User.ts, OPTIONAL
+  EMAIL_SUPPORT_FROM_ADDRESS="xxxxxx"
+
+  # Used in api/server/mailchimp.ts, OPTIONAL
+  MAILCHIMP_API_KEY="xxxxxx"
+  MAILCHIMP_REGION="xxxxxx"
+  MAILCHIMP_SAAS_ALL_LIST_ID="xxxxxx"
+  ```
+  Important: The above environmental variables are available on the server only. You should add your `.env` file to `.gitignore` inside the `api` folder so that your secret keys are not stored on a remote Github repo.
+  
+  - To get `MONGO_URL` and `MONGO_URL_TEST`, we recommend a [free MongoDB at mLab](https://docs.mlab.com/).
+  - Specify your own secret key for Express session `SESSION_SECRET`: https://github.com/expressjs/session#secret
+  - Get `Google_clientID` and `Google_clientSecret` by following the [official OAuth tutorial](https://developers.google.com/identity/sign-in/web/sign-in#before_you_begin). <br/>
+    Important: For Google OAuth app, callback URL is: http://localhost:8000/oauth2callback <br/>
+    Important: You have to enable Google+ API in your Google Cloud Platform account.
+
+- Once `.env` is created, you can run the `api` app. Navigate to the `api` folder, run `yarn` to add all packages, then run the command below:
+  ```
+  yarn dev
+  ```
+
+#### Running `app` app:
+
+- Navigate to the `app` folder, run `yarn` to add all packages, then run the command below and navigate to `http://localhost:3000`:
+  ```
+  GA_TRACKING_ID=UA-xxxxxxxxx-x yarn dev
+  ```
+  - To get `GA_TRACKING_ID`, set up Google Analytics and follow [these instructions](https://support.google.com/analytics/answer/1008080?hl=en) to find your tracking ID.
+  
+  You are welcome to remove Google Analytics integration or pass universally available variables inside the code. If you do so, your command to run `app` will be:
+  ```
+  yarn dev
+  ```
 
 Internal and external API requests will be sent from `http://localhost:3000` to `http://localhost:8000`.
-
-All environmental variables in `api` are avaialable on server only and kept in a `.env` file that you should create, add environmental variables to it and keep this file in `.gitignore`.
 
 
 ## Deploy
 
-To run the two apps (`app` and `api`) at the same time, follow the instructions below.
+To run the two apps (`api` and `app`) at the same time, follow the instructions below.
 
-- Inside `app` folder, create `now.json` file with following content:
+- Inside the `api` folder, create a `now.json` file with the following content:
+  ```
+  {
+    "env": {
+        "NODE_ENV": "production"
+    },
+    "dotenv": true,
+    "alias": "saas-api.async-await.com",
+    "scale": {
+      "sfo1": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  }
+  ```
+  Remember to edit `now.json` so it reflects your domain.
+  
+- Inside the `app` folder, create a `now.json` file with the following content:
   ```
   {
     "env": {
@@ -101,29 +150,11 @@ To run the two apps (`app` and `api`) at the same time, follow the instructions 
   ```
   Remember to edit `now.json` so it reflects your `GA_TRACKING_ID` and domains.
 
-- Inside `api` folder, create `now.json` file with following content:
-  ```
-  {
-    "env": {
-        "NODE_ENV": "production"
-    },
-    "dotenv": true,
-    "alias": "saas-api.async-await.com",
-    "scale": {
-      "sfo1": {
-        "min": 1,
-        "max": 1
-      }
-    }
-  }
-  ```
-  Remember to edit `now.json` so it reflects your domain.
-
 Follow [these simple steps](https://github.com/builderbook/builderbook#deploy) to deploy each app to `Now` by Zeit.
 
 Learn how to configure and scale your deployment: [Now docs](https://zeit.co/docs/features/configuration).
 
-You are welcome to deploy to any cloud provider, we plan to publish tutorial for AWS Elastic Beanstalk.
+You are welcome to deploy to any cloud provider. We plan to publish a tutorial for AWS Elastic Beanstalk.
 
 
 ## Built with
@@ -158,13 +189,14 @@ Settings for Personal Profile:
 
 
 ## Contributing
-If you'd like to contribute, check out our [todo list](https://github.com/async-labs/saas/issues/1) for features you can discuss and add.
+If you'd like to contribute, check our [todo list](https://github.com/async-labs/saas/issues/1) for features you can discuss and add.
 
 To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
 
 
 ## Other projects
 Want to support this project?
+
 Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book).
 
 
@@ -175,129 +207,131 @@ Sign up at [async](https://async-await.com) and/or buy our [book](https://builde
 
 
 ## License
-All code in this repository is provided under the MIT License.
+All code in this repository is provided under the [MIT License](https://github.com/async-labs/saas/blob/master/LICENSE.md).
 
 
 ## Project structure
 
+#### Structure for `api` app:
 ```
-├── api
-│   ├── server
-│   │   ├── api
-│   │   │   ├── admin.ts
-│   │   │   ├── index.ts
-│   │   │   ├── public.ts
-│   │   │   ├── team-leader.ts
-│   │   │   ├── team-member.ts
-│   │   ├── models
-│   │   │   ├── Discussion.ts
-│   │   │   ├── EmailTemplate.ts
-│   │   │   ├── Invitation.ts
-│   │   │   ├── Post.ts
-│   │   │   ├── Purchase.ts
-│   │   │   ├── Team.ts
-│   │   │   ├── Topic.ts
-│   │   │   ├── User.ts
-│   │   ├── utils
-│   │   │   ├── slugify.ts
-│   │   ├── app.ts
-│   │   ├── aws-s3.ts
-│   │   ├── aws-ses.ts
-│   │   ├── google.ts
-│   │   ├── logs.ts
-│   │   ├── mailchimp.ts
-│   │   ├── stripe.ts
-│   ├── static
-│   ├── test/server/utils
-│   ├── .eslintrc.js
-│   ├── .gitignore
-│   ├── .npmignore
-│   ├── nodemon.js             
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── yarn.lock
-├── app
-│   ├── components
-│   │   ├── common
-│   │   │   ├── ActiveLink.tsx
-│   │   │   ├── AutoComplete.tsx
-│   │   │   ├── AvatarwithMenu.tsx
-│   │   │   ├── Confirm.tsx
-│   │   │   ├── LoginButton.tsx
-│   │   │   ├── MenuWithLinks.tsx
-│   │   │   ├── MenuWithMenuItems.tsx
-│   │   │   ├── Notifier.tsx
-│   │   │   ├── SettingList.tsx
-│   │   ├── discussions
-│   │   │   ├── CreateDiscussionForm.tsx
-│   │   │   ├── DiscussionActionMenu.tsx
-│   │   │   ├── DiscussionList.tsx
-│   │   │   ├── EditDiscussionForm.tsx
-│   │   ├── posts
-│   │   │   ├── PostContent.tsx
-│   │   │   ├── PostDetail.tsx
-│   │   │   ├── PostEditor.tsx
-│   │   │   ├── PostForm.tsx
-│   │   ├── teams
-│   │   │   ├── InviteMember.tsx
-│   │   ├── topics
-│   │   │   ├── CreateTopicForm.tsx
-│   │   │   ├── EditTopicForm.tsx
-│   │   │   ├── TopicActionMenu.tsx
-│   │   │   ├── TopicList.tsx
-│   ├── lib
-│   │   ├── api
-│   │   │   ├── admin.ts
-│   │   │   ├── getRootUrl.ts
-│   │   │   ├── makeQueryString.ts
-│   │   │   ├── public.ts
-│   │   │   ├── sendRequestAndGetResponse.ts
-│   │   │   ├── team-leader.ts
-│   │   │   ├── team-member.ts
-│   │   ├── store
-│   │   │   ├── discussion.ts
-│   │   │   ├── index.ts
-│   │   │   ├── invitation.ts
-│   │   │   ├── post.ts
-│   │   │   ├── team.ts
-│   │   │   ├── topic.ts
-│   │   │   ├── user.ts
-│   │   ├── confirm.ts
-│   │   ├── context.ts
-│   │   ├── env.js
-│   │   ├── gtag.js
-│   │   ├── notifier.ts
-│   │   ├── sharedStyles.ts
-│   │   ├── withAuth.tsx
-│   │   ├── withLayout.tsx
-│   │   ├── withStore.tsx
-│   ├── pages
-│   │   ├── discussions
-│   │   │   ├── detail.tsx
-│   │   ├── settings
-│   │   │   ├── create-team.tsx
-│   │   │   ├── team-billing.tsx
-│   │   │   ├── team-members.tsx
-│   │   │   ├── team-profile.tsx
-│   │   │   ├── your-profile.tsx
-│   │   ├── topics
-│   │   │   ├── detail.tsx
-│   │   ├── _document.tsx
-│   │   ├── invitation.tsx
-│   │   ├── login.tsx
-│   ├── server
-│   │   ├── app.ts
-│   │   ├── routesWithSlug.ts
-│   ├── static
-│   │   ├── robots.txt
-│   ├── .eslintrc.js
-│   ├── .gitignore
-│   ├── .npmignore
-│   ├── next.config.js
-│   ├── nodemon.json
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── tsconfig.server.json
-│   ├── yarn.lock
+├── server
+│   ├── api
+│   │   ├── admin.ts
+│   │   ├── index.ts
+│   │   ├── public.ts
+│   │   ├── team-leader.ts
+│   │   ├── team-member.ts
+│   ├── models
+│   │   ├── Discussion.ts
+│   │   ├── EmailTemplate.ts
+│   │   ├── Invitation.ts
+│   │   ├── Post.ts
+│   │   ├── Purchase.ts
+│   │   ├── Team.ts
+│   │   ├── Topic.ts
+│   │   ├── User.ts
+│   ├── utils
+│   │   ├── slugify.ts
+│   ├── app.ts
+│   ├── aws-s3.ts
+│   ├── aws-ses.ts
+│   ├── google.ts
+│   ├── logs.ts
+│   ├── mailchimp.ts
+│   ├── stripe.ts
+├── static
+├── test/server/utils
+├── .eslintrc.js
+├── .gitignore
+├── .npmignore
+├── nodemon.js             
+├── package.json
+├── tsconfig.json
+├── yarn.lock
+```
 
+#### Structure for `app` app:
+```
+├── components
+│   ├── common
+│   │   ├── ActiveLink.tsx
+│   │   ├── AutoComplete.tsx
+│   │   ├── AvatarwithMenu.tsx
+│   │   ├── Confirm.tsx
+│   │   ├── LoginButton.tsx
+│   │   ├── MenuWithLinks.tsx
+│   │   ├── MenuWithMenuItems.tsx
+│   │   ├── Notifier.tsx
+│   │   ├── SettingList.tsx
+│   ├── discussions
+│   │   ├── CreateDiscussionForm.tsx
+│   │   ├── DiscussionActionMenu.tsx
+│   │   ├── DiscussionList.tsx
+│   │   ├── EditDiscussionForm.tsx
+│   ├── posts
+│   │   ├── PostContent.tsx
+│   │   ├── PostDetail.tsx
+│   │   ├── PostEditor.tsx
+│   │   ├── PostForm.tsx
+│   ├── teams
+│   │   ├── InviteMember.tsx
+│   ├── topics
+│   │   ├── CreateTopicForm.tsx
+│   │   ├── EditTopicForm.tsx
+│   │   ├── TopicActionMenu.tsx
+│   │   ├── TopicList.tsx
+├── lib
+│   ├── api
+│   │   ├── admin.ts
+│   │   ├── getRootUrl.ts
+│   │   ├── makeQueryString.ts
+│   │   ├── public.ts
+│   │   ├── sendRequestAndGetResponse.ts
+│   │   ├── team-leader.ts
+│   │   ├── team-member.ts
+│   ├── store
+│   │   ├── discussion.ts
+│   │   ├── index.ts
+│   │   ├── invitation.ts
+│   │   ├── post.ts
+│   │   ├── team.ts
+│   │   ├── topic.ts
+│   │   ├── user.ts
+│   ├── confirm.ts
+│   ├── context.ts
+│   ├── env.js
+│   ├── gtag.js
+│   ├── notifier.ts
+│   ├── sharedStyles.ts
+│   ├── withAuth.tsx
+│   ├── withLayout.tsx
+│   ├── withStore.tsx
+├── pages
+│   ├── discussions
+│   │   ├── detail.tsx
+│   ├── settings
+│   │   ├── create-team.tsx
+│   │   ├── team-billing.tsx
+│   │   ├── team-members.tsx
+│   │   ├── team-profile.tsx
+│   │   ├── your-profile.tsx
+│   ├── topics
+│   │   ├── detail.tsx
+│   ├── _document.tsx
+│   ├── invitation.tsx
+│   ├── login.tsx
+├── server
+│   ├── app.ts
+│   ├── routesWithSlug.ts
+├── static
+│   ├── robots.txt
+├── .eslintrc.js
+├── .gitignore
+├── .npmignore
+├── next.config.js
+├── nodemon.json
+├── package.json
+├── tsconfig.json
+├── tsconfig.server.json
+├── yarn.lock
 ```
