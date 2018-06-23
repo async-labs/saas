@@ -1,11 +1,11 @@
 ## SaaS Boilerplate
 Open source web app that saves you weeks of work when building your own SaaS product. 
 
-The boilerplate app comes with many basic features (see `Features` below) so you are able to focus on features that actually differentiate your product.
+The boilerplate app comes with many basic SaaS features (see `Features` below) so that you are able to focus on features that differentiate your product.
 
-We built this boilerplate for ourselves to focus better on what matters and successfully used it to quickly launch multiple SaaS web app.
+We built this boilerplate for ourselves to focus more on what matters and successfully used it to quickly launch multiple SaaS web apps.
 
-We used this boilerplate to build [async](https://async-await.com), [builderbook](https://builderbook.org) and other real-world web apps.
+We used this boilerplate to build [async](https://async-await.com), [builderbook](https://builderbook.org), and other real-world web apps.
 
 
 ## Live demo: 
@@ -74,13 +74,12 @@ yarn dev
 
 Internal and external API requests will be sent from `http://localhost:3000` to `http://localhost:8000`.
 
-All environmental variables in `api` are avaialable on server only and kept in `.env` file that you should create, add environmental variables to it and keep this file in `.gitignore`.
+All environmental variables in `api` are avaialable on server only and kept in a `.env` file that you should create, add environmental variables to it and keep this file in `.gitignore`.
 
 
 ## Deploy
 
-To run two apps (`app` and `api`) at the same time.
-Find instructions below.
+To run the two apps (`app` and `api`) at the same time, follow the instructions below.
 
 - Inside `app` folder, create `now.json` file with following content:
   ```
@@ -118,7 +117,7 @@ Find instructions below.
     }
   }
   ```
-  Remember to edit `now.json` so it reflects your 
+  Remember to edit `now.json` so it reflects your domain.
 
 Follow [these simple steps](https://github.com/builderbook/builderbook#deploy) to deploy each app to `Now` by Zeit.
 
@@ -138,9 +137,9 @@ You are welcome to deploy to any cloud provider, we plan to publish tutorial for
 - [MongoDB](https://github.com/mongodb/mongo)
 - [Typescript](https://github.com/Microsoft/TypeScript)
 
-For more detail, check up `package.json` files in both `app` and `api` folders.
+For more detail, check `package.json` files in both `app` and `api` folders.
 
-To customize styles, check up [this guide](https://github.com/builderbook/builderbook#add-your-own-styles).
+To customize styles, check [this guide](https://github.com/builderbook/builderbook#add-your-own-styles).
 
 
 ## Screenshots
@@ -161,12 +160,12 @@ Settings for Personal Profile:
 ## Contributing
 If you'd like to contribute, check out our [todo list](https://github.com/async-labs/saas/issues/1) for features you can discuss and add.
 
-To report bug, create an [issue](https://github.com/async-labs/saas/issues/new).
+To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
 
 
 ## Other projects
 Want to support this project?
-Sign up at [async](https://async-await.com) and/or [buy book](https://builderbook.org).
+Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book).
 
 
 ## Team
@@ -180,4 +179,125 @@ All code in this repository is provided under the MIT License.
 
 
 ## Project structure
-(in progress)
+
+```
+├── api
+│   ├── server
+│   │   ├── api
+│   │   │   ├── admin.ts
+│   │   │   ├── index.ts
+│   │   │   ├── public.ts
+│   │   │   ├── team-leader.ts
+│   │   │   ├── team-member.ts
+│   │   ├── models
+│   │   │   ├── Discussion.ts
+│   │   │   ├── EmailTemplate.ts
+│   │   │   ├── Invitation.ts
+│   │   │   ├── Post.ts
+│   │   │   ├── Purchase.ts
+│   │   │   ├── Team.ts
+│   │   │   ├── Topic.ts
+│   │   │   ├── User.ts
+│   │   ├── utils
+│   │   │   ├── slugify.ts
+│   │   ├── app.ts
+│   │   ├── aws-s3.ts
+│   │   ├── aws-ses.ts
+│   │   ├── google.ts
+│   │   ├── logs.ts
+│   │   ├── mailchimp.ts
+│   │   ├── stripe.ts
+│   ├── static
+│   ├── test/server/utils
+│   ├── .eslintrc.js
+│   ├── .gitignore
+│   ├── .npmignore
+│   ├── nodemon.js             
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── yarn.lock
+├── app
+│   ├── components
+│   │   ├── common
+│   │   │   ├── ActiveLink.tsx
+│   │   │   ├── AutoComplete.tsx
+│   │   │   ├── AvatarwithMenu.tsx
+│   │   │   ├── Confirm.tsx
+│   │   │   ├── LoginButton.tsx
+│   │   │   ├── MenuWithLinks.tsx
+│   │   │   ├── MenuWithMenuItems.tsx
+│   │   │   ├── Notifier.tsx
+│   │   │   ├── SettingList.tsx
+│   │   ├── discussions
+│   │   │   ├── CreateDiscussionForm.tsx
+│   │   │   ├── DiscussionActionMenu.tsx
+│   │   │   ├── DiscussionList.tsx
+│   │   │   ├── EditDiscussionForm.tsx
+│   │   ├── posts
+│   │   │   ├── PostContent.tsx
+│   │   │   ├── PostDetail.tsx
+│   │   │   ├── PostEditor.tsx
+│   │   │   ├── PostForm.tsx
+│   │   ├── teams
+│   │   │   ├── InviteMember.tsx
+│   │   ├── topics
+│   │   │   ├── CreateTopicForm.tsx
+│   │   │   ├── EditTopicForm.tsx
+│   │   │   ├── TopicActionMenu.tsx
+│   │   │   ├── TopicList.tsx
+│   ├── lib
+│   │   ├── api
+│   │   │   ├── admin.ts
+│   │   │   ├── getRootUrl.ts
+│   │   │   ├── makeQueryString.ts
+│   │   │   ├── public.ts
+│   │   │   ├── sendRequestAndGetResponse.ts
+│   │   │   ├── team-leader.ts
+│   │   │   ├── team-member.ts
+│   │   ├── store
+│   │   │   ├── discussion.ts
+│   │   │   ├── index.ts
+│   │   │   ├── invitation.ts
+│   │   │   ├── post.ts
+│   │   │   ├── team.ts
+│   │   │   ├── topic.ts
+│   │   │   ├── user.ts
+│   │   ├── confirm.ts
+│   │   ├── context.ts
+│   │   ├── env.js
+│   │   ├── gtag.js
+│   │   ├── notifier.ts
+│   │   ├── sharedStyles.ts
+│   │   ├── withAuth.tsx
+│   │   ├── withLayout.tsx
+│   │   ├── withStore.tsx
+│   ├── pages
+│   │   ├── discussions
+│   │   │   ├── detail.tsx
+│   │   ├── settings
+│   │   │   ├── create-team.tsx
+│   │   │   ├── team-billing.tsx
+│   │   │   ├── team-members.tsx
+│   │   │   ├── team-profile.tsx
+│   │   │   ├── your-profile.tsx
+│   │   ├── topics
+│   │   │   ├── detail.tsx
+│   │   ├── _document.tsx
+│   │   ├── invitation.tsx
+│   │   ├── login.tsx
+│   ├── server
+│   │   ├── app.ts
+│   │   ├── routesWithSlug.ts
+│   ├── static
+│   │   ├── robots.txt
+│   ├── .eslintrc.js
+│   ├── .gitignore
+│   ├── .npmignore
+│   ├── next.config.js
+│   ├── nodemon.json
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── tsconfig.server.json
+│   ├── yarn.lock
+
+```
