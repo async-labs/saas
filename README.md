@@ -1,8 +1,7 @@
 ## SaaS Boilerplate
 Open source web app that saves you weeks of work when building your own SaaS product. 
 - The boilerplate app comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you are able to focus on features that differentiate your product.
-- We built this boilerplate for ourselves to focus more on what matters and successfully used it to quickly launch multiple SaaS web apps.
-- We used this boilerplate to build [async](https://async-await.com), [builderbook](https://builderbook.org), and other real-world web apps.
+- We built this boilerplate for ourselves to focus more on what matters. We've used it to quickly launch [async](https://async-await.com), [builderbook](https://builderbook.org), and other real-world SaaS web apps.
 
 
 ## Live demo: 
@@ -37,7 +36,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 - Universally-available environmental variables at runtime.
 - Server-side environmental variables managed with `dotenv`.
 - Custom logger (configure what _not_ to print in production).
-- Many useful components for any web app: `ActiveLink`, `AutoComplete`, `Confirm`, `Notifier`, `MenuWithLinks`, and more.
+- Useful components for any web app: `ActiveLink`, `AutoComplete`, `Confirm`, `Notifier`, `MenuWithLinks`, and more.
 - Analytics with `Google Analytics`.
 - Production-ready, scalable architecture:
   - `app` - user-facing web app with Next/Express server, responsible for rendering pages (either client-side or server-side). `app` sends requests via API methods and fetch to `api` server's Express routes.
@@ -150,7 +149,7 @@ To run the two apps (`api` and `app`) at the same time, follow the instructions 
   ```
   Remember to edit `now.json` so it reflects your `GA_TRACKING_ID` and domains.
 
-Follow [these simple steps](https://github.com/builderbook/builderbook#deploy) to deploy each app to `Now` by Zeit.
+- Follow [these simple steps](https://github.com/builderbook/builderbook#deploy) to deploy each app to `Now` by Zeit.
 
 Learn how to configure and scale your deployment: [Now docs](https://zeit.co/docs/features/configuration).
 
@@ -198,6 +197,8 @@ To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new
 Want to support this project?
 
 Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book).
+
+If you're interested in hiring our team to build custom SaaS features, fill out our [form](https://goo.gl/forms/4kk6mvowOjkQY21y2).
 
 
 ## Team
