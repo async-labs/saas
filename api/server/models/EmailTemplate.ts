@@ -38,11 +38,11 @@ async function insertTemplates() {
           Note that any data you save on the demo app will be deleted after 30 days.
         </p>
         <p>
-          If you want to contribute to our SaaS boilerplate or report an issue, visit our <a href="https://github.com/async-labs/saas" target="blank">repo</a>. 
+          - If you found our SaaS boilerplate useful, please remember to <a href="https://github.com/async-labs/saas" target="blank">star our repo</a>.
         <br/>
-          If you're learning how to build your own web app, check out our <a href="https://builderbook.org/book" target="blank">book</a>.
+          - If you're learning how to build your own web app, check out our <a href="https://builderbook.org/book" target="blank">book</a>. 
         <br/> 
-          If you're interested in hiring our team to build custom SaaS features, please fill out our <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>
+          - If you want to hire our team to build custom SaaS features, please fill out our <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>
         </p>
         <p>
           <a href="https://youtu.be/QiLXx-0W8Q4?t=1m7s" target="blank">We hope you don't like pain</a>.
@@ -53,7 +53,7 @@ async function insertTemplates() {
     },
     {
       name: 'invitation',
-      subject: 'You are invited to join a team at async-await.com',
+      subject: 'You are invited to join a Team at async-await.com',
       message: `You've been invited to join <b>{{teamName}}</b>.
         <br/>Click here to accept the invitation: {{invitationURL}}
       `,
