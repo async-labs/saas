@@ -43,7 +43,7 @@ const getMenuItemOptions = (member, component) => [
   },
 ];
 
-type MyProps = { teamSlug: string; store: Store; isTL: boolean };
+type MyProps = { teamSlug: string; store: Store; isTL: boolean; isAdmin: boolean };
 type MyState = { inviteMemberOpen: boolean };
 
 @inject('store')
@@ -111,7 +111,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
   // TODO: MobX when member gets removed - already done
 
   render() {
-    const { store, isTL } = this.props;
+    const { store, isTL, isAdmin } = this.props;
     const { currentTeam, currentUser } = store;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
@@ -135,7 +135,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
           </Head>
           <Grid container style={styleGrid}>
             <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} />
+              <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
               <h3>Team Members</h3>
@@ -155,11 +155,11 @@ class TeamMembers extends React.Component<MyProps, MyState> {
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} />
+            <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
           </Grid>
           <Grid item sm={10} xs={12} style={styleGridItem}>
             <h3>Team Members</h3>
-            <br />
+            <p />
             <h4 style={{ marginRight: 20, display: 'inline' }}>
               Current Team ( {Array.from(currentTeam.members.values()).length} / 20 )
             </h4>

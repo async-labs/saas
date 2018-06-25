@@ -88,7 +88,7 @@ function ThemeWrapper({ children, pageContext }) {
 
 function withLayout(BaseComponent, { teamRequired = true } = {}) {
   type MyProps = { pageContext: object; store: Store; teamSlug: string };
-  type MyState = { isTL: boolean };
+  type MyState = { isTL: boolean; isAdmin: boolean };
 
   @observer
   class App extends React.Component<MyProps, MyState> {
@@ -101,6 +101,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       const { currentTeam, currentUser } = props.store;
       this.state = {
         isTL: (currentUser && currentTeam && currentUser._id === currentTeam.teamLeaderId) || false,
+        isAdmin: (currentUser && currentUser.isAdmin) || false,
       };
     }
 
@@ -150,9 +151,14 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
 
         const { currentTeam: newTeam, currentUser } = store;
         const isTL = (currentUser && newTeam && currentUser._id === newTeam.teamLeaderId) || false;
+        const isAdmin = (currentUser && currentUser.isAdmin) || false;
 
         if (this.state.isTL !== isTL) {
           this.setState({ isTL });
+        }
+
+        if (this.state.isAdmin !== isAdmin) {
+          this.setState({ isAdmin });
         }
       }
     }
@@ -160,9 +166,8 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
     pageContext = null;
 
     render() {
-      // TODO: Add teamRequired: false to some pages that don't require team
-
       const { store } = this.props;
+      // console.log(this.state.isTL, this.state.isAdmin);
 
       if (store.isLoggingIn) {
         return <div style={styleLoadingDiv}>loading User ...</div>;
@@ -207,7 +212,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
           return (
             <ThemeWrapper pageContext={this.pageContext}>
               <Grid item sm={12} xs={12}>
-                <BaseComponent isTL={this.state.isTL} {...this.props} />
+                <BaseComponent isTL={this.state.isTL} isAdmin={this.state.isAdmin} {...this.props} />
               </Grid>
             </ThemeWrapper>
           );
@@ -261,7 +266,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
               </div>
             </Grid>
             <Grid item sm={11} xs={12}>
-              <BaseComponent isTL={this.state.isTL} {...this.props} />
+              <BaseComponent isTL={this.state.isTL} isAdmin={this.state.isAdmin} {...this.props} />
             </Grid>
           </Grid>
         </ThemeWrapper>

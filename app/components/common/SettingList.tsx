@@ -13,7 +13,7 @@ const styleLoadingDiv = {
   padding: '20px',
 };
 
-type MyProps = { store: Store; isTL: boolean };
+type MyProps = { store: Store; isTL: boolean; isAdmin: boolean };
 
 @inject('store')
 @observer
@@ -23,15 +23,14 @@ class SettingList extends React.Component<MyProps> {
   };
 
   render() {
-    const { store, isTL } = this.props;
+    const { store, isTL, isAdmin } = this.props;
     const { currentTeam, currentUser } = store;
+
+    // console.log(`TL status: ${isTL}`);
+    // console.log(`Admin status: ${isAdmin}`);
 
     if (!currentTeam) {
       return <div style={styleLoadingDiv}>Create new team or select existing team.</div>;
-    }
-
-    if (!currentTeam.isInitialTopicsLoaded) {
-      return <div style={styleLoadingDiv}>loading Topics ...</div>;
     }
 
     return (
@@ -41,7 +40,7 @@ class SettingList extends React.Component<MyProps> {
             <h3>Team Settings</h3>
             <Avatar style={styleTeamAvatar} src={currentTeam.avatarUrl} />
             <p style={{ textAlign: 'center' }}>{currentTeam.name}</p>
-            <hr style={{ width: '75%', margin: '0px auto' }} />
+            <hr style={{ width: '50%', margin: '0px auto' }} />
           </div>
         ) : null}
         {isTL ? (
@@ -66,7 +65,7 @@ class SettingList extends React.Component<MyProps> {
               linkText="Team Profile"
               href={`/settings/team-profile?teamSlug=${currentTeam.slug}`}
               as={`/team/${currentTeam.slug}/settings/team-profile`}
-              highlighterSlug={'/team-settings'}
+              highlighterSlug={'/team-profile'}
             />
             <p />
             <hr style={{ width: '100%', margin: '20px auto' }} />
@@ -76,7 +75,7 @@ class SettingList extends React.Component<MyProps> {
         <h3>Profile settings</h3>
         <Avatar style={styleTeamAvatar} src={currentUser.avatarUrl} />
         <p style={{ textAlign: 'center' }}>{currentUser.displayName}</p>
-        <hr style={{ width: '75%', margin: '0px auto' }} />
+        <hr style={{ width: '50%', margin: '0px auto' }} />
 
         <p />
         <p />
@@ -85,6 +84,20 @@ class SettingList extends React.Component<MyProps> {
           href={`/settings/your-profile`}
           highlighterSlug={'/your-profile'}
         />
+
+        <p />
+        <p />
+        {isAdmin ? (
+          <React.Fragment>
+            <hr style={{ width: '100%', margin: '20px auto' }} />
+            <h3>Admin settings</h3>
+            <ActiveLink
+              linkText="Admin Settings"
+              href={`/settings/admin`}
+              highlighterSlug={'/admin'}
+            />
+          </React.Fragment>
+        ) : null}
       </div>
     );
   }

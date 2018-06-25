@@ -27,7 +27,7 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-type MyProps = { store: Store; isTL: boolean; teamSlug: string };
+type MyProps = { store: Store; isTL: boolean; isAdmin: boolean; teamSlug: string };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class TeamProfile extends React.Component<MyProps, MyState> {
@@ -117,8 +117,8 @@ class TeamProfile extends React.Component<MyProps, MyState> {
   // TODO: Test Connect Github button when working on Projects
 
   render() {
-    const { store, isTL } = this.props;
-    const { currentUser, currentTeam } = store;
+    const { store, isTL, isAdmin } = this.props;
+    const { currentTeam } = store;
     const { newName, newAvatarUrl } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
@@ -137,15 +137,15 @@ class TeamProfile extends React.Component<MyProps, MyState> {
       return (
         <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
           <Head>
-            <title>Settings for {currentTeam.name}</title>
+            <title>Profile for {currentTeam.name}</title>
             <meta name="description" content="Only the Team Leader can access this page" />
           </Head>
           <Grid container style={styleGrid}>
             <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} />
+              <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
-              <h3>Team Settings</h3>
+              <h3>Team Profile</h3>
               <p>Only the Team Leader can access this page.</p>
               <p>Create your own team to become a Team Leader.</p>
             </Grid>
@@ -161,12 +161,11 @@ class TeamProfile extends React.Component<MyProps, MyState> {
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} />
+            <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
           </Grid>
           <Grid item sm={10} xs={12} style={styleGridItem}>
-            <h3>Team Settings</h3>
+            <h3>Team Profile</h3>
             <p />
-            <br />
             <form onSubmit={this.onSubmit}>
               <h4>Team name</h4>
               <TextField

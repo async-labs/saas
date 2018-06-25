@@ -72,6 +72,11 @@ interface ITeamModel extends mongoose.Model<ITeamDocument> {
     teamLeaderId: string;
     userId: string;
   }): Promise<void>;
+  removeOldData({
+    arrayOfTeamIds
+  }: {
+    arrayOfTeamIds: string[];
+  }): Promise<void>;
 }
 
 class TeamClass extends mongoose.Model {
@@ -155,6 +160,13 @@ class TeamClass extends mongoose.Model {
     }
 
     await this.findByIdAndUpdate(teamId, { $pull: { memberIds: userId } });
+  }
+
+  static async removeOldData({ arrayOfTeamIds }) {
+
+    await this.remove({ _id: arrayOfTeamIds });
+
+    return arrayOfTeamIds;
   }
 }
 
