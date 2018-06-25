@@ -25,7 +25,7 @@ class LoginButton extends React.PureComponent<{ next?: string; invitationToken?:
 
     return (
       <Button variant="raised" style={styleLoginButton} href={url}>
-        <img src="https://storage.googleapis.com/nice-future-2156/G.svg" alt="Log in with Google" />
+        <img src="https://storage.googleapis.com/async-await-all/G.svg" alt="Log in with Google" />
         &nbsp;&nbsp;&nbsp; Log in with Google
       </Button>
     );
