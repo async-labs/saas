@@ -1,4 +1,4 @@
-## SaaS Boilerplate
+## Boilerplate App for SaaS Product
 Open source web app that saves you weeks of work when building your own SaaS product. 
 - The boilerplate app comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you are able to focus on features that differentiate your product.
 - We built this boilerplate for ourselves to focus more on what matters. We've used it to quickly launch [async](https://async-await.com), [builderbook](https://builderbook.org), and other real-world SaaS web apps.
@@ -7,6 +7,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 ## Live demo: 
 - https://saas-app.async-await.com
 
+
 ## Contents
 - [Features](#features)
 - [Run locally](#run-locally)
@@ -14,13 +15,15 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 - [Built with](#built-with)
 - [Screenshots](#screenshots)
 - [Contributing](#contributing)
-- [Other projects](#other-projects)
+- [Showcase](#showcase)
 - [Team](#team)
 - [License](#license)
 - [Project structure](#project-structure)
 
+
 ## Features
-- User authentication with Google, cookie, session, compression, parser, and helmet.
+- User authentication with Google, cookie, and session.
+- Production-ready Express server with compression, parser, and helmet.
 - Transactional emails (`AWS SES`): welcome, team invitation, and payment.
 - Adding email addresses to newsletter lists (`Mailchimp`): new users, paying users.
 - File upload, load, and deletion (`AWS S3`) with pre-signed request for: Posts, Team Profile, and User Profile.
@@ -46,11 +49,9 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 
 
 ## Run locally
-
 To run locally, you will need to run two apps: `api` and `app`.
 
 #### Running `api` app:
-
 - Before running, create a `.env` file inside the `api` folder with the environmental variables listed below.<br/> 
   This file _must_ have values for the `required` variables.<br/>
   To use all features and third-party integrations, also add the `optional` variables. <br/>
@@ -92,7 +93,6 @@ To run locally, you will need to run two apps: `api` and `app`.
   ```
 
 #### Running `app` app:
-
 - Navigate to the `app` folder, run `yarn` to add all packages, then run the command below and navigate to `http://localhost:3000`:
   ```
   GA_TRACKING_ID=UA-xxxxxxxxx-x yarn dev
@@ -108,7 +108,6 @@ Internal and external API requests will be sent from `http://localhost:3000` to 
 
 
 ## Deploy
-
 To deploy the two apps (`api` and `app`), follow the instructions below.
 
 - Inside the `api` folder, create a `now.json` file with the following content:
@@ -157,7 +156,6 @@ You are welcome to deploy to any cloud provider. We plan to publish a tutorial f
 
 
 ## Built with
-
 - [React](https://github.com/facebook/react)
 - [Material-UI](https://github.com/mui-org/material-ui)
 - [Next](https://github.com/zeit/next.js)
@@ -186,17 +184,22 @@ Settings for Team Members:
 Settings for Personal Profile:
 ![saas-yourprofile](https://user-images.githubusercontent.com/26158226/41631313-c61e0df4-73e8-11e8-808d-b6d1f8042817.png)
 
+Menu dropdown to switch between Teams:
+![menudrop-selectteam](https://user-images.githubusercontent.com/26158226/41943540-a7c515a8-7958-11e8-9fd0-5c372ab51c1a.png)
+
+
+## Showcase
+Check out projects built with the code in this open source app. Feel free to add your own project by creating a pull request.
+- [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee) : Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
+- [Async homepage and blog](https://async-await.com/): Communication tool for engineering teams to achieve deep work.
+- [Builder Book](https://github.com/builderbook/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
+- [Harbor](https://github.com/builderbook/harbor): Open source web app that allows anyone with a Gmail account to automatically charge for advice sent via email.
+
 
 ## Contributing
-If you'd like to contribute, check our [todo list](https://github.com/async-labs/saas/issues/1) for features you can discuss and add.
+If you'd like to contribute, check our [todo list](https://github.com/async-labs/saas/issues/1) for features you can discuss and add. To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
 
-To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
-
-
-## Other projects
-Want to support this project?
-
-Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book).
+Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book).
 
 If you're interested in hiring our team to build custom SaaS features, fill out our [form](https://goo.gl/forms/4kk6mvowOjkQY21y2).
 
