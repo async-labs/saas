@@ -109,7 +109,7 @@ Internal and external API requests will be sent from `http://localhost:3000` to 
 
 ## Deploy
 
-To run the two apps (`api` and `app`) at the same time, follow the instructions below.
+To deploy the two apps (`api` and `app`), follow the instructions below.
 
 - Inside the `api` folder, create a `now.json` file with the following content:
   ```
@@ -149,7 +149,7 @@ To run the two apps (`api` and `app`) at the same time, follow the instructions 
   ```
   Remember to edit `now.json` so it reflects your `GA_TRACKING_ID` and domains.
 
-- Follow [these simple steps](https://github.com/builderbook/builderbook#deploy) to deploy each app to `Now` by Zeit.
+- Follow [these simple steps](https://github.com/builderbook/builderbook#deploy) to deploy each app to `Now` cloud by Zeit.
 
 Learn how to configure and scale your deployment: [Now docs](https://zeit.co/docs/features/configuration).
 
