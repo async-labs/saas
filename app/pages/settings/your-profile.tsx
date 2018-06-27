@@ -27,7 +27,7 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-type MyProps = { store: Store, isTL: boolean, isAdmin: boolean };
+type MyProps = { store: Store, isTL: boolean };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class YourProfile extends React.Component<MyProps, MyState> {
@@ -114,7 +114,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
   };
 
   render() {
-    const { store, isTL, isAdmin } = this.props;
+    const { store, isTL } = this.props;
     const { newName, newAvatarUrl } = this.state;
 
     return (
@@ -126,7 +126,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
 
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
+            <SettingList store={store} isTL={isTL} />
           </Grid>
           <Grid item sm={10} xs={12} style={styleGridItem}>
             <h3>Your profile</h3>

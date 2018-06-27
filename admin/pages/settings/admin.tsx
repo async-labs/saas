@@ -6,7 +6,6 @@ import Grid from '@material-ui/core/Grid';
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
-import SettingList from '../../components/common/SettingList';
 import notify from '../../lib/notifier';
 import { removeOldData } from '../../lib/api/admin';
 
@@ -63,10 +62,7 @@ class AdminSettings extends React.Component<MyProps, MyState> {
             <meta name="description" content="Only the Admin can access this page" />
           </Head>
           <Grid container style={styleGrid}>
-            <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
-            </Grid>
-            <Grid item sm={10} xs={12} style={styleGridItem}>
+            <Grid item sm={12} xs={12} style={styleGridItem}>
               <h3>Admin Settings</h3>
               <p />
               <p>Only the Admin can access this page.</p>
@@ -82,10 +78,7 @@ class AdminSettings extends React.Component<MyProps, MyState> {
           <meta name="description" content="Admin Settings" />
         </Head>
         <Grid container style={styleGrid}>
-          <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
-          </Grid>
-          <Grid item sm={10} xs={12} style={styleGridItem}>
+          <Grid item sm={12} xs={12} style={styleGridItem}>
             <h3>Remove old data</h3>
             <p />
             <Button

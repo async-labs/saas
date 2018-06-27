@@ -6,7 +6,7 @@ import withStore from './withStore';
 
 export default function withAuth(
   BaseComponent,
-  { loginRequired = true, logoutRequired = false, adminRequired = false } = {},
+  { loginRequired = true, logoutRequired = false } = {},
 ) {
   class App extends React.Component<{ store: Store }> {
     static async getInitialProps(ctx) {
@@ -41,10 +41,6 @@ export default function withAuth(
         }
       }
 
-      if (adminRequired && (!user || !user.isAdmin)) {
-        Router.push(redirectUrl, asUrl);
-      }
-
       if (logoutRequired && user) {
         Router.push(redirectUrl, asUrl);
       }
@@ -55,10 +51,6 @@ export default function withAuth(
       const user = store.currentUser;
 
       if (loginRequired && !logoutRequired && !user) {
-        return null;
-      }
-
-      if (adminRequired && (!user || !user.isAdmin)) {
         return null;
       }
 

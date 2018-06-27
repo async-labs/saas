@@ -13,7 +13,7 @@ const styleLoadingDiv = {
   padding: '20px',
 };
 
-type MyProps = { store: Store; isTL: boolean; isAdmin: boolean };
+type MyProps = { store: Store; isTL: boolean };
 
 @inject('store')
 @observer
@@ -23,11 +23,8 @@ class SettingList extends React.Component<MyProps> {
   };
 
   render() {
-    const { store, isTL, isAdmin } = this.props;
+    const { store, isTL } = this.props;
     const { currentTeam, currentUser } = store;
-
-    // console.log(`TL status: ${isTL}`);
-    // console.log(`Admin status: ${isAdmin}`);
 
     if (!currentTeam) {
       return <div style={styleLoadingDiv}>Create new team or select existing team.</div>;
@@ -84,20 +81,6 @@ class SettingList extends React.Component<MyProps> {
           href={`/settings/your-profile`}
           highlighterSlug={'/your-profile'}
         />
-
-        <p />
-        <p />
-        {isAdmin ? (
-          <React.Fragment>
-            <hr style={{ width: '100%', margin: '20px auto' }} />
-            <h3>Admin settings</h3>
-            <ActiveLink
-              linkText="Admin Settings"
-              href={`/settings/admin`}
-              highlighterSlug={'/admin'}
-            />
-          </React.Fragment>
-        ) : null}
       </div>
     );
   }

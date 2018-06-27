@@ -18,7 +18,7 @@ require('dotenv').config();
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 8000;
-const { PRODUCTION_URL_API } = process.env;
+const { PRODUCTION_URL_APP, PRODUCTION_URL_API } = process.env;
 const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_API;
 
 let MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
@@ -28,7 +28,7 @@ mongoose.connect(MONGO_URL);
 const server = express();
 
 const appPort = process.env.APP_PORT || 3000;
-const origin = dev ? `http://localhost:${appPort}` : 'https://saas-app.async-await.com';
+const origin = dev ? `http://localhost:${appPort}` : PRODUCTION_URL_APP;
 server.use(cors({ origin, credentials: true }));
 
 server.use(helmet());
@@ -65,7 +65,7 @@ api(server);
 
 server.get('/uploaded-file', async (req, res) => {
   if (!req.user) {
-    res.redirect(dev ? 'http://localhost:3000/login' : 'https://saas-app.async-await.com/login');
+    res.redirect(dev ? 'http://localhost:3000/login' : `${PRODUCTION_URL_APP}/login`);
     return;
   }
 

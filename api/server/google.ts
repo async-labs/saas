@@ -99,9 +99,7 @@ export default function auth({ ROOT_URL, server }) {
 
       let redirectUrlAfterLogin;
 
-      if (req.user && req.user.isAdmin) {
-        redirectUrlAfterLogin = `/admin`;
-      } else if (req.session.next_url) {
+      if (req.user && req.session.next_url) {
         redirectUrlAfterLogin = req.session.next_url;
       } else {
         if (!req.user.defaultTeamSlug) {

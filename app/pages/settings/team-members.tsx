@@ -43,7 +43,7 @@ const getMenuItemOptions = (member, component) => [
   },
 ];
 
-type MyProps = { teamSlug: string; store: Store; isTL: boolean; isAdmin: boolean };
+type MyProps = { teamSlug: string; store: Store; isTL: boolean };
 type MyState = { inviteMemberOpen: boolean };
 
 @inject('store')
@@ -107,11 +107,10 @@ class TeamMembers extends React.Component<MyProps, MyState> {
   }
 
   // TODO: MobX for when new user is invited
-  // TODO: MobX when invited user becomes team member
-  // TODO: MobX when member gets removed - already done
+  // TODO: MobX when member gets removed
 
   render() {
-    const { store, isTL, isAdmin } = this.props;
+    const { store, isTL } = this.props;
     const { currentTeam, currentUser } = store;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
@@ -135,7 +134,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
           </Head>
           <Grid container style={styleGrid}>
             <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
+              <SettingList store={store} isTL={isTL} />
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
               <h3>Team Members</h3>
@@ -155,7 +154,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
+            <SettingList store={store} isTL={isTL} />
           </Grid>
           <Grid item sm={10} xs={12} style={styleGridItem}>
             <h3>Team Members</h3>

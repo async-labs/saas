@@ -116,7 +116,6 @@ class UserClass extends mongoose.Model {
       'email',
       'avatarUrl',
       'slug',
-      'isAdmin',
       'isGithubConnected',
       'defaultTeamSlug',
     ];

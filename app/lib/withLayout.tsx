@@ -17,9 +17,11 @@ import MenuWithLinks from '../components/common/MenuWithLinks';
 import ActiveLink from '../components/common/ActiveLink';
 import * as gtag from './gtag';
 import { Store } from './store';
+import env from '../lib/env';
 
 const dev = process.env.NODE_ENV !== 'production';
-const LOG_OUT_URL = dev ? 'http://localhost:8000' : 'https://saas-api.async-await.com';
+const { PRODUCTION_URL_API } = env;
+const LOG_OUT_URL = dev ? 'http://localhost:8000' : PRODUCTION_URL_API;
 
 const styleLoadingDiv = {
   padding: '20px',
@@ -88,7 +90,7 @@ function ThemeWrapper({ children, pageContext }) {
 
 function withLayout(BaseComponent, { teamRequired = true } = {}) {
   type MyProps = { pageContext: object; store: Store; teamSlug: string };
-  type MyState = { isTL: boolean; isAdmin: boolean };
+  type MyState = { isTL: boolean };
 
   @observer
   class App extends React.Component<MyProps, MyState> {
@@ -101,7 +103,6 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       const { currentTeam, currentUser } = props.store;
       this.state = {
         isTL: (currentUser && currentTeam && currentUser._id === currentTeam.teamLeaderId) || false,
-        isAdmin: (currentUser && currentUser.isAdmin) || false,
       };
     }
 
@@ -151,14 +152,9 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
 
         const { currentTeam: newTeam, currentUser } = store;
         const isTL = (currentUser && newTeam && currentUser._id === newTeam.teamLeaderId) || false;
-        const isAdmin = (currentUser && currentUser.isAdmin) || false;
 
         if (this.state.isTL !== isTL) {
           this.setState({ isTL });
-        }
-
-        if (this.state.isAdmin !== isAdmin) {
-          this.setState({ isAdmin });
         }
       }
     }
@@ -167,7 +163,6 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
 
     render() {
       const { store } = this.props;
-      // console.log(this.state.isTL, this.state.isAdmin);
 
       if (store.isLoggingIn) {
         return <div style={styleLoadingDiv}>loading User ...</div>;
@@ -212,7 +207,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
           return (
             <ThemeWrapper pageContext={this.pageContext}>
               <Grid item sm={12} xs={12}>
-                <BaseComponent isTL={this.state.isTL} isAdmin={this.state.isAdmin} {...this.props} />
+                <BaseComponent isTL={this.state.isTL} {...this.props} />
               </Grid>
             </ThemeWrapper>
           );
@@ -266,7 +261,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
               </div>
             </Grid>
             <Grid item sm={11} xs={12}>
-              <BaseComponent isTL={this.state.isTL} isAdmin={this.state.isAdmin} {...this.props} />
+              <BaseComponent isTL={this.state.isTL} {...this.props} />
             </Grid>
           </Grid>
         </ThemeWrapper>

@@ -1,6 +1,5 @@
 import * as express from 'express';
 import Team from '../models/Team';
-import logger from '../logs';
 
 const router = express.Router();
 
@@ -15,6 +14,8 @@ router.use((req, res, next) => {
 
 router.get('/teams/remove-old-data', async (req, res) => {
   try {
+    console.log(req.user._id);
+    
     const allTeams = await Team.find({}).lean();
     const arrayOfTeamIds = allTeams._id;
 
@@ -22,7 +23,18 @@ router.get('/teams/remove-old-data', async (req, res) => {
 
     res.json({ removedTeams });
   } catch (err) {
-    logger.error(err);
+    console.error(err);
+    res.json({ error: err.post || err.toString() });
+  }
+});
+
+router.post('/get-initial-data', async (req, res) => {
+  try {
+    const teams = await Team.getList(req.user.id);
+
+    res.json({ teams });
+  } catch (err) {
+    console.error(err);
     res.json({ error: err.post || err.toString() });
   }
 });

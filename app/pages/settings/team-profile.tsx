@@ -27,7 +27,7 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-type MyProps = { store: Store; isTL: boolean; isAdmin: boolean; teamSlug: string };
+type MyProps = { store: Store; isTL: boolean; teamSlug: string };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class TeamProfile extends React.Component<MyProps, MyState> {
@@ -117,7 +117,7 @@ class TeamProfile extends React.Component<MyProps, MyState> {
   // TODO: Test Connect Github button when working on Projects
 
   render() {
-    const { store, isTL, isAdmin } = this.props;
+    const { store, isTL } = this.props;
     const { currentTeam } = store;
     const { newName, newAvatarUrl } = this.state;
 
@@ -142,7 +142,7 @@ class TeamProfile extends React.Component<MyProps, MyState> {
           </Head>
           <Grid container style={styleGrid}>
             <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
+              <SettingList store={store} isTL={isTL} />
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
               <h3>Team Profile</h3>
@@ -161,7 +161,7 @@ class TeamProfile extends React.Component<MyProps, MyState> {
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
+            <SettingList store={store} isTL={isTL} />
           </Grid>
           <Grid item sm={10} xs={12} style={styleGridItem}>
             <h3>Team Profile</h3>

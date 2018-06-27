@@ -16,7 +16,6 @@
     "coverageDirectory": "./.coverage"
   },
   "dependencies": {
-    "@octokit/rest": "^15.8.2",
     "@types/mongoose": "^5.0.16",
     "@types/node": "^10.3.3",
     "aws-sdk": "^2.255.1",

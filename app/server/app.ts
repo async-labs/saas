@@ -37,10 +37,6 @@ app.prepare().then(() => {
     server.set('trust proxy', 1); // sets req.hostname, req.ip
   }
 
-  server.get('/robots.txt', (_, res) => {
-    res.sendFile(path.join(__dirname, '../static', 'robots.txt'));
-  });
-
   // middleware that populates req.user via fetching from API
   server.use(async (req: any, _, nextfn) => {
     const headers: any = {};
@@ -70,6 +66,10 @@ app.prepare().then(() => {
     }
 
     res.redirect(`${ROOT_URL}/${redirectUrl}`);
+  });
+
+  server.get('/robots.txt', (_, res) => {
+    res.sendFile(path.join(__dirname, '../static', 'robots.txt'));
   });
 
   routesWithSlug({ server, app });

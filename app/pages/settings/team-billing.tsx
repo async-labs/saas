@@ -21,7 +21,7 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-type MyProps = { store: Store; isTL: boolean; isAdmin: boolean; teamSlug: string };
+type MyProps = { store: Store; isTL: boolean; teamSlug: string };
 
 @observer
 class TeamBilling extends React.Component<MyProps> {
@@ -57,7 +57,7 @@ class TeamBilling extends React.Component<MyProps> {
   };
 
   render() {
-    const { store, isTL, isAdmin } = this.props;
+    const { store, isTL } = this.props;
     const { currentTeam } = store;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
@@ -81,7 +81,7 @@ class TeamBilling extends React.Component<MyProps> {
           </Head>
           <Grid container style={styleGrid}>
             <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
+              <SettingList store={store} isTL={isTL} />
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
               <h3>Team Billing</h3>
@@ -101,7 +101,7 @@ class TeamBilling extends React.Component<MyProps> {
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} isAdmin={isAdmin} />
+            <SettingList store={store} isTL={isTL} />
           </Grid>
           <Grid item sm={10} xs={12} style={styleGridItem}>
             <h3>Team Billing</h3>
