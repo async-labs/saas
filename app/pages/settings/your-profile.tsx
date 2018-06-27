@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Head from 'next/head';
-import Router from 'next/router';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -13,7 +12,6 @@ import withLayout from '../../lib/withLayout';
 import SettingList from '../../components/common/SettingList';
 import notify from '../../lib/notifier';
 import {
-  updateProfile,
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
 } from '../../lib/api/team-member';
@@ -27,7 +25,7 @@ const styleGridItem = {
   borderRight: '0.5px #aaa solid',
 };
 
-type MyProps = { store: Store, isTL: boolean };
+type MyProps = { store: Store; isTL: boolean };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class YourProfile extends React.Component<MyProps, MyState> {
@@ -44,6 +42,8 @@ class YourProfile extends React.Component<MyProps, MyState> {
   onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    const { currentUser } = this.props.store;
+
     const { newName, newAvatarUrl } = this.state;
 
     if (!newName) {
@@ -51,16 +51,16 @@ class YourProfile extends React.Component<MyProps, MyState> {
       return;
     }
 
+    NProgress.start();
+
     try {
       this.setState({ disabled: true });
 
-      await updateProfile({ name: newName, avatarUrl: newAvatarUrl });
-
-      // TODO: MobX instead of Router.push
-      Router.push(`/settings/your-profile`);
+      await currentUser.updateProfile({ name: newName, avatarUrl: newAvatarUrl });
+      NProgress.done();
       notify('You successfully updated your profile.');
     } catch (error) {
-      console.log(error);
+      NProgress.done();
       notify(error);
     } finally {
       this.setState({ disabled: false });
@@ -100,12 +100,15 @@ class YourProfile extends React.Component<MyProps, MyState> {
         newAvatarUrl: responseFromApiServerForUpload.url,
       });
 
-      await updateProfile({ name: currentUser.displayName, avatarUrl: this.state.newAvatarUrl });
+      await currentUser.updateProfile({
+        name: this.state.newName,
+        avatarUrl: this.state.newAvatarUrl,
+      });
 
       NProgress.done();
       notify('You successfully uploaded new photo.');
     } catch (error) {
-      console.log(error);
+      NProgress.done();
       notify(error);
       NProgress.done();
     } finally {
@@ -120,8 +123,8 @@ class YourProfile extends React.Component<MyProps, MyState> {
     return (
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
-          <title>Your Profile</title>
-          <meta name="description" content="View or edit your Async profile" />
+          <title>Your profile at Async</title>
+          <meta name="description" content="description" />
         </Head>
 
         <Grid container style={styleGrid}>

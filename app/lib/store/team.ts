@@ -283,8 +283,22 @@ export class Team {
   }
 
   @action
-  async inviteMember(email: string) {
-    return await inviteMember({ teamId: this._id, email });
+  async inviteMember({ email }: { email: string }) {
+    this.isLoadingMembers = true;
+    try {
+      const { newInvitation } = await inviteMember({ teamId: this._id, email });
+
+      runInAction(() => {
+        this.invitedUsers.set(newInvitation._id, new Invitation(newInvitation));
+        this.isLoadingMembers = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.isLoadingMembers = false;
+      });
+
+      throw error;
+    }
   }
 
   @action

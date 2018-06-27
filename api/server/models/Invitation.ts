@@ -124,7 +124,7 @@ class InvitationClass extends mongoose.Model {
       invitationURL: `${ROOT_URL}/invitation?token=${token}`,
     });
 
-    sendEmail({
+    await sendEmail({
       from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
       to: [email],
       subject: template.subject,
@@ -132,6 +132,8 @@ class InvitationClass extends mongoose.Model {
     }).catch(err => {
       logger.error('Email sending error:', err);
     });
+
+    return await this.findOne({ teamId, email }).lean();
   }
 
   static async getTeamInvitedUsers({ userId, teamId }) {

@@ -53,18 +53,17 @@ class InviteMember extends React.Component<Props, State> {
     NProgress.start();
     try {
       this.setState({ disabled: true });
-      await store.currentTeam.inviteMember(email);
+      await store.currentTeam.inviteMember({ email });
 
       this.setState({ email: '' });
-      notify('You successfully sent invitation.');
-      this.props.onClose();
       NProgress.done();
+      notify('You successfully sent invitation.');
     } catch (error) {
-      console.log(error);
       notify(error);
     } finally {
-      NProgress.done();
+      this.props.onClose();
       this.setState({ disabled: false });
+      NProgress.done();
     }
   };
 
@@ -76,6 +75,7 @@ class InviteMember extends React.Component<Props, State> {
         <DialogTitle id="invite-memter-dialog-title">Invite member</DialogTitle>
         <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
           <TextField
+            autoFocus
             value={this.state.email}
             placeholder="Email"
             onChange={event => {

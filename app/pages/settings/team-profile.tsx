@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Head from 'next/head';
-import Router from 'next/router';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -12,7 +11,6 @@ import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
 import SettingList from '../../components/common/SettingList';
 import notify from '../../lib/notifier';
-import { updateTeam } from '../../lib/api/team-leader';
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
@@ -45,22 +43,29 @@ class TeamProfile extends React.Component<MyProps, MyState> {
     event.preventDefault();
     const teamId = this.props.store.currentTeam._id;
     const { newName, newAvatarUrl } = this.state;
+    const { currentTeam } = this.props.store;
 
     if (!newName) {
       notify('Team name is required');
       return;
     }
 
+    NProgress.start();
+
     try {
       this.setState({ disabled: true });
 
-      const updatedTeam = await updateTeam({ teamId, name: newName, avatarUrl: newAvatarUrl });
+      await currentTeam.edit({ name: newName, avatarUrl: newAvatarUrl });
 
-      // TODO: MobX instead of Router.push
-      Router.push(`/team/${updatedTeam.slug}/settings/team-settings`);
-      notify('You successfully updated team profile.');
+      // Slack: Note: If you change your workspace’s URL, Slack will automatically redirect from the old to the new address. However, you should still make sure everyone in your workspace knows about the change because the old name will be placed back into the pool and could be used by some other workspace in the future.
+
+      // TODO: updating team slug creates many problems
+      // better solution is to assign unique team slug and allow TL to change team name
+      // team slug can start with 1 and increment by 1
+      NProgress.done();
+      notify('You successfully updated team profile. Reloading page...');
     } catch (error) {
-      console.log(error);
+      NProgress.done();
       notify(error);
     } finally {
       this.setState({ disabled: false });
@@ -101,7 +106,7 @@ class TeamProfile extends React.Component<MyProps, MyState> {
         newAvatarUrl: responseFromApiServerForUpload.url,
       });
 
-      await updateTeam({ teamId, name: currentTeam.name, avatarUrl: this.state.newAvatarUrl });
+      await currentTeam.edit({ name: currentTeam.name, avatarUrl: this.state.newAvatarUrl });
 
       NProgress.done();
       notify('You successfully uploaded new team logo.');
@@ -146,6 +151,7 @@ class TeamProfile extends React.Component<MyProps, MyState> {
             </Grid>
             <Grid item sm={10} xs={12} style={styleGridItem}>
               <h3>Team Profile</h3>
+              <p />
               <p>Only the Team Leader can access this page.</p>
               <p>Create your own team to become a Team Leader.</p>
             </Grid>

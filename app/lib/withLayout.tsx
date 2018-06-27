@@ -25,7 +25,7 @@ const LOG_OUT_URL = dev ? 'http://localhost:8000' : PRODUCTION_URL_API;
 
 const styleLoadingDiv = {
   padding: '20px',
-}
+};
 
 Router.onRouteChangeStart = () => {
   NProgress.start();
@@ -195,11 +195,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
           return (
             <ThemeWrapper pageContext={this.pageContext}>
               <Grid item sm={11} xs={12}>
-                <Link prefetch href="/settings/create-team">
-                  <Button style={{ margin: '20px' }} variant="outlined">
-                    Create team
-                  </Button>
-                </Link>
+              <div style={styleLoadingDiv}>Select existing Team or create new Team.</div>
               </Grid>
             </ThemeWrapper>
           );

@@ -85,7 +85,9 @@ router.post('/teams/invite-member', async (req, res) => {
 
     await Invitation.add({ userId: req.user.id, teamId, email });
 
-    res.json({ done: 1 });
+    const newInvitation = await Invitation.add({ userId: req.user.id, teamId, email });
+
+    res.json({ newInvitation });
   } catch (err) {
     console.error(err);
     res.json({ error: err.post || err.toString() });
