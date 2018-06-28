@@ -57,13 +57,12 @@ class YourProfile extends React.Component<MyProps, MyState> {
       this.setState({ disabled: true });
 
       await currentUser.updateProfile({ name: newName, avatarUrl: newAvatarUrl });
-      NProgress.done();
       notify('You successfully updated your profile.');
     } catch (error) {
-      NProgress.done();
       notify(error);
     } finally {
       this.setState({ disabled: false });
+      NProgress.done();
     }
   };
 

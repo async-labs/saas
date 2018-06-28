@@ -13,7 +13,7 @@ async function checkPrefix(prefix, user) {
     .lean();
 
   if (!teams.find(t => t.slug === prefix)) {
-    throw new Error('Wrong prefix. Create new team or select existing team.');
+    throw new Error('Wrong prefix.');
   }
 }
 

@@ -150,7 +150,7 @@ class UserClass extends mongoose.Model {
     }
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
-      .select('name avatarUrl')
+      .select('displayName avatarUrl slug')
       .lean();
   }
 

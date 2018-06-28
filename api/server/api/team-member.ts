@@ -298,13 +298,13 @@ router.post('/user/update-profile', async (req, res) => {
   try {
     const { name, avatarUrl } = req.body;
 
-    const user = await User.updateProfile({
+    const updatedUser = await User.updateProfile({
       userId: req.user.id,
       name,
       avatarUrl,
     });
 
-    res.json(user);
+    res.json({ updatedUser });
   } catch (err) {
     logger.error(err);
     res.json({ error: err.post || err.toString() });

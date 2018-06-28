@@ -16,14 +16,15 @@ export class User {
 
   @action
   async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {
-    await updateProfile({
+    const { updatedUser } = await updateProfile({
       name: name,
       avatarUrl: avatarUrl,
     });
 
     runInAction(() => {
-      this.displayName = name;
-      this.avatarUrl = avatarUrl;
+      this.displayName = updatedUser.displayName;
+      this.avatarUrl = updatedUser.avatarUrl;
+      this.slug = updatedUser.slug;
     });
   }
 }
