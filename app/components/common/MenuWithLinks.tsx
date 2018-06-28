@@ -1,10 +1,16 @@
 import React from 'react';
+import { withRouter } from 'next/router';
+import Link from 'next/link';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Avatar from '@material-ui/core/Avatar';
-import ActiveLink from './ActiveLink';
 
-class MenuWithLinks extends React.PureComponent<{ src?: string; alt?: string; options: any[] }> {
+class MenuWithLinks extends React.PureComponent<{
+  src?: string;
+  alt?: string;
+  options: any[];
+  router: any;
+}> {
   state = {
     anchorEl: null,
   };
@@ -18,7 +24,7 @@ class MenuWithLinks extends React.PureComponent<{ src?: string; alt?: string; op
   };
 
   render() {
-    const { options, src, alt, children } = this.props;
+    const { options, src, alt, children, router } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -48,20 +54,40 @@ class MenuWithLinks extends React.PureComponent<{ src?: string; alt?: string; op
             (option, i) =>
               option.separator ? (
                 <hr
-                  style={{ width: '85%', margin: '20px auto 10px auto' }}
+                  style={{ width: '85%', margin: '10px auto' }}
                   key={`separated-${i}`}
                 />
               ) : (
-                <MenuItem onClick={this.handleClose} key={option.href}>
-                  <ActiveLink
-                    teamLogo={option.avatarUrl}
-                    linkText={option.text}
-                    href={option.href}
-                    as={option.as || option.href}
-                    simple={option.simple}
-                    highlighterSlug={option.highlighterSlug}
-                  />
-                </MenuItem>
+                <Link prefetch href={option.href} as={option.as || option.href}>
+                  <a>
+                    <MenuItem
+                      onClick={this.handleClose}
+                      key={option.href}
+                      style={{
+                        fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
+                        fontSize: '14px'
+                      }}
+                    >
+                      {option.avatarUrl ? (
+                        <Avatar
+                          src={`${option.avatarUrl ||
+                            'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
+                          alt="Team logo"
+                          style={{
+                            margin: '0px 10px 0px 0px',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            height: '32px',
+                            width: '32px',
+                            verticalAlign: 'middle',
+                          }}
+                        />
+                      ) : null}
+
+                      {option.text}
+                    </MenuItem>
+                  </a>
+                </Link>
               ),
           )}
         </Menu>
@@ -70,4 +96,4 @@ class MenuWithLinks extends React.PureComponent<{ src?: string; alt?: string; op
   }
 }
 
-export default MenuWithLinks;
+export default withRouter(MenuWithLinks);
