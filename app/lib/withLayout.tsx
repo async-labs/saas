@@ -45,7 +45,7 @@ const getTeamOptionsMenuWithLinks = teams =>
     href: `/topics/detail?teamSlug=${t.slug}&topicSlug=projects`,
     as: `/team/${t.slug}/t/projects`,
     simple: false,
-    highlighterSlug: `/${t.slug}`,
+    highlighterSlug: `/team/${t.slug}/`,
   }));
 
 const menuUnderTeamList = (team, isTL) => [
