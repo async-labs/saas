@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 
 import Topic from './Topic';
 
-import generateSlug from '../utils/slugify';
+import { generateNumberSlug } from '../utils/slugify';
 import User from './User';
 
 const mongoSchema = new mongoose.Schema({
@@ -82,7 +82,7 @@ class TeamClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const slug = await generateSlug(this, name);
+    const slug = await generateNumberSlug(this);
 
     let defaultTeam = false;
     if ((await this.find({ teamLeaderId: userId }).count()) === 0) {
@@ -123,18 +123,17 @@ class TeamClass extends mongoose.Model {
       throw new Error('Permission denied');
     }
 
-    const modifier = { name: team.name, avatarUrl, slug: team.slug };
+    const modifier = { name: team.name, avatarUrl: avatarUrl };
 
     if (name !== team.name) {
       modifier.name = name;
-      modifier.slug = await generateSlug(this, name);
     }
 
     await this.updateOne({ _id: teamId }, { $set: modifier }, { runValidators: true });
 
-    if (team.defaultTeam) {
-      await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: modifier.slug } });
-    }
+    // if (team.defaultTeam) {
+    //   await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: modifier.slug } });
+    // }
 
     return this.findById(teamId, 'name avatarUrl slug defaultTeam').lean();
   }

@@ -104,13 +104,13 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       await discussion.addPost(content);
 
       this.setState({ name: '', memberIds: [], privacy: 'public' });
-      notify('You successfully created Discussion');
+      notify('You successfully created Discussion.');
 
       Router.push(
         `/discussions/detail?teamSlug=${currentTeam.slug}&topicSlug=${
           currentTopic.slug
         }&discussionSlug=${discussion.slug}`,
-        `/team/${currentTeam.slug}/t/${currentTopic.slug}/${discussion.slug}`,
+        `/team/${currentTeam.slug}/t/${currentTopic.slug}/d/${discussion.slug}`,
       );
     } catch (error) {
       console.log(error);

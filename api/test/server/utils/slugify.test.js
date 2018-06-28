@@ -1,4 +1,4 @@
-import generateSlug from '../../../server/utils/slugify';
+import generateSlug from '../../../server/utils/slugify.ts';
 
 const MockUser = {
   slugs: ['john-and-jonhson', 'john-and-jonhson-1', 'john'],

@@ -28,7 +28,7 @@ async function createUniqueSlug(Model, slug, count, filter) {
   return createUniqueSlug(Model, slug, count + 1, filter);
 }
 
-export default async function generateSlug(Model, name, filter = {}) {
+async function generateSlug(Model, name, filter = {}) {
   const origSlug = slugify(name);
 
   const obj = await Model.findOne({ slug: origSlug, ...filter })
@@ -42,7 +42,7 @@ export default async function generateSlug(Model, name, filter = {}) {
   return createUniqueSlug(Model, origSlug, 1, filter);
 }
 
-export async function generateNumberSlug(Model, filter = {}, number = 1) {
+async function generateNumberSlug(Model, filter = {}, number = 1) {
   const obj = await Model.findOne({ slug: number, ...filter })
     .select('_id')
     .lean();
@@ -53,3 +53,5 @@ export async function generateNumberSlug(Model, filter = {}, number = 1) {
 
   return generateNumberSlug(Model, filter, ++number);
 }
+
+export { generateSlug, generateNumberSlug };

@@ -1,5 +1,4 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper';
 import { observer, inject } from 'mobx-react';
@@ -66,8 +65,8 @@ class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
                       href={`/discussions/detail?teamSlug=${topic.team.slug}&topicSlug=${
                         topic.slug
                       }&discussionSlug=${d.slug}`}
-                      as={`/team/${topic.team.slug}/t/${topic.slug}/${d.slug}`}
-                      highlighterSlug={`/team/${topic.team.slug}/t/${topic.slug}/${d.slug}`}
+                      as={`/team/${topic.team.slug}/t/${topic.slug}/d/${d.slug}`}
+                      highlighterSlug={`/team/${topic.team.slug}/t/${topic.slug}/d/${d.slug}`}
                     />
 
                     <DiscussionActionMenu discussion={d} />

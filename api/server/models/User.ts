@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
-import generateSlug from '../utils/slugify';
+import { generateSlug } from '../utils/slugify';
 import { subscribe } from '../mailchimp';
 import sendEmail from '../aws-ses';
 import logger from '../logs';

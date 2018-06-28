@@ -174,7 +174,7 @@ export class Topic {
             `/discussions/detail?teamSlug=${this.team.slug}&topicSlug=${this.slug}&discussionSlug=${
               d.slug
             }`,
-            `/team/${this.team.slug}/t/${this.slug}/${d.slug}`,
+            `/team/${this.team.slug}/t/${this.slug}/d/${d.slug}`,
           );
         } else {
           Router.push(

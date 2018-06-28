@@ -41,7 +41,6 @@ class TeamProfile extends React.Component<MyProps, MyState> {
 
   onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const teamId = this.props.store.currentTeam._id;
     const { newName, newAvatarUrl } = this.state;
     const { currentTeam } = this.props.store;
 
@@ -57,25 +56,18 @@ class TeamProfile extends React.Component<MyProps, MyState> {
 
       await currentTeam.edit({ name: newName, avatarUrl: newAvatarUrl });
 
-      // Slack: Note: If you change your workspace’s URL, Slack will automatically redirect from the old to the new address. However, you should still make sure everyone in your workspace knows about the change because the old name will be placed back into the pool and could be used by some other workspace in the future.
-
-      // TODO: updating team slug creates many problems
-      // better solution is to assign unique team slug and allow TL to change team name
-      // team slug can start with 1 and increment by 1
-      NProgress.done();
-      notify('You successfully updated team profile. Reloading page...');
+      notify('You successfully updated Team name.');
     } catch (error) {
-      NProgress.done();
       notify(error);
     } finally {
       this.setState({ disabled: false });
+      NProgress.done();
     }
   };
 
   uploadFile = async () => {
     const { store } = this.props;
     const { currentTeam } = store;
-    const teamId = this.props.store.currentTeam._id;
 
     const file = document.getElementById('upload-file').files[0];
     document.getElementById('upload-file').value = '';
@@ -108,18 +100,14 @@ class TeamProfile extends React.Component<MyProps, MyState> {
 
       await currentTeam.edit({ name: currentTeam.name, avatarUrl: this.state.newAvatarUrl });
 
-      NProgress.done();
-      notify('You successfully uploaded new team logo.');
+      notify('You successfully uploaded new Team logo.');
     } catch (error) {
-      console.log(error);
       notify(error);
-      NProgress.done();
     } finally {
       this.setState({ disabled: false });
+      NProgress.done();
     }
   };
-
-  // TODO: Test Connect Github button when working on Projects
 
   render() {
     const { store, isTL } = this.props;

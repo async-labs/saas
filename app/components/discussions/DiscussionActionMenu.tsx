@@ -60,7 +60,7 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
     }
 
     const selectedDiscussion = currentTopic.discussions.find(d => d._id === id);
-    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/t/${currentTopic.slug}/${
+    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/t/${currentTopic.slug}/d/${
       selectedDiscussion.slug
     }`;
 

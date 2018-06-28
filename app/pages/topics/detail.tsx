@@ -64,7 +64,7 @@ class Topic extends React.Component<{
         `/discussions/detail?teamSlug=${teamSlug}&topicSlug=${topicSlug}&discussionSlug=${
           currentDiscussion.slug
         }`,
-        `/team/${teamSlug}/t/${currentTopic.slug}/${currentDiscussion.slug}`,
+        `/team/${teamSlug}/t/${currentTopic.slug}/d/${currentDiscussion.slug}`,
       );
     }
   }

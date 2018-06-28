@@ -53,19 +53,16 @@ class MenuWithLinks extends React.PureComponent<{
           {options.map(
             (option, i) =>
               option.separator ? (
-                <hr
-                  style={{ width: '85%', margin: '10px auto' }}
-                  key={`separated-${i}`}
-                />
+                <hr style={{ width: '85%', margin: '10px auto' }} key={`separated-${i}`} />
               ) : (
-                <Link prefetch href={option.href} as={option.as || option.href}>
+                <Link prefetch href={option.href} as={option.as || option.href} key={option.href}>
                   <a>
                     <MenuItem
                       onClick={this.handleClose}
                       key={option.href}
                       style={{
                         fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
-                        fontSize: '14px'
+                        fontSize: '14px',
                       }}
                     >
                       {option.avatarUrl ? (
