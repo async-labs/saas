@@ -137,31 +137,15 @@ router.get('/topics/list', async (req, res) => {
   }
 });
 
-router.get('/topics/private-topic', async (req, res) => {
-  try {
-    const topic = await Topic.getPrivateTopic({
-      userId: req.user.id,
-      teamId: req.query.teamId,
-      topicSlug: req.query.topicSlug,
-    });
-
-    res.json({ topic });
-  } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
-  }
-});
-
 router.post('/discussions/add', async (req, res) => {
   try {
-    const { name, topicId, memberIds = [], isPrivate = false } = req.body;
+    const { name, topicId, memberIds = [] } = req.body;
 
     const discussion = await Discussion.add({
       userId: req.user.id,
       name,
       topicId,
       memberIds,
-      isPrivate,
     });
 
     res.json({ discussion });
@@ -173,14 +157,13 @@ router.post('/discussions/add', async (req, res) => {
 
 router.post('/discussions/edit', async (req, res) => {
   try {
-    const { name, id, memberIds = [], isPrivate = false } = req.body;
+    const { name, id, memberIds = [] } = req.body;
 
     const { topicId } = await Discussion.edit({
       userId: req.user.id,
       name,
       id,
       memberIds,
-      isPrivate,
     });
 
     res.json({ done: 1 });

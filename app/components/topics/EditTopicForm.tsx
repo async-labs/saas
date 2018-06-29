@@ -37,7 +37,7 @@ class EditTopicForm extends React.Component<Props, State> {
     const { topic } = props;
 
     if (state.topicId === topic._id) {
-      return;
+      return null;
     }
 
     return {

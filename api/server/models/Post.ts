@@ -12,7 +12,6 @@ import Topic from './Topic';
 import Team from './Team';
 import Discussion from './Discussion';
 import { deleteFiles } from '../aws-s3';
-// import logger from '../logs';
 
 function deletePostFiles(posts: IPostDocument[]) {
   const imgRegEx = /\<img.+data-src=[\"|\'](.+?)[\"|\']/g;
@@ -167,14 +166,14 @@ class PostClass extends mongoose.Model {
     }
 
     const discussion = await Discussion.findById(discussionId)
-      .select('topicId memberIds isPrivate slug')
+      .select('topicId memberIds slug')
       .lean();
 
     if (!discussion) {
       throw new Error('Discussion not found');
     }
 
-    if (discussion.isPrivate && discussion.memberIds.indexOf(userId) === -1) {
+    if (discussion.memberIds.indexOf(userId) === -1) {
       throw new Error('Permission denied');
     }
 
@@ -222,9 +221,7 @@ class PostClass extends mongoose.Model {
 
     Discussion.updateOne({ _id: discussion._id }, { lastActivityDate: new Date() }).exec();
 
-    const memberIds: string[] = discussion.isPrivate
-      ? discussion.memberIds.filter(id => id !== userId)
-      : team.memberIds.filter(id => id !== userId);
+    const memberIds: string[] = discussion.memberIds.filter(id => id !== userId);
 
     return post;
   }

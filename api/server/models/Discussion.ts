@@ -24,10 +24,6 @@ const mongoSchema = new mongoose.Schema({
     required: true,
   },
   memberIds: [String],
-  isPrivate: {
-    type: Boolean,
-    default: false,
-  },
   createdAt: {
     type: Date,
     required: true,
@@ -49,7 +45,6 @@ interface IDiscussionDocument extends mongoose.Document {
   name: string;
   slug: string;
   memberIds: string[];
-  isPrivate: boolean;
   createdAt: Date;
   lastActivityDate: Date;
 }
@@ -67,13 +62,11 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
     name,
     userId,
     topicId,
-    isPrivate,
     memberIds,
   }: {
     name: string;
     userId: string;
     topicId: string;
-    isPrivate: boolean;
     memberIds: string[];
   }): Promise<IDiscussionDocument>;
 
@@ -81,13 +74,11 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
     userId,
     id,
     name,
-    isPrivate,
     memberIds,
   }: {
     userId: string;
     id: string;
     name: string;
-    isPrivate: boolean;
     memberIds: string[];
   }): Promise<{ topicId: string }>;
 
@@ -129,7 +120,7 @@ class DiscussionClass extends mongoose.Model {
   static async getList({ userId, topicId }) {
     await this.checkPermission({ userId, topicId });
 
-    const filter: any = { topicId, $or: [{ isPrivate: false }, { memberIds: userId }] };
+    const filter: any = { topicId, memberIds: userId };
 
     const discussions: any[] = await this.find(filter)
       .sort({ lastActivityDate: -1 })
@@ -138,7 +129,7 @@ class DiscussionClass extends mongoose.Model {
     return { discussions };
   }
 
-  static async add({ name, userId, topicId, isPrivate = false, memberIds = [] }) {
+  static async add({ name, userId, topicId, memberIds = [] }) {
     if (!name) {
       throw new Error('Bad data');
     }
@@ -152,13 +143,12 @@ class DiscussionClass extends mongoose.Model {
       topicId,
       name,
       slug,
-      isPrivate,
-      memberIds: (isPrivate && uniq([userId, ...memberIds])) || [],
+      memberIds: uniq([userId, ...memberIds]),
       createdAt: new Date(),
     });
   }
 
-  static async edit({ userId, id, name, isPrivate = false, memberIds = [] }) {
+  static async edit({ userId, id, name, memberIds = [] }) {
     if (!id) {
       throw new Error('Bad data');
     }
@@ -181,8 +171,7 @@ class DiscussionClass extends mongoose.Model {
       { _id: id },
       {
         name,
-        isPrivate,
-        memberIds: (isPrivate && uniq([userId, ...memberIds])) || [],
+        memberIds: uniq([userId, ...memberIds]),
       },
     );
 

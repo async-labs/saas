@@ -1,22 +1,16 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { inject } from 'mobx-react';
 import Router from 'next/router';
-
 import NProgress from 'nprogress';
 
+import MemberChooser from '../users/MemberChooser';
+import PostEditor from '../posts/PostEditor';
 import notify from '../../lib/notifier';
 import { Store } from '../../lib/store';
-import AutoComplete from '../common/AutoComplete';
-import PostEditor from '../posts/PostEditor';
 
 const styles = {
   paper: {
@@ -35,7 +29,6 @@ interface Props {
 interface State {
   name: string;
   memberIds: string[];
-  privacy: string;
   disabled: boolean;
   content: string;
 }
@@ -45,21 +38,16 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     name: '',
     content: '',
     memberIds: [],
-    privacy: 'public',
     disabled: false,
   };
 
   handleClose = () => {
-    this.setState({ name: '', content: '', memberIds: [], privacy: 'public', disabled: false });
+    this.setState({ name: '', content: '', memberIds: [], disabled: false });
     this.props.onClose();
   };
 
-  handlePrivacyChange = event => {
-    this.setState({ privacy: event.target.value });
-  };
-
-  handleAutoCompleteChange = selectedItems => {
-    this.setState({ memberIds: selectedItems.map(i => i.value) });
+  handleMemberChange = memberIds => {
+    this.setState({ memberIds });
   };
 
   onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -78,8 +66,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       return;
     }
 
-    const { name, memberIds, privacy, content } = this.state;
-    const isPrivate = privacy === 'private';
+    const { name, memberIds, content } = this.state;
     if (!name) {
       notify('Name is required');
       return;
@@ -96,14 +83,13 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
       const discussion = await currentTopic.addDiscussion({
         name,
-        memberIds: isPrivate ? memberIds : [],
-        isPrivate,
+        memberIds,
       });
 
       await discussion.addPost(content);
 
-      this.setState({ name: '', memberIds: [], privacy: 'public' });
-      notify('You successfully created Discussion.');
+      this.setState({ name: '', memberIds: [] });
+      notify('You successfully created Discussion');
 
       Router.push(
         `/discussions/detail?teamSlug=${currentTeam.slug}&topicSlug=${
@@ -115,33 +101,26 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       console.log(error);
       notify(error);
     } finally {
-      this.props.onClose();
-      NProgress.done();
       this.setState({ disabled: false });
+      NProgress.done();
+      this.props.onClose();
     }
   };
 
-  renderAutoComplete() {
+  renderMemberChooser() {
     const { store } = this.props;
     const { currentUser } = store;
-    const memberIds: string[] = [];
 
-    const suggestions = Array.from(store.currentTeam.members.values())
-      .filter(user => user._id !== currentUser._id)
-      .map(user => ({
-        label: user.displayName,
-        value: user._id,
-      }));
-
-    const selectedItems = suggestions.filter(s => memberIds.indexOf(s.value) !== -1);
+    const members = Array.from(store.currentTeam.members.values()).filter(
+      user => user._id !== currentUser._id,
+    );
 
     return (
-      <AutoComplete
-        label="Type name of Team Member"
-        helperText="These members will see all posts and be notified about unread posts in this discussion."
-        onChange={this.handleAutoCompleteChange}
-        suggestions={suggestions}
-        selectedItems={selectedItems}
+      <MemberChooser
+        helperText="These members will see all posts and be notified about unread posts in this Discussion."
+        onChange={this.handleMemberChange}
+        members={members}
+        selectedMemberIds={this.state.memberIds}
       />
     );
   }
@@ -177,29 +156,14 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                   this.setState({ name: event.target.value });
                 }}
               />
-              <p />
-              <br />
-              <FormControl component="fieldset">
-                <FormLabel component="legend">Privacy setting:</FormLabel>
-                <RadioGroup
-                  aria-label="privacy"
-                  name="privacy"
-                  value={this.state.privacy}
-                  onChange={this.handlePrivacyChange}
-                >
-                  <FormControlLabel value="public" control={<Radio />} label="Public" />
-                  <FormControlLabel value="private" control={<Radio />} label="Private" />
-                </RadioGroup>
-              </FormControl>
             </div>
+            <p />
+            {this.renderMemberChooser()}
             <br />
             <PostEditor
               content={this.state.content}
               onChanged={content => this.setState({ content })}
             />
-            <p />
-
-            {this.state.privacy === 'private' ? this.renderAutoComplete() : null}
             <br />
             <div style={{ float: 'right' }}>
               <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
