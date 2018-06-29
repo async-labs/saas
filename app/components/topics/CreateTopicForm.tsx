@@ -30,7 +30,6 @@ interface State {
   disabled: boolean;
 }
 
-@inject('store')
 class CreateTopicForm extends React.Component<Props, State> {
   state = {
     name: '',
@@ -97,7 +96,7 @@ class CreateTopicForm extends React.Component<Props, State> {
             <div>
               <TextField
                 autoFocus
-                label='Type name of Topic'
+                label="Type name of Topic"
                 helperText="Give a short and informative name to new Topic"
                 value={this.state.name}
                 onChange={event => {
@@ -125,4 +124,4 @@ class CreateTopicForm extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(CreateTopicForm);
+export default withStyles(styles)(inject('store')(CreateTopicForm));

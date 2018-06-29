@@ -43,8 +43,6 @@ interface MyState {
   htmlContent: string;
 }
 
-@inject('store')
-@observer
 class PostEditor extends React.Component<MyProps, MyState> {
   state = {
     htmlContent: '',
@@ -216,4 +214,4 @@ class PostEditor extends React.Component<MyProps, MyState> {
   }
 }
 
-export default PostEditor;
+export default inject('store')(observer(PostEditor));

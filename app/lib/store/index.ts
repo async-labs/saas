@@ -1,5 +1,5 @@
 import * as mobx from 'mobx';
-import { observable, action, IObservableArray, runInAction } from 'mobx';
+import { observable, action, IObservableArray, runInAction, decorate } from 'mobx';
 
 import { getTeamList } from '../api/team-member';
 import { addTeam } from '../../lib/api/team-leader';
@@ -17,14 +17,17 @@ mobx.configure({ enforceActions: true });
 //       when page changed remove previous page's data after some delay.
 
 class Store {
-  @observable teams: IObservableArray<Team> = <IObservableArray>[];
+  teams: IObservableArray<Team> = observable([]);
+  notifications: IObservableArray<Notification> = observable([]);
 
-  @observable isLoadingTeams = false;
-  @observable isInitialTeamsLoaded = false;
+  isLoadingTeams = false;
+  isInitialTeamsLoaded = false;
+  isLoadingNotifications = false;
+  isInitialNotificationsLoaded = false;
 
-  @observable currentUser?: User = null;
-  @observable currentTeam?: Team;
-  @observable isLoggingIn = true;
+  currentUser?: User = null;
+  currentTeam?: Team;
+  isLoggingIn = true;
 
   constructor(initialState: any = {}) {
     if (initialState.teams) {
@@ -34,7 +37,6 @@ class Store {
     this.setCurrentUser(initialState.user, initialState.teamSlug);
   }
 
-  @action
   setCurrentUser(user, selectedTeamSlug: string) {
     if (user) {
       this.currentUser = new User(user);
@@ -49,7 +51,6 @@ class Store {
     }
   }
 
-  @action
   changeUserState(user?, selectedTeamSlug?: string) {
     this.teams.clear();
 
@@ -57,7 +58,6 @@ class Store {
     this.setCurrentUser(user, selectedTeamSlug);
   }
 
-  @action
   setTeams(teams: any[], selectedTeamSlug?: string) {
     const teamObjs = teams.map(t => new Team({ store: this, ...t }));
 
@@ -74,7 +74,6 @@ class Store {
     this.isInitialTeamsLoaded = true;
   }
 
-  @action
   async addTeam({ name, avatarUrl }: { name: string; avatarUrl: string }): Promise<Team> {
     const data = await addTeam({ name, avatarUrl });
     const team = new Team({ store: this, ...data });
@@ -86,7 +85,6 @@ class Store {
     return team;
   }
 
-  @action
   async loadTeams(selectedTeamSlug?: string) {
     if (this.isLoadingTeams || this.isInitialTeamsLoaded) {
       return;
@@ -109,7 +107,6 @@ class Store {
     }
   }
 
-  @action
   setCurrentTeam(slug: string) {
     if (this.currentTeam) {
       if (this.currentTeam.slug === slug) {
@@ -135,6 +132,29 @@ class Store {
     }
   }
 }
+
+decorate(Store, {
+  teams: observable,
+  notifications: observable,
+  isLoadingTeams: observable,
+  isInitialNotificationsLoaded: observable,
+  isLoadingNotifications: observable,
+  isInitialTeamsLoaded: observable,
+  currentUser: observable,
+  currentTeam: observable,
+  isLoggingIn: observable,
+
+  setCurrentUser: action,
+  changeUserState: action,
+  setTeams: action,
+  addTeam: action,
+  loadTeams: action,
+  setCurrentTeam: action,
+  setNotifications: action,
+  loadNotifications: action,
+  deleteNotification: action,
+  createNotification: action,
+});
 
 let store: Store = null;
 

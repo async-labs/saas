@@ -46,8 +46,6 @@ const getMenuItemOptions = (member, component) => [
 type MyProps = { teamSlug: string; store: Store; isTL: boolean };
 type MyState = { inviteMemberOpen: boolean };
 
-@inject('store')
-@observer
 class TeamMembers extends React.Component<MyProps, MyState> {
   state = {
     inviteMemberOpen: false,
@@ -246,4 +244,4 @@ class TeamMembers extends React.Component<MyProps, MyState> {
   }
 }
 
-export default withAuth(withLayout(TeamMembers));
+export default withAuth(withLayout(observer(TeamMembers)));

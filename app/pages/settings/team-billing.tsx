@@ -23,7 +23,6 @@ const styleGridItem = {
 
 type MyProps = { store: Store; isTL: boolean; teamSlug: string };
 
-@observer
 class TeamBilling extends React.Component<MyProps> {
   state = {
     newName: '',
@@ -116,4 +115,4 @@ class TeamBilling extends React.Component<MyProps> {
   }
 }
 
-export default withAuth(withLayout(TeamBilling));
+export default withAuth(withLayout(observer(TeamBilling)));

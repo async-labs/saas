@@ -11,7 +11,6 @@ import { Store, Team } from '../lib/store';
 import withAuth from '../lib/withAuth';
 import withLayout from '../lib/withLayout';
 
-@observer
 class Invitation extends React.Component<{ store: Store; team: Team; token: string }> {
   static async getInitialProps({ query }) {
     const { token } = query;
@@ -88,4 +87,6 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
   }
 }
 
-export default withAuth(withLayout(Invitation), { loginRequired: false });
+export default withAuth(withLayout(observer(Invitation), { teamRequired: false }), {
+  loginRequired: false,
+});

@@ -38,8 +38,6 @@ const getMenuItemOptions = (discussion, component) => [
   },
 ];
 
-@inject('store')
-@observer
 class DiscussionActionMenu extends React.Component<{ discussion: Discussion; store?: Store }> {
   state = {
     discussionFormOpen: false,
@@ -162,4 +160,4 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
   }
 }
 
-export default DiscussionActionMenu;
+export default inject('store')(observer(DiscussionActionMenu));

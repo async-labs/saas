@@ -1,4 +1,4 @@
-export class Invitation {
+class Invitation {
   _id: string;
   teamId: String;
   email: String;
@@ -8,3 +8,5 @@ export class Invitation {
     Object.assign(this, params);
   }
 }
+
+export { Invitation };

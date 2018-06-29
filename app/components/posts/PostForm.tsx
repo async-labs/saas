@@ -33,8 +33,6 @@ interface MyState {
   disabled: boolean;
 }
 
-@inject('store')
-@observer
 class PostForm extends React.Component<MyProps, MyState> {
   state = {
     postId: null,
@@ -184,4 +182,4 @@ export default withStyles(styles)<{
   post?: Post;
   onFinished?: Function;
   open?: boolean;
-}>(PostForm);
+}>(inject('store')(observer(PostForm)));

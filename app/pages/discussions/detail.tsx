@@ -24,7 +24,7 @@ const styleGridItem = {
 
 const styleLoadingDiv = {
   padding: '20px',
-}
+};
 
 interface Props {
   store: Store;
@@ -34,7 +34,6 @@ interface Props {
   isServer: boolean;
 }
 
-@observer
 class Discussion extends React.Component<Props> {
   state = {
     drawerState: false,
@@ -77,9 +76,7 @@ class Discussion extends React.Component<Props> {
     const { selectedPost, drawerState } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return (
-        <div style={styleLoadingDiv}>Create new team or select existing team.</div>
-      );
+      return <div style={styleLoadingDiv}>Create new team or select existing team.</div>;
     }
 
     if (!currentTeam.isInitialTopicsLoaded) {
@@ -92,7 +89,7 @@ class Discussion extends React.Component<Props> {
       return (
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
-          <div style={styleLoadingDiv}>No topic found.</div>
+            <div style={styleLoadingDiv}>No topic found.</div>
           </Grid>
 
           <Grid item sm={10} xs={12}>
@@ -157,7 +154,12 @@ class Discussion extends React.Component<Props> {
       <div style={{ height: '100%' }}>
         <Head>
           <title>Discussion: {currentDiscussion.name}</title>
-          <meta name="description" content={`Discussion ${currentDiscussion.name} in Topic ${currentTopic.name} by Team ${currentTeam.name}`} />
+          <meta
+            name="description"
+            content={`Discussion ${currentDiscussion.name} in Topic ${currentTopic.name} by Team ${
+              currentTeam.name
+            }`}
+          />
         </Head>
         <Grid container style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
@@ -213,4 +215,4 @@ class Discussion extends React.Component<Props> {
   }
 }
 
-export default withAuth(withLayout(Discussion));
+export default withAuth(withLayout(observer(Discussion)));

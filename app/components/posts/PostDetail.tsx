@@ -35,8 +35,6 @@ const getMenuItemOptions = (post, component) => [
   },
 ];
 
-@inject('store')
-@observer
 class PostDetail extends React.Component<{
   post: Post;
   store?: Store;
@@ -113,4 +111,4 @@ class PostDetail extends React.Component<{
   }
 }
 
-export default PostDetail;
+export default inject('store')(observer(PostDetail));

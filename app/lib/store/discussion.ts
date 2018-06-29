@@ -1,38 +1,45 @@
-import { observable, action, IObservableArray, runInAction } from 'mobx';
+import { observable, action, IObservableArray, runInAction, decorate } from 'mobx';
 
 import { getPostList, editDiscussion, addPost, deletePost } from '../api/team-member';
 
 import { Store, Topic, Post } from './index';
 
-export class Discussion {
+class Discussion {
   _id: string;
   topicId: string;
   store: Store;
   topic: Topic;
 
-  @observable name: string;
-  @observable slug: string;
-  @observable isPrivate: boolean;
-  @observable memberIds: IObservableArray<string> = <IObservableArray>[];
-  @observable posts: IObservableArray<Post> = <IObservableArray>[];
-  @observable isInitialPostsLoaded = false;
-  @observable lastActivityDate: Date = new Date();
+  name: string;
+  slug: string;
+  isPrivate: boolean;
+  memberIds: IObservableArray<string> = observable([]);
+  posts: IObservableArray<Post> = observable([]);
+  isInitialPostsLoaded = false;
+  lastActivityDate: Date = new Date();
 
-  @observable private isLoadingPosts = false;
+  private isLoadingPosts = false;
 
   constructor(params) {
+    this._id = params._id;
+    this.topicId = params.topicId;
+    this.store = params.store;
+    this.topic = params.topic;
+
+    this.name = params.name;
+    this.slug = params.slug;
+    this.isPrivate = !!params.isPrivate;
+    this.memberIds.replace(params.memberIds || []);
+
     if (params.lastActivityDate) {
       params.lastActivityDate = new Date(params.lastActivityDate);
     }
-
-    Object.assign(this, params);
 
     if (params.initialPosts) {
       this.setInitialPosts(params.initialPosts);
     }
   }
 
-  @action
   setInitialPosts(posts) {
     const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
 
@@ -40,7 +47,6 @@ export class Discussion {
     this.isInitialPostsLoaded = true;
   }
 
-  @action
   async loadInitialPosts() {
     if (this.isLoadingPosts || this.isInitialPostsLoaded) {
       return;
@@ -64,7 +70,6 @@ export class Discussion {
     }
   }
 
-  @action
   changeLocalCache(data) {
     // TODO: remove if current user no longer access to this discussion
 
@@ -73,7 +78,6 @@ export class Discussion {
     this.memberIds.replace(data.memberIds || []);
   }
 
-  @action
   async edit(data) {
     try {
       await editDiscussion({
@@ -90,25 +94,21 @@ export class Discussion {
     }
   }
 
-  @action
   addPostToLocalCache(data) {
     const postObj = new Post({ discussion: this, store: this.store, ...data });
     this.posts.push(postObj);
   }
 
-  @action
   editPostFromLocalCache(data) {
     const post = this.posts.find(t => t._id === data.id);
     post.changeLocalCache(data);
   }
 
-  @action
   removePostFromLocalCache(postId) {
     const post = this.posts.find(t => t._id === postId);
     this.posts.remove(post);
   }
 
-  @action
   async addPost(content: string) {
     const { post } = await addPost({
       discussionId: this._id,
@@ -120,7 +120,6 @@ export class Discussion {
     });
   }
 
-  @action
   async deletePost(post: Post) {
     await deletePost({
       id: post._id,
@@ -132,3 +131,25 @@ export class Discussion {
     });
   }
 }
+
+decorate(Discussion, {
+  name: observable,
+  slug: observable,
+  isPrivate: observable,
+  memberIds: observable,
+  posts: observable,
+  isInitialPostsLoaded: observable,
+  lastActivityDate: observable,
+
+  setInitialPosts: action,
+  loadInitialPosts: action,
+  changeLocalCache: action,
+  edit: action,
+  addPostToLocalCache: action,
+  editPostFromLocalCache: action,
+  removePostFromLocalCache: action,
+  addPost: action,
+  deletePost: action,
+});
+
+export { Discussion };

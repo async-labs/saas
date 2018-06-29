@@ -1,4 +1,4 @@
-import { observable, computed, action, runInAction } from 'mobx';
+import { observable, computed, action, runInAction, decorate } from 'mobx';
 
 import { editPost } from '../api/team-member';
 
@@ -13,27 +13,24 @@ export class Post {
   discussion: Discussion;
   store: Store;
 
-  @observable isEdited: boolean;
-  @observable content: string;
-  @observable htmlContent: string;
+  isEdited: boolean;
+  content: string;
+  htmlContent: string;
 
   constructor(params) {
     Object.assign(this, params);
   }
 
-  @computed
   get user(): User {
     return this.discussion.topic.team.members.get(this.createdUserId) || null;
   }
 
-  @action
   changeLocalCache(data) {
     this.content = data.content;
     this.htmlContent = data.htmlContent;
     this.isEdited = true;
   }
 
-  @action
   async edit(data) {
     try {
       await editPost({
@@ -50,3 +47,13 @@ export class Post {
     }
   }
 }
+
+decorate(Post, {
+  isEdited: observable,
+  content: observable,
+  htmlContent: observable,
+
+  user: computed,
+  changeLocalCache: action,
+  edit: action,
+});

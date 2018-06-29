@@ -1,4 +1,4 @@
-import { observable, action, IObservableArray, runInAction } from 'mobx';
+import { observable, action, IObservableArray, runInAction, decorate } from 'mobx';
 import Router from 'next/router';
 
 import {
@@ -17,35 +17,41 @@ import { Topic } from './topic';
 import { User } from './user';
 import { Invitation } from './invitation';
 import { Store } from './index';
-// import invitation from 'pages/invitation';
 
-export class Team {
+class Team {
   store: Store;
-
-  @observable private isLoadingTopics = false;
-  @observable isInitialTopicsLoaded = false;
 
   _id: string;
   teamLeaderId: string;
 
-  @observable slug: string;
-  @observable name: string;
-  @observable avatarUrl: string;
-  @observable memberIds: string[];
-  @observable topics: IObservableArray<Topic> = <IObservableArray>[];
-  @observable privateTopics: IObservableArray<Topic> = <IObservableArray>[];
-  @observable currentTopic?: Topic;
+  slug: string;
+  name: string;
+  avatarUrl: string;
+  memberIds: IObservableArray<string> = observable([]);
 
-  @observable currentTopicSlug?: string;
-  @observable currentDiscussionSlug?: string;
+  topics: IObservableArray<Topic> = observable([]);
+  currentTopic?: Topic;
 
-  @observable members: Map<string, User> = new Map();
-  @observable invitedUsers: Map<string, Invitation> = new Map();
-  @observable private isLoadingMembers = false;
-  @observable private isInitialMembersLoaded = false;
+  currentTopicSlug?: string;
+  currentDiscussionSlug?: string;
+
+  private isLoadingTopics = false;
+  isInitialTopicsLoaded = false;
+
+  members: Map<string, User> = new Map();
+  invitedUsers: Map<string, Invitation> = new Map();
+  private isLoadingMembers = false;
+  private isInitialMembersLoaded = false;
 
   constructor(params) {
-    Object.assign(this, params);
+    this._id = params._id;
+    this.teamLeaderId = params.teamLeaderId;
+    this.slug = params.slug;
+    this.name = params.name;
+    this.avatarUrl = params.avatarUrl;
+    this.memberIds.replace(params.memberIds || []);
+
+    this.store = params.store;
 
     if (params.initialTopics) {
       this.setInitialTopics(params.initialTopics);
@@ -56,7 +62,6 @@ export class Team {
     }
   }
 
-  @action
   async edit({ name, avatarUrl }: { name: string; avatarUrl: string }) {
     try {
       const { slug } = await updateTeam({
@@ -76,7 +81,6 @@ export class Team {
     }
   }
 
-  @action
   setInitialTopics(topics: any[]) {
     this.topics.clear();
 
@@ -91,7 +95,6 @@ export class Team {
     this.isInitialTopicsLoaded = true;
   }
 
-  @action
   async loadInitialTopics() {
     if (this.isLoadingTopics || this.isInitialTopicsLoaded) {
       return;
@@ -122,7 +125,6 @@ export class Team {
     }
   }
 
-  @action
   setCurrentTopicAndDiscussion({
     topicSlug,
     discussionSlug,
@@ -145,7 +147,6 @@ export class Team {
     }
   }
 
-  @action
   setCurrentTopic(slug: string) {
     let found = false;
     for (let i = 0; i < this.topics.length; i++) {
@@ -170,25 +171,21 @@ export class Team {
     }
   }
 
-  @action
   addTopicToLocalCache(data) {
     const topicObj = new Topic({ team: this, store: this.store, ...data });
     this.topics.unshift(topicObj);
   }
 
-  @action
   editTopicFromLocalCache(topicId: string, name: string) {
     const topic = this.topics.find(t => t._id === topicId);
     topic.name = name;
   }
 
-  @action
   removeTopicFromLocalCache(topicId: string) {
     const topic = this.topics.find(t => t._id === topicId);
     this.topics.remove(topic);
   }
 
-  @action
   async addTopic(data) {
     const { topic } = await addTopic({
       teamId: this._id,
@@ -205,7 +202,6 @@ export class Team {
     });
   }
 
-  @action
   async deleteTopic(topicId: string) {
     const topic = this.topics.find(t => t._id === topicId);
 
@@ -231,7 +227,6 @@ export class Team {
     });
   }
 
-  @action
   setInitialMembers(users, invitations) {
     this.members.clear();
     this.invitedUsers.clear();
@@ -247,7 +242,6 @@ export class Team {
     this.isInitialMembersLoaded = true;
   }
 
-  @action
   async loadInitialMembers() {
     if (this.isLoadingMembers || this.isInitialMembersLoaded) {
       return;
@@ -282,7 +276,6 @@ export class Team {
     }
   }
 
-  @action
   async inviteMember({ email }: { email: string }) {
     this.isLoadingMembers = true;
     try {
@@ -301,7 +294,6 @@ export class Team {
     }
   }
 
-  @action
   async removeMember(userId: string) {
     await removeMember({ teamId: this._id, userId });
 
@@ -310,3 +302,38 @@ export class Team {
     });
   }
 }
+
+decorate(Team, {
+  isLoadingTopics: observable,
+  isInitialTopicsLoaded: observable,
+
+  slug: observable,
+  name: observable,
+  avatarUrl: observable,
+  memberIds: observable,
+  topics: observable,
+  currentTopic: observable,
+  currentTopicSlug: observable,
+  currentDiscussionSlug: observable,
+  members: observable,
+  invitedUsers: observable,
+  isLoadingMembers: observable,
+  isInitialMembersLoaded: observable,
+
+  edit: action,
+  setInitialTopics: action,
+  loadInitialTopics: action,
+  setCurrentTopicAndDiscussion: action,
+  setCurrentTopic: action,
+  addTopicToLocalCache: action,
+  editTopicFromLocalCache: action,
+  removeTopicFromLocalCache: action,
+  addTopic: action,
+  deleteTopic: action,
+  setInitialMembers: action,
+  loadInitialMembers: action,
+  inviteMember: action,
+  removeMember: action,
+});
+
+export { Team };

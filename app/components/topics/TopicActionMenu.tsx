@@ -29,8 +29,6 @@ const getMenuItemOptions = (topic, component) => [
   },
 ];
 
-@inject('store')
-@observer
 class TopicActionMenu extends React.Component<{ topic: Topic }> {
   state = {
     topicFormOpen: false,
@@ -93,4 +91,4 @@ class TopicActionMenu extends React.Component<{ topic: Topic }> {
   }
 }
 
-export default TopicActionMenu;
+export default inject('store')(observer(TopicActionMenu));

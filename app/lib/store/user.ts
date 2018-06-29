@@ -1,20 +1,20 @@
-import { observable, runInAction, action } from 'mobx';
+import { observable, runInAction, action, decorate } from 'mobx';
 
 import { updateProfile } from '../api/team-member';
 
-export class User {
+class User {
   _id: string;
-  @observable slug: string;
-  @observable email: string | null;
-  @observable displayName: string | null;
-  @observable avatarUrl: string | null;
-  @observable defaultTeamSlug: string;
+  isAdmin: boolean;
+  slug: string;
+  email: string | null;
+  displayName: string | null;
+  avatarUrl: string | null;
+  defaultTeamSlug: string;
 
   constructor(params) {
     Object.assign(this, params);
   }
 
-  @action
   async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {
     const { updatedUser } = await updateProfile({
       name: name,
@@ -28,3 +28,15 @@ export class User {
     });
   }
 }
+
+decorate(User, {
+  slug: observable,
+  email: observable,
+  displayName: observable,
+  avatarUrl: observable,
+  defaultTeamSlug: observable,
+
+  updateProfile: action,
+});
+
+export { User };

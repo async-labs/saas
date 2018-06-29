@@ -17,10 +17,8 @@ const stylePaper = {
 
 const styleLoadingDiv = {
   padding: '20px',
-}
+};
 
-@inject('store')
-@observer
 class TopicList extends React.Component<{ store: Store }> {
   state = {
     addPublicTopicOpen: false,
@@ -82,10 +80,13 @@ class TopicList extends React.Component<{ store: Store }> {
               ) : null,
           )}
         </ul>
-        <CreateTopicForm open={this.state.addPublicTopicOpen} onClose={this.handleAddPublicTopicClose} />
+        <CreateTopicForm
+          open={this.state.addPublicTopicOpen}
+          onClose={this.handleAddPublicTopicClose}
+        />
       </div>
     );
   }
 }
 
-export default TopicList;
+export default inject('store')(observer(TopicList));

@@ -20,8 +20,6 @@ interface State {
   disabled: boolean;
 }
 
-@inject('store')
-@observer
 class InviteMember extends React.Component<Props, State> {
   state = {
     email: '',
@@ -95,4 +93,4 @@ class InviteMember extends React.Component<Props, State> {
   }
 }
 
-export default InviteMember;
+export default inject('store')(observer(InviteMember));

@@ -14,8 +14,6 @@ const stylePaper = {
   padding: '10px 5px',
 };
 
-@inject('store')
-@observer
 class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
   state = {
     discussionFormOpen: false,
@@ -85,4 +83,4 @@ class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
   }
 }
 
-export default DiscussionList;
+export default inject('store')(observer(DiscussionList));

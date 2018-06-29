@@ -1,13 +1,11 @@
 import React from 'react';
 import Router from 'next/router';
-import Link from 'next/link';
 import NProgress from 'nprogress';
 import { observer } from 'mobx-react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 
 import TopicList from '../components/topics/TopicList';
 import getContext from '../lib/context';
@@ -92,7 +90,6 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
   type MyProps = { pageContext: object; store: Store; teamSlug: string };
   type MyState = { isTL: boolean };
 
-  @observer
   class App extends React.Component<MyProps, MyState> {
     public static defaultProps: { pageContext: null };
 
@@ -195,7 +192,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
           return (
             <ThemeWrapper pageContext={this.pageContext}>
               <Grid item sm={11} xs={12}>
-              <div style={styleLoadingDiv}>Select existing Team or create new Team.</div>
+                <div style={styleLoadingDiv}>Select existing Team or create new Team.</div>
               </Grid>
             </ThemeWrapper>
           );
@@ -265,7 +262,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
     }
   }
 
-  return App;
+  return observer(App);
 }
 
 export default withLayout;

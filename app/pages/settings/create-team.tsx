@@ -28,8 +28,6 @@ const styleGridItem = {
 
 type MyProps = { store: Store; isTL: boolean };
 
-@inject('store')
-@observer
 class CreateTeam extends React.Component<MyProps> {
   state = {
     newName: '',
@@ -91,8 +89,6 @@ class CreateTeam extends React.Component<MyProps> {
       Router.push(`/team/${team.slug}/t/projects`);
 
       notify('You successfully created Team.');
-
-
     } catch (error) {
       console.log(error);
       notify(error);
@@ -179,4 +175,4 @@ class CreateTeam extends React.Component<MyProps> {
   }
 }
 
-export default withAuth(withLayout(CreateTeam, { teamRequired: false }));
+export default withAuth(withLayout(inject('store')(observer(CreateTeam)), { teamRequired: false }));

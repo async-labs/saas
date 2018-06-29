@@ -40,7 +40,6 @@ interface State {
   content: string;
 }
 
-@inject('store')
 class CreateDiscussionForm extends React.Component<Props, State> {
   state = {
     name: '',
@@ -216,4 +215,4 @@ class CreateDiscussionForm extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(CreateDiscussionForm);
+export default withStyles(styles)(inject('store')(CreateDiscussionForm));

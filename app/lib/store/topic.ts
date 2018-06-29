@@ -1,4 +1,4 @@
-import { observable, action, IObservableArray, runInAction, computed } from 'mobx';
+import { observable, action, IObservableArray, runInAction, computed, decorate } from 'mobx';
 import Router from 'next/router';
 
 import { getDiscussionList, addDiscussion, deleteDiscussion } from '../api/team-member';
@@ -8,22 +8,23 @@ import { Store } from './index';
 import { Discussion } from './discussion';
 import { Team } from './team';
 
-export class Topic {
+class Topic {
   _id: string;
 
   team: Team;
   store: Store;
 
-  @observable name: string;
-  @observable slug: string;
-  @observable isProjects: boolean;
-  @observable currentDiscussion?: Discussion;
-  @observable currentDiscussionSlug?: string;
-  @observable isInitialDiscussionsLoaded = false;
-  @observable discussions: IObservableArray<Discussion> = <IObservableArray>[];
+  name: string;
+  slug: string;
+  searchDiscussionQuery: string = '';
+  isProjects: boolean;
+  currentDiscussion?: Discussion;
+  currentDiscussionSlug?: string;
+  isInitialDiscussionsLoaded = false;
+  discussions: IObservableArray<Discussion> = observable([]);
 
-  @observable private isLoadingDiscussions = false;
-  @observable private initialDiscussionSlug: string = '';
+  private isLoadingDiscussions = false;
+  private initialDiscussionSlug: string = '';
 
   limit = 10;
 
@@ -35,7 +36,6 @@ export class Topic {
     }
   }
 
-  @action
   setInitialDiscussions(discussions) {
     const discussionObjs = discussions.map(
       t => new Discussion({ topic: this, store: this.store, ...t }),
@@ -53,7 +53,6 @@ export class Topic {
     }
   }
 
-  @action
   setCurrentDiscussion(slug: string) {
     this.currentDiscussionSlug = slug;
     for (let i = 0; i < this.discussions.length; i++) {
@@ -67,14 +66,12 @@ export class Topic {
     }
   }
 
-  @action
   setInitialDiscussionSlug(slug: string) {
     if (!this.initialDiscussionSlug) {
       this.initialDiscussionSlug = slug;
     }
   }
 
-  @action
   async loadInitialDiscussions() {
     if (this.isInitialDiscussionsLoaded || this.isLoadingDiscussions) {
       return;
@@ -95,7 +92,6 @@ export class Topic {
     }
   }
 
-  @action
   addDiscussionToLocalCache(data): Discussion {
     const obj = new Discussion({ topic: this, store: this.store, ...data });
 
@@ -106,7 +102,6 @@ export class Topic {
     return obj;
   }
 
-  @action
   editDiscussionFromLocalCache(data) {
     const discussion = this.discussions.find(item => item._id === data.id);
     if (discussion) {
@@ -114,13 +109,11 @@ export class Topic {
     }
   }
 
-  @action
   removeDiscussionFromLocalCache(discussionId: string) {
     const discussion = this.discussions.find(item => item._id === discussionId);
     this.discussions.remove(discussion);
   }
 
-  @action
   async edit(data) {
     try {
       await editTopic({
@@ -137,7 +130,6 @@ export class Topic {
     }
   }
 
-  @action
   async addDiscussion(data): Promise<Discussion> {
     const { discussion } = await addDiscussion({
       topicId: this._id,
@@ -152,7 +144,6 @@ export class Topic {
     });
   }
 
-  @action
   async deleteDiscussion(id: string) {
     await deleteDiscussion({
       id,
@@ -186,8 +177,34 @@ export class Topic {
     });
   }
 
-  @computed
   get orderedDiscussions() {
     return this.discussions;
   }
 }
+
+decorate(Topic, {
+  name: observable,
+  slug: observable,
+  searchDiscussionQuery: observable,
+  isProjects: observable,
+  currentDiscussion: observable,
+  currentDiscussionSlug: observable,
+  isInitialDiscussionsLoaded: observable,
+  discussions: observable,
+  isLoadingDiscussions: observable,
+
+  setInitialDiscussions: action,
+  setCurrentDiscussion: action,
+  setInitialDiscussionSlug: action,
+  loadInitialDiscussions: action,
+  addDiscussionToLocalCache: action,
+  editDiscussionFromLocalCache: action,
+  removeDiscussionFromLocalCache: action,
+  edit: action,
+  addDiscussion: action,
+  deleteDiscussion: action,
+
+  orderedDiscussions: computed,
+});
+
+export { Topic };

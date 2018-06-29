@@ -15,8 +15,6 @@ const styleLoadingDiv = {
 
 type MyProps = { store: Store; isTL: boolean };
 
-@inject('store')
-@observer
 class SettingList extends React.Component<MyProps> {
   state = {
     addPublicTopicOpen: false,
@@ -86,4 +84,4 @@ class SettingList extends React.Component<MyProps> {
   }
 }
 
-export default SettingList;
+export default inject('store')(observer(SettingList));

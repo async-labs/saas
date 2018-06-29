@@ -22,7 +22,6 @@ const styleLoadingDiv = {
   padding: '20px',
 };
 
-@observer
 class Topic extends React.Component<{
   teamSlug: string;
   topicSlug: string;
@@ -120,7 +119,13 @@ class Topic extends React.Component<{
             <title>{currentTopic.name}</title>
             <meta name="description" content={`${currentTopic.name} by Team ${currentTeam.name}`} />
           </Head>
-          <Grid container direction="row" justify="flex-start" alignItems="stretch" style={styleGrid}>
+          <Grid
+            container
+            direction="row"
+            justify="flex-start"
+            alignItems="stretch"
+            style={styleGrid}
+          >
             <Grid item sm={2} xs={12} style={styleGridItem}>
               <DiscussionList topic={currentTopic} />
             </Grid>
@@ -136,10 +141,7 @@ class Topic extends React.Component<{
       <React.Fragment>
         <Head>
           <title>{currentTopic.name}</title>
-          <meta
-            name="description"
-            content={`${currentTopic.name} by Team ${currentTeam.name}`}
-          />
+          <meta name="description" content={`${currentTopic.name} by Team ${currentTeam.name}`} />
         </Head>
         <Grid container direction="row" justify="flex-start" alignItems="stretch" style={styleGrid}>
           <Grid item sm={2} xs={12} style={styleGridItem}>
@@ -154,4 +156,4 @@ class Topic extends React.Component<{
   }
 }
 
-export default withAuth(withLayout(Topic));
+export default withAuth(withLayout(observer(Topic)));
