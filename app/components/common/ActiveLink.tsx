@@ -1,8 +1,9 @@
 import { withRouter } from 'next/router';
 import Link from 'next/link';
 import Avatar from '@material-ui/core/Avatar';
+import { observer, inject } from 'mobx-react';
 
-const ActiveLink = ({ linkText, router, href, as, teamLogo, simple, highlighterSlug }) => {
+const ActiveLink = ({ linkText, router, href, as, teamLogo, simple, highlighterSlug, store }) => {
   const style1 = {
     display: 'inline',
     fontWeight: 300,
@@ -11,7 +12,7 @@ const ActiveLink = ({ linkText, router, href, as, teamLogo, simple, highlighterS
 
   const style2 = {
     display: 'inline',
-    fontWeight: router.asPath.includes(highlighterSlug) ? 600 : 300,
+    fontWeight: store.currentUrl.includes(highlighterSlug) ? 600 : 300,
     fontSize: '14px',
   };
 
@@ -57,4 +58,4 @@ export default withRouter<{
   teamLogo?: string;
   simple?: boolean;
   highlighterSlug?: string;
-}>(ActiveLink);
+}>(inject('store')(observer(ActiveLink)));

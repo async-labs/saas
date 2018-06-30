@@ -49,7 +49,7 @@ export default function withStore(BaseComponent) {
       }
 
       Object.assign(props, {
-        initialState: { user, teamSlug, ...initialData },
+        initialState: { user, teamSlug, currentUrl: ctx.asPath, ...initialData },
       });
 
       return props;

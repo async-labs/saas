@@ -27,6 +27,7 @@ class Store {
 
   currentUser?: User = null;
   currentTeam?: Team;
+  currentUrl: string = '';
   isLoggingIn = true;
 
   constructor(initialState: any = {}) {
@@ -35,6 +36,12 @@ class Store {
     }
 
     this.setCurrentUser(initialState.user, initialState.teamSlug);
+
+    this.currentUrl = initialState.currentUrl || '';
+  }
+
+  changeCurrentUrl(url: string) {
+    this.currentUrl = url;
   }
 
   setCurrentUser(user, selectedTeamSlug: string) {
@@ -142,8 +149,10 @@ decorate(Store, {
   isInitialTeamsLoaded: observable,
   currentUser: observable,
   currentTeam: observable,
+  currentUrl: observable,
   isLoggingIn: observable,
 
+  changeCurrentUrl: action,
   setCurrentUser: action,
   changeUserState: action,
   setTeams: action,

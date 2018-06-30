@@ -14,7 +14,7 @@ import Confirm from '../components/common/Confirm';
 import MenuWithLinks from '../components/common/MenuWithLinks';
 import ActiveLink from '../components/common/ActiveLink';
 import * as gtag from './gtag';
-import { Store } from './store';
+import { Store, getStore } from './store';
 import env from '../lib/env';
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -32,6 +32,11 @@ Router.onRouteChangeStart = () => {
 Router.onRouteChangeComplete = url => {
   NProgress.done();
   gtag.pageview(url);
+
+  const store = getStore();
+  if (store) {
+    store.changeCurrentUrl(url);
+  }
 };
 
 Router.onRouteChangeError = () => NProgress.done();
