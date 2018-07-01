@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import Head from 'next/head';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -182,7 +183,20 @@ class TeamMembers extends React.Component<MyProps, MyState> {
                   {Array.from(currentTeam.members.values()).map(m => (
                     <TableRow key={m._id}>
                       <TableCell component="th" scope="row">
-                        {m.displayName}{' '}
+                        <Avatar
+                          role="presentation"
+                          src={m.avatarUrl}
+                          alt={m.avatarUrl}
+                          key={m._id}
+                          style={{
+                            margin: '0px 5px',
+                            display: 'inline-flex',
+                            width: '30px',
+                            height: '30px',
+                            verticalAlign: 'middle',
+                          }}
+                        />{' '}
+                        {m.displayName}
                       </TableCell>
                       <TableCell>
                         {isTL && m._id !== currentUser._id ? (

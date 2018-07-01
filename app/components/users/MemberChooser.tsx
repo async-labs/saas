@@ -28,7 +28,7 @@ class MemberChooser extends React.Component<Props> {
 
     return (
       <AutoComplete
-        label={this.props.label || 'Type name of Team Member'}
+        label={this.props.label || 'Find team member by name'}
         helperText={this.props.helperText}
         onChange={this.handleAutoCompleteChange}
         suggestions={suggestions}

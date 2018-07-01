@@ -146,17 +146,17 @@ class CreateDiscussionForm extends React.Component<Props, State> {
             </Button>
           </div>
           <form style={{ width: '100%', height: '60%' }} onSubmit={this.onSubmit}>
-            <div>
-              <TextField
-                autoFocus
-                label="Type name of Discussion"
-                helperText="Give a short and informative name to new Discussion"
-                value={this.state.name}
-                onChange={event => {
-                  this.setState({ name: event.target.value });
-                }}
-              />
-            </div>
+            <br />
+            <TextField
+              autoFocus
+              label="Type name of Discussion"
+              helperText="Give a short and informative name to new Discussion"
+              value={this.state.name}
+              onChange={event => {
+                this.setState({ name: event.target.value });
+              }}
+            />
+            <br />
             <p />
             {this.renderMemberChooser()}
             <br />

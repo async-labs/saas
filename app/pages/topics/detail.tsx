@@ -10,6 +10,8 @@ import withAuth from '../../lib/withAuth';
 import { Store } from '../../lib/store';
 
 const styleGrid = {
+  width: '100vw',
+  maxWidth: '100%',
   height: '100%',
 };
 
@@ -114,7 +116,7 @@ class Topic extends React.Component<{
 
     if (!currentDiscussion) {
       return (
-        <React.Fragment>
+        <div style={{ height: '100%' }}>
           <Head>
             <title>{currentTopic.name}</title>
             <meta name="description" content={`${currentTopic.name} by Team ${currentTeam.name}`} />
@@ -129,16 +131,16 @@ class Topic extends React.Component<{
             <Grid item sm={2} xs={12} style={styleGridItem}>
               <DiscussionList topic={currentTopic} />
             </Grid>
-            <Grid item sm={10} xs={12} style={styleGrid}>
+            <Grid item sm={10} xs={12} style={styleGridItem}>
               <div style={styleLoadingDiv}>No discussion is found.</div>
             </Grid>
           </Grid>
-        </React.Fragment>
+        </div>
       );
     }
 
     return (
-      <React.Fragment>
+      <div style={{ height: '100%' }}>
         <Head>
           <title>{currentTopic.name}</title>
           <meta name="description" content={`${currentTopic.name} by Team ${currentTeam.name}`} />
@@ -151,7 +153,7 @@ class Topic extends React.Component<{
             <div style={styleLoadingDiv}>loading {currentDiscussion.name} ...</div>
           </Grid>
         </Grid>
-      </React.Fragment>
+      </div>
     );
   }
 }

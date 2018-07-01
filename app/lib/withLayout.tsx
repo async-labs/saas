@@ -15,11 +15,18 @@ import MenuWithLinks from '../components/common/MenuWithLinks';
 import ActiveLink from '../components/common/ActiveLink';
 import * as gtag from './gtag';
 import { Store, getStore } from './store';
-import env from '../lib/env';
+import env from './env';
 
 const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_API } = env;
 const LOG_OUT_URL = dev ? 'http://localhost:8000' : PRODUCTION_URL_API;
+
+const styleGrid = {
+  width: '100vw',
+  minHeight: '100vh',
+  maxWidth: '100%',
+  padding: '0px 10px',
+};
 
 const styleLoadingDiv = {
   padding: '20px',
@@ -114,8 +121,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       let baseComponentProps = {};
       let teamSlug = '';
 
-      const topicSlug = query.topicSlug;
-      const discussionSlug = query.discussionSlug;
+      const { topicSlug, discussionSlug } = query;
 
       if (BaseComponent.getInitialProps) {
         baseComponentProps = await BaseComponent.getInitialProps(ctx);
@@ -125,7 +131,13 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
         teamSlug = query.teamSlug;
       }
 
-      return { ...baseComponentProps, teamSlug, topicSlug, discussionSlug, isServer: !!req };
+      return {
+        ...baseComponentProps,
+        teamSlug,
+        topicSlug,
+        discussionSlug,
+        isServer: !!req,
+      };
     }
 
     componentDidMount() {
@@ -178,7 +190,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
               direction="row"
               justify="flex-start"
               alignItems="stretch"
-              style={{ height: '100%' }}
+              style={styleGrid}
             >
               <Grid item sm={12} xs={12}>
                 <BaseComponent {...this.props} />
@@ -219,9 +231,18 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
             direction="row"
             justify="flex-start"
             alignItems="stretch"
-            style={{ padding: '0px 10px', height: '100%' }}
+            style={styleGrid}
           >
-            <Grid item sm={1} xs={12} style={{ borderRight: '0.5px #aaa solid' }}>
+            <Grid
+              item
+              sm={1}
+              xs={12}
+              style={{
+                borderRight: '0.5px #aaa solid',
+                width: '100vw',
+                maxWidth: '100%',
+              }}
+            >
               <MenuWithLinks
                 options={getTeamOptionsMenuWithLinks(store.teams).concat(
                   menuUnderTeamList(store.currentTeam, this.state.isTL),

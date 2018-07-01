@@ -135,7 +135,7 @@ class DownshiftMultiple extends React.Component<{
     const { inputValue, selectedItems } = this.state;
 
     return (
-      <div className={classes.root}>
+      <div className={classes.root} style={{ height: 'auto', width: 'auto' }}>
         <Downshift
           inputValue={inputValue}
           onChange={this.handleChange}

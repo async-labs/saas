@@ -13,7 +13,13 @@ import Confirm from '../components/common/Confirm';
 import MenuWithLinks from '../components/common/MenuWithLinks';
 import { Store } from './store';
 
-// require('dotenv').config();
+const styleGrid = {
+  width: '100vw',
+  minHeight: '100vh',
+  maxWidth: '100%',
+  padding: '0px 10px',
+};
+
 
 const dev = process.env.NODE_ENV !== 'production';
 const LOG_OUT_URL = dev ? 'http://localhost:9000' : process.env.PRODUCTION_URL_ADMIN;
@@ -118,7 +124,7 @@ function withLayout(BaseComponent) {
               direction="row"
               justify="flex-start"
               alignItems="stretch"
-              style={{ height: '100%' }}
+              style={styleGrid}
             >
               <Grid item sm={12} xs={12}>
                 <BaseComponent {...this.props} />
@@ -135,7 +141,7 @@ function withLayout(BaseComponent) {
             direction="row"
             justify="flex-start"
             alignItems="stretch"
-            style={{ padding: '0px 10px', height: '100%' }}
+            style={styleGrid}
           >
             <Grid item sm={1} xs={12} style={{ borderRight: '0.5px #aaa solid' }}>
               <MenuWithLinks options={menuUnderTeamList()}>

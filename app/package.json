@@ -10,7 +10,8 @@
     "lint": "tslint components pages lib server",
     "test": "jest --coverage",
     "processes-3000": "ss -lptn 'sport = :3000'",
-    "processes-node": "ps -e|grep node"
+    "processes-node": "ps -e|grep node",
+    "kill-processes-at-port": "lsof -i tcp:3000 | awk 'NR!=1 {print $2}' | xargs kill"
   },
   "jest": {
     "coverageDirectory": "./.coverage"

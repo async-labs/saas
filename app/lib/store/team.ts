@@ -104,24 +104,14 @@ class Team {
 
     try {
       const { topics = [] } = await getTopicList(this._id);
-      const topicObjs = topics.map(t => new Topic({ team: this, store: this.store, ...t }));
 
       runInAction(() => {
-        this.topics.replace(topicObjs);
-
-        if (this.currentTopicSlug) {
-          this.setCurrentTopic(this.currentTopicSlug);
-        }
-
-        this.isLoadingTopics = false;
-        this.isInitialTopicsLoaded = true;
+        this.setInitialTopics(topics);
       });
-    } catch (error) {
+    } finally {
       runInAction(() => {
         this.isLoadingTopics = false;
       });
-
-      throw error;
     }
   }
 
@@ -142,6 +132,7 @@ class Team {
         topic.currentDiscussionSlug = discussionSlug;
         topic.loadInitialDiscussions();
         this.currentTopic = topic;
+        console.log(this.currentTopic.slug);
         break;
       }
     }

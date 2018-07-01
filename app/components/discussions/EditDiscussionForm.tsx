@@ -137,8 +137,9 @@ class EditDiscussionForm extends React.Component<Props, State> {
               }}
             />
             <br />
-            <br />
+            <p />
             {this.renderMemberChooser()}
+            <br />
             <DialogActions>
               <Button
                 color="primary"

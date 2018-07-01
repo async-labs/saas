@@ -5,13 +5,26 @@ import htmlescape from 'htmlescape';
 
 import getContext from '../lib/context';
 
-const { GA_TRACKING_ID, PRODUCTION_URL_APP, PRODUCTION_URL_API, StripePublishableKey } = process.env;
+const {
+  GA_TRACKING_ID,
+  PRODUCTION_URL_APP,
+  PRODUCTION_URL_API,
+  StripePublishableKey,
+} = process.env;
 const env = { GA_TRACKING_ID, PRODUCTION_URL_APP, PRODUCTION_URL_API, StripePublishableKey };
 
 class MyDocument extends Document {
   render() {
     return (
-      <html lang="en" style={{ height: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
+      <html
+        lang="en"
+        style={{
+          width: '100%',
+          height: '100%',
+          overflowX: 'hidden',
+          overflowY: 'auto',
+        }}
+      >
         <Head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -36,7 +49,8 @@ class MyDocument extends Document {
           <style>
             {`
               #__next {
-                height: 100% !important;
+                width: 100%;
+                height: 100%;
               }
               a, a:focus {
                 font-weight: 600;
@@ -115,13 +129,12 @@ class MyDocument extends Document {
           style={{
             font: '16px Muli',
             color: '#fff',
-            margin: '0px auto',
             fontWeight: 300,
             lineHeight: '1.5em',
             height: '100%',
-            right: '-15px',
-            left: 0,
-            position: 'absolute',
+            width: '100%',
+            margin: 0,
+            padding: 0,
           }}
         >
           <Main />
