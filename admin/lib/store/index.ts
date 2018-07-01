@@ -1,5 +1,5 @@
 import * as mobx from 'mobx';
-import { observable, action, IObservableArray, runInAction } from 'mobx';
+import { observable, action, decorate } from 'mobx';
 
 import { User } from './user';
 
@@ -10,14 +10,13 @@ mobx.configure({ enforceActions: true });
 //       when page changed remove previous page's data after some delay.
 
 class Store {
-  @observable currentUser?: User = null;
-  @observable isLoggingIn = true;
+  currentUser?: User = null;
+  isLoggingIn = true;
 
   constructor(initialState: any = {}) {
     this.setCurrentUser(initialState.user);
   }
 
-  @action
   setCurrentUser(user) {
     if (user) {
       this.currentUser = new User(user);
@@ -28,7 +27,6 @@ class Store {
     this.isLoggingIn = false;
   }
 
-  @action
   changeUserState(user) {
     this.setCurrentUser(user);
   }
@@ -51,5 +49,13 @@ function initStore(initialState = {}) {
 function getStore() {
   return store;
 }
+
+decorate(Store, {
+  currentUser: observable,
+  isLoggingIn: observable,
+
+  setCurrentUser: action,
+  changeUserState: action,
+});
 
 export { User, Store, initStore, getStore };

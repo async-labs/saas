@@ -62,11 +62,10 @@ function ThemeWrapper({ children, pageContext }) {
   );
 }
 
-function withLayout(BaseComponent, { teamRequired = true } = {}) {
+function withLayout(BaseComponent) {
   type MyProps = { pageContext: object; store: Store; teamSlug: string };
   type MyState = { isTL: boolean; isAdmin: boolean };
 
-  @observer
   class App extends React.Component<MyProps, MyState> {
     public static defaultProps: { pageContext: null };
 
@@ -82,23 +81,16 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
     }
 
     static async getInitialProps(ctx) {
-      const { query, req } = ctx;
+      const { req } = ctx;
 
       let baseComponentProps = {};
-      let teamSlug = '';
 
-      const topicSlug = query.topicSlug;
-      const discussionSlug = query.discussionSlug;
 
       if (BaseComponent.getInitialProps) {
         baseComponentProps = await BaseComponent.getInitialProps(ctx);
       }
 
-      if (teamRequired) {
-        teamSlug = query.teamSlug;
-      }
-
-      return { ...baseComponentProps, teamSlug, topicSlug, discussionSlug, isServer: !!req };
+      return { ...baseComponentProps, isServer: !!req };
     }
 
     componentDidMount() {
@@ -172,7 +164,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
     }
   }
 
-  return App;
+  return observer(App);
 }
 
 export default withLayout;

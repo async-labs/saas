@@ -1,15 +1,26 @@
-import { observable  } from 'mobx';
+import { observable, decorate  } from 'mobx';
 
-export class User {
+class User {
   _id: string;
   isAdmin: boolean;
-  @observable slug: string;
-  @observable email: string | null;
-  @observable displayName: string | null;
-  @observable avatarUrl: string | null;
-  @observable defaultTeamSlug: string;
+  slug: string;
+  email: string | null;
+  displayName: string | null;
+  avatarUrl: string | null;
+  defaultTeamSlug: string;
 
   constructor(params) {
     Object.assign(this, params);
   }
 }
+
+decorate(User, {
+  slug: observable,
+  email: observable,
+  displayName: observable,
+  avatarUrl: observable,
+  defaultTeamSlug: observable,
+
+});
+
+export { User };

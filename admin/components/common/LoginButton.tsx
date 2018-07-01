@@ -8,12 +8,12 @@ import { styleLoginButton } from '../../lib/sharedStyles';
 const dev = process.env.NODE_ENV !== 'production';
 const LOGIN_URL = dev ? 'http://localhost:9000' : 'https://admin.async-await.com';
 
-class LoginButton extends React.PureComponent<{ next?: string; invitationToken?: string }> {
+class LoginButton extends React.PureComponent<{ next?: string }> {
   render() {
-    const { next, invitationToken } = this.props;
+    const { next } = this.props;
 
     let url = `${LOGIN_URL}/auth/google`;
-    const qs = makeQueryString({ next, invitationToken });
+    const qs = makeQueryString({ next });
 
     if (qs) {
       url += `?${qs}`;
