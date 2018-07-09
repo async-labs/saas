@@ -8,14 +8,14 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 
-import { Store } from '../../lib/store';
-import withAuth from '../../lib/withAuth';
-import withLayout from '../../lib/withLayout';
-import notify from '../../lib/notifier';
+import { Store } from '../lib/store';
+import withAuth from '../lib/withAuth';
+import withLayout from '../lib/withLayout';
+import notify from '../lib/notifier';
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
-} from '../../lib/api/team-member';
+} from '../lib/api/team-member';
 
 const styleGrid = {
   height: '100%',
@@ -86,7 +86,7 @@ class CreateTeam extends React.Component<MyProps> {
 
       document.getElementById('upload-file').value = '';
 
-      Router.push(`/team/${team.slug}/t/projects`);
+      Router.push(`/team/${team.slug}/d`);
 
       notify('You successfully created Team.');
     } catch (error) {

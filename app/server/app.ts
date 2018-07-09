@@ -61,7 +61,7 @@ app.prepare().then(() => {
       if (!req.user.defaultTeamSlug) {
         redirectUrl = 'settings/create-team';
       } else {
-        redirectUrl = `team/${req.user.defaultTeamSlug}/t/projects`;
+        redirectUrl = `team/${req.user.defaultTeamSlug}/d`;
       }
     }
 

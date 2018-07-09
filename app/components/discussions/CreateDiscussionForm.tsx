@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { inject } from 'mobx-react';
 import Router from 'next/router';
+import Head from 'next/head';
 import NProgress from 'nprogress';
 
 import MemberChooser from '../users/MemberChooser';
@@ -19,19 +20,19 @@ const styles = {
   },
 };
 
-interface Props {
+type Props = {
   store?: Store;
   onClose: Function;
   open: boolean;
   classes: { paper: string };
-}
+};
 
-interface State {
+type State = {
   name: string;
   memberIds: string[];
   disabled: boolean;
   content: string;
-}
+};
 
 class CreateDiscussionForm extends React.Component<Props, State> {
   state = {
@@ -60,12 +61,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       return;
     }
 
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('Topic have not selected');
-      return;
-    }
-
     const { name, memberIds, content } = this.state;
     if (!name) {
       notify('Name is required');
@@ -81,7 +76,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     try {
       this.setState({ disabled: true });
 
-      const discussion = await currentTopic.addDiscussion({
+      const discussion = await currentTeam.addDiscussion({
         name,
         memberIds,
       });
@@ -89,13 +84,11 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       await discussion.addPost(content);
 
       this.setState({ name: '', memberIds: [] });
-      notify('You successfully created Discussion');
+      notify('You successfully added new Discussion.');
 
       Router.push(
-        `/discussions/detail?teamSlug=${currentTeam.slug}&topicSlug=${
-          currentTopic.slug
-        }&discussionSlug=${discussion.slug}`,
-        `/team/${currentTeam.slug}/t/${currentTopic.slug}/d/${discussion.slug}`,
+        `/discussion?teamSlug=${currentTeam.slug}&discussionSlug=${discussion.slug}`,
+        `/team/${currentTeam.slug}/d/${discussion.slug}`,
       );
     } catch (error) {
       console.log(error);
@@ -129,52 +122,68 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     const {
       open,
       classes: { paper },
+      store,
     } = this.props;
 
     return (
-      <Drawer
-        anchor="right"
-        open={open}
-        classes={{ paper }}
-        transitionDuration={{ enter: 500, exit: 500 }}
-      >
-        <div style={{ width: '100%', height: '100%', padding: '20px' }}>
-          <h3>Create new Discussion</h3>
-          <div style={{ float: 'right' }}>
-            <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
-              Cancel
-            </Button>
+      <React.Fragment>
+        {open ? (
+          <Head>
+            <title>New Discussion</title>
+            <meta name="description" content="Create new discussion" />
+          </Head>
+        ) : null}
+        <Drawer
+          anchor="right"
+          open={open}
+          classes={{ paper }}
+          transitionDuration={{ enter: 500, exit: 500 }}
+        >
+          <div style={{ width: '100%', height: '100%', padding: '20px' }}>
+            <h3>Create new Discussion</h3>
+            <form style={{ width: '100%', height: '60%' }} onSubmit={this.onSubmit}>
+              <p />
+              <div style={{ margin: '20px 0px' }}>
+                <Button
+                  variant="outlined"
+                  onClick={this.handleClose}
+                  disabled={this.state.disabled}
+                >
+                  Cancel
+                </Button>{' '}
+                <Button
+                  type="submit"
+                  variant="raised"
+                  color="primary"
+                  disabled={this.state.disabled}
+                >
+                  Create Discussion
+                </Button>
+              </div>
+              <p />
+              <br />
+              <TextField
+                autoFocus
+                label="Type name of Discussion"
+                helperText="Give a short and informative name to new Discussion"
+                value={this.state.name}
+                onChange={event => {
+                  this.setState({ name: event.target.value });
+                }}
+              />
+              <p />
+              {this.renderMemberChooser()}
+              <br />
+              <PostEditor
+                content={this.state.content}
+                onChanged={content => this.setState({ content })}
+                members={Array.from(store.currentTeam.members.values())}
+              />
+              <br />
+            </form>
           </div>
-          <form style={{ width: '100%', height: '60%' }} onSubmit={this.onSubmit}>
-            <br />
-            <TextField
-              autoFocus
-              label="Type name of Discussion"
-              helperText="Give a short and informative name to new Discussion"
-              value={this.state.name}
-              onChange={event => {
-                this.setState({ name: event.target.value });
-              }}
-            />
-            <br />
-            <p />
-            {this.renderMemberChooser()}
-            <br />
-            <PostEditor
-              content={this.state.content}
-              onChanged={content => this.setState({ content })}
-            />
-            <br />
-            <div style={{ float: 'right' }}>
-              <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
-                Create Discussion
-              </Button>
-              <br />
-              <br />
-            </div>
-          </form>
-        </div>
-      </Drawer>
+        </Drawer>
+      </React.Fragment>
     );
   }
 }

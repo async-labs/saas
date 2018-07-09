@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Head from 'next/head';
-import Router from 'next/router';
 import { observer } from 'mobx-react';
 
 import Grid from '@material-ui/core/Grid';
@@ -9,8 +8,7 @@ import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
 import SettingList from '../../components/common/SettingList';
-import notify from '../../lib/notifier';
-import { addTeam } from '../../lib/api/team-leader';
+
 
 const styleGrid = {
   height: '100%',
@@ -27,32 +25,6 @@ class TeamBilling extends React.Component<MyProps> {
   state = {
     newName: '',
     disabled: false,
-  };
-
-  onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const { newName: name } = this.state;
-    if (!name) {
-      notify('Name is required');
-      return;
-    }
-
-    try {
-      this.setState({ disabled: true });
-
-      const { slug } = await addTeam({ name });
-
-      this.setState({ newName: '' });
-
-      Router.push(`/team/${slug}/projects`);
-      notify('Team added successfully');
-    } catch (error) {
-      console.log(error);
-      notify(error);
-    } finally {
-      this.setState({ disabled: false });
-    }
   };
 
   render() {

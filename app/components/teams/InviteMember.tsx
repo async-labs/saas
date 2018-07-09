@@ -9,16 +9,16 @@ import { inject, observer } from 'mobx-react';
 import notify from '../../lib/notifier';
 import { Store } from '../../lib/store';
 
-interface Props {
+type Props = {
   store: Store;
   onClose: Function;
   open: boolean;
-}
+};
 
-interface State {
+type State = {
   email: string;
   disabled: boolean;
-}
+};
 
 class InviteMember extends React.Component<Props, State> {
   state = {
@@ -54,9 +54,10 @@ class InviteMember extends React.Component<Props, State> {
       await store.currentTeam.inviteMember({ email });
 
       this.setState({ email: '' });
-      NProgress.done();
       notify('You successfully sent invitation.');
+      NProgress.done();
     } catch (error) {
+      console.log(error);
       notify(error);
     } finally {
       this.props.onClose();

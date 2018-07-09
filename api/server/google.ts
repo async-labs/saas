@@ -103,9 +103,9 @@ export default function auth({ ROOT_URL, server }) {
         redirectUrlAfterLogin = req.session.next_url;
       } else {
         if (!req.user.defaultTeamSlug) {
-          redirectUrlAfterLogin = '/settings/create-team';
+          redirectUrlAfterLogin = '/create-team';
         } else {
-          redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/t/projects`;
+          redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/d`;
         }
       }
 

@@ -2,7 +2,6 @@ import * as express from 'express';
 
 import { signRequestForUpload } from '../aws-s3';
 import Team from '../models/Team';
-import Topic from '../models/Topic';
 import User from '../models/User';
 import Discussion from '../models/Discussion';
 import Post from '../models/Post';
@@ -21,12 +20,12 @@ router.use((req, res, next) => {
   next();
 });
 
-async function loadTopicData(topic, userId, body) {
+async function loadDiscussionsData(team, userId, body) {
   const { discussionSlug } = body;
 
   const { discussions } = await Discussion.getList({
     userId,
-    topicId: topic._id,
+    teamId: team._id,
   });
 
   const data: any = { initialDiscussions: discussions };
@@ -54,7 +53,6 @@ async function loadTopicData(topic, userId, body) {
 }
 
 async function loadTeamData(team, userId, body) {
-  const initialTopics = await Topic.getList({ userId, teamId: team._id });
   const initialMembers = await User.getTeamMembers({
     userId,
     teamId: team._id,
@@ -68,24 +66,9 @@ async function loadTeamData(team, userId, body) {
     });
   }
 
-  const { topicSlug } = body;
+  Object.assign(team, await loadDiscussionsData(team, userId, body));
 
-  if (topicSlug) {
-    for (let i = 0; i < initialTopics.length; i++) {
-      const topic = initialTopics[i];
-
-      if (topic.slug === topicSlug) {
-        Object.assign(topic, await loadTopicData(topic, userId, body));
-        break;
-      }
-    }
-  }
-
-  const data: any = { initialTopics, initialMembers, initialInvitations };
-
-  if (topicSlug) {
-    data.currentTopicSlug = topicSlug;
-  }
+  const data: any = { initialMembers, initialInvitations };
 
   return data;
 }
@@ -126,25 +109,14 @@ router.get('/teams', async (req, res) => {
   }
 });
 
-router.get('/topics/list', async (req, res) => {
-  try {
-    const topics = await Topic.getList({ userId: req.user.id, teamId: req.query.teamId });
-
-    res.json({ topics });
-  } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
-  }
-});
-
 router.post('/discussions/add', async (req, res) => {
   try {
-    const { name, topicId, memberIds = [] } = req.body;
+    const { name, teamId, memberIds = [] } = req.body;
 
     const discussion = await Discussion.add({
       userId: req.user.id,
       name,
-      topicId,
+      teamId,
       memberIds,
     });
 
@@ -159,7 +131,7 @@ router.post('/discussions/edit', async (req, res) => {
   try {
     const { name, id, memberIds = [] } = req.body;
 
-    const { topicId } = await Discussion.edit({
+    await Discussion.edit({
       userId: req.user.id,
       name,
       id,
@@ -177,7 +149,7 @@ router.post('/discussions/delete', async (req, res) => {
   try {
     const { id } = req.body;
 
-    const { topicId } = await Discussion.delete({ userId: req.user.id, id });
+    await Discussion.delete({ userId: req.user.id, id });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -188,12 +160,14 @@ router.post('/discussions/delete', async (req, res) => {
 
 router.get('/discussions/list', async (req, res) => {
   try {
-    const { topicId } = req.query;
+    const { teamId } = req.query;
 
     const { discussions } = await Discussion.getList({
       userId: req.user.id,
-      topicId,
+      teamId,
     });
+
+    console.log(`Express route: ${discussions.length}`);
 
     res.json({ discussions });
   } catch (err) {
@@ -219,7 +193,7 @@ router.post('/posts/edit', async (req, res) => {
   try {
     const { content, id } = req.body;
 
-    const { discussionId, htmlContent } = await Post.edit({ userId: req.user.id, content, id });
+    await Post.edit({ userId: req.user.id, content, id });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -230,7 +204,7 @@ router.post('/posts/edit', async (req, res) => {
 
 router.post('/posts/delete', async (req, res) => {
   try {
-    const { id, discussionId } = req.body;
+    const { id } = req.body;
 
     await Post.delete({ userId: req.user.id, id });
 
@@ -256,7 +230,6 @@ router.get('/posts/list', async (req, res) => {
 });
 
 // Upload file to S3
-
 router.get('/aws/get-signed-request-for-upload-to-s3', async (req, res) => {
   try {
     const { fileName, fileType, prefix, bucket, acl = 'private' } = req.query;

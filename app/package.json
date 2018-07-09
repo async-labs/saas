@@ -36,6 +36,7 @@
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-jss": "^8.6.0",
+    "react-mentions": "^2.0.1",
     "react-stripe-checkout": "^2.6.3",
     "typescript": "^2.9.2"
   },

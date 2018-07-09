@@ -17,18 +17,21 @@ export class Post {
   content: string;
   htmlContent: string;
 
+  lastUpdatedAt: Date;
+
   constructor(params) {
     Object.assign(this, params);
   }
 
   get user(): User {
-    return this.discussion.topic.team.members.get(this.createdUserId) || null;
+    return this.discussion.team.members.get(this.createdUserId) || null;
   }
 
   changeLocalCache(data) {
     this.content = data.content;
     this.htmlContent = data.htmlContent;
     this.isEdited = true;
+    this.lastUpdatedAt = data.lastUpdatedAt;
   }
 
   async edit(data) {
@@ -52,6 +55,7 @@ decorate(Post, {
   isEdited: observable,
   content: observable,
   htmlContent: observable,
+  lastUpdatedAt: observable,
 
   user: computed,
   changeLocalCache: action,

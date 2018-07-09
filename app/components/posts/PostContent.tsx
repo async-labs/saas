@@ -1,16 +1,32 @@
 import React from 'react';
 
-class PostContent extends React.Component<{
-  html: string;
-}> {
+function addPlaceholder(elm) {
+  const body = elm.querySelector('.lazy-load-image-body');
+  const image = elm.querySelector('.s3-image') as HTMLImageElement;
+  if (!body || !image || !image.dataset.src) {
+    return;
+  }
+
+  // TODO: if width of image placeholder is greater than width of PostDetail div - make width of image placeholder to be 100%
+
+  image.style.display = 'none';
+  let div = window.document.createElement('div');
+  div.className = 'image-placeholder';
+  div.style.width = `${image.dataset.width || 200}px`;
+  div.style.height = `${image.dataset.height || 200}px`;
+  div.innerHTML = `<p class="image-placeholder-text">loading ...</p>`;
+  body.appendChild(div);
+}
+
+class PostContent extends React.Component<{ html: string }> {
   postBodyElm: HTMLDivElement;
 
   componentDidMount() {
-    this.addImageLoadEvent();
+    this.initializeFileUIandEvent();
   }
 
   componentDidUpdate() {
-    this.addImageLoadEvent();
+    this.initializeFileUIandEvent();
   }
 
   componentWillUnmount() {
@@ -22,13 +38,15 @@ class PostContent extends React.Component<{
     }
   }
 
-  addImageLoadEvent() {
-    const imgContainers = this.postBodyElm.getElementsByClassName('lazy-load-image');
+  initializeFileUIandEvent() {
+    const imgContainers = this.postBodyElm.querySelectorAll('.lazy-load-image');
 
     for (let i = 0; i < imgContainers.length; i++) {
       const elm = imgContainers.item(i);
       elm.removeEventListener('toggle', this.lazyLoadImage);
       elm.addEventListener('toggle', this.lazyLoadImage);
+
+      addPlaceholder(elm);
     }
   }
 
@@ -39,7 +57,7 @@ class PostContent extends React.Component<{
       return;
     }
 
-    const image = target.getElementsByClassName('s3-image').item(0) as HTMLImageElement;
+    const image = target.querySelector('.s3-image') as HTMLImageElement;
     if (!image || image.hasAttribute('loaded') || !image.dataset.src) {
       return;
     }

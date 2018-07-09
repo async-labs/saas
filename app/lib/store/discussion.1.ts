@@ -14,6 +14,7 @@ class Discussion {
   slug: string;
   memberIds: IObservableArray<string> = observable([]);
   posts: IObservableArray<Post> = observable([]);
+  lastActivityDate: Date = new Date();
 
   isLoadingPosts = false;
 
@@ -27,8 +28,13 @@ class Discussion {
     this.slug = params.slug;
     this.memberIds.replace(params.memberIds || []);
 
+    if (params.lastActivityDate) {
+      params.lastActivityDate = new Date(params.lastActivityDate);
+    }
+
+    this.lastActivityDate = params.lastActivityDate;
+
     if (params.initialPosts) {
-      console.log(`initialPosts: ${params.initialPosts}`);
       this.setInitialPosts(params.initialPosts);
     }
   }
@@ -52,7 +58,8 @@ class Discussion {
     this.isLoadingPosts = true;
 
     try {
-      const { posts = [] } = await getPostList(this._id);
+      const lastPostId = this.posts.length > 0 ? this.posts[this.posts.length - 1]._id : null;
+      const { posts = [] } = await getPostList(this._id, lastPostId);
 
       runInAction(() => {
         posts.forEach(t =>
@@ -81,6 +88,7 @@ class Discussion {
     try {
       await editDiscussion({
         id: this._id,
+        socketId: (this.store.socket && this.store.socket.id) || null,
         ...data,
       });
 
@@ -90,6 +98,18 @@ class Discussion {
     } catch (error) {
       console.error(error);
       throw error;
+    }
+  }
+
+  handlePostRealtimeEvent(data) {
+    const { action } = data;
+
+    if (action === 'added') {
+      this.addPostToLocalCache(data.post);
+    } else if (action === 'edited') {
+      this.editPostFromLocalCache(data);
+    } else if (action === 'deleted') {
+      this.removePostFromLocalCache(data.id);
     }
   }
 
@@ -111,6 +131,7 @@ class Discussion {
   async addPost(content: string) {
     const { post } = await addPost({
       discussionId: this._id,
+      socketId: (this.store.socket && this.store.socket.id) || null,
       content,
     });
 
@@ -123,11 +144,26 @@ class Discussion {
     await deletePost({
       id: post._id,
       discussionId: this._id,
+      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
       this.posts.remove(post);
     });
+  }
+
+  leaveSocketRoom() {
+    if (this.store.socket) {
+      console.log('leaving socket discussion room', this.name);
+      this.store.socket.emit('leaveDiscussion', this._id);
+    }
+  }
+
+  joinSocketRoom() {
+    if (this.store.socket) {
+      console.log('joining socket discussion room', this.name);
+      this.store.socket.emit('joinDiscussion', this._id);
+    }
   }
 }
 
@@ -137,11 +173,13 @@ decorate(Discussion, {
   memberIds: observable,
   posts: observable,
   isLoadingPosts: observable,
+  lastActivityDate: observable,
 
   setInitialPosts: action,
   loadPosts: action,
   changeLocalCache: action,
   edit: action,
+  handlePostRealtimeEvent: action,
   addPostToLocalCache: action,
   editPostFromLocalCache: action,
   removePostFromLocalCache: action,

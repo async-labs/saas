@@ -37,8 +37,6 @@ const mongoSchema = new mongoose.Schema({
     default: '',
   },
 
-  projectIds: [String],
-
   isAdmin: {
     type: Boolean,
     default: false,

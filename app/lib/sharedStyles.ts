@@ -17,11 +17,10 @@ const styleToolbar = {
 
 const styleLoginButton = {
   borderRadius: '2px',
-  // textTransform: 'none',
   font: '16px Muli',
   fontWeight: 400,
   letterSpacing: '0.01em',
-  color: 'white',
+  color: '#fff',
   backgroundColor: '#DF4930',
 };
 

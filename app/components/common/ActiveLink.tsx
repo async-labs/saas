@@ -1,51 +1,46 @@
 import { withRouter } from 'next/router';
 import Link from 'next/link';
-import Avatar from '@material-ui/core/Avatar';
 import { observer, inject } from 'mobx-react';
 
-const ActiveLink = ({ linkText, router, href, as, teamLogo, simple, highlighterSlug, store }) => {
-  const style1 = {
-    display: 'inline',
-    fontWeight: 300,
-    fontSize: '14px',
+const ActiveLink = ({ linkText, href, as, hasIcon, highlighterSlug, store }) => {
+  const selectedElement = store.currentUrl.includes(highlighterSlug);
+
+  const styleAnchor = {
+    fontWeight: 400,
+    fontSize: '13px',
   };
 
-  const style2 = {
-    display: 'inline',
-    fontWeight: store.currentUrl.includes(highlighterSlug) ? 600 : 300,
-    fontSize: '14px',
+  const styleAnchorSelectedWithIcon = {
+    fontWeight: 400,
+    fontSize: '13px',
+    position: 'relative',
+    left: '-14px',
   };
 
-  const handleClick = e => {
-    e.preventDefault();
-    router.push(href, as);
-  };
+  const trimmingLength = 20;
 
   // TODO: solve TS warning
-  return simple ? (
+  return (
     <Link prefetch href={href} as={as}>
-      <a onClick={handleClick} style={style1}>
-        {linkText}
-      </a>
-    </Link>
-  ) : (
-    <Link prefetch href={href} as={as}>
-      <a onClick={handleClick} style={style2}>
-        {teamLogo ? (
-          <Avatar
-            src={`${teamLogo || 'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
-            alt="Team logo"
+      <a
+        // onClick={handleClick}
+        style={hasIcon && selectedElement ? styleAnchorSelectedWithIcon : styleAnchor}
+      >
+        {hasIcon && selectedElement ? (
+          <i
+            className="material-icons"
+            color="action"
             style={{
-              margin: '0px 10px 0px 0px',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              height: '32px',
-              width: '32px',
-              verticalAlign: 'middle',
+              fontSize: 14,
+              verticalAlign: 'text-bottom',
             }}
-          />
+          >
+            arrow_right
+          </i>
         ) : null}
-        {linkText}
+        {linkText.length > trimmingLength
+          ? `${linkText.substring(0, trimmingLength)}...`
+          : linkText}
       </a>
     </Link>
   );
@@ -56,6 +51,6 @@ export default withRouter<{
   href?: string;
   as?: string;
   teamLogo?: string;
-  simple?: boolean;
+  hasIcon?: boolean;
   highlighterSlug?: string;
 }>(inject('store')(observer(ActiveLink)));

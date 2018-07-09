@@ -8,30 +8,31 @@ import marked from 'marked';
 import he from 'he';
 
 import notify from '../../lib/notifier';
-import { Store, Post } from '../../lib/store';
+import { Store, Post, User } from '../../lib/store';
 
 import PostEditor from './PostEditor';
 
 const styles = {
   paper: {
-    width: '100%',
+    width: '100%', // TODO: should 100% when isMobile is true
     padding: '0px 20px 20px 20px',
   },
 };
 
-interface MyProps {
+type MyProps = {
   store?: Store;
+  members: User[];
   post?: Post;
   onFinished?: Function;
   open?: boolean;
   classes: { paper: string };
-}
+};
 
-interface MyState {
+type MyState = {
   postId: string | null;
   content: string;
   disabled: boolean;
-}
+};
 
 class PostForm extends React.Component<MyProps, MyState> {
   state = {
@@ -98,13 +99,7 @@ class PostForm extends React.Component<MyProps, MyState> {
       return;
     }
 
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('Topic have not selected');
-      return;
-    }
-
-    const { currentDiscussion } = currentTopic;
+    const { currentDiscussion } = currentTeam;
     if (!currentDiscussion) {
       notify('Discussion have not selected');
       return;
@@ -142,7 +137,7 @@ class PostForm extends React.Component<MyProps, MyState> {
   };
 
   render() {
-    const { classes, open } = this.props;
+    const { classes, open, members } = this.props;
     const isEditing = !!this.props.post;
 
     const { paper } = classes;
@@ -156,13 +151,9 @@ class PostForm extends React.Component<MyProps, MyState> {
       >
         <div style={{ width: '100%', height: '100%', padding: '20px' }}>
           <h3>{isEditing ? 'Edit Post' : 'Add Post'}</h3>
-          <form style={{ width: '100%', height: '75%' }} onSubmit={this.onSubmit}>
-            <PostEditor
-              content={this.state.content}
-              onChanged={content => this.setState({ content })}
-            />
+          <form style={{ width: '100%', height: '100%' }} onSubmit={this.onSubmit}>
             <p />
-            <div style={{ float: 'right' }}>
+            <div style={{ margin: '20px 0px' }}>
               <Button variant="outlined" onClick={this.closeDrawer} disabled={this.state.disabled}>
                 Cancel
               </Button>{' '}
@@ -170,6 +161,12 @@ class PostForm extends React.Component<MyProps, MyState> {
                 {isEditing ? 'Save changes' : 'Publish'}
               </Button>
             </div>
+            <p />
+            <PostEditor
+              content={this.state.content}
+              onChanged={content => this.setState({ content })}
+              members={members}
+            />
             <br />
           </form>
         </div>
@@ -178,8 +175,4 @@ class PostForm extends React.Component<MyProps, MyState> {
   }
 }
 
-export default withStyles(styles)<{
-  post?: Post;
-  onFinished?: Function;
-  open?: boolean;
-}>(inject('store')(observer(PostForm)));
+export default withStyles(styles)<MyProps>(inject('store')(observer(PostForm)));

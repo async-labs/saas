@@ -2,7 +2,8 @@ import React from 'react';
 import { Provider, inject } from 'mobx-react';
 
 import { initStore, Store, getStore } from './store';
-import { getInitialData, getUser } from './api/admin';
+import { getInitialData } from './api/team-member';
+import { getUser } from './api/public';
 
 export default function withStore(BaseComponent) {
   BaseComponent = inject('store')(BaseComponent);
@@ -33,14 +34,14 @@ export default function withStore(BaseComponent) {
         Object.assign(props, (await BaseComponent.getInitialProps(ctx)) || {});
       }
 
-      const { teamSlug, topicSlug, discussionSlug } = props;
+      const { teamSlug, discussionSlug } = props;
       let initialData = {};
 
       if (user) {
         try {
           initialData = await getInitialData({
             request: ctx.req,
-            data: { teamSlug, topicSlug, discussionSlug },
+            data: { teamSlug, discussionSlug },
           });
         } catch (error) {
           console.log(error);
@@ -48,7 +49,7 @@ export default function withStore(BaseComponent) {
       }
 
       Object.assign(props, {
-        initialState: { user, teamSlug, ...initialData },
+        initialState: { user, teamSlug, currentUrl: ctx.asPath, ...initialData },
       });
 
       return props;

@@ -8,7 +8,6 @@ import * as url from 'url';
 import * as qs from 'querystring';
 import { chunk } from 'lodash';
 
-import Topic from './Topic';
 import Team from './Team';
 import Discussion from './Discussion';
 import { deleteFiles } from '../aws-s3';
@@ -166,7 +165,7 @@ class PostClass extends mongoose.Model {
     }
 
     const discussion = await Discussion.findById(discussionId)
-      .select('topicId memberIds slug')
+      .select('teamId memberIds slug')
       .lean();
 
     if (!discussion) {
@@ -177,15 +176,7 @@ class PostClass extends mongoose.Model {
       throw new Error('Permission denied');
     }
 
-    const topic = await Topic.findById(discussion.topicId)
-      .select('teamId slug')
-      .lean();
-
-    if (!topic) {
-      throw new Error('Topic not found');
-    }
-
-    const team = await Team.findById(topic.teamId)
+    const team = await Team.findById(discussion.teamId)
       .select('memberIds slug')
       .lean();
 
@@ -193,13 +184,15 @@ class PostClass extends mongoose.Model {
       throw new Error('Team not found');
     }
 
-    return { topic, discussion, team };
+    return { team, discussion };
   }
 
   static async getList({ userId, discussionId }) {
     await this.checkPermission({ userId, discussionId });
 
-    return this.find({ discussionId }).sort({ createdAt: 1 });
+    const filter: any = { discussionId };
+
+    return this.find(filter).sort({ createdAt: 1 });
   }
 
   static async add({ content, userId, discussionId }) {
@@ -218,8 +211,6 @@ class PostClass extends mongoose.Model {
       htmlContent,
       createdAt: new Date(),
     });
-
-    Discussion.updateOne({ _id: discussion._id }, { lastActivityDate: new Date() }).exec();
 
     const memberIds: string[] = discussion.memberIds.filter(id => id !== userId);
 

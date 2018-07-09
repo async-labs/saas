@@ -9,7 +9,8 @@ class Notifier extends React.PureComponent {
     message: '',
   };
 
-  componentDidMount() {
+  constructor(props) {
+    super(props);
     openSnackbarFn = this.openSnackbar;
   }
 
@@ -33,7 +34,7 @@ class Notifier extends React.PureComponent {
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         message={message}
-        autoHideDuration={3000}
+        autoHideDuration={5000}
         onClose={this.handleSnackbarClose}
         open={this.state.open}
         ContentProps={{
@@ -45,7 +46,9 @@ class Notifier extends React.PureComponent {
 }
 
 export function openSnackbar({ message }) {
-  openSnackbarFn({ message });
+  if (openSnackbarFn) {
+    openSnackbarFn({ message });
+  }
 }
 
 export default Notifier;

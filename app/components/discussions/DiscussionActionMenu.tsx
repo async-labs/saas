@@ -17,10 +17,11 @@ const ROOT_URL = dev ? `http://localhost:3000` : PRODUCTION_URL_APP;
 const getMenuOptions = discussion => ({
   dataId: discussion._id,
   id: `discussion-menu-${discussion._id}`,
-  tooltipTitle: 'Settings for Discussion',
 });
 
-const getMenuItemOptions = (discussion, component) => [
+// TODO: hide Edit/Delete from all except creator of Discussion
+
+const getMenuItemOptionsForCreator = (discussion, component) => [
   {
     text: 'Copy URL',
     dataId: discussion._id,
@@ -38,6 +39,14 @@ const getMenuItemOptions = (discussion, component) => [
   },
 ];
 
+const getMenuItemOptions = (discussion, component) => [
+  {
+    text: 'Copy URL',
+    dataId: discussion._id,
+    onClick: component.handleCopyUrl,
+  },
+];
+
 class DiscussionActionMenu extends React.Component<{ discussion: Discussion; store?: Store }> {
   state = {
     discussionFormOpen: false,
@@ -50,19 +59,14 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
   handleCopyUrl = async event => {
     const { store } = this.props;
     const { currentTeam } = store;
-    const { currentTopic } = currentTeam;
 
     const id = event.currentTarget.dataset.id;
     if (!id) {
       return;
     }
 
-    const selectedDiscussion = currentTopic.discussions.find(d => d._id === id);
-    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/t/${currentTopic.slug}/d/${
-      selectedDiscussion.slug
-    }`;
-
-    console.log(discussionUrl);
+    const selectedDiscussion = currentTeam.discussions.find(d => d._id === id);
+    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/d/${selectedDiscussion.slug}`;
 
     try {
       if (window.navigator) {
@@ -83,18 +87,12 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
       return;
     }
 
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('You have not selected Topic');
-      return;
-    }
-
     const id = event.currentTarget.dataset.id;
     if (!id) {
       return;
     }
 
-    const selectedDiscussion = currentTopic.discussions.find(d => d._id === id);
+    const selectedDiscussion = currentTeam.discussions.find(d => d._id === id);
 
     this.setState({ discussionFormOpen: true, selectedDiscussion });
   };
@@ -103,12 +101,6 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('You have not selected Team.');
-      return;
-    }
-
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('You have not selected Topic.');
       return;
     }
 
@@ -125,7 +117,7 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
         NProgress.start();
 
         try {
-          await currentTopic.deleteDiscussion(id);
+          await currentTeam.deleteDiscussion(id);
 
           notify('You successfully deleted Discussion.');
           NProgress.done();
@@ -139,13 +131,20 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
   };
 
   render() {
-    const { discussion } = this.props;
+    const { discussion, store } = this.props;
+    const { currentUser } = store;
+
+    const isCreator = currentUser._id === discussion.createdUserId ? true : false;
 
     return (
-      <span>
+      <React.Fragment>
         <MenuWithMenuItems
           menuOptions={getMenuOptions(discussion)}
-          itemOptions={getMenuItemOptions(discussion, this)}
+          itemOptions={
+            isCreator
+              ? getMenuItemOptionsForCreator(discussion, this)
+              : getMenuItemOptions(discussion, this)
+          }
         />
 
         {this.state.discussionFormOpen ? (
@@ -155,7 +154,7 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
             discussion={discussion}
           />
         ) : null}
-      </span>
+      </React.Fragment>
     );
   }
 }

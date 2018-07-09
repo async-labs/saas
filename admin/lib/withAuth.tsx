@@ -33,11 +33,11 @@ export default function withAuth(
       let asUrl = '/login';
       if (user) {
         if (!user.defaultTeamSlug) {
-          redirectUrl = '/settings/create-team';
-          asUrl = '/settings/create-team';
+          redirectUrl = '/create-team';
+          asUrl = '/create-team';
         } else {
-          redirectUrl = `/topics/detail?teamSlug=${user.defaultTeamSlug}&topicSlug=projects`;
-          asUrl = `/team/${user.defaultTeamSlug}/t/projects`;
+          redirectUrl = `/discussion?teamSlug=${user.defaultTeamSlug}`;
+          asUrl = `/team/${user.defaultTeamSlug}/d`;
         }
       }
 

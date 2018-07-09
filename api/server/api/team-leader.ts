@@ -2,7 +2,6 @@ import * as express from 'express';
 
 import Invitation from '../models/Invitation';
 import Team from '../models/Team';
-import Topic from '../models/Topic';
 import logger from '../logs';
 import User from '../models/User';
 
@@ -103,45 +102,6 @@ router.post('/teams/remove-member', async (req, res) => {
     res.json({ done: 1 });
   } catch (err) {
     console.error(err);
-    res.json({ error: err.post || err.toString() });
-  }
-});
-
-router.post('/topics/add', async (req, res) => {
-  try {
-    const { name, teamId } = req.body;
-
-    const topic = await Topic.add({ userId: req.user.id, name, teamId });
-
-    res.json({ topic });
-  } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
-  }
-});
-
-router.post('/topics/edit', async (req, res) => {
-  try {
-    const { id, name } = req.body;
-
-    const { teamId } = await Topic.edit({ userId: req.user.id, name, id });
-
-    res.json({ done: 1 });
-  } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
-  }
-});
-
-router.post('/topics/delete', async (req, res) => {
-  try {
-    const { id } = req.body;
-
-    const { teamId } = await Topic.delete({ userId: req.user.id, id });
-
-    res.json({ done: 1 });
-  } catch (err) {
-    logger.error(err);
     res.json({ error: err.post || err.toString() });
   }
 });

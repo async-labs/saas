@@ -37,8 +37,8 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
       if (team.memberIds.includes(user._id)) {
         removeInvitationIfMemberAdded(token);
         Router.push(
-          `/topics/detail?teamSlug=${team.slug}&topicSlug=projects`,
-          `/team/${team.slug}/t/projects`,
+          `/discussion?teamSlug=${team.slug}`,
+          `/team/${team.slug}/d`,
         );
       } else {
         Router.push(`/`);
@@ -81,7 +81,7 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
           Join <b>{team.name}</b> by logging in with your Google account.
         </p>
         <br />
-        <LoginButton next={`/team/${team.slug}/t/projects`} invitationToken={token} />
+        <LoginButton next={`/team/${team.slug}/d`} invitationToken={token} />
       </div>
     );
   }

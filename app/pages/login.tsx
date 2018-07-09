@@ -6,7 +6,7 @@ import LoginButton from '../components/common/LoginButton';
 import withAuth from '../lib/withAuth';
 import withLayout from '../lib/withLayout';
 
-class Login extends React.Component<{ next?: string }> {
+class Login extends React.Component<{ next?: string; firstGridItem: boolean }> {
   static getInitialProps({ query }) {
     const { next } = query;
 

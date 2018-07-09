@@ -1,19 +1,17 @@
-import { observable, action, IObservableArray, runInAction, decorate } from 'mobx';
+import { observable, action, IObservableArray, runInAction, computed, decorate } from 'mobx';
 import Router from 'next/router';
 
 import {
   getTeamMembers,
   getTeamInvitedUsers,
-  addTopic,
-  deleteTopic,
   inviteMember,
   removeMember,
   updateTeam,
 } from '../api/team-leader';
 
-import { getTopicList } from '../api/team-member';
+import { getDiscussionList, addDiscussion, deleteDiscussion } from '../api/team-member';
 
-import { Topic } from './topic';
+import { Discussion } from './discussion';
 import { User } from './user';
 import { Invitation } from './invitation';
 import { Store } from './index';
@@ -24,24 +22,22 @@ class Team {
   _id: string;
   teamLeaderId: string;
 
-  slug: string;
   name: string;
+  slug: string;
   avatarUrl: string;
   memberIds: IObservableArray<string> = observable([]);
-
-  topics: IObservableArray<Topic> = observable([]);
-  currentTopic?: Topic;
-
-  currentTopicSlug?: string;
-  currentDiscussionSlug?: string;
-
-  private isLoadingTopics = false;
-  isInitialTopicsLoaded = false;
 
   members: Map<string, User> = new Map();
   invitedUsers: Map<string, Invitation> = new Map();
   private isLoadingMembers = false;
   private isInitialMembersLoaded = false;
+
+  currentDiscussion?: Discussion;
+  currentDiscussionSlug?: string;
+  discussions: IObservableArray<Discussion> = observable([]);
+
+  isLoadingDiscussions = false;
+  private initialDiscussionSlug: string = '';
 
   constructor(params) {
     this._id = params._id;
@@ -50,15 +46,17 @@ class Team {
     this.name = params.name;
     this.avatarUrl = params.avatarUrl;
     this.memberIds.replace(params.memberIds || []);
+    this.currentDiscussionSlug = params.currentDiscussionSlug || null;
 
     this.store = params.store;
 
-    if (params.initialTopics) {
-      this.setInitialTopics(params.initialTopics);
-    }
-
     if (params.initialMembers) {
       this.setInitialMembers(params.initialMembers, params.initialInvitations);
+    }
+
+    if (params.initialDiscussions) {
+      console.log(`params:${params.initialDiscussions.length}`);
+      this.setInitialDiscussions(params.initialDiscussions);
     }
   }
 
@@ -81,138 +79,123 @@ class Team {
     }
   }
 
-  setInitialTopics(topics: any[]) {
-    this.topics.clear();
+  setCurrentDiscussion({ slug }: { slug: string }) {
+    this.currentDiscussionSlug = slug;
+    for (let i = 0; i < this.discussions.length; i++) {
+      const discussion = this.discussions[i];
 
-    const topicObjs = topics.map(t => new Topic({ team: this, store: this.store, ...t }));
-
-    this.topics.replace(topicObjs);
-
-    if (this.currentTopicSlug) {
-      this.setCurrentTopic(this.currentTopicSlug);
+      if (discussion && discussion.slug === slug) {
+        this.currentDiscussion = discussion;
+        break;
+      }
     }
-
-    this.isInitialTopicsLoaded = true;
   }
 
-  async loadInitialTopics() {
-    if (this.isLoadingTopics || this.isInitialTopicsLoaded) {
+  setInitialDiscussionSlug(slug: string) {
+    if (!this.initialDiscussionSlug) {
+      this.initialDiscussionSlug = slug;
+    }
+  }
+
+  setInitialDiscussions(discussions) {
+    const discussionObjs = discussions.map(
+      t => new Discussion({ team: this, store: this.store, ...t }),
+    );
+
+    this.discussions.replace(discussionObjs);
+
+    if (!this.currentDiscussionSlug && this.discussions.length > 0) {
+      this.currentDiscussionSlug = this.orderedDiscussions[0].slug;
+    }
+
+    if (this.currentDiscussionSlug) {
+      this.setCurrentDiscussion({ slug: this.currentDiscussionSlug });
+    }
+  }
+
+  async loadDiscussions() {
+    if (this.store.isServer || this.isLoadingDiscussions) {
       return;
     }
 
-    this.isLoadingTopics = true;
+    this.isLoadingDiscussions = true;
 
     try {
-      const { topics = [] } = await getTopicList(this._id);
+      const { discussions = [] } = await getDiscussionList({ teamId: this._id });
+
+      console.log(`loadDiscussions(): ${discussions.length}`);
 
       runInAction(() => {
-        this.setInitialTopics(topics);
+        discussions.forEach(t =>
+          this.discussions.push(new Discussion({ team: this, store: this.store, ...t })),
+        );
       });
     } finally {
       runInAction(() => {
-        this.isLoadingTopics = false;
+        this.isLoadingDiscussions = false;
       });
     }
   }
 
-  setCurrentTopicAndDiscussion({
-    topicSlug,
-    discussionSlug,
-  }: {
-    topicSlug: string;
-    discussionSlug: string;
-  }) {
-    this.currentTopicSlug = topicSlug;
-    this.currentDiscussionSlug = discussionSlug;
+  addDiscussionToLocalCache(data): Discussion {
+    const obj = new Discussion({ team: this, store: this.store, ...data });
 
-    for (let i = 0; i < this.topics.length; i++) {
-      const topic = this.topics[i];
-      if (topic.slug === topicSlug) {
-        topic.setInitialDiscussionSlug(discussionSlug);
-        topic.currentDiscussionSlug = discussionSlug;
-        topic.loadInitialDiscussions();
-        this.currentTopic = topic;
-        console.log(this.currentTopic.slug);
-        break;
-      }
+    if (obj.memberIds.includes(this.store.currentUser._id)) {
+      this.discussions.push(obj);
+    }
+
+    return obj;
+  }
+
+  editDiscussionFromLocalCache(data) {
+    const discussion = this.discussions.find(item => item._id === data.id);
+    if (discussion) {
+      discussion.changeLocalCache(data);
     }
   }
 
-  setCurrentTopic(slug: string) {
-    let found = false;
-    for (let i = 0; i < this.topics.length; i++) {
-      const topic = this.topics[i];
-      if (topic.slug === slug) {
-        this.currentTopicSlug = slug;
-        if (this.currentDiscussionSlug) {
-          topic.setInitialDiscussionSlug(this.currentDiscussionSlug);
-          topic.currentDiscussionSlug = this.currentDiscussionSlug;
-        }
-
-        topic.loadInitialDiscussions().catch(err => console.log(err));
-        this.currentTopic = topic;
-        found = true;
-        break;
-      }
-    }
-
-    if (!found) {
-      this.currentTopic = null;
-      this.currentTopicSlug = null;
-    }
+  removeDiscussionFromLocalCache(discussionId: string) {
+    const discussion = this.discussions.find(item => item._id === discussionId);
+    this.discussions.remove(discussion);
   }
 
-  addTopicToLocalCache(data) {
-    const topicObj = new Topic({ team: this, store: this.store, ...data });
-    this.topics.unshift(topicObj);
-  }
-
-  editTopicFromLocalCache(topicId: string, name: string) {
-    const topic = this.topics.find(t => t._id === topicId);
-    topic.name = name;
-  }
-
-  removeTopicFromLocalCache(topicId: string) {
-    const topic = this.topics.find(t => t._id === topicId);
-    this.topics.remove(topic);
-  }
-
-  async addTopic(data) {
-    const { topic } = await addTopic({
+  async addDiscussion(data): Promise<Discussion> {
+    const { discussion } = await addDiscussion({
       teamId: this._id,
       ...data,
     });
 
-    runInAction(() => {
-      this.addTopicToLocalCache(topic);
-
-      Router.push(
-        `/topics/detail?teamSlug=${this.slug}&topicSlug=${topic.slug}`,
-        `/team/${this.slug}/t/${topic.slug}`,
-      );
+    return new Promise<Discussion>(resolve => {
+      runInAction(() => {
+        const obj = this.addDiscussionToLocalCache(discussion);
+        resolve(obj);
+      });
     });
   }
 
-  async deleteTopic(topicId: string) {
-    const topic = this.topics.find(t => t._id === topicId);
-
-    await deleteTopic({
-      id: topicId,
+  async deleteDiscussion(id: string) {
+    await deleteDiscussion({
+      id,
     });
 
     runInAction(() => {
-      this.removeTopicFromLocalCache(topicId);
+      const discussion = this.discussions.find(d => d._id === id);
 
-      if (this.store.currentTeam === this && this.currentTopic === topic) {
-        if (this.topics.length > 0) {
+      this.removeDiscussionFromLocalCache(id);
+
+      if (this.currentDiscussion === discussion) {
+        this.currentDiscussion = null;
+        this.currentDiscussionSlug = null;
+
+        if (this.discussions.length > 0) {
+          const d = this.discussions[0];
+
           Router.push(
-            `/topics/detail?teamSlug=${this.slug}&topicSlug=${this.topics[0].slug}`,
-            `/team/${this.slug}/t/${this.topics[0].slug}`,
+            `/discussion?teamSlug=${this.slug}&discussionSlug=${d.slug}`,
+            `/team/${this.slug}/d/${d.slug}`,
           );
         } else {
-          Router.push('/');
-          this.currentTopic = null;
-          this.currentTopicSlug = null;
+          Router.push(`/discussion?teamSlug=${this.slug}`, `/team/${this.slug}/d`);
         }
       }
     });
@@ -223,7 +206,11 @@ class Team {
     this.invitedUsers.clear();
 
     for (let i = 0; i < users.length; i++) {
-      this.members.set(users[i]._id, new User(users[i]));
+      if (this.store.currentUser && this.store.currentUser._id === users[i]._id) {
+        this.members.set(users[i]._id, this.store.currentUser);
+      } else {
+        this.members.set(users[i]._id, new User(users[i]));
+      }
     }
 
     for (let i = 0; i < invitations.length; i++) {
@@ -292,39 +279,45 @@ class Team {
       this.members.delete(userId);
     });
   }
+
+  get orderedDiscussions() {
+    return this.discussions.slice().sort();
+  }
 }
 
 decorate(Team, {
-  isLoadingTopics: observable,
-  isInitialTopicsLoaded: observable,
-
-  slug: observable,
   name: observable,
+  slug: observable,
   avatarUrl: observable,
   memberIds: observable,
-  topics: observable,
-  currentTopic: observable,
-  currentTopicSlug: observable,
-  currentDiscussionSlug: observable,
   members: observable,
   invitedUsers: observable,
   isLoadingMembers: observable,
   isInitialMembersLoaded: observable,
 
   edit: action,
-  setInitialTopics: action,
-  loadInitialTopics: action,
-  setCurrentTopicAndDiscussion: action,
-  setCurrentTopic: action,
-  addTopicToLocalCache: action,
-  editTopicFromLocalCache: action,
-  removeTopicFromLocalCache: action,
-  addTopic: action,
-  deleteTopic: action,
   setInitialMembers: action,
   loadInitialMembers: action,
   inviteMember: action,
   removeMember: action,
+
+  currentDiscussion: observable,
+  currentDiscussionSlug: observable,
+  isLoadingDiscussions: observable,
+  discussions: observable,
+
+  setInitialDiscussions: action,
+  setCurrentDiscussion: action,
+  setInitialDiscussionSlug: action,
+  loadDiscussions: action,
+  addDiscussionToLocalCache: action,
+  editDiscussionFromLocalCache: action,
+  removeDiscussionFromLocalCache: action,
+  addDiscussion: action,
+  deleteDiscussion: action,
+
+  orderedDiscussions: computed,
+
 });
 
 export { Team };

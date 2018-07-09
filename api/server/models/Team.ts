@@ -1,7 +1,5 @@
 import * as mongoose from 'mongoose';
 
-import Topic from './Topic';
-
 import { generateNumberSlug } from '../utils/slugify';
 import User from './User';
 
@@ -98,15 +96,6 @@ class TeamClass extends mongoose.Model {
       memberIds: [userId],
       createdAt: new Date(),
       defaultTeam,
-    });
-
-    await Topic.create({
-      createdUserId: userId,
-      teamId: team._id,
-      name: 'Projects',
-      slug: 'projects',
-      isProjects: true,
-      createdAt: new Date(),
     });
 
     return team;

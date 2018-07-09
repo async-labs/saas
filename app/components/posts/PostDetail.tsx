@@ -2,12 +2,13 @@ import React from 'react';
 import moment from 'moment';
 import { inject, observer } from 'mobx-react';
 import Paper from '@material-ui/core/Paper';
+import Avatar from '@material-ui/core/Avatar';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 import { Store, Post } from '../../lib/store';
 import confirm from '../../lib/confirm';
 import notify from '../../lib/notifier';
-import AvatarWithMenu from '../common/AvatarwithMenu';
 
 import PostContent from './PostContent';
 
@@ -16,10 +17,17 @@ const stylePaper = {
   padding: '20px',
 };
 
+const styleLineSeparator = {
+  verticalAlign: 'text-bottom',
+  fontWeight: 300,
+  fontSize: '16px',
+  margin: '0px 5px',
+  opacity: 0.75,
+};
+
 const getMenuOptions = post => ({
   dataId: post._id,
   id: `post-menu-${post._id}`,
-  tooltipTitle: 'Settings for Post',
 });
 
 const getMenuItemOptions = (post, component) => [
@@ -71,21 +79,47 @@ class PostDetail extends React.Component<{
     }
 
     return (
-      <div>
-        <MenuWithMenuItems
-          menuOptions={getMenuOptions(post)}
-          itemOptions={getMenuItemOptions(post, this)}
-        />
-      </div>
+      <MenuWithMenuItems
+        menuOptions={getMenuOptions(post)}
+        itemOptions={getMenuItemOptions(post, this)}
+      />
     );
   }
 
   renderPostDetail(post: Post) {
-    const date = moment(post.createdAt).format('MMM Do YYYY');
+    const createdDate = moment(post.createdAt).format('MMM Do YYYY');
+    const lastEditedDate = moment(post.lastUpdatedAt).fromNow();
     return (
       <div>
-        {post.user && <AvatarWithMenu src={post.user.avatarUrl} alt={post.user.displayName} />}
-        {this.renderMenu()}
+        {post.user && (
+          <Tooltip
+            title={post.user.displayName}
+            placement="top"
+            disableFocusListener
+            disableTouchListener
+          >
+            <Avatar
+              src={post.user.avatarUrl}
+              alt={post.user.displayName}
+              style={{
+                width: '50px',
+                height: '50px',
+                margin: '0px 10px 0px 5px',
+                cursor: 'pointer',
+                float: 'left',
+              }}
+            />
+          </Tooltip>
+        )}
+        <div
+          style={{
+            float: 'right',
+            margin: '-10px -0px auto auto',
+            zIndex: 1000,
+          }}
+        >
+          {this.renderMenu()}
+        </div>
         <div
           style={{
             margin: '0px 20px 0px 70px',
@@ -93,9 +127,17 @@ class PostDetail extends React.Component<{
             lineHeight: '1em',
           }}
         >
-          <span style={{ fontSize: '11px', fontWeight: 600, verticalAlign: 'top' }}>
-            {(post.user && post.user.displayName) || 'User'} |{' '}
-            {(post.createdAt && date) || 'no date'} {post.isEdited ? '| edited' : ''}
+          <span style={{ fontSize: '12px', fontWeight: 400 }}>
+            {`By: ${post.user && post.user.displayName}` || 'User'}
+            <span style={styleLineSeparator}>|</span>
+            {`Created: ${post.createdAt && createdDate}` || ''}
+
+            {post.isEdited ? (
+              <React.Fragment>
+                <span style={styleLineSeparator}>|</span>
+                Last edited: {lastEditedDate}
+              </React.Fragment>
+            ) : null}
           </span>
 
           <PostContent html={post.htmlContent} />

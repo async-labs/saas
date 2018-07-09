@@ -13,19 +13,19 @@ import MemberChooser from '../users/MemberChooser';
 import notify from '../../lib/notifier';
 import { Store, Discussion } from '../../lib/store';
 
-interface Props {
+type Props = {
   store?: Store;
   onClose: Function;
   open: boolean;
   discussion: Discussion;
-}
+};
 
-interface State {
+type State = {
   name: string;
   memberIds: string[];
   disabled: boolean;
   discussionId: string;
-}
+};
 
 class EditDiscussionForm extends React.Component<Props, State> {
   state = {
@@ -68,12 +68,6 @@ class EditDiscussionForm extends React.Component<Props, State> {
       return;
     }
 
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('Topic have not selected');
-      return;
-    }
-
     const { name, memberIds } = this.state;
     if (!name) {
       notify('Name is required');
@@ -87,7 +81,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
       await discussion.edit({ name, memberIds });
 
       this.setState({ name: '', memberIds: [] });
-      notify('You successfully edited Discussion');
+      notify('You successfully edited Discussion.');
     } catch (error) {
       console.log(error);
       notify(error);
@@ -125,7 +119,6 @@ class EditDiscussionForm extends React.Component<Props, State> {
         <DialogTitle id="simple-dialog-title">Edit Discussion</DialogTitle>
         <DialogContent>
           <DialogContentText>Explain discussion</DialogContentText>
-          <hr />
           <br />
           <form onSubmit={this.onSubmit}>
             <TextField

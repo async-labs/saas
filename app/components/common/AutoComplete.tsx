@@ -78,6 +78,7 @@ class DownshiftMultiple extends React.Component<{
   label: string;
 }> {
   state = {
+    autoFocusInput: false,
     inputValue: '',
     selectedItems: [],
   };
@@ -86,6 +87,7 @@ class DownshiftMultiple extends React.Component<{
     super(props);
 
     this.state = {
+      autoFocusInput: false,
       inputValue: '',
       selectedItems: props.selectedItems || [],
     };
@@ -96,6 +98,7 @@ class DownshiftMultiple extends React.Component<{
     if (selectedItems.length && !inputValue.length && keycode(event) === 'backspace') {
       this.setState({
         selectedItems: selectedItems.slice(0, selectedItems.length - 1),
+        autoFocusInput: true,
       });
 
       this.props.onChange(selectedItems);
@@ -109,14 +112,14 @@ class DownshiftMultiple extends React.Component<{
   handleChange = item => {
     let { selectedItems } = this.state;
 
-    if (selectedItems.indexOf(item) === -1) {
-      // TODO: Del, please review my code in this file and DiscussionForm
+    if (selectedItems.map(i => i.value).indexOf(item.value) === -1) {
       selectedItems = [...selectedItems, item];
     }
 
     this.setState({
       inputValue: '',
       selectedItems,
+      autoFocusInput: true,
     });
 
     this.props.onChange(selectedItems);
@@ -132,7 +135,7 @@ class DownshiftMultiple extends React.Component<{
 
   render() {
     const { classes, suggestions, helperText, label } = this.props;
-    const { inputValue, selectedItems } = this.state;
+    const { inputValue, selectedItems, autoFocusInput } = this.state;
 
     return (
       <div className={classes.root} style={{ height: 'auto', width: 'auto' }}>
@@ -156,6 +159,10 @@ class DownshiftMultiple extends React.Component<{
                 classes,
                 helperText,
                 label,
+                autoFocus: autoFocusInput,
+                // adding key in order to re-render input, when item selected or emptied
+                // re-rendering needed for fixing label transition bug
+                key: `text-field-${!!selectedItems.length}`,
                 InputProps: getInputProps({
                   startAdornment: selectedItems.map(item => (
                     <Chip
