@@ -33,16 +33,14 @@ async function insertTemplates() {
       subject: 'Welcome to SaaS by Async',
       message: `{{userName}},
         <p>
-          Thanks for signing up on our <a href="https://saas-app.async-await.com" target="blank">demo app</a>!
+          Thanks for signing up on the demo app for our <a href="https://github.com/async-labs/saas" target="blank">SaaS boilerplate</a>!
         <br/>
           Note that any data you save on the demo app will be deleted after 30 days.
         </p>
         <p>
-          - If you found our SaaS boilerplate useful, please remember to <a href="https://github.com/async-labs/saas" target="blank">star our repo</a>.
-        <br/>
-          - If you're learning how to build your own web app, check out our <a href="https://builderbook.org/book" target="blank">book</a>. 
+          If you're learning how to build your own web app, check out our <a href="https://builderbook.org/book" target="blank">book</a>. 
         <br/> 
-          - If you want to hire our team to build custom SaaS features, please fill out our <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>
+          If you want to hire our team to build custom SaaS features, please fill out our <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>
         </p>
         <p>
           <a href="https://youtu.be/QiLXx-0W8Q4?t=1m7s" target="blank">We hope you don't like pain</a>.
