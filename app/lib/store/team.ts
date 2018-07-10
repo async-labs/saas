@@ -29,14 +29,14 @@ class Team {
 
   public members: Map<string, User> = new Map();
   public invitedUsers: Map<string, Invitation> = new Map();
-  private isLoadingMembers = false;
-  private isInitialMembersLoaded = false;
 
   public currentDiscussion?: Discussion;
   public currentDiscussionSlug?: string;
   public discussions: IObservableArray<Discussion> = observable([]);
-
   public isLoadingDiscussions = false;
+
+  private isLoadingMembers = false;
+  private isInitialMembersLoaded = false;
   private initialDiscussionSlug: string = '';
 
   constructor(params) {
@@ -200,16 +200,16 @@ class Team {
     this.members.clear();
     this.invitedUsers.clear();
 
-    for (let i = 0; i < users.length; i++) {
-      if (this.store.currentUser && this.store.currentUser._id === users[i]._id) {
-        this.members.set(users[i]._id, this.store.currentUser);
+    for (const user of users) {
+      if (this.store.currentUser && this.store.currentUser._id === user._id) {
+        this.members.set(user._id, this.store.currentUser);
       } else {
-        this.members.set(users[i]._id, new User(users[i]));
+        this.members.set(user._id, new User(user));
       }
     }
 
-    for (let i = 0; i < invitations.length; i++) {
-      this.invitedUsers.set(invitations[i]._id, new Invitation(invitations[i]));
+    for (const invitation of invitations) {
+      this.invitedUsers.set(invitation._id, new Invitation(invitation));
     }
 
     this.isInitialMembersLoaded = true;
@@ -231,11 +231,11 @@ class Team {
       }
 
       runInAction(() => {
-        for (let i = 0; i < users.length; i++) {
-          this.members.set(users[i]._id, new User(users[i]));
+        for (const user of users) {
+          this.members.set(user._id, new User(user));
         }
-        for (let i = 0; i < invitations.length; i++) {
-          this.invitedUsers.set(invitations[i]._id, new Invitation(invitations[i]));
+        for (const invitation of invitations) {
+          this.invitedUsers.set(invitation._id, new Invitation(invitation));
         }
 
         this.isLoadingMembers = false;

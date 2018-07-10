@@ -7,8 +7,8 @@ import Team from './Team';
 import User, { IUserDocument } from './User';
 
 const dev = process.env.NODE_ENV !== 'production';
-const { PRODUCTION_URL_API } = process.env;
-const ROOT_URL = dev ? 'http://localhost:3000' : PRODUCTION_URL_API;
+const { PRODUCTION_URL_APP } = process.env;
+const ROOT_URL = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
 const mongoSchema = new mongoose.Schema({
   teamId: {

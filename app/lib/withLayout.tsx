@@ -142,6 +142,10 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
         firstGridItem = false;
       }
 
+      if (pathname.includes('/invitation')) {
+        firstGridItem = false;
+      }
+
       return {
         ...baseComponentProps,
         teamSlug,

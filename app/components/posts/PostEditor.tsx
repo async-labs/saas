@@ -24,7 +24,7 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
 
   return new Promise(resolve => {
     reader.onload = e => {
-      img.onload = function() {
+      img.onload = () => {
         resolve({ width: img.width, height: img.height });
       };
 
@@ -182,7 +182,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
   public showHtmlContent = async () => {
     const { content } = this.props;
 
-    function markdownToHtml(content) {
+    function markdownToHtml(postContent) {
       const renderer = new marked.Renderer();
 
       renderer.link = (href, title, text) => {
@@ -202,7 +202,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
         breaks: true,
       });
 
-      return marked(he.decode(content));
+      return marked(he.decode(postContent));
     }
 
     const htmlContent = content ? markdownToHtml(content) : '<span>Nothing to preview.</span>';

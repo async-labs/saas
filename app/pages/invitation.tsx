@@ -59,7 +59,7 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
     return (
       <div style={{ textAlign: 'center', margin: '0 20px' }}>
         <Head>
-          <title>Team Invitation: {team.name}</title>
+          <title>Invitation to {team.name}</title>
           <meta name="description" content={`Invitation to join ${team.name}`} />
         </Head>
         <br />
