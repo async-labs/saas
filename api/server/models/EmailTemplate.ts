@@ -1,5 +1,5 @@
-import * as mongoose from 'mongoose';
 import Handlebars from 'handlebars';
+import * as mongoose from 'mongoose';
 
 interface IEmailTemplateDocument extends mongoose.Document {
   name: string;
@@ -33,19 +33,25 @@ async function insertTemplates() {
       subject: 'Welcome to SaaS by Async',
       message: `{{userName}},
         <p>
-          Thanks for signing up on the demo app for our <a href="https://github.com/async-labs/saas" target="blank">SaaS boilerplate</a>!
+          Thanks for signing at our <a href="https://github.com/async-labs/saas" target="blank">SaaS boilerplate</a>!
         <br/>
           Note that any data you save on the demo app will be deleted after 30 days.
         </p>
-        <p>
-          If you're learning how to build your own web app, check out our <a href="https://builderbook.org/book" target="blank">book</a>. 
-        <br/> 
-          If you want to hire our team to build custom SaaS features, please fill out our <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>
-        </p>
+        <li>
+          If you found our SaaS boilerplate useful,
+          please remember to <a href="https://github.com/async-labs/saas" target="blank">star our repo</a>.
+        </li>
+        <li> If you're learning how to build your own web app,
+        check out our <a href="https://builderbook.org/book" target="blank">book</a>.
+        </li>
+        <li>
+          If you want to hire our team to help you build SaaS product,
+          please apply using this <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>.
+        </li>
         <p>
           <a href="https://youtu.be/QiLXx-0W8Q4?t=1m7s" target="blank">We hope you don't like pain</a>.
         </p>
-      
+
         Kelly & Timur, Team Async
       `,
     },

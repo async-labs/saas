@@ -1,26 +1,25 @@
-import React from 'react';
-import { observer, inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import NProgress from 'nprogress';
+import React from 'react';
 
-import notify from '../../lib/notifier';
 import confirm from '../../lib/confirm';
+import notify from '../../lib/notifier';
 import { Discussion, Store } from '../../lib/store';
 
+import env from '../../lib/env';
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 import EditDiscussionForm from './EditDiscussionForm';
-import env from '../../lib/env';
 
 const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_APP } = env;
-const ROOT_URL = dev ? `http://localhost:3000` : PRODUCTION_URL_APP;
+const ROOT_URL = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
 const getMenuOptions = discussion => ({
   dataId: discussion._id,
   id: `discussion-menu-${discussion._id}`,
-  tooltipTitle: 'Settings for Discussion',
 });
 
-const getMenuItemOptions = (discussion, component) => [
+const getMenuItemOptionsForCreator = (discussion, component) => [
   {
     text: 'Copy URL',
     dataId: discussion._id,
@@ -38,31 +37,61 @@ const getMenuItemOptions = (discussion, component) => [
   },
 ];
 
+const getMenuItemOptions = (discussion, component) => [
+  {
+    text: 'Copy URL',
+    dataId: discussion._id,
+    onClick: component.handleCopyUrl,
+  },
+];
+
 class DiscussionActionMenu extends React.Component<{ discussion: Discussion; store?: Store }> {
-  state = {
+  public state = {
     discussionFormOpen: false,
   };
 
-  handleDiscussionFormClose = () => {
+  public handleDiscussionFormClose = () => {
     this.setState({ discussionFormOpen: false, selectedDiscussion: null });
   };
 
-  handleCopyUrl = async event => {
+  public render() {
+    const { discussion, store } = this.props;
+    const { currentUser } = store;
+
+    const isCreator = currentUser._id === discussion.createdUserId ? true : false;
+
+    return (
+      <React.Fragment>
+        <MenuWithMenuItems
+          menuOptions={getMenuOptions(discussion)}
+          itemOptions={
+            isCreator
+              ? getMenuItemOptionsForCreator(discussion, this)
+              : getMenuItemOptions(discussion, this)
+          }
+        />
+
+        {this.state.discussionFormOpen ? (
+          <EditDiscussionForm
+            open={true}
+            onClose={this.handleDiscussionFormClose}
+            discussion={discussion}
+          />
+        ) : null}
+      </React.Fragment>
+    );
+  }
+  public handleCopyUrl = async event => {
     const { store } = this.props;
     const { currentTeam } = store;
-    const { currentTopic } = currentTeam;
 
     const id = event.currentTarget.dataset.id;
     if (!id) {
       return;
     }
 
-    const selectedDiscussion = currentTopic.discussions.find(d => d._id === id);
-    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/t/${currentTopic.slug}/d/${
-      selectedDiscussion.slug
-    }`;
-
-    console.log(discussionUrl);
+    const selectedDiscussion = currentTeam.discussions.find(d => d._id === id);
+    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/d/${selectedDiscussion.slug}`;
 
     try {
       if (window.navigator) {
@@ -76,16 +105,10 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
     }
   };
 
-  editDiscussion = event => {
+  public editDiscussion = event => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('You have not selected Team.');
-      return;
-    }
-
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('You have not selected Topic');
       return;
     }
 
@@ -94,21 +117,15 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
       return;
     }
 
-    const selectedDiscussion = currentTopic.discussions.find(d => d._id === id);
+    const selectedDiscussion = currentTeam.discussions.find(d => d._id === id);
 
     this.setState({ discussionFormOpen: true, selectedDiscussion });
   };
 
-  deleteDiscussion = async event => {
+  public deleteDiscussion = async event => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('You have not selected Team.');
-      return;
-    }
-
-    const { currentTopic } = currentTeam;
-    if (!currentTopic) {
-      notify('You have not selected Topic.');
       return;
     }
 
@@ -125,7 +142,7 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
         NProgress.start();
 
         try {
-          await currentTopic.deleteDiscussion(id);
+          await currentTeam.deleteDiscussion(id);
 
           notify('You successfully deleted Discussion.');
           NProgress.done();
@@ -137,27 +154,6 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
       },
     });
   };
-
-  render() {
-    const { discussion } = this.props;
-
-    return (
-      <span>
-        <MenuWithMenuItems
-          menuOptions={getMenuOptions(discussion)}
-          itemOptions={getMenuItemOptions(discussion, this)}
-        />
-
-        {this.state.discussionFormOpen ? (
-          <EditDiscussionForm
-            open={true}
-            onClose={this.handleDiscussionFormClose}
-            discussion={discussion}
-          />
-        ) : null}
-      </span>
-    );
-  }
 }
 
 export default inject('store')(observer(DiscussionActionMenu));

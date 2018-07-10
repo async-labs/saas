@@ -1,59 +1,43 @@
-import React from 'react';
-import Tooltip from '@material-ui/core/Tooltip';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import React from 'react';
 
 class MenuWithMenuItems extends React.PureComponent<{
   menuOptions: any;
   itemOptions: any[];
 }> {
-  state = {
+  public state = {
     menuElm: null,
   };
 
-  handleClick = event => {
-    event.preventDefault();
-    this.setState({ menuElm: event.currentTarget });
-  };
-
-  handleClose = () => {
-    this.setState({ menuElm: null });
-  };
-
-  render() {
+  public render() {
     const { menuOptions, itemOptions } = this.props;
+    const { menuElm } = this.state;
 
     return (
-      <span>
-        <Tooltip
-          title={menuOptions.tooltipTitle}
-          placement="top"
-          disableFocusListener
-          disableTouchListener
+      <div style={{ verticalAlign: 'middle' }}>
+        <i
+          aria-owns={menuElm ? menuOptions.id : null}
+          data-id={menuOptions.dataId}
+          aria-haspopup="true"
+          style={{ fontSize: '13px', opacity: 0.7, cursor: 'pointer' }}
+          className="material-icons"
+          onClick={e => this.handleClick(e)}
         >
-          <a href="#" style={{ float: 'right' }} onClick={this.handleClick}>
-            <i
-              data-id={menuOptions.dataId}
-              aria-haspopup="true"
-              color="action"
-              style={{ fontSize: '13px', opacity: 0.7, verticalAlign: 'middle' }}
-              className="material-icons"
-            >
-              more_vert
-            </i>
-          </a>
-        </Tooltip>
+          more_vert
+        </i>
 
         <Menu
           id={menuOptions.id}
-          anchorEl={this.state.menuElm}
-          open={!!this.state.menuElm}
+          anchorEl={menuElm}
+          open={Boolean(menuElm)}
           onClose={this.handleClose}
         >
           {itemOptions.map((option, i) => (
             <MenuItem
               key={option.dataId + i}
               data-id={option.dataId}
+              data-more-id={option.dataMoreId}
               onClick={e => {
                 this.setState({ menuElm: null });
                 option.onClick(e);
@@ -63,9 +47,18 @@ class MenuWithMenuItems extends React.PureComponent<{
             </MenuItem>
           ))}
         </Menu>
-      </span>
+      </div>
     );
   }
+
+  public handleClick = event => {
+    event.preventDefault();
+    this.setState({ menuElm: event.currentTarget });
+  };
+
+  public handleClose = () => {
+    this.setState({ menuElm: null });
+  };
 }
 
 export default MenuWithMenuItems;

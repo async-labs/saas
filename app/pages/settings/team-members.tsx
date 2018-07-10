@@ -1,25 +1,25 @@
-import * as React from 'react';
-import { observer } from 'mobx-react';
-import Head from 'next/head';
-import Paper from '@material-ui/core/Paper';
+import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Avatar from '@material-ui/core/Avatar';
+import Paper from '@material-ui/core/Paper';
+import { observer } from 'mobx-react';
+import Head from 'next/head';
+import * as React from 'react';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
-import TableHead from '@material-ui/core/TableHead';
 import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 
+import MenuWithMenuItems from '../../components/common/MenuWithMenuItems';
+import SettingList from '../../components/common/SettingList';
+import InviteMember from '../../components/teams/InviteMember';
+import confirm from '../../lib/confirm';
+import notify from '../../lib/notifier';
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
-import notify from '../../lib/notifier';
-import confirm from '../../lib/confirm';
-import SettingList from '../../components/common/SettingList';
-import MenuWithMenuItems from '../../components/common/MenuWithMenuItems';
-import InviteMember from '../../components/teams/InviteMember';
 
 const styleGrid = {
   height: '100%',
@@ -48,15 +48,15 @@ type MyProps = { teamSlug: string; store: Store; isTL: boolean };
 type MyState = { inviteMemberOpen: boolean };
 
 class TeamMembers extends React.Component<MyProps, MyState> {
-  state = {
+  public state = {
     inviteMemberOpen: false,
   };
 
-  handleInviteMemberClose = () => {
+  public handleInviteMemberClose = () => {
     this.setState({ inviteMemberOpen: false });
   };
 
-  inviteMember = () => {
+  public inviteMember = () => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('You have not selected a Team.');
@@ -66,7 +66,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
     this.setState({ inviteMemberOpen: true });
   };
 
-  removeMember = event => {
+  public removeMember = event => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('You have not selected a Team.');
@@ -94,7 +94,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
     });
   };
 
-  renderMenu(member) {
+  public renderMenu(member) {
     return (
       <div>
         <MenuWithMenuItems
@@ -108,7 +108,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
   // TODO: MobX for when new user is invited
   // TODO: MobX when member gets removed
 
-  render() {
+  public render() {
     const { store, isTL } = this.props;
     const { currentTeam, currentUser } = store;
 
@@ -135,7 +135,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
             <Grid item sm={2} xs={12} style={styleGridItem}>
               <SettingList store={store} isTL={isTL} />
             </Grid>
-            <Grid item sm={10} xs={12} style={styleGridItem}>
+            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
               <h3>Team Members</h3>
               <p>Only the Team Leader can access this page.</p>
               <p>Create your own team to become a Team Leader.</p>
@@ -155,7 +155,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
           <Grid item sm={2} xs={12} style={styleGridItem}>
             <SettingList store={store} isTL={isTL} />
           </Grid>
-          <Grid item sm={10} xs={12} style={styleGridItem}>
+          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
             <h3>Team Members</h3>
             <p />
             <h4 style={{ marginRight: 20, display: 'inline' }}>

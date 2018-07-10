@@ -6,8 +6,7 @@ import * as stripe from 'stripe';
 export function charge({ amount, token, buyerEmail }) {
   const dev = process.env.NODE_ENV !== 'production';
 
-  const API_KEY =
-    dev ? process.env.Stripe_Test_SecretKey : process.env.Stripe_Live_SecretKey;
+  const API_KEY = dev ? process.env.Stripe_Test_SecretKey : process.env.Stripe_Live_SecretKey;
   const client = new stripe(API_KEY);
 
   return client.charges.create({

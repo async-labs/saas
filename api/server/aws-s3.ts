@@ -1,4 +1,5 @@
 import * as aws from 'aws-sdk';
+import logger from './logs';
 
 import Team from './models/Team';
 
@@ -59,7 +60,7 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, 
       };
 
       if (err) {
-        console.log(err);
+        logger.error(err);
         reject(err);
       } else {
         resolve(returnData);
@@ -90,7 +91,7 @@ function signRequestForLoad(path, bucket) {
       };
 
       if (err) {
-        console.log(err);
+        logger.error(err);
         reject(err);
       } else {
         resolve(returnData);

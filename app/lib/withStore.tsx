@@ -1,17 +1,15 @@
+import { inject, Provider } from 'mobx-react';
 import React from 'react';
-import { Provider, inject } from 'mobx-react';
 
-import { initStore, Store, getStore } from './store';
-import { getInitialData } from './api/team-member';
 import { getUser } from './api/public';
+import { getInitialData } from './api/team-member';
+import { getStore, initStore, Store } from './store';
 
 export default function withStore(BaseComponent) {
   BaseComponent = inject('store')(BaseComponent);
 
   class App extends React.Component {
-    store: Store;
-
-    static async getInitialProps(ctx) {
+    public static async getInitialProps(ctx) {
       const props: any = {};
 
       // if store initialized already do not load data again
@@ -55,13 +53,15 @@ export default function withStore(BaseComponent) {
       return props;
     }
 
+    public store: Store;
+
     constructor(props) {
       super(props);
 
       this.store = initStore(props.initialState);
     }
 
-    render() {
+    public render() {
       return (
         <Provider store={this.store}>
           <BaseComponent {...this.props} />

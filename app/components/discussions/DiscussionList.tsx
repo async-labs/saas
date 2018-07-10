@@ -1,41 +1,40 @@
-import React from 'react';
 import Tooltip from '@material-ui/core/Tooltip';
-import Paper from '@material-ui/core/Paper';
-import { observer, inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
+import React from 'react';
 
-import { Store, Topic } from '../../lib/store';
+import { Store, Team } from '../../lib/store';
 
 import ActiveLink from '../common/ActiveLink';
-import DiscussionActionMenu from '../discussions/DiscussionActionMenu';
 import CreateDiscussionForm from './CreateDiscussionForm';
+import DiscussionListItem from './DiscussionListItem';
 
-const stylePaper = {
-  margin: '10px 5px',
-  padding: '10px 5px',
-};
+type Props = { store?: Store; team: Team };
 
-class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
-  state = {
+class DiscussionList extends React.Component<Props> {
+  public state = {
     discussionFormOpen: false,
   };
 
-  addDiscussion = event => {
-    event.preventDefault();
-    this.setState({ discussionFormOpen: true });
-  };
+  public componentDidUpdate(prevProps: Props) {
+    if (this.props.team._id !== prevProps.team._id) {
+      this.props.team.loadDiscussions();
+    }
+  }
 
-  handleDiscussionFormClose = () => {
-    this.setState({ discussionFormOpen: false });
-  };
+  public render() {
+    const { team } = this.props;
 
-  render() {
-    const { topic } = this.props;
+    console.log(team.orderedDiscussions.length);
 
     return (
       <div>
-        <h3>{topic.name}</h3>
-
-        <p style={{ display: 'inline' }}>All Discussions:</p>
+        <ActiveLink
+          hasIcon
+          linkText="Discussions"
+          href={`/discussion?teamSlug=${team.slug}`}
+          as={`/team/${team.slug}/d`}
+          highlighterSlug={`/${team.slug}/d`}
+        />
 
         <Tooltip title="Add Discussion" placement="right" disableFocusListener disableTouchListener>
           <a onClick={this.addDiscussion} style={{ float: 'right', padding: '0px 10px' }}>
@@ -44,33 +43,11 @@ class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
             </i>{' '}
           </a>
         </Tooltip>
-
-        <br />
-
-        <ul>
-          {topic &&
-            topic.orderedDiscussions.map(d => {
-
-              return (
-                <Paper
-                  key={d._id}
-                  style={stylePaper}
-                  elevation={topic.currentDiscussionSlug === d.slug ? 8 : 2}
-                >
-                  <li key={d._id}>
-                    <ActiveLink
-                      linkText={d.name}
-                      href={`/discussions/detail?teamSlug=${topic.team.slug}&topicSlug=${
-                        topic.slug
-                      }&discussionSlug=${d.slug}`}
-                      as={`/team/${topic.team.slug}/t/${topic.slug}/d/${d.slug}`}
-                      highlighterSlug={`/team/${topic.team.slug}/t/${topic.slug}/d/${d.slug}`}
-                    />
-
-                    <DiscussionActionMenu discussion={d} />
-                  </li>
-                </Paper>
-              );
+        <p />
+        <ul style={{ listStyle: 'none', padding: '0px' }}>
+          {team &&
+            team.orderedDiscussions.map(d => {
+              return <DiscussionListItem key={d._id} discussion={d} team={team} />;
             })}
         </ul>
 
@@ -81,6 +58,15 @@ class DiscussionList extends React.Component<{ store?: Store; topic: Topic }> {
       </div>
     );
   }
+
+  public addDiscussion = event => {
+    event.preventDefault();
+    this.setState({ discussionFormOpen: true });
+  };
+
+  public handleDiscussionFormClose = () => {
+    this.setState({ discussionFormOpen: false });
+  };
 }
 
 export default inject('store')(observer(DiscussionList));

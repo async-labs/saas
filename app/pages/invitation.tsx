@@ -1,9 +1,9 @@
-import Head from 'next/head';
-import React from 'react';
-import { observer } from 'mobx-react';
 import Avatar from '@material-ui/core/Avatar';
+import { observer } from 'mobx-react';
 import Error from 'next/error';
+import Head from 'next/head';
 import Router from 'next/router';
+import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
 import { getInvitedTeamByToken, removeInvitationIfMemberAdded } from '../lib/api/public';
@@ -12,7 +12,7 @@ import withAuth from '../lib/withAuth';
 import withLayout from '../lib/withLayout';
 
 class Invitation extends React.Component<{ store: Store; team: Team; token: string }> {
-  static async getInitialProps({ query }) {
+  public static async getInitialProps({ query }) {
     const { token } = query;
     if (!token) {
       return {};
@@ -28,7 +28,7 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
     }
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     const { store, team, token } = this.props;
 
     const user = store.currentUser;
@@ -36,17 +36,14 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
     if (user && team) {
       if (team.memberIds.includes(user._id)) {
         removeInvitationIfMemberAdded(token);
-        Router.push(
-          `/topics/detail?teamSlug=${team.slug}&topicSlug=projects`,
-          `/team/${team.slug}/t/projects`,
-        );
+        Router.push(`/discussion?teamSlug=${team.slug}`, `/team/${team.slug}/d`);
       } else {
-        Router.push(`/`);
+        Router.push('/');
       }
     }
   }
 
-  render() {
+  public render() {
     const { team, token, store } = this.props;
 
     if (!team) {
@@ -62,7 +59,7 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
     return (
       <div style={{ textAlign: 'center', margin: '0 20px' }}>
         <Head>
-          <title>Team Invitation: {team.name}</title>
+          <title>Invitation to {team.name}</title>
           <meta name="description" content={`Invitation to join ${team.name}`} />
         </Head>
         <br />
@@ -81,7 +78,7 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
           Join <b>{team.name}</b> by logging in with your Google account.
         </p>
         <br />
-        <LoginButton next={`/team/${team.slug}/t/projects`} invitationToken={token} />
+        <LoginButton next={`/team/${team.slug}/d`} invitationToken={token} />
       </div>
     );
   }

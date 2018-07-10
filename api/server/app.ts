@@ -1,27 +1,28 @@
-import * as express from 'express';
-import * as session from 'express-session';
-import * as cors from 'cors';
 import * as compression from 'compression';
 import * as mongoSessionStore from 'connect-mongo';
-import * as mongoose from 'mongoose';
+import * as cors from 'cors';
+import * as dotenv from 'dotenv';
+import * as express from 'express';
+import * as session from 'express-session';
 import * as helmet from 'helmet';
+import * as mongoose from 'mongoose';
 import * as path from 'path';
 
-import auth from './google';
 import api from './api';
 import { signRequestForLoad } from './aws-s3';
+import auth from './google';
 
 import logger from './logs';
 import Team from './models/Team';
 
-require('dotenv').config();
+dotenv.config();
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 8000;
 const { PRODUCTION_URL_APP, PRODUCTION_URL_API } = process.env;
 const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_API;
 
-let MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
+const MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
 
 mongoose.connect(MONGO_URL);
 
@@ -45,11 +46,11 @@ const sessionOptions = {
   }),
   resave: false,
   saveUninitialized: false,
-  cookie: <any>{
+  cookie: {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
     domain: dev ? 'localhost' : '.async-await.com',
-  },
+  } as any,
 };
 
 if (!dev) {
@@ -69,9 +70,9 @@ server.get('/uploaded-file', async (req, res) => {
     return;
   }
 
-  const { path, bucket, teamSlug } = req.query;
+  const { path: filePath, bucket, teamSlug } = req.query;
 
-  if (!path) {
+  if (!filePath) {
     res.status(401).end('Missing required data');
     return;
   }
@@ -92,20 +93,22 @@ server.get('/uploaded-file', async (req, res) => {
     }
   }
 
-  const data: any = await signRequestForLoad(path, bucket);
+  const data: any = await signRequestForLoad(filePath, bucket);
 
   res.redirect(data.signedRequest);
 });
 
-server.get('/robots.txt', (req, res) => {
+server.get('/robots.txt', (_, res) => {
   res.sendFile(path.join(__dirname, '../static', 'robots.txt'));
 });
 
-server.get('*', (req, res) => {
+server.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
 server.listen(port, err => {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   logger.info(`> Ready on ${ROOT_URL}`);
 });

@@ -1,19 +1,19 @@
-import React from 'react';
-import Head from 'next/head';
 import { observer } from 'mobx-react';
+import Head from 'next/head';
+import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
 import withAuth from '../lib/withAuth';
 import withLayout from '../lib/withLayout';
 
-class Login extends React.Component<{ next?: string }> {
-  static getInitialProps({ query }) {
+class Login extends React.Component<{ next?: string; firstGridItem: boolean }> {
+  public static getInitialProps({ query }) {
     const { next } = query;
 
     return { next };
   }
 
-  render() {
+  public render() {
     return (
       <div style={{ textAlign: 'center', margin: '0 20px' }}>
         <Head>

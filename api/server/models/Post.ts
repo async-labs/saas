@@ -1,17 +1,17 @@
 import * as mongoose from 'mongoose';
 
-import * as marked from 'marked';
 import * as he from 'he';
 import * as hljs from 'highlight.js';
+import * as marked from 'marked';
 
-import * as url from 'url';
-import * as qs from 'querystring';
 import { chunk } from 'lodash';
+import * as qs from 'querystring';
+import * as url from 'url';
 
-import Topic from './Topic';
-import Team from './Team';
-import Discussion from './Discussion';
 import { deleteFiles } from '../aws-s3';
+import logger from '../logs';
+import Discussion from './Discussion';
+import Team from './Team';
 
 function deletePostFiles(posts: IPostDocument[]) {
   const imgRegEx = /\<img.+data-src=[\"|\'](.+?)[\"|\']/g;
@@ -39,7 +39,7 @@ function deletePostFiles(posts: IPostDocument[]) {
 
   Object.keys(files).forEach(bucket => {
     chunk(files[bucket], 1000).forEach(fileList =>
-      deleteFiles(bucket, fileList).catch(err => console.log(err)),
+      deleteFiles(bucket, fileList).catch(err => logger.error(err)),
     );
   });
 }
@@ -156,58 +156,18 @@ interface IPostModel extends mongoose.Model<IPostDocument> {
 }
 
 class PostClass extends mongoose.Model {
-  static async checkPermission({ userId, discussionId, post = null }) {
-    if (!userId || !discussionId) {
-      throw new Error('Bad data');
-    }
-
-    if (post && post.createdUserId !== userId) {
-      throw new Error('Permission denied');
-    }
-
-    const discussion = await Discussion.findById(discussionId)
-      .select('topicId memberIds slug')
-      .lean();
-
-    if (!discussion) {
-      throw new Error('Discussion not found');
-    }
-
-    if (discussion.memberIds.indexOf(userId) === -1) {
-      throw new Error('Permission denied');
-    }
-
-    const topic = await Topic.findById(discussion.topicId)
-      .select('teamId slug')
-      .lean();
-
-    if (!topic) {
-      throw new Error('Topic not found');
-    }
-
-    const team = await Team.findById(topic.teamId)
-      .select('memberIds slug')
-      .lean();
-
-    if (!team || team.memberIds.indexOf(userId) === -1) {
-      throw new Error('Team not found');
-    }
-
-    return { topic, discussion, team };
-  }
-
-  static async getList({ userId, discussionId }) {
+  public static async getList({ userId, discussionId }) {
     await this.checkPermission({ userId, discussionId });
 
-    return this.find({ discussionId }).sort({ createdAt: 1 });
+    const filter: any = { discussionId };
+
+    return this.find(filter).sort({ createdAt: 1 });
   }
 
-  static async add({ content, userId, discussionId }) {
+  public static async add({ content, userId, discussionId }) {
     if (!content) {
       throw new Error('Bad data');
     }
-
-    const { discussion, team } = await this.checkPermission({ userId, discussionId });
 
     const htmlContent = markdownToHtml(content);
 
@@ -219,14 +179,10 @@ class PostClass extends mongoose.Model {
       createdAt: new Date(),
     });
 
-    Discussion.updateOne({ _id: discussion._id }, { lastActivityDate: new Date() }).exec();
-
-    const memberIds: string[] = discussion.memberIds.filter(id => id !== userId);
-
     return post;
   }
 
-  static async edit({ content, userId, id }) {
+  public static async edit({ content, userId, id }) {
     if (!content || !id) {
       throw new Error('Bad data');
     }
@@ -249,7 +205,7 @@ class PostClass extends mongoose.Model {
     return { discussionId: post.discussionId, htmlContent };
   }
 
-  static async delete({ userId, id }) {
+  public static async delete({ userId, id }) {
     if (!id) {
       throw new Error('Bad data');
     }
@@ -263,6 +219,38 @@ class PostClass extends mongoose.Model {
     deletePostFiles([post]);
 
     await this.remove({ _id: id });
+  }
+
+  public static async checkPermission({ userId, discussionId, post = null }) {
+    if (!userId || !discussionId) {
+      throw new Error('Bad data');
+    }
+
+    if (post && post.createdUserId !== userId) {
+      throw new Error('Permission denied');
+    }
+
+    const discussion = await Discussion.findById(discussionId)
+      .select('teamId memberIds slug')
+      .lean();
+
+    if (!discussion) {
+      throw new Error('Discussion not found');
+    }
+
+    if (discussion.memberIds.indexOf(userId) === -1) {
+      throw new Error('Permission denied');
+    }
+
+    const team = await Team.findById(discussion.teamId)
+      .select('memberIds slug')
+      .lean();
+
+    if (!team || team.memberIds.indexOf(userId) === -1) {
+      throw new Error('Team not found');
+    }
+
+    return { team, discussion };
   }
 }
 

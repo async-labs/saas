@@ -1,12 +1,12 @@
 import * as express from 'express';
-import * as path from 'path';
-import * as next from 'next';
 import * as helmet from 'helmet';
 import * as mobxReact from 'mobx-react';
+import * as next from 'next';
+import * as path from 'path';
 
 import { getUser } from '../lib/api/public';
-import routesWithSlug from './routesWithSlug';
 import env from '../lib/env';
+import routesWithSlug from './routesWithSlug';
 
 mobxReact.useStaticRendering(true);
 
@@ -61,7 +61,7 @@ app.prepare().then(() => {
       if (!req.user.defaultTeamSlug) {
         redirectUrl = 'settings/create-team';
       } else {
-        redirectUrl = `team/${req.user.defaultTeamSlug}/t/projects`;
+        redirectUrl = `team/${req.user.defaultTeamSlug}/d`;
       }
     }
 
@@ -79,7 +79,9 @@ app.prepare().then(() => {
   });
 
   server.listen(port, err => {
-    if (err) throw err;
+    if (err) {
+      throw err;
+    }
     console.log(`> Ready on ${ROOT_URL}`);
   });
 });

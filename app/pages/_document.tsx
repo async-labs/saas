@@ -1,7 +1,7 @@
+import htmlescape from 'htmlescape';
+import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
 import JssProvider from 'react-jss/lib/JssProvider';
-import Document, { Head, Main, NextScript } from 'next/document';
-import htmlescape from 'htmlescape';
 
 import getContext from '../lib/context';
 
@@ -14,17 +14,9 @@ const {
 const env = { GA_TRACKING_ID, PRODUCTION_URL_APP, PRODUCTION_URL_API, StripePublishableKey };
 
 class MyDocument extends Document {
-  render() {
+  public render() {
     return (
-      <html
-        lang="en"
-        style={{
-          width: '100%',
-          height: '100%',
-          overflowX: 'hidden',
-          overflowY: 'auto',
-        }}
-      >
+      <html lang="en" style={{ overflow: 'overlay' }}>
         <Head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -52,22 +44,20 @@ class MyDocument extends Document {
                 width: 100%;
                 height: 100%;
               }
-              a, a:focus {
+              a,
+              a:focus {
                 font-weight: 600;
                 color: #fff;
                 text-decoration: none;
-                outline: none
+                outline: none;
               }
-              a:hover, button:hover {
+              a:hover,
+              button:hover {
                 opacity: 0.75;
-                cursor: pointer
-              }
-              ul {
-                list-style: none;
-                padding: 0px;
+                cursor: pointer;
               }
               hr {
-                border: 0.5px #aaa solid;
+                border: 0.5px #707070 solid;
               }
               blockquote {
                 padding: 0 0.5em;
@@ -85,19 +75,22 @@ class MyDocument extends Document {
                 font-size: 14px;
               }
               code {
-                font-size: 14px;
+                font-size: 13px;
                 background: #303030;
                 color: #fff;
+                padding: 3px 5px;
               }
               mark {
                 background-color: #ffff0060;
               }
-              .image-placeholder {
+
+              .lazy-load-image-body .image-placeholder {
                 background-color: #ddd;
                 display: flex;
                 margin-bottom: 10px;
+                width: 100%;
               }
-              .image-placeholder-text {
+              .lazy-load-image-body .image-placeholder-text {
                 color: #111;
                 font-weight: 400;
                 align-self: center;
@@ -127,14 +120,11 @@ class MyDocument extends Document {
         </Head>
         <body
           style={{
-            font: '16px Muli',
+            font: '15px Muli',
             color: '#fff',
             fontWeight: 300,
             lineHeight: '1.5em',
-            height: '100%',
-            width: '100%',
-            margin: 0,
-            padding: 0,
+            padding: '0px 0px 0px 0px !important',
           }}
         >
           <Main />

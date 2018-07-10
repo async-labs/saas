@@ -42,16 +42,16 @@ async function generateSlug(Model, name, filter = {}) {
   return createUniqueSlug(Model, origSlug, 1, filter);
 }
 
-async function generateNumberSlug(Model, filter = {}, number = 1) {
-  const obj = await Model.findOne({ slug: number, ...filter })
+async function generateNumberSlug(Model, filter = {}, n = 1) {
+  const obj = await Model.findOne({ slug: n, ...filter })
     .select('_id')
     .lean();
 
   if (!obj) {
-    return `${number}`;
+    return `${n}`;
   }
 
-  return generateNumberSlug(Model, filter, ++number);
+  return generateNumberSlug(Model, filter, ++n);
 }
 
 export { generateSlug, generateNumberSlug };

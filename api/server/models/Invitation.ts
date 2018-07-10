@@ -1,14 +1,14 @@
 import * as mongoose from 'mongoose';
 
+import sendEmail from '../aws-ses';
+import logger from '../logs';
+import getEmailTemplate from './EmailTemplate';
 import Team from './Team';
 import User, { IUserDocument } from './User';
-import getEmailTemplate from './EmailTemplate';
-import logger from '../logs';
-import sendEmail from '../aws-ses';
 
 const dev = process.env.NODE_ENV !== 'production';
-const { PRODUCTION_URL_API } = process.env;
-const ROOT_URL = dev ? `http://localhost:3000` : PRODUCTION_URL_API;
+const { PRODUCTION_URL_APP } = process.env;
+const ROOT_URL = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
 const mongoSchema = new mongoose.Schema({
   teamId: {
@@ -71,7 +71,7 @@ function generateToken() {
 }
 
 class InvitationClass extends mongoose.Model {
-  static async add({ userId, teamId, email }) {
+  public static async add({ userId, teamId, email }) {
     if (!teamId || !email) {
       throw new Error('Bad data');
     }
@@ -136,7 +136,7 @@ class InvitationClass extends mongoose.Model {
     return await this.findOne({ teamId, email }).lean();
   }
 
-  static async getTeamInvitedUsers({ userId, teamId }) {
+  public static async getTeamInvitedUsers({ userId, teamId }) {
     const team = await Team.findOne({ _id: teamId })
       .select('teamLeaderId')
       .lean();
@@ -145,12 +145,12 @@ class InvitationClass extends mongoose.Model {
       throw new Error('You have no permission.');
     }
 
-    return this.find({ teamId: teamId })
+    return this.find({ teamId })
       .select('email')
       .lean();
   }
 
-  static async getTeamByToken({ token }) {
+  public static async getTeamByToken({ token }) {
     if (!token) {
       throw new Error('Bad data');
     }
@@ -172,7 +172,7 @@ class InvitationClass extends mongoose.Model {
     return team;
   }
 
-  static async removeIfMemberAdded({ token, userId }) {
+  public static async removeIfMemberAdded({ token, userId }) {
     if (!token) {
       throw new Error('Bad data');
     }
@@ -192,7 +192,7 @@ class InvitationClass extends mongoose.Model {
     }
   }
 
-  static async addUserToTeam({ token, user }) {
+  public static async addUserToTeam({ token, user }) {
     if (!token || !user) {
       throw new Error('Bad data');
     }

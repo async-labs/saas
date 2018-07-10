@@ -4,5 +4,5 @@
     "module": "commonjs",
     "outDir": "production-server/"
   },
-  "include": ["server/**/*.ts"]
+  "include": ["./server/**/*.ts"]
 }

@@ -33,11 +33,6 @@ const mongoSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
-  lastActivityDate: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
 });
 
 mongoSchema.index({ name: 'text' });
@@ -51,7 +46,6 @@ interface IDiscussionDocument extends mongoose.Document {
   memberIds: string[];
   isPrivate: boolean;
   createdAt: Date;
-  lastActivityDate: Date;
 }
 
 interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
@@ -132,7 +126,6 @@ class DiscussionClass extends mongoose.Model {
     const filter: any = { topicId, $or: [{ isPrivate: false }, { memberIds: userId }] };
 
     const discussions: any[] = await this.find(filter)
-      .sort({ lastActivityDate: -1 })
       .lean();
 
     return { discussions };

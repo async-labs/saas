@@ -1,17 +1,16 @@
-import * as mongoose from 'mongoose';
 import { uniq } from 'lodash';
+import * as mongoose from 'mongoose';
 
 import { generateNumberSlug } from '../utils/slugify';
-import Topic from './Topic';
-import Team from './Team';
 import Post, { deletePostFiles } from './Post';
+import Team from './Team';
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
     type: String,
     required: true,
   },
-  topicId: {
+  teamId: {
     type: String,
     required: true,
   },
@@ -29,11 +28,6 @@ const mongoSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
-  lastActivityDate: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
 });
 
 mongoSchema.index({ name: 'text' });
@@ -41,32 +35,31 @@ mongoSchema.index({ topicId: 1, slug: 1 }, { unique: true });
 
 interface IDiscussionDocument extends mongoose.Document {
   createdUserId: string;
-  topicId: string;
+  teamId: string;
   name: string;
   slug: string;
   memberIds: string[];
   createdAt: Date;
-  lastActivityDate: Date;
 }
 
 interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
   getList({
     userId,
-    topicId,
+    teamId,
   }: {
     userId: string;
-    topicId: string;
+    teamId: string;
   }): Promise<{ discussions: IDiscussionDocument[] }>;
 
   add({
     name,
     userId,
-    topicId,
+    teamId,
     memberIds,
   }: {
     name: string;
     userId: string;
-    topicId: string;
+    teamId: string;
     memberIds: string[];
   }): Promise<IDiscussionDocument>;
 
@@ -80,26 +73,18 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
     id: string;
     name: string;
     memberIds: string[];
-  }): Promise<{ topicId: string }>;
+  }): Promise<{ teamId: string }>;
 
-  delete({ userId, id }: { userId: string; id: string }): Promise<{ topicId: string }>;
+  delete({ userId, id }: { userId: string; id: string }): Promise<{ teamId: string }>;
 }
 
 class DiscussionClass extends mongoose.Model {
-  static async checkPermission({ userId, topicId, memberIds = [] }) {
-    if (!userId || !topicId) {
+  public static async checkPermission({ userId, teamId, memberIds = [] }) {
+    if (!userId || !teamId) {
       throw new Error('Bad data');
     }
 
-    const topic = await Topic.findById(topicId)
-      .select('teamId')
-      .lean();
-
-    if (!topic) {
-      throw new Error('Topic not found');
-    }
-
-    const team = await Team.findById(topic.teamId)
+    const team = await Team.findById(teamId)
       .select('memberIds teamLeaderId')
       .lean();
 
@@ -108,8 +93,8 @@ class DiscussionClass extends mongoose.Model {
     }
 
     // all members must be member of Team.
-    for (let i = 0; i < memberIds.length; i++) {
-      if (team.memberIds.indexOf(memberIds[i]) === -1) {
+    for (const id of memberIds) {
+      if (team.memberIds.indexOf(id) === -1) {
         throw new Error('Permission denied');
       }
     }
@@ -117,30 +102,28 @@ class DiscussionClass extends mongoose.Model {
     return { team };
   }
 
-  static async getList({ userId, topicId }) {
-    await this.checkPermission({ userId, topicId });
+  public static async getList({ userId, teamId }) {
+    await this.checkPermission({ userId, teamId });
 
-    const filter: any = { topicId, memberIds: userId };
+    const filter: any = { teamId, memberIds: userId };
 
-    const discussions: any[] = await this.find(filter)
-      .sort({ lastActivityDate: -1 })
-      .lean();
+    const discussions: any[] = await this.find(filter).lean();
 
     return { discussions };
   }
 
-  static async add({ name, userId, topicId, memberIds = [] }) {
+  public static async add({ name, userId, teamId, memberIds = [] }) {
     if (!name) {
       throw new Error('Bad data');
     }
 
-    await this.checkPermission({ userId, topicId, memberIds });
+    await this.checkPermission({ userId, teamId, memberIds });
 
-    const slug = await generateNumberSlug(this, { topicId });
+    const slug = await generateNumberSlug(this, { teamId });
 
     return this.create({
       createdUserId: userId,
-      topicId,
+      teamId,
       name,
       slug,
       memberIds: uniq([userId, ...memberIds]),
@@ -148,18 +131,18 @@ class DiscussionClass extends mongoose.Model {
     });
   }
 
-  static async edit({ userId, id, name, memberIds = [] }) {
+  public static async edit({ userId, id, name, memberIds = [] }) {
     if (!id) {
       throw new Error('Bad data');
     }
 
     const discussion = await this.findById(id)
-      .select('topicId createdUserId')
+      .select('teamId createdUserId')
       .lean();
 
     const { team } = await this.checkPermission({
       userId,
-      topicId: discussion.topicId,
+      teamId: discussion.teamId,
       memberIds,
     });
 
@@ -175,19 +158,19 @@ class DiscussionClass extends mongoose.Model {
       },
     );
 
-    return { topicId: discussion.topicId };
+    return { teamId: discussion.teamId };
   }
 
-  static async delete({ userId, id }) {
+  public static async delete({ userId, id }) {
     if (!id) {
       throw new Error('Bad data');
     }
 
     const discussion = await this.findById(id)
-      .select('topicId')
+      .select('teamId')
       .lean();
 
-    await this.checkPermission({ userId, topicId: discussion.topicId });
+    await this.checkPermission({ userId, teamId: discussion.teamId });
 
     deletePostFiles(
       await Post.find({ discussionId: id })
@@ -199,11 +182,11 @@ class DiscussionClass extends mongoose.Model {
 
     await this.remove({ _id: id });
 
-    return { topicId: discussion.topicId };
+    return { teamId: discussion.teamId };
   }
 
-  static findBySlug(topicId: string, slug: string) {
-    return this.findOne({ topicId, slug }).lean();
+  public static findBySlug(teamId: string, slug: string) {
+    return this.findOne({ teamId, slug }).lean();
   }
 }
 

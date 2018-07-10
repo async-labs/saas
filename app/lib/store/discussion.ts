@@ -1,64 +1,61 @@
-import { observable, action, IObservableArray, runInAction, decorate } from 'mobx';
+import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
+import NProgress from 'nprogress';
 
-import { getPostList, editDiscussion, addPost, deletePost } from '../api/team-member';
-
-import { Store, Topic, Post } from './index';
+import { addPost, deletePost, editDiscussion, getPostList } from '../api/team-member';
+import { Post, Store, Team } from './index';
 
 class Discussion {
-  _id: string;
-  topicId: string;
-  store: Store;
-  topic: Topic;
+  public _id: string;
+  public createdUserId: string;
+  public store: Store;
+  public team: Team;
 
-  name: string;
-  slug: string;
-  isPrivate: boolean;
-  memberIds: IObservableArray<string> = observable([]);
-  posts: IObservableArray<Post> = observable([]);
-  isInitialPostsLoaded = false;
-  lastActivityDate: Date = new Date();
+  public name: string;
+  public slug: string;
+  public memberIds: IObservableArray<string> = observable([]);
+  public posts: IObservableArray<Post> = observable([]);
 
-  private isLoadingPosts = false;
+  public isLoadingPosts = false;
 
   constructor(params) {
     this._id = params._id;
-    this.topicId = params.topicId;
+    this.createdUserId = params.createdUserId;
     this.store = params.store;
-    this.topic = params.topic;
+    this.team = params.team;
 
     this.name = params.name;
     this.slug = params.slug;
-    this.isPrivate = !!params.isPrivate;
     this.memberIds.replace(params.memberIds || []);
-
-    if (params.lastActivityDate) {
-      params.lastActivityDate = new Date(params.lastActivityDate);
-    }
 
     if (params.initialPosts) {
       this.setInitialPosts(params.initialPosts);
     }
   }
 
-  setInitialPosts(posts) {
+  get members() {
+    return this.memberIds.map(id => this.team.members.get(id));
+  }
+
+  public setInitialPosts(posts) {
     const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
 
     this.posts.replace(postObjs);
-    this.isInitialPostsLoaded = true;
   }
 
-  async loadInitialPosts() {
-    if (this.isLoadingPosts || this.isInitialPostsLoaded) {
+  public async loadPosts() {
+    if (this.isLoadingPosts || this.store.isServer) {
       return;
     }
 
+    NProgress.start();
     this.isLoadingPosts = true;
 
     try {
       const { posts = [] } = await getPostList(this._id);
 
       runInAction(() => {
-        this.setInitialPosts(posts);
+        const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
+        this.posts.replace(postObjs);
       });
     } catch (error) {
       console.error(error);
@@ -66,19 +63,19 @@ class Discussion {
     } finally {
       runInAction(() => {
         this.isLoadingPosts = false;
+        NProgress.done();
       });
     }
   }
 
-  changeLocalCache(data) {
+  public changeLocalCache(data) {
     // TODO: remove if current user no longer access to this discussion
 
     this.name = data.name;
-    this.isPrivate = !!data.isPrivate;
     this.memberIds.replace(data.memberIds || []);
   }
 
-  async edit(data) {
+  public async edit(data) {
     try {
       await editDiscussion({
         id: this._id,
@@ -94,22 +91,22 @@ class Discussion {
     }
   }
 
-  addPostToLocalCache(data) {
+  public addPostToLocalCache(data) {
     const postObj = new Post({ discussion: this, store: this.store, ...data });
     this.posts.push(postObj);
   }
 
-  editPostFromLocalCache(data) {
+  public editPostFromLocalCache(data) {
     const post = this.posts.find(t => t._id === data.id);
     post.changeLocalCache(data);
   }
 
-  removePostFromLocalCache(postId) {
+  public removePostFromLocalCache(postId) {
     const post = this.posts.find(t => t._id === postId);
     this.posts.remove(post);
   }
 
-  async addPost(content: string) {
+  public async addPost(content: string) {
     const { post } = await addPost({
       discussionId: this._id,
       content,
@@ -120,7 +117,7 @@ class Discussion {
     });
   }
 
-  async deletePost(post: Post) {
+  public async deletePost(post: Post) {
     await deletePost({
       id: post._id,
       discussionId: this._id,
@@ -135,14 +132,12 @@ class Discussion {
 decorate(Discussion, {
   name: observable,
   slug: observable,
-  isPrivate: observable,
   memberIds: observable,
   posts: observable,
-  isInitialPostsLoaded: observable,
-  lastActivityDate: observable,
+  isLoadingPosts: observable,
 
   setInitialPosts: action,
-  loadInitialPosts: action,
+  loadPosts: action,
   changeLocalCache: action,
   edit: action,
   addPostToLocalCache: action,

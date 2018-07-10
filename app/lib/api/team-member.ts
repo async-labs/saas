@@ -25,7 +25,7 @@ export const getPrivateTopic = (teamId: string, topicSlug: string) =>
     qs: { teamId, topicSlug },
   });
 
-export const getDiscussionList = (params): Promise<{ discussions: Array<any> }> =>
+export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>
   sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
     method: 'GET',
     qs: params,

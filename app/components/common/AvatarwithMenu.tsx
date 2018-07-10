@@ -1,14 +1,14 @@
-import React from 'react';
 // import Link from 'next/link';
 import Avatar from '@material-ui/core/Avatar';
+import React from 'react';
 
 class AvatarWithMenu extends React.PureComponent<{ src?: string; alt?: string }> {
-  state = {
+  public state = {
     open: false,
     anchorEl: undefined,
   };
 
-  render() {
+  public render() {
     const { src, alt } = this.props;
 
     return (

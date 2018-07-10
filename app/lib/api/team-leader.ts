@@ -39,18 +39,3 @@ export const removeMember = data =>
   sendRequestAndGetResponse(`${BASE_PATH}/teams/remove-member`, {
     body: JSON.stringify(data),
   });
-
-export const addTopic = data =>
-  sendRequestAndGetResponse(`${BASE_PATH}/topics/add`, {
-    body: JSON.stringify(data),
-  });
-
-export const editTopic = data =>
-  sendRequestAndGetResponse(`${BASE_PATH}/topics/edit`, {
-    body: JSON.stringify(data),
-  });
-
-export const deleteTopic = data =>
-  sendRequestAndGetResponse(`${BASE_PATH}/topics/delete`, {
-    body: JSON.stringify(data),
-  });

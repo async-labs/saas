@@ -1,22 +1,18 @@
 import React from 'react';
 
-import AutoComplete from '../common/AutoComplete';
 import { User } from '../../lib/store';
+import AutoComplete from '../common/AutoComplete';
 
-interface Props {
-  onChange: Function;
+type Props = {
+  onChange: (item) => void;
   selectedMemberIds?: string[];
   members: User[];
   label?: string;
   helperText?: string;
-}
+};
 
 class MemberChooser extends React.Component<Props> {
-  handleAutoCompleteChange = selectedItems => {
-    this.props.onChange(selectedItems.map(i => i.value));
-  };
-
-  render() {
+  public render() {
     const suggestions = this.props.members.map(user => ({
       label: user.displayName,
       value: user._id,
@@ -36,6 +32,10 @@ class MemberChooser extends React.Component<Props> {
       />
     );
   }
+
+  private handleAutoCompleteChange = selectedItems => {
+    this.props.onChange(selectedItems.map(i => i.value));
+  };
 }
 
 export default MemberChooser;
