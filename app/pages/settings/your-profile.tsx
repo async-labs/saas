@@ -1,20 +1,20 @@
-import * as React from 'react';
-import Head from 'next/head';
-import TextField from '@material-ui/core/TextField';
+import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Avatar from '@material-ui/core/Avatar';
+import TextField from '@material-ui/core/TextField';
+import Head from 'next/head';
 import NProgress from 'nprogress';
+import * as React from 'react';
 
-import { Store } from '../../lib/store';
-import withAuth from '../../lib/withAuth';
-import withLayout from '../../lib/withLayout';
 import SettingList from '../../components/common/SettingList';
-import notify from '../../lib/notifier';
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
 } from '../../lib/api/team-member';
+import notify from '../../lib/notifier';
+import { Store } from '../../lib/store';
+import withAuth from '../../lib/withAuth';
+import withLayout from '../../lib/withLayout';
 
 const styleGrid = {
   height: '100%',
@@ -39,7 +39,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
     };
   }
 
-  onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  public onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { currentUser } = this.props.store;
@@ -66,7 +66,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
     }
   };
 
-  uploadFile = async () => {
+  public uploadFile = async () => {
     const { store } = this.props;
     const { currentUser } = store;
 
@@ -115,7 +115,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
     }
   };
 
-  render() {
+  public render() {
     const { store, isTL } = this.props;
     const { newName, newAvatarUrl } = this.state;
 
@@ -130,7 +130,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
           <Grid item sm={2} xs={12} style={styleGridItem}>
             <SettingList store={store} isTL={isTL} />
           </Grid>
-          <Grid item sm={10} xs={12} style={styleGridItem}>
+          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
             <h3>Your profile</h3>
             <p />
             <form onSubmit={this.onSubmit}>

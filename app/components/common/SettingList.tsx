@@ -1,9 +1,9 @@
-import React from 'react';
-import { observer, inject } from 'mobx-react';
 import Avatar from '@material-ui/core/Avatar';
+import { inject, observer } from 'mobx-react';
+import React from 'react';
 
-import ActiveLink from './ActiveLink';
 import { Store } from '../../lib/store';
+import ActiveLink from './ActiveLink';
 
 const styleTeamAvatar = {
   margin: '0px auto',
@@ -16,7 +16,7 @@ const styleNotFoundDiv = {
 type MyProps = { store: Store; isTL: boolean };
 
 class SettingList extends React.Component<MyProps> {
-  render() {
+  public render() {
     const { store, isTL } = this.props;
     const { currentTeam, currentUser } = store;
 
@@ -81,7 +81,7 @@ class SettingList extends React.Component<MyProps> {
         <ActiveLink
           hasIcon
           linkText="Your Profile"
-          href={`/settings/your-profile`}
+          href={'/settings/your-profile'}
           highlighterSlug={'/your-profile'}
         />
       </React.Fragment>

@@ -1,9 +1,9 @@
-import * as mongoose from 'mongoose';
 import { uniq } from 'lodash';
+import * as mongoose from 'mongoose';
 
 import { generateNumberSlug } from '../utils/slugify';
-import Team from './Team';
 import Post, { deletePostFiles } from './Post';
+import Team from './Team';
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
@@ -27,7 +27,7 @@ const mongoSchema = new mongoose.Schema({
     type: Date,
     required: true,
     default: Date.now,
-  }
+  },
 });
 
 mongoSchema.index({ name: 'text' });
@@ -79,7 +79,7 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
 }
 
 class DiscussionClass extends mongoose.Model {
-  static async checkPermission({ userId, teamId, memberIds = [] }) {
+  public static async checkPermission({ userId, teamId, memberIds = [] }) {
     if (!userId || !teamId) {
       throw new Error('Bad data');
     }
@@ -93,8 +93,8 @@ class DiscussionClass extends mongoose.Model {
     }
 
     // all members must be member of Team.
-    for (let i = 0; i < memberIds.length; i++) {
-      if (team.memberIds.indexOf(memberIds[i]) === -1) {
+    for (const id of memberIds) {
+      if (team.memberIds.indexOf(id) === -1) {
         throw new Error('Permission denied');
       }
     }
@@ -102,18 +102,17 @@ class DiscussionClass extends mongoose.Model {
     return { team };
   }
 
-  static async getList({ userId, teamId }) {
+  public static async getList({ userId, teamId }) {
     await this.checkPermission({ userId, teamId });
 
     const filter: any = { teamId, memberIds: userId };
 
-    const discussions: any[] = await this.find(filter)
-      .lean();
+    const discussions: any[] = await this.find(filter).lean();
 
     return { discussions };
   }
 
-  static async add({ name, userId, teamId, memberIds = [] }) {
+  public static async add({ name, userId, teamId, memberIds = [] }) {
     if (!name) {
       throw new Error('Bad data');
     }
@@ -132,7 +131,7 @@ class DiscussionClass extends mongoose.Model {
     });
   }
 
-  static async edit({ userId, id, name, memberIds = [] }) {
+  public static async edit({ userId, id, name, memberIds = [] }) {
     if (!id) {
       throw new Error('Bad data');
     }
@@ -162,7 +161,7 @@ class DiscussionClass extends mongoose.Model {
     return { teamId: discussion.teamId };
   }
 
-  static async delete({ userId, id }) {
+  public static async delete({ userId, id }) {
     if (!id) {
       throw new Error('Bad data');
     }
@@ -186,7 +185,7 @@ class DiscussionClass extends mongoose.Model {
     return { teamId: discussion.teamId };
   }
 
-  static findBySlug(teamId: string, slug: string) {
+  public static findBySlug(teamId: string, slug: string) {
     return this.findOne({ teamId, slug }).lean();
   }
 }

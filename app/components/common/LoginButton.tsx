@@ -1,8 +1,8 @@
 import React from 'react';
 
 import Button from '@material-ui/core/Button';
-import env from '../../lib/env';
 import { makeQueryString } from '../../lib/api/makeQueryString';
+import env from '../../lib/env';
 
 import { styleLoginButton } from '../../lib/sharedStyles';
 
@@ -13,7 +13,7 @@ const { PRODUCTION_URL_API } = env;
 const LOGIN_URL = dev ? 'http://localhost:8000' : PRODUCTION_URL_API;
 
 class LoginButton extends React.PureComponent<{ next?: string; invitationToken?: string }> {
-  render() {
+  public render() {
     const { next, invitationToken } = this.props;
 
     let url = `${LOGIN_URL}/auth/google`;

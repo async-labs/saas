@@ -1,41 +1,33 @@
-import * as React from 'react';
 import { inject, observer } from 'mobx-react';
+import * as React from 'react';
 
-import Head from 'next/head';
-import Router from 'next/router';
-import TextField from '@material-ui/core/TextField';
+import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Avatar from '@material-ui/core/Avatar';
+import TextField from '@material-ui/core/TextField';
+import Head from 'next/head';
+import Router from 'next/router';
 
+import { getSignedRequestForUpload, uploadFileUsingSignedPutRequest } from '../lib/api/team-member';
+import notify from '../lib/notifier';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 import withLayout from '../lib/withLayout';
-import notify from '../lib/notifier';
-import {
-  getSignedRequestForUpload,
-  uploadFileUsingSignedPutRequest,
-} from '../lib/api/team-member';
 
 const styleGrid = {
   height: '100%',
 };
 
-const styleGridItem = {
-  padding: '0px 20px',
-  borderRight: '0.5px #aaa solid',
-};
-
 type MyProps = { store: Store; isTL: boolean };
 
 class CreateTeam extends React.Component<MyProps> {
-  state = {
+  public state = {
     newName: '',
     newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
     disabled: false,
   };
 
-  onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  public onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { newName } = this.state;
@@ -86,9 +78,9 @@ class CreateTeam extends React.Component<MyProps> {
 
       document.getElementById('upload-file').value = '';
 
-      Router.push(`/team/${team.slug}/d`);
+      Router.push(`/team/${team.slug}/settings/team-members`);
 
-      notify('You successfully created Team.');
+      notify('You successfully created Team. Redirecting ...');
     } catch (error) {
       console.log(error);
       notify(error);
@@ -97,13 +89,13 @@ class CreateTeam extends React.Component<MyProps> {
     }
   };
 
-  previewAvatar = () => {
+  public previewAvatar = () => {
     const file = document.getElementById('upload-file').files[0];
     if (!file) {
       return;
     }
 
-    var reader = new FileReader();
+    const reader = new FileReader();
 
     reader.onload = e => {
       this.setState({ newAvatarUrl: e.target.result });
@@ -112,7 +104,7 @@ class CreateTeam extends React.Component<MyProps> {
     reader.readAsDataURL(file);
   };
 
-  render() {
+  public render() {
     const { newAvatarUrl } = this.state;
 
     return (
@@ -122,7 +114,7 @@ class CreateTeam extends React.Component<MyProps> {
           <meta name="description" content="Create a new Team" />
         </Head>
         <Grid container style={styleGrid}>
-          <Grid item sm={12} xs={12} style={styleGridItem}>
+          <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
             <h3>Create team</h3>
             <p />
             <form onSubmit={this.onSubmit}>

@@ -1,5 +1,4 @@
 function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
-
   const img = document.createElement('img');
   const canvas = document.createElement('canvas');
 
@@ -38,7 +37,7 @@ function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
 
   return new Promise(resolve => {
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = e => {
       img.src = e.target.result;
 
       img.onload = resize(resolve);

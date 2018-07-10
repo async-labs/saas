@@ -1,41 +1,28 @@
-import React from 'react';
 import Tooltip from '@material-ui/core/Tooltip';
-import { observer, inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
+import React from 'react';
 
 import { Store, Team } from '../../lib/store';
 
 import ActiveLink from '../common/ActiveLink';
-import DiscussionListItem from './DiscussionListItem';
 import CreateDiscussionForm from './CreateDiscussionForm';
+import DiscussionListItem from './DiscussionListItem';
 
 type Props = { store?: Store; team: Team };
 
 class DiscussionList extends React.Component<Props> {
-  state = {
+  public state = {
     discussionFormOpen: false,
   };
 
-  // componentDidMount() {
-  //   this.props.team.loadDiscussions();
-  // }
-
-  componentDidUpdate(prevProps: Props) {
+  public componentDidUpdate(prevProps: Props) {
     if (this.props.team._id !== prevProps.team._id) {
       this.props.team.loadDiscussions();
     }
   }
 
-  addDiscussion = event => {
-    event.preventDefault();
-    this.setState({ discussionFormOpen: true });
-  };
-
-  handleDiscussionFormClose = () => {
-    this.setState({ discussionFormOpen: false });
-  };
-
-  render() {
-    const { store, team } = this.props;
+  public render() {
+    const { team } = this.props;
 
     console.log(team.orderedDiscussions.length);
 
@@ -60,13 +47,7 @@ class DiscussionList extends React.Component<Props> {
         <ul style={{ listStyle: 'none', padding: '0px' }}>
           {team &&
             team.orderedDiscussions.map(d => {
-              return (
-                <DiscussionListItem
-                  key={d._id}
-                  discussion={d}
-                  team={team}
-                />
-              );
+              return <DiscussionListItem key={d._id} discussion={d} team={team} />;
             })}
         </ul>
 
@@ -77,6 +58,15 @@ class DiscussionList extends React.Component<Props> {
       </div>
     );
   }
+
+  public addDiscussion = event => {
+    event.preventDefault();
+    this.setState({ discussionFormOpen: true });
+  };
+
+  public handleDiscussionFormClose = () => {
+    this.setState({ discussionFormOpen: false });
+  };
 }
 
 export default inject('store')(observer(DiscussionList));

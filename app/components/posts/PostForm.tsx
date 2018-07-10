@@ -1,14 +1,14 @@
-import React from 'react';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
-import NProgress from 'nprogress';
-import { inject, observer } from 'mobx-react';
-import marked from 'marked';
 import he from 'he';
+import marked from 'marked';
+import { inject, observer } from 'mobx-react';
+import NProgress from 'nprogress';
+import React from 'react';
 
 import notify from '../../lib/notifier';
-import { Store, Post, User } from '../../lib/store';
+import { Post, Store, User } from '../../lib/store';
 
 import PostEditor from './PostEditor';
 
@@ -23,7 +23,7 @@ type MyProps = {
   store?: Store;
   members: User[];
   post?: Post;
-  onFinished?: Function;
+  onFinished?: () => void;
   open?: boolean;
   classes: { paper: string };
 };
@@ -35,13 +35,7 @@ type MyState = {
 };
 
 class PostForm extends React.Component<MyProps, MyState> {
-  state = {
-    postId: null,
-    content: '',
-    disabled: false,
-  };
-
-  static getDerivedStateFromProps(props: MyProps, state) {
+  public static getDerivedStateFromProps(props: MyProps, state) {
     const { post } = props;
 
     if (!post && !state.postId) {
@@ -58,7 +52,51 @@ class PostForm extends React.Component<MyProps, MyState> {
     };
   }
 
-  onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  public state = {
+    postId: null,
+    content: '',
+    disabled: false,
+  };
+
+  public render() {
+    const { classes, open, members } = this.props;
+    const isEditing = !!this.props.post;
+
+    const { paper } = classes;
+
+    return (
+      <Drawer
+        anchor="right"
+        open={open}
+        classes={{ paper }}
+        transitionDuration={{ enter: 500, exit: 500 }}
+      >
+        <div style={{ width: '100%', height: '100%', padding: '20px' }}>
+          <h3>{isEditing ? 'Edit Post' : 'Add Post'}</h3>
+          <form style={{ width: '100%', height: '100%' }} onSubmit={this.onSubmit}>
+            <p />
+            <div style={{ margin: '20px 0px' }}>
+              <Button variant="outlined" onClick={this.closeDrawer} disabled={this.state.disabled}>
+                Cancel
+              </Button>{' '}
+              <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
+                {isEditing ? 'Save changes' : 'Publish'}
+              </Button>
+            </div>
+            <p />
+            <PostEditor
+              content={this.state.content}
+              onChanged={content => this.setState({ content })}
+              members={members}
+            />
+            <br />
+          </form>
+        </div>
+      </Drawer>
+    );
+  }
+
+  public onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { content } = this.state;
@@ -127,7 +165,7 @@ class PostForm extends React.Component<MyProps, MyState> {
     }
   };
 
-  closeDrawer = () => {
+  public closeDrawer = () => {
     this.setState({ content: '', postId: null });
 
     const { onFinished } = this.props;
@@ -135,44 +173,6 @@ class PostForm extends React.Component<MyProps, MyState> {
       onFinished();
     }
   };
-
-  render() {
-    const { classes, open, members } = this.props;
-    const isEditing = !!this.props.post;
-
-    const { paper } = classes;
-
-    return (
-      <Drawer
-        anchor="right"
-        open={open}
-        classes={{ paper }}
-        transitionDuration={{ enter: 500, exit: 500 }}
-      >
-        <div style={{ width: '100%', height: '100%', padding: '20px' }}>
-          <h3>{isEditing ? 'Edit Post' : 'Add Post'}</h3>
-          <form style={{ width: '100%', height: '100%' }} onSubmit={this.onSubmit}>
-            <p />
-            <div style={{ margin: '20px 0px' }}>
-              <Button variant="outlined" onClick={this.closeDrawer} disabled={this.state.disabled}>
-                Cancel
-              </Button>{' '}
-              <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
-                {isEditing ? 'Save changes' : 'Publish'}
-              </Button>
-            </div>
-            <p />
-            <PostEditor
-              content={this.state.content}
-              onChanged={content => this.setState({ content })}
-              members={members}
-            />
-            <br />
-          </form>
-        </div>
-      </Drawer>
-    );
-  }
 }
 
 export default withStyles(styles)<MyProps>(inject('store')(observer(PostForm)));

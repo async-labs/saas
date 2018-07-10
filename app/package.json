@@ -7,7 +7,7 @@
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "NODE_ENV=production node production-server/server/app.js",
     "now": "now && now alias && now rm saas-app --safe --yes",
-    "lint": "tslint components pages lib server",
+    "lint": "tslint -p tsconfig.json && tslint -p tsconfig.server.json",
     "test": "jest --coverage",
     "processes-3000": "ss -lptn 'sport = :3000'",
     "processes-node": "ps -e|grep node",

@@ -1,6 +1,6 @@
-import { withRouter } from 'next/router';
+import { inject, observer } from 'mobx-react';
 import Link from 'next/link';
-import { observer, inject } from 'mobx-react';
+import { withRouter } from 'next/router';
 
 const ActiveLink = ({ linkText, href, as, hasIcon, highlighterSlug, store }) => {
   const selectedElement = store.currentUrl.includes(highlighterSlug);

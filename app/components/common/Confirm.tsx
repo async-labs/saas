@@ -1,15 +1,15 @@
-import React from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import React from 'react';
 
 let openConfirmDialogFn;
 
 class Confirm extends React.Component {
-  state = {
+  public state = {
     open: false,
     title: 'Are you sure?',
     message: '',
@@ -17,25 +17,7 @@ class Confirm extends React.Component {
     onAnswer: a => a,
   };
 
-  componentDidMount() {
-    openConfirmDialogFn = this.openConfirmDialog;
-  }
-
-  handleClose = () => {
-    this.setState({ open: false });
-    this.state.onAnswer(false);
-  };
-
-  handleYes = () => {
-    this.setState({ open: false });
-    this.state.onAnswer(true);
-  };
-
-  openConfirmDialog = ({ title, message, onAnswer }) => {
-    this.setState({ open: true, title, message, onAnswer });
-  };
-
-  render() {
+  public render() {
     return (
       <Dialog
         open={this.state.open}
@@ -58,6 +40,24 @@ class Confirm extends React.Component {
       </Dialog>
     );
   }
+
+  public componentDidMount() {
+    openConfirmDialogFn = this.openConfirmDialog;
+  }
+
+  public handleClose = () => {
+    this.setState({ open: false });
+    this.state.onAnswer(false);
+  };
+
+  public handleYes = () => {
+    this.setState({ open: false });
+    this.state.onAnswer(true);
+  };
+
+  public openConfirmDialog = ({ title, message, onAnswer }) => {
+    this.setState({ open: true, title, message, onAnswer });
+  };
 }
 
 export function openConfirmDialog({
@@ -67,7 +67,7 @@ export function openConfirmDialog({
 }: {
   title: string;
   message: string;
-  onAnswer: Function;
+  onAnswer: (answer) => void;
 }) {
   openConfirmDialogFn({ title, message, onAnswer });
 }

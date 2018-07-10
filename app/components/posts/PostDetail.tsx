@@ -1,14 +1,14 @@
-import React from 'react';
-import moment from 'moment';
-import { inject, observer } from 'mobx-react';
-import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
+import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
+import { inject, observer } from 'mobx-react';
+import moment from 'moment';
+import React from 'react';
 
-import MenuWithMenuItems from '../common/MenuWithMenuItems';
-import { Store, Post } from '../../lib/store';
 import confirm from '../../lib/confirm';
 import notify from '../../lib/notifier';
+import { Post, Store } from '../../lib/store';
+import MenuWithMenuItems from '../common/MenuWithMenuItems';
 
 import PostContent from './PostContent';
 
@@ -46,9 +46,9 @@ const getMenuItemOptions = (post, component) => [
 class PostDetail extends React.Component<{
   post: Post;
   store?: Store;
-  onEditClick: Function;
+  onEditClick: (post) => void;
 }> {
-  editPost = () => {
+  public editPost = () => {
     const { post, onEditClick } = this.props;
     if (onEditClick) {
       onEditClick(post);
@@ -56,7 +56,7 @@ class PostDetail extends React.Component<{
     console.log(`PostDetail: ${post._id}`);
   };
 
-  deletePost = () => {
+  public deletePost = () => {
     confirm({
       title: 'Are you sure?',
       message: '',
@@ -70,7 +70,13 @@ class PostDetail extends React.Component<{
     });
   };
 
-  renderMenu() {
+  public render() {
+    const { post } = this.props;
+
+    return <Paper style={stylePaper}>{this.renderPostDetail(post)}</Paper>;
+  }
+
+  public renderMenu() {
     const { post, store } = this.props;
     const { currentUser } = store;
 
@@ -86,7 +92,7 @@ class PostDetail extends React.Component<{
     );
   }
 
-  renderPostDetail(post: Post) {
+  public renderPostDetail(post: Post) {
     const createdDate = moment(post.createdAt).format('MMM Do YYYY');
     const lastEditedDate = moment(post.lastUpdatedAt).fromNow();
     return (
@@ -144,12 +150,6 @@ class PostDetail extends React.Component<{
         </div>
       </div>
     );
-  }
-
-  render() {
-    const { post } = this.props;
-
-    return <Paper style={stylePaper}>{this.renderPostDetail(post)}</Paper>;
   }
 }
 

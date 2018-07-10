@@ -7,8 +7,8 @@
     "allowSyntheticDefaultImports": true,
     "removeComments": false,
     "preserveConstEnums": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "sourceMap": true,
     "skipLibCheck": true,
     "baseUrl": ".",
@@ -18,5 +18,5 @@
     "module": "commonjs",
     "outDir": "production-server/"
   },
-  "include": ["server/**/*.ts"]
+  "include": ["./server/**/*.ts"]
 }

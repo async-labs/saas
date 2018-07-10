@@ -7,29 +7,27 @@ function addPlaceholder(elm) {
     return;
   }
 
-  // TODO: if width of image placeholder is greater than width of PostDetail div - make width of image placeholder to be 100%
-
   image.style.display = 'none';
-  let div = window.document.createElement('div');
+  const div = window.document.createElement('div');
   div.className = 'image-placeholder';
   div.style.width = `${image.dataset.width || 200}px`;
   div.style.height = `${image.dataset.height || 200}px`;
-  div.innerHTML = `<p class="image-placeholder-text">loading ...</p>`;
+  div.innerHTML = '<p class="image-placeholder-text">loading ...</p>';
   body.appendChild(div);
 }
 
 class PostContent extends React.Component<{ html: string }> {
-  postBodyElm: HTMLDivElement;
+  public postBodyElm: HTMLDivElement;
 
-  componentDidMount() {
+  public componentDidMount() {
     this.initializeFileUIandEvent();
   }
 
-  componentDidUpdate() {
+  public componentDidUpdate() {
     this.initializeFileUIandEvent();
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     const imgContainers = this.postBodyElm.getElementsByClassName('lazy-load-image');
 
     for (let i = 0; i < imgContainers.length; i++) {
@@ -38,7 +36,7 @@ class PostContent extends React.Component<{ html: string }> {
     }
   }
 
-  initializeFileUIandEvent() {
+  public initializeFileUIandEvent() {
     const imgContainers = this.postBodyElm.querySelectorAll('.lazy-load-image');
 
     for (let i = 0; i < imgContainers.length; i++) {
@@ -50,7 +48,7 @@ class PostContent extends React.Component<{ html: string }> {
     }
   }
 
-  lazyLoadImage = event => {
+  public lazyLoadImage = event => {
     const target: HTMLDetailsElement = event.currentTarget;
 
     if (!target.open) {
@@ -63,7 +61,7 @@ class PostContent extends React.Component<{ html: string }> {
     }
 
     const placeholder = target.getElementsByClassName('image-placeholder').item(0);
-    image.onload = function() {
+    image.onload = () => {
       if (placeholder) {
         placeholder.remove();
       }
@@ -75,7 +73,7 @@ class PostContent extends React.Component<{ html: string }> {
     image.setAttribute('loaded', '1');
   };
 
-  render() {
+  public render() {
     const { html } = this.props;
 
     return (

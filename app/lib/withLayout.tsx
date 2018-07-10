@@ -1,21 +1,21 @@
-import React from 'react';
-import Router from 'next/router';
-import NProgress from 'nprogress';
-import { observer } from 'mobx-react';
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
-import Avatar from '@material-ui/core/Avatar';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import { observer } from 'mobx-react';
+import Router from 'next/router';
+import NProgress from 'nprogress';
+import React from 'react';
 
+import Confirm from '../components/common/Confirm';
 import Loading from '../components/common/Loading';
+import MenuWithLinks from '../components/common/MenuWithLinks';
+import Notifier from '../components/common/Notifier';
 import DiscussionList from '../components/discussions/DiscussionList';
 import getContext from './context';
-import Notifier from '../components/common/Notifier';
-import Confirm from '../components/common/Confirm';
-import MenuWithLinks from '../components/common/MenuWithLinks';
-import * as gtag from './gtag';
-import { Store, getStore } from './store';
 import env from './env';
+import * as gtag from './gtag';
+import { getStore, Store } from './store';
 
 const styleGrid = {
   width: '100vw',
@@ -70,15 +70,15 @@ const menuUnderTeamList = (team, isTL) => [
   },
   isTL
     ? {
-        text: `Settings`,
+        text: 'Settings',
         href: `/settings/team-members?teamSlug=${team.slug}`,
         as: `/team/${team.slug}/settings/team-members`,
         simple: true,
         highlighterSlug: '/settings',
       }
     : {
-        text: `Settings`,
-        href: `/settings/your-profile`,
+        text: 'Settings',
+        href: '/settings/your-profile',
         simple: true,
         highlighterSlug: '/settings',
       },
@@ -121,17 +121,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
   class App extends React.Component<MyProps, MyState> {
     public static defaultProps: { pageContext: null };
 
-    constructor(props, context) {
-      super(props, context);
-      this.pageContext = this.props.pageContext || getContext();
-
-      const { currentTeam, currentUser } = props.store;
-      this.state = {
-        isTL: (currentUser && currentTeam && currentUser._id === currentTeam.teamLeaderId) || false,
-      };
-    }
-
-    static async getInitialProps(ctx) {
+    public static async getInitialProps(ctx) {
       const { query, req, pathname } = ctx;
 
       let baseComponentProps = {};
@@ -161,7 +151,19 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       };
     }
 
-    componentDidMount() {
+    private pageContext = null;
+
+    constructor(props, context) {
+      super(props, context);
+      this.pageContext = this.props.pageContext || getContext();
+
+      const { currentTeam, currentUser } = props.store;
+      this.state = {
+        isTL: (currentUser && currentTeam && currentUser._id === currentTeam.teamLeaderId) || false,
+      };
+    }
+
+    public componentDidMount() {
       const jssStyles = document.querySelector('#jss-server-side');
       if (jssStyles && jssStyles.parentNode) {
         jssStyles.parentNode.removeChild(jssStyles);
@@ -172,31 +174,13 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       }
     }
 
-    componentDidUpdate() {
+    public componentDidUpdate() {
       if (teamRequired) {
         this.checkTeam();
       }
     }
 
-    checkTeam() {
-      const { teamSlug, store } = this.props;
-      const { currentTeam } = store;
-
-      if (!currentTeam || currentTeam.slug !== teamSlug) {
-        store.setCurrentTeam(teamSlug);
-
-        const { currentTeam: newTeam, currentUser } = store;
-        const isTL = (currentUser && newTeam && currentUser._id === newTeam.teamLeaderId) || false;
-
-        if (this.state.isTL !== isTL) {
-          this.setState({ isTL });
-        }
-      }
-    }
-
-    pageContext = null;
-
-    render() {
+    public render() {
       // Add teamRequired: false to some pages that don't require team
 
       const { store, firstGridItem } = this.props;
@@ -243,8 +227,8 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
           );
         } else {
           return (
-            <ThemeWrapper pageContext={this.pageContext} firstGridItem={firstGridItem}>
-              <Grid item sm={10} xs={12}>
+            <ThemeWrapper pageContext={this.pageContext} firstGridItem={false}>
+              <Grid item sm={12} xs={12}>
                 <BaseComponent isTL={this.state.isTL} {...this.props} />
               </Grid>
             </ThemeWrapper>
@@ -296,16 +280,31 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
                 <hr />
                 <p />
                 <p />
-                <p />
                 <DiscussionList store={store} team={currentTeam} />
               </Grid>
             ) : null}
-            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
+            <Grid item sm={10} xs={12}>
               <BaseComponent isTL={this.state.isTL} {...this.props} />
             </Grid>
           </Grid>
         </ThemeWrapper>
       );
+    }
+
+    private checkTeam() {
+      const { teamSlug, store } = this.props;
+      const { currentTeam } = store;
+
+      if (!currentTeam || currentTeam.slug !== teamSlug) {
+        store.setCurrentTeam(teamSlug);
+
+        const { currentTeam: newTeam, currentUser } = store;
+        const isTL = (currentUser && newTeam && currentUser._id === newTeam.teamLeaderId) || false;
+
+        if (this.state.isTL !== isTL) {
+          this.setState({ isTL });
+        }
+      }
     }
   }
 

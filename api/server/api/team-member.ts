@@ -1,17 +1,17 @@
 import * as express from 'express';
 
 import { signRequestForUpload } from '../aws-s3';
+import logger from '../logs';
+import Discussion from '../models/Discussion';
+import Invitation from '../models/Invitation';
+import Post from '../models/Post';
 import Team from '../models/Team';
 import User from '../models/User';
-import Discussion from '../models/Discussion';
-import Post from '../models/Post';
-import logger from '../logs';
-import Invitation from '../models/Invitation';
 
 const router = express.Router();
 
 router.use((req, res, next) => {
-  console.log('team member API', req.path);
+  logger.debug('team member API', req.path);
   if (!req.user) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
@@ -30,13 +30,11 @@ async function loadDiscussionsData(team, userId, body) {
 
   const data: any = { initialDiscussions: discussions };
 
-  for (let i = 0; i < discussions.length; i++) {
-    const discussion = discussions[i];
-
+  for (const discussion of discussions) {
     if (discussion.slug === discussionSlug) {
       Object.assign(discussion, {
         initialPosts: await Post.getList({
-          userId: userId,
+          userId,
           discussionId: discussion._id,
         }),
       });
@@ -82,9 +80,7 @@ router.post('/get-initial-data', async (req, res) => {
       selectedTeamSlug = teams[0].slug;
     }
 
-    for (let i = 0; i < teams.length; i++) {
-      const team = teams[i];
-
+    for (const team of teams) {
       if (team.slug === selectedTeamSlug) {
         Object.assign(team, await loadTeamData(team, req.user.id, req.body));
         break;
@@ -167,7 +163,7 @@ router.get('/discussions/list', async (req, res) => {
       teamId,
     });
 
-    console.log(`Express route: ${discussions.length}`);
+    logger.debug(`Express route: ${discussions.length}`);
 
     res.json({ discussions });
   } catch (err) {

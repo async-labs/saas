@@ -1,42 +1,42 @@
-import { observable, action, IObservableArray, runInAction, computed, decorate } from 'mobx';
+import { action, computed, decorate, IObservableArray, observable, runInAction } from 'mobx';
 import Router from 'next/router';
 
 import {
-  getTeamMembers,
   getTeamInvitedUsers,
+  getTeamMembers,
   inviteMember,
   removeMember,
   updateTeam,
 } from '../api/team-leader';
 
-import { getDiscussionList, addDiscussion, deleteDiscussion } from '../api/team-member';
+import { addDiscussion, deleteDiscussion, getDiscussionList } from '../api/team-member';
 
 import { Discussion } from './discussion';
-import { User } from './user';
-import { Invitation } from './invitation';
 import { Store } from './index';
+import { Invitation } from './invitation';
+import { User } from './user';
 
 class Team {
-  store: Store;
+  public store: Store;
 
-  _id: string;
-  teamLeaderId: string;
+  public _id: string;
+  public teamLeaderId: string;
 
-  name: string;
-  slug: string;
-  avatarUrl: string;
-  memberIds: IObservableArray<string> = observable([]);
+  public name: string;
+  public slug: string;
+  public avatarUrl: string;
+  public memberIds: IObservableArray<string> = observable([]);
 
-  members: Map<string, User> = new Map();
-  invitedUsers: Map<string, Invitation> = new Map();
+  public members: Map<string, User> = new Map();
+  public invitedUsers: Map<string, Invitation> = new Map();
   private isLoadingMembers = false;
   private isInitialMembersLoaded = false;
 
-  currentDiscussion?: Discussion;
-  currentDiscussionSlug?: string;
-  discussions: IObservableArray<Discussion> = observable([]);
+  public currentDiscussion?: Discussion;
+  public currentDiscussionSlug?: string;
+  public discussions: IObservableArray<Discussion> = observable([]);
 
-  isLoadingDiscussions = false;
+  public isLoadingDiscussions = false;
   private initialDiscussionSlug: string = '';
 
   constructor(params) {
@@ -59,7 +59,7 @@ class Team {
     }
   }
 
-  async edit({ name, avatarUrl }: { name: string; avatarUrl: string }) {
+  public async edit({ name, avatarUrl }: { name: string; avatarUrl: string }) {
     try {
       const { slug } = await updateTeam({
         teamId: this._id,
@@ -78,11 +78,9 @@ class Team {
     }
   }
 
-  setCurrentDiscussion({ slug }: { slug: string }) {
+  public setCurrentDiscussion({ slug }: { slug: string }) {
     this.currentDiscussionSlug = slug;
-    for (let i = 0; i < this.discussions.length; i++) {
-      const discussion = this.discussions[i];
-
+    for (const discussion of this.discussions) {
       if (discussion && discussion.slug === slug) {
         this.currentDiscussion = discussion;
         break;
@@ -90,13 +88,13 @@ class Team {
     }
   }
 
-  setInitialDiscussionSlug(slug: string) {
+  public setInitialDiscussionSlug(slug: string) {
     if (!this.initialDiscussionSlug) {
       this.initialDiscussionSlug = slug;
     }
   }
 
-  setInitialDiscussions(discussions) {
+  public setInitialDiscussions(discussions) {
     const discussionObjs = discussions.map(
       t => new Discussion({ team: this, store: this.store, ...t }),
     );
@@ -112,7 +110,7 @@ class Team {
     }
   }
 
-  async loadDiscussions() {
+  public async loadDiscussions() {
     if (this.store.isServer || this.isLoadingDiscussions) {
       return;
     }
@@ -121,8 +119,6 @@ class Team {
 
     try {
       const { discussions = [] } = await getDiscussionList({ teamId: this._id });
-
-      console.log(`loadDiscussions(): ${discussions.length}`);
 
       runInAction(() => {
         discussions.forEach(t =>
@@ -136,7 +132,7 @@ class Team {
     }
   }
 
-  addDiscussionToLocalCache(data): Discussion {
+  public addDiscussionToLocalCache(data): Discussion {
     const obj = new Discussion({ team: this, store: this.store, ...data });
 
     if (obj.memberIds.includes(this.store.currentUser._id)) {
@@ -146,19 +142,19 @@ class Team {
     return obj;
   }
 
-  editDiscussionFromLocalCache(data) {
+  public editDiscussionFromLocalCache(data) {
     const discussion = this.discussions.find(item => item._id === data.id);
     if (discussion) {
       discussion.changeLocalCache(data);
     }
   }
 
-  removeDiscussionFromLocalCache(discussionId: string) {
+  public removeDiscussionFromLocalCache(discussionId: string) {
     const discussion = this.discussions.find(item => item._id === discussionId);
     this.discussions.remove(discussion);
   }
 
-  async addDiscussion(data): Promise<Discussion> {
+  public async addDiscussion(data): Promise<Discussion> {
     const { discussion } = await addDiscussion({
       teamId: this._id,
       ...data,
@@ -172,7 +168,7 @@ class Team {
     });
   }
 
-  async deleteDiscussion(id: string) {
+  public async deleteDiscussion(id: string) {
     await deleteDiscussion({
       id,
     });
@@ -200,7 +196,7 @@ class Team {
     });
   }
 
-  setInitialMembers(users, invitations) {
+  public setInitialMembers(users, invitations) {
     this.members.clear();
     this.invitedUsers.clear();
 
@@ -219,7 +215,7 @@ class Team {
     this.isInitialMembersLoaded = true;
   }
 
-  async loadInitialMembers() {
+  public async loadInitialMembers() {
     if (this.isLoadingMembers || this.isInitialMembersLoaded) {
       return;
     }
@@ -253,7 +249,7 @@ class Team {
     }
   }
 
-  async inviteMember({ email }: { email: string }) {
+  public async inviteMember({ email }: { email: string }) {
     this.isLoadingMembers = true;
     try {
       const { newInvitation } = await inviteMember({ teamId: this._id, email });
@@ -271,7 +267,7 @@ class Team {
     }
   }
 
-  async removeMember(userId: string) {
+  public async removeMember(userId: string) {
     await removeMember({ teamId: this._id, userId });
 
     runInAction(() => {
@@ -316,7 +312,6 @@ decorate(Team, {
   deleteDiscussion: action,
 
   orderedDiscussions: computed,
-
 });
 
 export { Team };

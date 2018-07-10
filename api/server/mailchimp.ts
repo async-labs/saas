@@ -1,6 +1,7 @@
+import * as dotenv from 'dotenv';
 import * as request from 'request';
 
-require('dotenv').config();
+dotenv.config();
 
 const LIST_IDS = {
   signups: process.env.MAILCHIMP_SAAS_ALL_LIST_ID,
@@ -23,7 +24,7 @@ function callAPI({ path, method, data }) {
         json: true,
         body: data,
       },
-      (err, response, body) => {
+      (err, body) => {
         if (err) {
           reject(err);
         } else {

@@ -1,7 +1,7 @@
 import * as express from 'express';
 
-import Invitation from '../models/Invitation';
 import logger from '../logs';
+import Invitation from '../models/Invitation';
 
 const router = express.Router();
 

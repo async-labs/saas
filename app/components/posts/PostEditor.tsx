@@ -1,26 +1,26 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
-import NProgress from 'nprogress';
-import { inject, observer } from 'mobx-react';
-import marked from 'marked';
+import Button from '@material-ui/core/Button';
 import he from 'he';
-import { MentionsInput, Mention } from 'react-mentions';
+import marked from 'marked';
+import { inject, observer } from 'mobx-react';
+import NProgress from 'nprogress';
+import React from 'react';
+import { Mention, MentionsInput } from 'react-mentions';
 
-import { Store, User } from '../../lib/store';
-import { resizeImage } from '../../lib/resizeImage';
-import notify from '../../lib/notifier';
+import getRootUrl from '../../lib/api/getRootUrl';
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
 } from '../../lib/api/team-member';
-import getRootUrl from '../../lib/api/getRootUrl';
+import notify from '../../lib/notifier';
+import { resizeImage } from '../../lib/resizeImage';
+import { Store, User } from '../../lib/store';
 
 import PostContent from './PostContent';
 
 function getImageDimension(file): Promise<{ width: number; height: number }> {
-  var reader = new FileReader();
-  var img = new Image();
+  const reader = new FileReader();
+  const img = new Image();
 
   return new Promise(resolve => {
     reader.onload = e => {
@@ -35,119 +35,23 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
   });
 }
 
-interface MyProps {
+type MyProps = {
   store?: Store;
-  onChanged: Function;
+  onChanged: (content) => void;
   content: string;
   members: User[];
-}
+};
 
-interface MyState {
+type MyState = {
   htmlContent: string;
-}
+};
 
 class PostEditor extends React.Component<MyProps, MyState> {
-  state = {
+  public state = {
     htmlContent: '',
   };
 
-  showMarkdownContent = () => {
-    this.setState({ htmlContent: '' });
-  };
-
-  showHtmlContent = async () => {
-    const { content } = this.props;
-
-    function markdownToHtml(content) {
-      const renderer = new marked.Renderer();
-
-      renderer.link = (href, title, text) => {
-        const t = title ? ` title="${title}"` : '';
-        return `
-          <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
-            ${text}
-            <i class="material-icons" style="font-size: 13px; vertical-align: baseline">
-              launch
-            </i>
-          </a>
-        `;
-      };
-
-      marked.setOptions({
-        renderer,
-        breaks: true,
-      });
-
-      return marked(he.decode(content));
-    }
-
-    const htmlContent = content ? markdownToHtml(content) : '<span>Nothing to preview.</span>';
-    this.setState({ htmlContent: htmlContent });
-  };
-
-  uploadFile = async () => {
-    const { content } = this.props;
-    const { store } = this.props;
-    const { currentTeam } = store;
-
-    const file = document.getElementById('upload-file').files[0];
-
-    if (file == null) {
-      notify('No file selected.');
-      return;
-    }
-
-    NProgress.start();
-
-    document.getElementById('upload-file').value = '';
-
-    const bucket = 'async-posts';
-    const prefix = `${currentTeam.slug}`;
-
-    const { width, height } = await getImageDimension(file);
-
-    try {
-      const responseFromApiServerForUpload = await getSignedRequestForUpload({
-        file,
-        prefix,
-        bucket,
-      });
-
-      const resizedFile = await resizeImage(file, 1024, 1024);
-
-      await uploadFileUsingSignedPutRequest(
-        resizedFile,
-        responseFromApiServerForUpload.signedRequest,
-      );
-
-      const imgSrc = `${getRootUrl()}/uploaded-file?teamSlug=${
-        currentTeam.slug
-      }&bucket=${bucket}&path=${responseFromApiServerForUpload.path}`;
-
-      const finalWidth = width > 768 ? '100%' : width;
-
-      const markdownImage = `<details class="lazy-load-image">
-        <summary>Click to see <b>${file.name}</b></summary>
-
-        <div class="lazy-load-image-body">
-          <img width="${finalWidth}" data-width="${finalWidth}" data-height="${height}" data-src="${imgSrc}" alt="Async" class="s3-image" style="display: none;" />
-        </div>
-      </details>`;
-
-      this.props.onChanged(content.concat('\n', markdownImage.replace(/\s+/g, ' ')));
-
-      // TODO: delete image if image is added but Post is not saved
-      // TODO: see more on Github's issue
-      NProgress.done();
-      notify('You successfully uploaded file.');
-    } catch (error) {
-      console.log(error);
-      notify(error);
-      NProgress.done();
-    }
-  };
-
-  render() {
+  public render() {
     const { htmlContent } = this.state;
     const { content, members, store } = this.props;
     const { currentUser } = store;
@@ -233,7 +137,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
               autoFocus
               value={content}
               placeholder="Compose new post"
-              markup={`\`@__display__\` `}
+              markup={'`@__display__` '}
               displayTransform={display => `\`@${display}\` `}
               onChange={event => {
                 this.props.onChanged(event.target.value);
@@ -270,6 +174,109 @@ class PostEditor extends React.Component<MyProps, MyState> {
       </div>
     );
   }
+
+  public showMarkdownContent = () => {
+    this.setState({ htmlContent: '' });
+  };
+
+  public showHtmlContent = async () => {
+    const { content } = this.props;
+
+    function markdownToHtml(content) {
+      const renderer = new marked.Renderer();
+
+      renderer.link = (href, title, text) => {
+        const t = title ? ` title="${title}"` : '';
+        return `
+          <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
+            ${text}
+            <i class="material-icons" style="font-size: 13px; vertical-align: baseline">
+              launch
+            </i>
+          </a>
+        `;
+      };
+
+      marked.setOptions({
+        renderer,
+        breaks: true,
+      });
+
+      return marked(he.decode(content));
+    }
+
+    const htmlContent = content ? markdownToHtml(content) : '<span>Nothing to preview.</span>';
+    this.setState({ htmlContent });
+  };
+
+  public uploadFile = async () => {
+    const { content } = this.props;
+    const { store } = this.props;
+    const { currentTeam } = store;
+
+    const file = document.getElementById('upload-file').files[0];
+
+    if (file == null) {
+      notify('No file selected.');
+      return;
+    }
+
+    NProgress.start();
+
+    document.getElementById('upload-file').value = '';
+
+    const bucket = 'async-posts';
+    const prefix = `${currentTeam.slug}`;
+
+    const { width, height } = await getImageDimension(file);
+
+    try {
+      const responseFromApiServerForUpload = await getSignedRequestForUpload({
+        file,
+        prefix,
+        bucket,
+      });
+
+      const resizedFile = await resizeImage(file, 1024, 1024);
+
+      await uploadFileUsingSignedPutRequest(
+        resizedFile,
+        responseFromApiServerForUpload.signedRequest,
+      );
+
+      const imgSrc = `${getRootUrl()}/uploaded-file?teamSlug=${
+        currentTeam.slug
+      }&bucket=${bucket}&path=${responseFromApiServerForUpload.path}`;
+
+      const finalWidth = width > 768 ? '100%' : width;
+
+      const markdownImage = `<details class="lazy-load-image">
+        <summary>Click to see <b>${file.name}</b></summary>
+        <div class="lazy-load-image-body">
+          <img
+            width="${finalWidth}"
+            data-width="${finalWidth}"
+            data-height="${height}"
+            data-src="${imgSrc}"
+            alt="Async"
+            class="s3-image"
+            style="display: none;"
+          />
+        </div>
+      </details>`;
+
+      this.props.onChanged(content.concat('\n', markdownImage.replace(/\s+/g, ' ')));
+
+      // TODO: delete image if image is added but Post is not saved
+      // TODO: see more on Github's issue
+      NProgress.done();
+      notify('You successfully uploaded file.');
+    } catch (error) {
+      console.log(error);
+      notify(error);
+      NProgress.done();
+    }
+  };
 }
 
 export default inject('store')(observer(PostEditor));

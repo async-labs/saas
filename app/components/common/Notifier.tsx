@@ -1,10 +1,10 @@
-import React from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
+import React from 'react';
 
 let openSnackbarFn;
 
 class Notifier extends React.PureComponent {
-  state = {
+  public state = {
     open: false,
     message: '',
   };
@@ -14,18 +14,7 @@ class Notifier extends React.PureComponent {
     openSnackbarFn = this.openSnackbar;
   }
 
-  handleSnackbarClose = () => {
-    this.setState({
-      open: false,
-      message: '',
-    });
-  };
-
-  openSnackbar = ({ message }) => {
-    this.setState({ open: true, message });
-  };
-
-  render() {
+  public render() {
     const message = (
       <span id="snackbar-message-id" dangerouslySetInnerHTML={{ __html: this.state.message }} />
     );
@@ -43,6 +32,17 @@ class Notifier extends React.PureComponent {
       />
     );
   }
+
+  public handleSnackbarClose = () => {
+    this.setState({
+      open: false,
+      message: '',
+    });
+  };
+
+  public openSnackbar = ({ message }) => {
+    this.setState({ open: true, message });
+  };
 }
 
 export function openSnackbar({ message }) {

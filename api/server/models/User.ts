@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
-import { generateSlug } from '../utils/slugify';
-import { subscribe } from '../mailchimp';
 import sendEmail from '../aws-ses';
 import logger from '../logs';
+import { subscribe } from '../mailchimp';
+import { generateSlug } from '../utils/slugify';
 import getEmailTemplate from './EmailTemplate';
-import Team from './Team';
 import Invitation from './Invitation';
+import Team from './Team';
 
 const mongoSchema = new mongoose.Schema({
   googleId: {
@@ -106,36 +106,7 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
 // });
 
 class UserClass extends mongoose.Model {
-  static publicFields(): string[] {
-    return [
-      '_id',
-      'id',
-      'displayName',
-      'email',
-      'avatarUrl',
-      'slug',
-      'isGithubConnected',
-      'defaultTeamSlug',
-    ];
-  }
-
-  static async checkPermissionAndGetTeam({ userId, teamId }) {
-    if (!userId || !teamId) {
-      throw new Error('Bad data');
-    }
-
-    const team = await Team.findById(teamId)
-      .select('memberIds')
-      .lean();
-
-    if (!team || team.memberIds.indexOf(userId) === -1) {
-      throw new Error('Team not found');
-    }
-
-    return team;
-  }
-
-  static async updateProfile({ userId, name, avatarUrl }) {
+  public static async updateProfile({ userId, name, avatarUrl }) {
     // TODO: If avatarUrl is changed and old is uploaded to our S3, delete it from S3
 
     const user = await this.findById(userId, 'slug displayName');
@@ -152,7 +123,7 @@ class UserClass extends mongoose.Model {
       .lean();
   }
 
-  static async getTeamMembers({ userId, teamId }) {
+  public static async getTeamMembers({ userId, teamId }) {
     const team = await this.checkPermissionAndGetTeam({ userId, teamId });
 
     return this.find({ _id: { $in: team.memberIds } })
@@ -160,7 +131,7 @@ class UserClass extends mongoose.Model {
       .lean();
   }
 
-  static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
+  public static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
     const user = await this.findOne({ googleId })
       .select(this.publicFields().join(' '))
       .lean();
@@ -201,7 +172,7 @@ class UserClass extends mongoose.Model {
       userName: displayName,
     });
 
-    if ((await Invitation.find({ email: email }).count()) === 0) {
+    if ((await Invitation.find({ email }).count()) === 0) {
       try {
         await sendEmail({
           from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
@@ -224,6 +195,35 @@ class UserClass extends mongoose.Model {
     }
 
     return _.pick(newUser, this.publicFields());
+  }
+
+  public static publicFields(): string[] {
+    return [
+      '_id',
+      'id',
+      'displayName',
+      'email',
+      'avatarUrl',
+      'slug',
+      'isGithubConnected',
+      'defaultTeamSlug',
+    ];
+  }
+
+  public static async checkPermissionAndGetTeam({ userId, teamId }) {
+    if (!userId || !teamId) {
+      throw new Error('Bad data');
+    }
+
+    const team = await Team.findById(teamId)
+      .select('memberIds')
+      .lean();
+
+    if (!team || team.memberIds.indexOf(userId) === -1) {
+      throw new Error('Team not found');
+    }
+
+    return team;
   }
 }
 

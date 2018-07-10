@@ -1,16 +1,17 @@
 import * as mongoose from 'mongoose';
 
-import * as marked from 'marked';
 import * as he from 'he';
 import * as hljs from 'highlight.js';
+import * as marked from 'marked';
 
-import * as url from 'url';
-import * as qs from 'querystring';
 import { chunk } from 'lodash';
+import * as qs from 'querystring';
+import * as url from 'url';
 
-import Team from './Team';
-import Discussion from './Discussion';
 import { deleteFiles } from '../aws-s3';
+import logger from '../logs';
+import Discussion from './Discussion';
+import Team from './Team';
 
 function deletePostFiles(posts: IPostDocument[]) {
   const imgRegEx = /\<img.+data-src=[\"|\'](.+?)[\"|\']/g;
@@ -38,7 +39,7 @@ function deletePostFiles(posts: IPostDocument[]) {
 
   Object.keys(files).forEach(bucket => {
     chunk(files[bucket], 1000).forEach(fileList =>
-      deleteFiles(bucket, fileList).catch(err => console.log(err)),
+      deleteFiles(bucket, fileList).catch(err => logger.error(err)),
     );
   });
 }
@@ -155,7 +156,72 @@ interface IPostModel extends mongoose.Model<IPostDocument> {
 }
 
 class PostClass extends mongoose.Model {
-  static async checkPermission({ userId, discussionId, post = null }) {
+  public static async getList({ userId, discussionId }) {
+    await this.checkPermission({ userId, discussionId });
+
+    const filter: any = { discussionId };
+
+    return this.find(filter).sort({ createdAt: 1 });
+  }
+
+  public static async add({ content, userId, discussionId }) {
+    if (!content) {
+      throw new Error('Bad data');
+    }
+
+    const htmlContent = markdownToHtml(content);
+
+    const post = await this.create({
+      createdUserId: userId,
+      discussionId,
+      content,
+      htmlContent,
+      createdAt: new Date(),
+    });
+
+    return post;
+  }
+
+  public static async edit({ content, userId, id }) {
+    if (!content || !id) {
+      throw new Error('Bad data');
+    }
+
+    // TODO: old uploaded file deleted, delete it from S3
+
+    const post = await this.findById(id)
+      .select('createdUserId discussionId')
+      .lean();
+
+    await this.checkPermission({ userId, discussionId: post.discussionId, post });
+
+    const htmlContent = markdownToHtml(content);
+
+    await this.updateOne(
+      { _id: id },
+      { content, htmlContent, isEdited: true, lastUpdatedAt: new Date() },
+    );
+
+    return { discussionId: post.discussionId, htmlContent };
+  }
+
+  public static async delete({ userId, id }) {
+    if (!id) {
+      throw new Error('Bad data');
+    }
+
+    const post = await this.findById(id)
+      .select('createdUserId discussionId content')
+      .lean();
+
+    await this.checkPermission({ userId, discussionId: post.discussionId, post });
+
+    deletePostFiles([post]);
+
+    await this.remove({ _id: id });
+  }
+
+  public static async checkPermission({ userId, discussionId, post = null }) {
     if (!userId || !discussionId) {
       throw new Error('Bad data');
     }
@@ -185,75 +251,6 @@ class PostClass extends mongoose.Model {
     }
 
     return { team, discussion };
-  }
-
-  static async getList({ userId, discussionId }) {
-    await this.checkPermission({ userId, discussionId });
-
-    const filter: any = { discussionId };
-
-    return this.find(filter).sort({ createdAt: 1 });
-  }
-
-  static async add({ content, userId, discussionId }) {
-    if (!content) {
-      throw new Error('Bad data');
-    }
-
-    const { discussion, team } = await this.checkPermission({ userId, discussionId });
-
-    const htmlContent = markdownToHtml(content);
-
-    const post = await this.create({
-      createdUserId: userId,
-      discussionId,
-      content,
-      htmlContent,
-      createdAt: new Date(),
-    });
-
-    const memberIds: string[] = discussion.memberIds.filter(id => id !== userId);
-
-    return post;
-  }
-
-  static async edit({ content, userId, id }) {
-    if (!content || !id) {
-      throw new Error('Bad data');
-    }
-
-    // TODO: old uploaded file deleted, delete it from S3
-
-    const post = await this.findById(id)
-      .select('createdUserId discussionId')
-      .lean();
-
-    await this.checkPermission({ userId, discussionId: post.discussionId, post });
-
-    const htmlContent = markdownToHtml(content);
-
-    await this.updateOne(
-      { _id: id },
-      { content, htmlContent, isEdited: true, lastUpdatedAt: new Date() },
-    );
-
-    return { discussionId: post.discussionId, htmlContent };
-  }
-
-  static async delete({ userId, id }) {
-    if (!id) {
-      throw new Error('Bad data');
-    }
-
-    const post = await this.findById(id)
-      .select('createdUserId discussionId content')
-      .lean();
-
-    await this.checkPermission({ userId, discussionId: post.discussionId, post });
-
-    deletePostFiles([post]);
-
-    await this.remove({ _id: id });
   }
 }
 

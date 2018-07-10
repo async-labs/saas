@@ -1,18 +1,18 @@
-import * as React from 'react';
-import Head from 'next/head';
-import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
+import Head from 'next/head';
 import Router from 'next/router';
+import * as React from 'react';
 
 import { observer } from 'mobx-react';
 
-import withLayout from '../lib/withLayout';
-import withAuth from '../lib/withAuth';
-import { Store } from '../lib/store';
-import PostForm from '../components/posts/PostForm';
-import PostDetail from '../components/posts/PostDetail';
 import Loading from '../components/common/Loading';
+import PostDetail from '../components/posts/PostDetail';
+import PostForm from '../components/posts/PostForm';
+import { Store } from '../lib/store';
+import withAuth from '../lib/withAuth';
+import withLayout from '../lib/withLayout';
 
 const styleGridItem = {
   padding: '10px 20px',
@@ -26,20 +26,20 @@ type Props = {
 };
 
 class Discussion extends React.Component<Props> {
-  state = {
+  public state = {
     drawerState: false,
     selectedPost: null,
   };
 
-  componentDidMount() {
+  public componentDidMount() {
     this.changeDiscussion(this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
+  public componentWillReceiveProps(nextProps) {
     this.changeDiscussion(nextProps);
   }
 
-  changeDiscussion(props: Props) {
+  public changeDiscussion(props: Props) {
     const { teamSlug, discussionSlug, store } = props;
     const { currentTeam } = store;
 
@@ -63,19 +63,18 @@ class Discussion extends React.Component<Props> {
         currentTeam.currentDiscussion.loadPosts();
       }
     }
-
   }
 
-  showFormToAddNewPost = () => {
+  public showFormToAddNewPost = () => {
     this.setState({ drawerState: true, selectedPost: null });
   };
 
-  onEditClickCallback = post => {
+  public onEditClickCallback = post => {
     this.setState({ selectedPost: post, drawerState: true });
     console.log(`Page: ${this.state.selectedPost}`);
   };
 
-  renderPosts() {
+  public renderPosts() {
     const { store, isServer } = this.props;
     const { currentTeam } = store;
 
@@ -105,7 +104,7 @@ class Discussion extends React.Component<Props> {
     );
   }
 
-  render() {
+  public render() {
     const { store } = this.props;
     const { currentTeam } = store;
     const { selectedPost, drawerState } = this.state;
@@ -141,7 +140,7 @@ class Discussion extends React.Component<Props> {
     // }
 
     return (
-      <div style={{ height: '100%' }}>
+      <div style={{ height: '100%', padding: '0px 20px' }}>
         <Head>
           <title>{currentDiscussion.name}</title>
           <meta

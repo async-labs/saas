@@ -1,11 +1,11 @@
-import React from 'react';
-import keycode from 'keycode';
-import Downshift from 'downshift';
+import Chip from '@material-ui/core/Chip';
+import MenuItem from '@material-ui/core/MenuItem';
+import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
-import MenuItem from '@material-ui/core/MenuItem';
-import Chip from '@material-ui/core/Chip';
+import Downshift from 'downshift';
+import keycode from 'keycode';
+import React from 'react';
 
 function renderInput(inputProps) {
   const { helperText, label, InputProps, classes, ref, ...other } = inputProps;
@@ -71,13 +71,13 @@ function getSuggestions(suggestions, inputValue, selectedItems) {
 
 class DownshiftMultiple extends React.Component<{
   classes: any;
-  onChange: Function;
+  onChange: (selectedItems) => void;
   suggestions: [{ label: string; value: string }];
   selectedItems: [{ label: string; value: string }];
   helperText: string;
   label: string;
 }> {
-  state = {
+  public state = {
     autoFocusInput: false,
     inputValue: '',
     selectedItems: [],
@@ -93,47 +93,7 @@ class DownshiftMultiple extends React.Component<{
     };
   }
 
-  handleKeyDown = event => {
-    const { inputValue, selectedItems } = this.state;
-    if (selectedItems.length && !inputValue.length && keycode(event) === 'backspace') {
-      this.setState({
-        selectedItems: selectedItems.slice(0, selectedItems.length - 1),
-        autoFocusInput: true,
-      });
-
-      this.props.onChange(selectedItems);
-    }
-  };
-
-  handleInputChange = event => {
-    this.setState({ inputValue: event.target.value });
-  };
-
-  handleChange = item => {
-    let { selectedItems } = this.state;
-
-    if (selectedItems.map(i => i.value).indexOf(item.value) === -1) {
-      selectedItems = [...selectedItems, item];
-    }
-
-    this.setState({
-      inputValue: '',
-      selectedItems,
-      autoFocusInput: true,
-    });
-
-    this.props.onChange(selectedItems);
-  };
-
-  handleDelete = item => () => {
-    const selectedItems = [...this.state.selectedItems];
-    selectedItems.splice(selectedItems.indexOf(item), 1);
-
-    this.setState({ selectedItems });
-    this.props.onChange(selectedItems);
-  };
-
-  render() {
+  public render() {
     const { classes, suggestions, helperText, label } = this.props;
     const { inputValue, selectedItems, autoFocusInput } = this.state;
 
@@ -198,6 +158,46 @@ class DownshiftMultiple extends React.Component<{
       </div>
     );
   }
+
+  public handleKeyDown = event => {
+    const { inputValue, selectedItems } = this.state;
+    if (selectedItems.length && !inputValue.length && keycode(event) === 'backspace') {
+      this.setState({
+        selectedItems: selectedItems.slice(0, selectedItems.length - 1),
+        autoFocusInput: true,
+      });
+
+      this.props.onChange(selectedItems);
+    }
+  };
+
+  public handleInputChange = event => {
+    this.setState({ inputValue: event.target.value });
+  };
+
+  public handleChange = item => {
+    let { selectedItems } = this.state;
+
+    if (selectedItems.map(i => i.value).indexOf(item.value) === -1) {
+      selectedItems = [...selectedItems, item];
+    }
+
+    this.setState({
+      inputValue: '',
+      selectedItems,
+      autoFocusInput: true,
+    });
+
+    this.props.onChange(selectedItems);
+  };
+
+  public handleDelete = item => () => {
+    const selectedItems = [...this.state.selectedItems];
+    selectedItems.splice(selectedItems.indexOf(item), 1);
+
+    this.setState({ selectedItems });
+    this.props.onChange(selectedItems);
+  };
 }
 
 const styles = theme => ({

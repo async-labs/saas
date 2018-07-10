@@ -1,8 +1,8 @@
 class Invitation {
-  _id: string;
-  teamId: String;
-  email: String;
-  createdAt: Date;
+  public _id: string;
+  public teamId: string;
+  public email: string;
+  public createdAt: Date;
 
   constructor(params) {
     Object.assign(this, params);

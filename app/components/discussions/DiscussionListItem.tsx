@@ -1,9 +1,9 @@
-import React from 'react';
-import Link from 'next/link';
 import Paper from '@material-ui/core/Paper';
-import { observer, inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
+import Link from 'next/link';
+import React from 'react';
 
-import { Store, Discussion, Team } from '../../lib/store';
+import { Discussion, Store, Team } from '../../lib/store';
 import DiscussionActionMenu from './DiscussionActionMenu';
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
 };
 
 class DiscussionListItem extends React.Component<Props> {
-  render() {
+  public render() {
     const { store, discussion, team } = this.props;
     const trimmingLength = 16;
 

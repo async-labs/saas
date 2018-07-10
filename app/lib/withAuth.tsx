@@ -1,5 +1,5 @@
-import React from 'react';
 import Router from 'next/router';
+import React from 'react';
 
 import { Store } from './store';
 import withStore from './withStore';
@@ -9,7 +9,7 @@ export default function withAuth(
   { loginRequired = true, logoutRequired = false } = {},
 ) {
   class App extends React.Component<{ store: Store }> {
-    static async getInitialProps(ctx) {
+    public static async getInitialProps(ctx) {
       const props: any = {};
 
       if (BaseComponent.getInitialProps) {
@@ -19,7 +19,7 @@ export default function withAuth(
       return props;
     }
 
-    componentDidMount() {
+    public componentDidMount() {
       const { store } = this.props;
 
       const user = store.currentUser;
@@ -46,7 +46,7 @@ export default function withAuth(
       }
     }
 
-    render() {
+    public render() {
       const { store } = this.props;
       const user = store.currentUser;
 

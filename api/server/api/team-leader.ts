@@ -1,8 +1,8 @@
 import * as express from 'express';
 
+import logger from '../logs';
 import Invitation from '../models/Invitation';
 import Team from '../models/Team';
-import logger from '../logs';
 import User from '../models/User';
 
 const router = express.Router();
@@ -10,7 +10,7 @@ const router = express.Router();
 // TODO: check for Team Leader properly
 
 router.use((req, res, next) => {
-  console.log('team leader API', req.path);
+  logger.debug('team leader API', req.path);
 
   if (!req.user) {
     res.status(401).json({ error: 'Unauthorized' });
@@ -24,7 +24,7 @@ router.post('/teams/add', async (req, res) => {
   try {
     const { name, avatarUrl } = req.body;
 
-    console.log(`Express route: ${name}, ${avatarUrl}`);
+    logger.debug(`Express route: ${name}, ${avatarUrl}`);
 
     const team = await Team.add({ userId: req.user.id, name, avatarUrl });
 
@@ -88,7 +88,7 @@ router.post('/teams/invite-member', async (req, res) => {
 
     res.json({ newInvitation });
   } catch (err) {
-    console.error(err);
+    logger.debug(err);
     res.json({ error: err.post || err.toString() });
   }
 });
@@ -101,7 +101,7 @@ router.post('/teams/remove-member', async (req, res) => {
 
     res.json({ done: 1 });
   } catch (err) {
-    console.error(err);
+    logger.debug(err);
     res.json({ error: err.post || err.toString() });
   }
 });

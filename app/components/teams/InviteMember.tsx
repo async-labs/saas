@@ -1,17 +1,17 @@
-import React from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import NProgress from 'nprogress';
 import { inject, observer } from 'mobx-react';
+import NProgress from 'nprogress';
+import React from 'react';
 
 import notify from '../../lib/notifier';
 import { Store } from '../../lib/store';
 
 type Props = {
   store: Store;
-  onClose: Function;
+  onClose: () => void;
   open: boolean;
 };
 
@@ -21,17 +21,44 @@ type State = {
 };
 
 class InviteMember extends React.Component<Props, State> {
-  state = {
+  public state = {
     email: '',
     disabled: false,
   };
 
-  handleClose = () => {
+  public render() {
+    const { open } = this.props;
+
+    return (
+      <Dialog onClose={this.handleClose} aria-labelledby="invite-memter-dialog-title" open={open}>
+        <DialogTitle id="invite-memter-dialog-title">Invite member</DialogTitle>
+        <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
+          <TextField
+            autoFocus
+            value={this.state.email}
+            placeholder="Email"
+            onChange={event => {
+              this.setState({ email: event.target.value });
+            }}
+          />
+          <p />
+          <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
+            Cancel
+          </Button>{' '}
+          <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
+            Invite
+          </Button>
+        </form>
+      </Dialog>
+    );
+  }
+
+  public handleClose = () => {
     this.setState({ email: '', disabled: false });
     this.props.onClose();
   };
 
-  onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  public onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { store } = this.props;
@@ -65,33 +92,6 @@ class InviteMember extends React.Component<Props, State> {
       NProgress.done();
     }
   };
-
-  render() {
-    const { open } = this.props;
-
-    return (
-      <Dialog onClose={this.handleClose} aria-labelledby="invite-memter-dialog-title" open={open}>
-        <DialogTitle id="invite-memter-dialog-title">Invite member</DialogTitle>
-        <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
-          <TextField
-            autoFocus
-            value={this.state.email}
-            placeholder="Email"
-            onChange={event => {
-              this.setState({ email: event.target.value });
-            }}
-          />
-          <p />
-          <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
-            Cancel
-          </Button>{' '}
-          <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
-            Invite
-          </Button>
-        </form>
-      </Dialog>
-    );
-  }
 }
 
 export default inject('store')(observer(InviteMember));

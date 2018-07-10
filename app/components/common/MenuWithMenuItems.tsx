@@ -1,25 +1,16 @@
-import React from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import React from 'react';
 
 class MenuWithMenuItems extends React.PureComponent<{
   menuOptions: any;
   itemOptions: any[];
 }> {
-  state = {
+  public state = {
     menuElm: null,
   };
 
-  handleClick = event => {
-    event.preventDefault();
-    this.setState({ menuElm: event.currentTarget });
-  };
-
-  handleClose = () => {
-    this.setState({ menuElm: null });
-  };
-
-  render() {
+  public render() {
     const { menuOptions, itemOptions } = this.props;
     const { menuElm } = this.state;
 
@@ -59,6 +50,15 @@ class MenuWithMenuItems extends React.PureComponent<{
       </div>
     );
   }
+
+  public handleClick = event => {
+    event.preventDefault();
+    this.setState({ menuElm: event.currentTarget });
+  };
+
+  public handleClose = () => {
+    this.setState({ menuElm: null });
+  };
 }
 
 export default MenuWithMenuItems;

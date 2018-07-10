@@ -1,21 +1,21 @@
-import { observable, action, IObservableArray, runInAction, decorate } from 'mobx';
+import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
 import NProgress from 'nprogress';
 
-import { getPostList, editDiscussion, addPost, deletePost } from '../api/team-member';
-import { Store, Team, Post } from './index';
+import { addPost, deletePost, editDiscussion, getPostList } from '../api/team-member';
+import { Post, Store, Team } from './index';
 
 class Discussion {
-  _id: string;
-  createdUserId: string;
-  store: Store;
-  team: Team;
+  public _id: string;
+  public createdUserId: string;
+  public store: Store;
+  public team: Team;
 
-  name: string;
-  slug: string;
-  memberIds: IObservableArray<string> = observable([]);
-  posts: IObservableArray<Post> = observable([]);
+  public name: string;
+  public slug: string;
+  public memberIds: IObservableArray<string> = observable([]);
+  public posts: IObservableArray<Post> = observable([]);
 
-  isLoadingPosts = false;
+  public isLoadingPosts = false;
 
   constructor(params) {
     this._id = params._id;
@@ -36,13 +36,13 @@ class Discussion {
     return this.memberIds.map(id => this.team.members.get(id));
   }
 
-  setInitialPosts(posts) {
+  public setInitialPosts(posts) {
     const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
 
     this.posts.replace(postObjs);
   }
 
-  async loadPosts() {
+  public async loadPosts() {
     if (this.isLoadingPosts || this.store.isServer) {
       return;
     }
@@ -68,14 +68,14 @@ class Discussion {
     }
   }
 
-  changeLocalCache(data) {
+  public changeLocalCache(data) {
     // TODO: remove if current user no longer access to this discussion
 
     this.name = data.name;
     this.memberIds.replace(data.memberIds || []);
   }
 
-  async edit(data) {
+  public async edit(data) {
     try {
       await editDiscussion({
         id: this._id,
@@ -91,22 +91,22 @@ class Discussion {
     }
   }
 
-  addPostToLocalCache(data) {
+  public addPostToLocalCache(data) {
     const postObj = new Post({ discussion: this, store: this.store, ...data });
     this.posts.push(postObj);
   }
 
-  editPostFromLocalCache(data) {
+  public editPostFromLocalCache(data) {
     const post = this.posts.find(t => t._id === data.id);
     post.changeLocalCache(data);
   }
 
-  removePostFromLocalCache(postId) {
+  public removePostFromLocalCache(postId) {
     const post = this.posts.find(t => t._id === postId);
     this.posts.remove(post);
   }
 
-  async addPost(content: string) {
+  public async addPost(content: string) {
     const { post } = await addPost({
       discussionId: this._id,
       content,
@@ -117,7 +117,7 @@ class Discussion {
     });
   }
 
-  async deletePost(post: Post) {
+  public async deletePost(post: Post) {
     await deletePost({
       id: post._id,
       discussionId: this._id,

@@ -7,11 +7,16 @@
     "build": "tsc --project tsconfig.json",
     "start": "NODE_ENV=production node production-server/app.js",
     "now": "now && now alias && now rm saas-api --safe --yes",
-    "lint": "tslint components pages lib server",
+    "lint": "tslint -p tsconfig.json",
     "test": "jest --coverage",
     "processes-8000": "ss -lptn 'sport = :8000'",
     "processes-node": "ps -e|grep node",
     "kill-processes-at-port": "lsof -i tcp:8000 | awk 'NR!=1 {print $2}' | xargs kill"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint && yarn build && cd ../app && yarn lint"
+    }
   },
   "jest": {
     "coverageDirectory": "./.coverage"
@@ -56,6 +61,7 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.8.2",
+    "husky": "^1.0.0-rc.13",
     "jest": "^22.4.4",
     "nodemon": "^1.17.4",
     "ts-node": "^6.0.3",

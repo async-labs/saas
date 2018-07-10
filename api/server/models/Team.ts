@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import logger from '../logs';
 
 import { generateNumberSlug } from '../utils/slugify';
 import User from './User';
@@ -73,8 +74,8 @@ interface ITeamModel extends mongoose.Model<ITeamDocument> {
 }
 
 class TeamClass extends mongoose.Model {
-  static async add({ userId, name, avatarUrl }) {
-    console.log(`Static method: ${name}, ${avatarUrl}`);
+  public static async add({ userId, name, avatarUrl }) {
+    logger.debug(`Static method: ${name}, ${avatarUrl}`);
 
     if (!userId || !name || !avatarUrl) {
       throw new Error('Bad data');
@@ -101,7 +102,7 @@ class TeamClass extends mongoose.Model {
     return team;
   }
 
-  static async updateTeam({ userId, teamId, name, avatarUrl }) {
+  public static async updateTeam({ userId, teamId, name, avatarUrl }) {
     const team = await this.findById(teamId, 'slug name defaultTeam teamLeaderId');
 
     if (!team) {
@@ -112,7 +113,7 @@ class TeamClass extends mongoose.Model {
       throw new Error('Permission denied');
     }
 
-    const modifier = { name: team.name, avatarUrl: avatarUrl };
+    const modifier = { name: team.name, avatarUrl };
 
     if (name !== team.name) {
       modifier.name = name;
@@ -127,15 +128,15 @@ class TeamClass extends mongoose.Model {
     return this.findById(teamId, 'name avatarUrl slug defaultTeam').lean();
   }
 
-  static findBySlug(slug: string) {
+  public static findBySlug(slug: string) {
     return this.findOne({ slug }).lean();
   }
 
-  static getList(userId: string) {
+  public static getList(userId: string) {
     return this.find({ memberIds: userId }).lean();
   }
 
-  static async removeMember({ teamId, teamLeaderId, userId }) {
+  public static async removeMember({ teamId, teamLeaderId, userId }) {
     const team = await this.findById(teamId).select('memberIds teamLeaderId');
 
     if (team.teamLeaderId !== teamLeaderId || teamLeaderId === userId) {

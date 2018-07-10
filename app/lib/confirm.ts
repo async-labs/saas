@@ -7,7 +7,7 @@ export default function confirm({
 }: {
   title: string;
   message: string;
-  onAnswer: Function;
+  onAnswer: (answer) => void;
 }) {
   openConfirmDialog({ title, message, onAnswer });
 }

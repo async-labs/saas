@@ -1,7 +1,7 @@
+import htmlescape from 'htmlescape';
+import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
 import JssProvider from 'react-jss/lib/JssProvider';
-import Document, { Head, Main, NextScript } from 'next/document';
-import htmlescape from 'htmlescape';
 
 import getContext from '../lib/context';
 
@@ -14,9 +14,9 @@ const {
 const env = { GA_TRACKING_ID, PRODUCTION_URL_APP, PRODUCTION_URL_API, StripePublishableKey };
 
 class MyDocument extends Document {
-  render() {
+  public render() {
     return (
-      <html lang="en" >
+      <html lang="en" style={{ overflow: 'overlay' }}>
         <Head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />

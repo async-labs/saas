@@ -1,9 +1,9 @@
-import React from 'react';
-import { withRouter } from 'next/router';
-import Router from 'next/router';
+import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Avatar from '@material-ui/core/Avatar';
+import { withRouter } from 'next/router';
+import Router from 'next/router';
+import React from 'react';
 
 class MenuWithLinks extends React.PureComponent<{
   src?: string;
@@ -11,19 +11,11 @@ class MenuWithLinks extends React.PureComponent<{
   options: any[];
   router: any;
 }> {
-  state = {
+  public state = {
     anchorEl: null,
   };
 
-  handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
-  render() {
+  public render() {
     const { options, src, alt, children, router } = this.props;
     const { anchorEl } = this.state;
 
@@ -90,6 +82,14 @@ class MenuWithLinks extends React.PureComponent<{
       </div>
     );
   }
+
+  public handleClick = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  public handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
 }
 
 export default withRouter(MenuWithLinks);

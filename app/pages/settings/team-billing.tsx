@@ -1,14 +1,13 @@
-import * as React from 'react';
-import Head from 'next/head';
 import { observer } from 'mobx-react';
+import Head from 'next/head';
+import * as React from 'react';
 
 import Grid from '@material-ui/core/Grid';
 
+import SettingList from '../../components/common/SettingList';
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
-import SettingList from '../../components/common/SettingList';
-
 
 const styleGrid = {
   height: '100%',
@@ -22,12 +21,12 @@ const styleGridItem = {
 type MyProps = { store: Store; isTL: boolean; teamSlug: string };
 
 class TeamBilling extends React.Component<MyProps> {
-  state = {
+  public state = {
     newName: '',
     disabled: false,
   };
 
-  render() {
+  public render() {
     const { store, isTL } = this.props;
     const { currentTeam } = store;
 
@@ -54,7 +53,7 @@ class TeamBilling extends React.Component<MyProps> {
             <Grid item sm={2} xs={12} style={styleGridItem}>
               <SettingList store={store} isTL={isTL} />
             </Grid>
-            <Grid item sm={10} xs={12} style={styleGridItem}>
+            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
               <h3>Team Billing</h3>
               <p>Only the Team Leader can access this page.</p>
               <p>Create your own team to become a Team Leader.</p>
@@ -74,7 +73,7 @@ class TeamBilling extends React.Component<MyProps> {
           <Grid item sm={2} xs={12} style={styleGridItem}>
             <SettingList store={store} isTL={isTL} />
           </Grid>
-          <Grid item sm={10} xs={12} style={styleGridItem}>
+          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
             <h3>Team Billing</h3>
             <p />
             <p>Card</p>
