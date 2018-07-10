@@ -28,7 +28,6 @@ class Discussion {
     this.memberIds.replace(params.memberIds || []);
 
     if (params.initialPosts) {
-      console.log(`initialPosts: ${params.initialPosts}`);
       this.setInitialPosts(params.initialPosts);
     }
   }
@@ -55,9 +54,8 @@ class Discussion {
       const { posts = [] } = await getPostList(this._id);
 
       runInAction(() => {
-        posts.forEach(t =>
-          this.posts.push(new Post({ discussion: this, store: this.store, ...t })),
-        );
+        const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
+        this.posts.replace(postObjs);
       });
     } catch (error) {
       console.error(error);

@@ -31,9 +31,9 @@ class Discussion extends React.Component<Props> {
     selectedPost: null,
   };
 
-  // componentDidMount() {
-  //   this.changeDiscussion(this.props);
-  // }
+  componentDidMount() {
+    this.changeDiscussion(this.props);
+  }
 
   componentWillReceiveProps(nextProps) {
     this.changeDiscussion(nextProps);

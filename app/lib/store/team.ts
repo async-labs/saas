@@ -55,7 +55,6 @@ class Team {
     }
 
     if (params.initialDiscussions) {
-      console.log(`params:${params.initialDiscussions.length}`);
       this.setInitialDiscussions(params.initialDiscussions);
     }
   }
