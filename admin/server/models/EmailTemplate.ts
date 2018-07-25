@@ -38,14 +38,12 @@ async function insertTemplates() {
           Note that any data you save on the demo app will be deleted after 30 days.
         </p>
         <p>
-          - If you found our SaaS boilerplate useful, please remember to <a href="https://github.com/async-labs/saas" target="blank">star our repo</a>.
+          If you're learning how to build a web app from scratch, check out our <a href="https://builderbook.org/book" target="blank">book</a>. 
         <br/>
-          - If you're learning how to build your own web app, check out our <a href="https://builderbook.org/book" target="blank">book</a>. 
-        <br/> 
-          - If you want to hire our team to build custom SaaS features, please fill out our <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>
+          You'll learn how to build with React/Next.js/Material-UI/Express, connect to MongoDB, set up user authentication, and more.
         </p>
         <p>
-          <a href="https://youtu.be/QiLXx-0W8Q4?t=1m7s" target="blank">We hope you don't like pain</a>.
+          If you want to hire our team to help you build a SaaS product, please apply using this <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>
         </p>
       
         Kelly & Timur, Team Async
