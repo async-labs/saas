@@ -278,6 +278,7 @@ class Team {
   get orderedDiscussions() {
     return this.discussions.slice().sort();
   }
+  
 }
 
 decorate(Team, {

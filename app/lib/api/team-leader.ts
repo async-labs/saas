@@ -2,12 +2,6 @@ import sendRequestAndGetResponse from './sendRequestAndGetResponse';
 
 const BASE_PATH = '/api/v1/team-leader';
 
-// subscribe to $50/mo plan
-// export const buyBook = ({ id, stripeToken }) =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/buy-book`, {
-//     body: JSON.stringify({ id, stripeToken }),
-//   });
-
 export const addTeam = data =>
   sendRequestAndGetResponse(`${BASE_PATH}/teams/add`, {
     body: JSON.stringify(data),
@@ -38,4 +32,24 @@ export const inviteMember = data =>
 export const removeMember = data =>
   sendRequestAndGetResponse(`${BASE_PATH}/teams/remove-member`, {
     body: JSON.stringify(data),
+  });
+
+export const createSubscriptionApiMethod = ({ teamId }: { teamId: string }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/subscribe-team`, {
+    body: JSON.stringify({ teamId }),
+  });
+
+export const cancelSubscriptionApiMethod = ({ teamId }: { teamId: string }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/cancel-subscription`, {
+    body: JSON.stringify({ teamId }),
+  });
+
+export const createCustomerApiMethod = ({ token }: { token: object }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/create-customer`, {
+    body: JSON.stringify({ token }),
+  });
+
+export const createNewCardAndUpdateCustomerApiMethod = ({ token }: { token: object }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/create-new-card-update-customer`, {
+    body: JSON.stringify({ token }),
   });

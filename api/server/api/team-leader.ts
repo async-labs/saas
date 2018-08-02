@@ -106,4 +106,66 @@ router.post('/teams/remove-member', async (req, res) => {
   }
 });
 
+router.post('/create-customer', async (req, res, next) => {
+  const { token } = req.body;
+
+  try {
+    const { hasCardInformation, stripeCard } = await User.createCustomer({
+      userId: req.user.id,
+      stripeToken: token,
+    });
+
+    res.json({ hasCardInformation, stripeCard });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/create-new-card-update-customer', async (req, res, next) => {
+  const { token } = req.body;
+
+  logger.debug('called express route');
+
+  try {
+    const { stripeCard } = await User.createNewCardUpdateCustomer({
+      userId: req.user.id,
+      stripeToken: token,
+    });
+
+    res.json({ stripeCard });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/subscribe-team', async (req, res, next) => {
+  const { teamId } = req.body;
+
+  try {
+    const { isSubscriptionActive } = await Team.subscribeTeam({
+      teamLeaderId: req.user.id,
+      teamId,
+    });
+
+    res.json({ isSubscriptionActive });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/cancel-subscription', async (req, res, next) => {
+  const { teamId } = req.body;
+
+  try {
+    const { isSubscriptionActive } = await Team.cancelSubscription({
+      teamLeaderId: req.user.id,
+      teamId,
+    });
+
+    res.json({ isSubscriptionActive });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

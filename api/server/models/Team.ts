@@ -4,6 +4,8 @@ import logger from '../logs';
 import { generateNumberSlug } from '../utils/slugify';
 import User from './User';
 
+import { cancelSubscription, createSubscription } from '../stripe';
+
 const mongoSchema = new mongoose.Schema({
   teamLeaderId: {
     type: String,
@@ -28,6 +30,20 @@ const mongoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isSubscriptionActive: {
+    type: Boolean,
+    default: false,
+  },
+  stripeSubscription: {
+    id: String,
+    object: String,
+    application_fee_percent: Number,
+    billing: String,
+    cancel_at_period_end: Boolean,
+    billing_cycle_anchor: Number,
+    canceled_at: Number,
+    created: Number,
+  },
 });
 
 interface ITeamDocument extends mongoose.Document {
@@ -38,6 +54,18 @@ interface ITeamDocument extends mongoose.Document {
   createdAt: Date;
 
   memberIds: string[];
+
+  isSubscriptionActive: boolean;
+  stripeSubscription: {
+    id: string;
+    object: string;
+    application_fee_percent: number,
+    billing: string,
+    cancel_at_period_end: boolean,
+    billing_cycle_anchor: number,
+    canceled_at: number,
+    created: number,
+  };
 }
 
 interface ITeamModel extends mongoose.Model<ITeamDocument> {
@@ -71,6 +99,20 @@ interface ITeamModel extends mongoose.Model<ITeamDocument> {
     teamLeaderId: string;
     userId: string;
   }): Promise<void>;
+  subscribeTeam({
+    teamLeaderId,
+    teamId,
+  }: {
+    teamLeaderId: string;
+    teamId: string;
+  }): Promise<ITeamDocument>;
+  cancelSubscription({
+    teamLeaderId,
+    teamId,
+  }: {
+    teamLeaderId: string;
+    teamId: string;
+  }): Promise<ITeamDocument>;
 }
 
 class TeamClass extends mongoose.Model {
@@ -144,6 +186,70 @@ class TeamClass extends mongoose.Model {
     }
 
     await this.findByIdAndUpdate(teamId, { $pull: { memberIds: userId } });
+  }
+
+  public static async subscribeTeam({ teamLeaderId, teamId }) {
+    const team = await this.findById(teamId).select('teamLeaderId isSubscriptionActive');
+
+    logger.debug(team.teamLeaderId, teamLeaderId);
+
+    if (team.teamLeaderId !== teamLeaderId) {
+      throw new Error('You do not have permission to subscribe Team.');
+    }
+
+    if (team.isSubscriptionActive) {
+      throw new Error('Team is already subscribed.');
+    }
+
+    const userWithCustomer = await User.findById(teamLeaderId, 'stripeCustomer');
+
+    logger.debug('static method Team', userWithCustomer.stripeCustomer.id);
+
+    const subscriptionObj = await createSubscription({
+      customerId: userWithCustomer.stripeCustomer.id,
+      teamId,
+      teamLeaderId,
+    });
+
+    return this.findByIdAndUpdate(
+      teamId,
+      {
+        stripeSubscription: subscriptionObj,
+        isSubscriptionActive: true,
+      },
+      { new: true, runValidators: true },
+    )
+      .select('isSubscriptionActive stripeSubscription')
+      .lean();
+  }
+
+  public static async cancelSubscription({ teamLeaderId, teamId }) {
+    const team = await this.findById(teamId).select(
+      'teamLeaderId isSubscriptionActive stripeSubscription',
+    );
+
+    if (team.teamLeaderId !== teamLeaderId) {
+      throw new Error('You do not have permission to subscribe Team.');
+    }
+
+    if (!team.isSubscriptionActive) {
+      throw new Error('Team is already unsubscribed.');
+    }
+
+    const cancelledSubscriptionObj = await cancelSubscription({
+      subscriptionId: team.stripeSubscription.id,
+    });
+
+    return this.findByIdAndUpdate(
+      teamId,
+      {
+        stripeSubscription: cancelledSubscriptionObj,
+        isSubscriptionActive: false,
+      },
+      { new: true, runValidators: true },
+    )
+      .select('isSubscriptionActive stripeSubscription')
+      .lean();
   }
 }
 

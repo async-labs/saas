@@ -9,6 +9,8 @@ import getEmailTemplate from './EmailTemplate';
 import Invitation from './Invitation';
 import Team from './Team';
 
+import { createCustomer, createNewCard, retrieveCard, updateCustomer } from '../stripe';
+
 const mongoSchema = new mongoose.Schema({
   googleId: {
     type: String,
@@ -46,11 +48,28 @@ const mongoSchema = new mongoose.Schema({
   displayName: String,
   avatarUrl: String,
 
-  isGithubConnected: {
+  stripeCustomer: {
+    id: String,
+    object: String,
+    created: Number,
+    currency: String,
+    default_source: String,
+    description: String,
+  },
+  stripeCard: {
+    id: String,
+    object: String,
+    brand: String,
+    funding: String,
+    country: String,
+    last4: String,
+    exp_month: Number,
+    exp_year: Number,
+  },
+  hasCardInformation: {
     type: Boolean,
     default: false,
   },
-  githubAccessToken: String,
 });
 
 export interface IUserDocument extends mongoose.Document {
@@ -66,8 +85,24 @@ export interface IUserDocument extends mongoose.Document {
 
   defaultTeamSlug: string;
 
-  isGithubConnected: boolean;
-  githubAccessToken: string;
+  hasCardInformation: boolean;
+  stripeCustomer: {
+    id: string;
+    default_source: string;
+    created: number;
+    object: string;
+    description: string;
+  };
+  stripeCard: {
+    id: string;
+    object: string;
+    brand: string;
+    country: string;
+    last4: string;
+    exp_month: number;
+    exp_year: number;
+    funding: string;
+  };
 }
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -98,6 +133,22 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     avatarUrl: string;
     googleToken: { refreshToken?: string; accessToken?: string };
   }): Promise<IUserDocument>;
+
+  createCustomer({
+    userId,
+    stripeToken,
+  }: {
+    userId: string;
+    stripeToken: object;
+  }): Promise<IUserDocument>;
+
+  createNewCardUpdateCustomer({
+    userId,
+    stripeToken,
+  }: {
+    userId: string;
+    stripeToken: object;
+  }): Promise<IUserDocument>;
 }
 
 // mongoSchema.pre('save', function(next) {
@@ -120,6 +171,53 @@ class UserClass extends mongoose.Model {
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('displayName avatarUrl slug')
+      .lean();
+  }
+
+  public static async createCustomer({ userId, stripeToken }) {
+    const user = await this.findById(userId, 'email');
+
+    const customerObj = await createCustomer({
+      token: stripeToken.id,
+      teamLeaderEmail: user.email,
+      teamLeaderId: userId,
+    });
+
+    logger.debug(customerObj.default_source.toString());
+
+    const cardObj = await retrieveCard({
+      customerId: customerObj.id,
+      cardId: customerObj.default_source.toString(),
+    });
+
+    const modifier = { stripeCustomer: customerObj, stripeCard: cardObj, hasCardInformation: true };
+
+    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
+      .select('stripeCustomer stripeCard hasCardInformation')
+      .lean();
+  }
+
+  public static async createNewCardUpdateCustomer({ userId, stripeToken }) {
+    const user = await this.findById(userId, 'stripeCustomer');
+
+    logger.debug('called static method on User');
+
+    const newCardObj = await createNewCard({
+      customerId: user.stripeCustomer.id,
+      token: stripeToken.id,
+    });
+
+    logger.debug(newCardObj.id);
+
+    const updatedCustomerObj = await updateCustomer({
+      customerId: user.stripeCustomer.id,
+      newCardId: newCardObj.id,
+    });
+
+    const modifier = { stripeCustomer: updatedCustomerObj, stripeCard: newCardObj };
+
+    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
+      .select('stripeCard')
       .lean();
   }
 
