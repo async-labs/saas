@@ -45,7 +45,10 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   - `app` - user-facing web app with Next/Express server, responsible for rendering pages (either client-side or server-side). `app` sends requests via API methods and fetch to `api` server's Express routes.
   - `api` - server-only web app with Express server, responsible for processing requests for internal and external APIs.
   - we prepared both apps for easy deployment to `now` by Zeit.
-- (upcoming) Payments with `Stripe`: subscribing to plan, managing subscription and card information.
+- **Subscriptions with `Stripe`**:
+  - subscribe/unsubscribe Team to plan,
+  - update card information,
+  - verified Stripe webhook for failed payment for subscription.
 
 
 ## Run locally
@@ -58,26 +61,41 @@ To run locally, you will need to run two apps: `api` and `app`.
   
   `.env`:
   ```
-  # Used in api/server/app.ts, REQUIRED
+  # Used in api/server/app.ts
   MONGO_URL="xxxxxx"
   MONGO_URL_TEST="xxxxxx"
   SESSION_SECRET="xxxxxx"
 
-  # Used in api/server/google.ts, REQUIRED
+  # Used in api/server/google.ts
   Google_clientID="xxxxxx"
   Google_clientSecret="xxxxxx"
 
-  # Used in api/server/aws-s3.ts and api/server/aws-ses.ts, OPTIONAL
+  # Used in api/server/aws-s3.ts and api/server/aws-ses.ts
   Amazon_accessKeyId="xxxxxx"
   Amazon_secretAccessKey="xxxxxx"
 
-  # Used in api/server/models/Invitation.ts and api/server/models/User.ts, OPTIONAL
+  # Used in api/server/models/Invitation.ts and api/server/models/User.ts
   EMAIL_SUPPORT_FROM_ADDRESS="xxxxxx"
 
-  # Used in api/server/mailchimp.ts, OPTIONAL
+  # Used in api/server/mailchimp.ts
   MAILCHIMP_API_KEY="xxxxxx"
   MAILCHIMP_REGION="xxxxxx"
   MAILCHIMP_SAAS_ALL_LIST_ID="xxxxxx"
+
+  # Used in api/server/stripe.ts
+  Stripe_Test_SecretKey="sk_test_xxxxxx"
+  Stripe_Live_SecretKey="sk_live_xxxxxx"
+
+  Stripe_Test_PublishableKey="pk_test_xxxxxx"
+  Stripe_Live_PublishableKey="pk_live_xxxxxx"
+
+  Stripe_Test_PlanId="plan_xxxxxx"
+  Stripe_Live_PlanId="plan_xxxxxx"
+
+  Stripe_Live_EndpointSecret="whsec_xxxxxx"
+
+  PRODUCTION_URL_APP="https://saas-app.async-await.com"
+  PRODUCTION_URL_API="https://saas-api.async-await.com"
   ```
   Important: The above environmental variables are available on the server only. You should add your `.env` file to `.gitignore` inside the `api` folder so that your secret keys are not stored on a remote Github repo.
   
@@ -95,9 +113,10 @@ To run locally, you will need to run two apps: `api` and `app`.
 #### Running `app` app:
 - Navigate to the `app` folder, run `yarn` to add all packages, then run the command below and navigate to `http://localhost:3000`:
   ```
-  GA_TRACKING_ID=UA-xxxxxxxxx-x yarn dev
+  GA_TRACKING_ID=UA-xxxxxxxxx-x StripePublishableKey=pk_xxxxxx yarn dev
   ```
   - To get `GA_TRACKING_ID`, set up Google Analytics and follow [these instructions](https://support.google.com/analytics/answer/1008080?hl=en) to find your tracking ID.
+  - To get `StripePublishableKey`, go to your Stripe dashboard, click `Developers`, then click `API keys`.
   
   You are welcome to remove Google Analytics integration or pass universally available variables inside the code. If you do so, your command to run `app` will be:
   ```
@@ -134,6 +153,7 @@ To deploy the two apps (`api` and `app`), follow the instructions below.
     "env": {
         "NODE_ENV": "production",
         "GA_TRACKING_ID": "UA-xxxxxxxxx-x",
+        "StripePublishableKey": "pk_live_xxxxxx",
         "PRODUCTION_URL_APP": "https://saas-app.async-await.com",
         "PRODUCTION_URL_API": "https://saas-api.async-await.com"
     },
