@@ -91,10 +91,10 @@ const menuUnderTeamListLeft = () => [
 
 const menuUnderTeamListRight = () => [
   {
-    text: 'Your Settings',
-    href: '/settings/your-settings',
+    text: 'Your Profile',
+    href: '/settings/your-profile',
     simple: true,
-    highlighterSlug: '/your-settings',
+    highlighterSlug: '/your-profile',
   },
   {
     text: 'Log out',
@@ -268,50 +268,54 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
                   borderRight: '0.5px #707070 solid',
                 }}
               >
-                <MenuWithLinks
-                  options={getTeamOptionsMenuWithLinksLeft(store.teams).concat(
-                    this.state.isTL
-                      ? menuUnderTeamListLeftTL(currentTeam)
-                      : menuUnderTeamListLeft(),
-                  )}
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between', margin: '0px 10px' }}
                 >
-                  <Avatar
-                    src={
-                      !currentTeam
-                        ? 'https://storage.googleapis.com/async-await/async-logo-40.svg'
-                        : currentTeam.avatarUrl
-                    }
-                    alt={`Logo of ${currentTeam.name}`}
-                    style={{
-                      margin: '20px auto',
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                    }}
-                  />
+                  <MenuWithLinks
+                    options={getTeamOptionsMenuWithLinksLeft(store.teams).concat(
+                      this.state.isTL
+                        ? menuUnderTeamListLeftTL(currentTeam)
+                        : menuUnderTeamListLeft(),
+                    )}
+                  >
+                    <Avatar
+                      src={
+                        !currentTeam
+                          ? 'https://storage.googleapis.com/async-await/async-logo-40.svg'
+                          : currentTeam.avatarUrl
+                      }
+                      alt={`Logo of ${currentTeam.name}`}
+                      style={{
+                        margin: '20px auto',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                      }}
+                    />
 
-                  <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
-                    arrow_drop_down
-                  </i>
-                </MenuWithLinks>
-                <MenuWithLinks options={menuUnderTeamListRight()}>
-                  <Avatar
-                    src={
-                      !currentTeam
-                        ? 'https://storage.googleapis.com/async-await/default-user.png'
-                        : currentUser.avatarUrl
-                    }
-                    alt={`Logo of ${currentUser.displayName}`}
-                    style={{
-                      margin: '20px auto',
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                    }}
-                  />
+                    <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
+                      arrow_drop_down
+                    </i>
+                  </MenuWithLinks>
+                  <MenuWithLinks options={menuUnderTeamListRight()}>
+                    <Avatar
+                      src={
+                        !currentTeam
+                          ? 'https://storage.googleapis.com/async-await/default-user.png'
+                          : currentUser.avatarUrl
+                      }
+                      alt={`Logo of ${currentUser.displayName}`}
+                      style={{
+                        margin: '20px auto',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                      }}
+                    />
 
-                  <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
-                    arrow_drop_down
-                  </i>
-                </MenuWithLinks>
+                    <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
+                      arrow_drop_down
+                    </i>
+                  </MenuWithLinks>
+                </div>
                 <hr />
                 <p />
                 <p />

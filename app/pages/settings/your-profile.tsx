@@ -5,8 +5,10 @@ import TextField from '@material-ui/core/TextField';
 import Head from 'next/head';
 import NProgress from 'nprogress';
 import * as React from 'react';
+import StripeCheckout from 'react-stripe-checkout';
 
-import SettingList from '../../components/common/SettingList';
+import env from '../../lib/env';
+
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
@@ -17,86 +19,59 @@ import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
 
+const { StripePublishableKey } = env;
+
 const styleGrid = {
   height: '100%',
 };
 
-const styleGridItem = {
-  padding: '0px 20px',
-  borderRight: '0.5px #707070 solid',
-};
-
-type MyProps = { store: Store; isTL: boolean; teamSlug: string };
+type MyProps = { store: Store; isTL: boolean; error?: string };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
-class TeamProfile extends React.Component<MyProps, MyState> {
+class YourProfile extends React.Component<MyProps, MyState> {
+  public static getInitialProps({ query }) {
+    const { error } = query;
+
+    return { error };
+  }
+
   constructor(props) {
     super(props);
 
     this.state = {
-      newName: this.props.store.currentTeam.name,
-      newAvatarUrl: this.props.store.currentTeam.avatarUrl,
+      newName: this.props.store.currentUser.displayName,
+      newAvatarUrl: this.props.store.currentUser.avatarUrl,
       disabled: false,
     };
   }
 
+  public componentDidMount() {
+    const { error } = this.props;
+
+    if (error) {
+      notify(error);
+    }
+  }
+
   public render() {
-    const { store, isTL } = this.props;
-    const { currentTeam } = store;
+    const { currentUser } = this.props.store;
     const { newName, newAvatarUrl } = this.state;
-
-    if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return (
-        <div style={{ padding: '20px' }}>
-          <p>You did not select any team.</p>
-          <p>
-            To access this page, please select existing team or create new team if you have no
-            teams.
-          </p>
-        </div>
-      );
-    }
-
-    if (!isTL) {
-      return (
-        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
-          <Head>
-            <title>Team Profile</title>
-            <meta name="description" content="description" />
-          </Head>
-          <Grid container style={styleGrid}>
-            <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} />
-            </Grid>
-            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-              <h3>Team Profile</h3>
-              <p>Only Team Leader can access this page.</p>
-              <p>Create your own team to become Team Leader.</p>
-            </Grid>
-          </Grid>
-        </div>
-      );
-    }
 
     return (
       <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
         <Head>
-          <title>Team Profile</title>
+          <title>Your Profile at Async</title>
           <meta name="description" content="description" />
         </Head>
         <Grid container style={styleGrid}>
-          <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} />
-          </Grid>
-          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-            <h3>Team Profile</h3>
-            <p />
-            <form onSubmit={this.onSubmit}>
-              <h4>Team name</h4>
+          <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
+            <h3>Your Profile</h3>
+            <form onSubmit={this.onSubmit} autoComplete="off">
+              <h4>Your name</h4>
               <TextField
                 autoComplete="off"
                 value={newName}
-                helperText="Team name as seen by your team members"
+                helperText="Your name as seen by your team members"
                 onChange={event => {
                   this.setState({ newName: event.target.value });
                 }}
@@ -112,9 +87,9 @@ class TeamProfile extends React.Component<MyProps, MyState> {
                 Update name
               </Button>
             </form>
+
             <br />
-            <br />
-            <h4>Team logo</h4>
+            <h4>Your photo</h4>
             <Avatar
               src={newAvatarUrl}
               style={{
@@ -126,8 +101,13 @@ class TeamProfile extends React.Component<MyProps, MyState> {
               }}
             />
             <label htmlFor="upload-file">
-              <Button variant="outlined" color="primary" component="span">
-                Update logo
+              <Button
+                variant="outlined"
+                color="primary"
+                component="span"
+                disabled={this.state.disabled}
+              >
+                Update photo
               </Button>
             </label>
             <input
@@ -138,16 +118,57 @@ class TeamProfile extends React.Component<MyProps, MyState> {
               style={{ display: 'none' }}
               onChange={this.uploadFile}
             />
+            <p />
             <br />
-            <br />
-            <br />
-            <h4>Export team's data</h4>
-            <a href={`/export/${currentTeam.slug}`}>
-              <Button variant="outlined" color="primary">
-                Export data
-              </Button>
-            </a>
-            <br />
+            <h4>Card information</h4>
+            {currentUser && !currentUser.stripeCard ? (
+              <StripeCheckout
+                stripeKey={StripePublishableKey}
+                token={this.addCard}
+                name="Add card information"
+                email={currentUser.email}
+                allowRememberMe={false}
+                panelLabel="Add card"
+                description={'This is your default payment method.'}
+              >
+                <Button variant="raised" color="primary">
+                  Add card
+                </Button>
+              </StripeCheckout>
+            ) : (
+              <span>
+                {' '}
+                <i
+                  className="material-icons"
+                  color="action"
+                  style={{ verticalAlign: 'text-bottom' }}
+                >
+                  done
+                </i>{' '}
+                Your default payment method:
+                <li>
+                  {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
+                </li>
+                <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
+                <li>
+                  Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
+                </li>
+                <p />
+                <StripeCheckout
+                  stripeKey={StripePublishableKey}
+                  token={this.addNewCardOnClick}
+                  name="Add new card"
+                  email={currentUser.email}
+                  allowRememberMe={false}
+                  panelLabel="Update card"
+                  description={'New card will be your default payment method.'}
+                >
+                  <Button variant="outlined" color="primary">
+                    Update card
+                  </Button>
+                </StripeCheckout>
+              </span>
+            )}
             <br />
           </Grid>
         </Grid>
@@ -155,24 +176,62 @@ class TeamProfile extends React.Component<MyProps, MyState> {
     );
   }
 
+  private addCard = async token => {
+    const { currentUser } = this.props.store;
+
+    NProgress.start();
+    this.setState({ disabled: true });
+
+    try {
+      await currentUser.createCustomer({ token });
+      notify('Success!');
+    } catch (err) {
+      notify(err);
+    } finally {
+      this.setState({ disabled: false });
+      NProgress.done();
+    }
+  };
+
+  private addNewCardOnClick = async token => {
+    const { currentUser } = this.props.store;
+
+    NProgress.start();
+    this.setState({ disabled: true });
+
+    try {
+      await currentUser.createNewCardAndUpdateCustomer({ token });
+      notify('You successfully updated card information.');
+    } catch (err) {
+      notify(err);
+    } finally {
+      this.setState({ disabled: false });
+      NProgress.done();
+    }
+  };
+
   private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const { currentUser } = this.props.store;
+
     const { newName, newAvatarUrl } = this.state;
-    const { currentTeam } = this.props.store;
 
     if (!newName) {
-      notify('Team name is required');
+      notify('Name is required');
       return;
     }
+
+    NProgress.start();
 
     try {
       this.setState({ disabled: true });
 
-      await currentTeam.edit({ name: newName, avatarUrl: newAvatarUrl });
-
-      notify('You successfully updated Team name.');
+      await currentUser.updateProfile({ name: newName, avatarUrl: newAvatarUrl });
+      NProgress.done();
+      notify('You successfully updated your profile.');
     } catch (error) {
-      console.log(error);
+      NProgress.done();
       notify(error);
     } finally {
       this.setState({ disabled: false });
@@ -181,12 +240,12 @@ class TeamProfile extends React.Component<MyProps, MyState> {
 
   private uploadFile = async () => {
     const { store } = this.props;
-    const { currentTeam } = store;
+    const { currentUser } = store;
 
     const file = document.getElementById('upload-file').files[0];
     document.getElementById('upload-file').value = '';
     const bucket = 'async-teams-avatars';
-    const prefix = `${currentTeam.slug}`;
+    const prefix = `${currentUser.slug}`;
 
     if (file == null) {
       return notify('No file selected.');
@@ -218,18 +277,19 @@ class TeamProfile extends React.Component<MyProps, MyState> {
         newAvatarUrl: responseFromApiServerForUpload.url,
       });
 
-      await currentTeam.edit({ name: currentTeam.name, avatarUrl: this.state.newAvatarUrl });
+      await currentUser.updateProfile({
+        name: this.state.newName,
+        avatarUrl: this.state.newAvatarUrl,
+      });
 
-      NProgress.done();
-      notify('You successfully uploaded new Team logo.');
+      notify('You successfully uploaded new photo.');
     } catch (error) {
-      console.log(error);
       notify(error);
-      NProgress.done();
     } finally {
       this.setState({ disabled: false });
+      NProgress.done();
     }
   };
 }
 
-export default withAuth(withLayout(TeamProfile));
+export default withAuth(withLayout(YourProfile, { teamRequired: false }));

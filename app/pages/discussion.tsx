@@ -149,6 +149,7 @@ class Discussion extends React.Component<Props> {
           />
         </Head>
         <h4 style={{ marginBottom: '1em' }}>{currentDiscussion.name}</h4>
+        Visible to :{' '}
         {currentDiscussion.members.map(m => (
           <Tooltip
             title={m.displayName}
