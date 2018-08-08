@@ -126,7 +126,7 @@ class TeamClass extends mongoose.Model {
     const slug = await generateNumberSlug(this);
 
     let defaultTeam = false;
-    if ((await this.find({ teamLeaderId: userId }).count()) === 0) {
+    if ((await this.countDocuments({ teamLeaderId: userId })) === 0) {
       await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: slug } });
       defaultTeam = true;
     }

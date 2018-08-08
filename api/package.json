@@ -22,8 +22,8 @@
     "coverageDirectory": "./.coverage"
   },
   "dependencies": {
-    "@types/mongoose": "^5.0.16",
-    "@types/node": "^10.3.3",
+    "@types/mongoose": "^5.2.4",
+    "@types/node": "^10.5.7",
     "aws-sdk": "^2.255.1",
     "compression": "^1.7.2",
     "connect-mongo": "^2.0.0",
@@ -40,12 +40,12 @@
     "isomorphic-unfetch": "^2.0.0",
     "lodash": "^4.17.10",
     "marked": "^0.4.0",
-    "mongoose": "^5.1.5",
+    "mongoose": "^5.2.7",
     "passport": "^0.4.0",
     "passport-google-oauth": "^1.0.0",
     "qs": "^6.5.2",
     "request": "^2.87.0",
-    "stripe": "^6.1.1",
+    "stripe": "^6.7.0",
     "typescript": "2.8.3",
     "winston": "^3.0.0-rc5"
   },

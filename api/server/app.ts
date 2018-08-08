@@ -11,6 +11,7 @@ import * as path from 'path';
 import api from './api';
 import { signRequestForLoad } from './aws-s3';
 import auth from './google';
+import { stripeWebHooks } from './stripe';
 
 import logger from './logs';
 import Team from './models/Team';
@@ -24,7 +25,10 @@ const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_API;
 
 const MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
 
-mongoose.connect(MONGO_URL);
+mongoose.connect(
+  MONGO_URL,
+  { useNewUrlParser: true },
+);
 
 const server = express();
 
@@ -34,6 +38,9 @@ server.use(cors({ origin, credentials: true }));
 
 server.use(helmet());
 server.use(compression());
+
+stripeWebHooks({ server });
+
 server.use(express.json());
 
 const MongoStore = mongoSessionStore(session);

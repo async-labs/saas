@@ -266,11 +266,13 @@ class UserClass extends mongoose.Model {
       defaultTeamSlug: '',
     });
 
+    const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
+
     const template = await getEmailTemplate('welcome', {
       userName: displayName,
     });
 
-    if ((await Invitation.find({ email }).count()) === 0) {
+    if (!hasInvitation) {
       try {
         await sendEmail({
           from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,

@@ -2,6 +2,8 @@ import { action, computed, decorate, IObservableArray, observable, runInAction }
 import Router from 'next/router';
 
 import {
+  cancelSubscriptionApiMethod,
+  createSubscriptionApiMethod,
   getTeamInvitedUsers,
   getTeamMembers,
   inviteMember,
@@ -27,6 +29,8 @@ class Team {
   public avatarUrl: string;
   public memberIds: IObservableArray<string> = observable([]);
 
+  public isSubscriptionActive: boolean;
+
   public members: Map<string, User> = new Map();
   public invitedUsers: Map<string, Invitation> = new Map();
 
@@ -47,6 +51,8 @@ class Team {
     this.avatarUrl = params.avatarUrl;
     this.memberIds.replace(params.memberIds || []);
     this.currentDiscussionSlug = params.currentDiscussionSlug || null;
+
+    this.isSubscriptionActive = params.isSubscriptionActive;
 
     this.store = params.store;
 
@@ -278,7 +284,34 @@ class Team {
   get orderedDiscussions() {
     return this.discussions.slice().sort();
   }
-  
+
+  public async createSubscription({ teamId }: { teamId: string }) {
+    try {
+      const { isSubscriptionActive } = await createSubscriptionApiMethod({ teamId });
+
+      // console.log(isSubscriptionActive);
+
+      runInAction(() => {
+        this.isSubscriptionActive = isSubscriptionActive;
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  public async cancelSubscription({ teamId }: { teamId: string }) {
+    try {
+      const { isSubscriptionActive } = await cancelSubscriptionApiMethod({ teamId });
+
+      runInAction(() => {
+        this.isSubscriptionActive = isSubscriptionActive;
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 }
 
 decorate(Team, {
@@ -290,6 +323,8 @@ decorate(Team, {
   invitedUsers: observable,
   isLoadingMembers: observable,
   isInitialMembersLoaded: observable,
+
+  isSubscriptionActive: observable,
 
   edit: action,
   setInitialMembers: action,

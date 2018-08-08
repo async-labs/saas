@@ -48,40 +48,54 @@ Router.onRouteChangeComplete = url => {
 
 Router.onRouteChangeError = () => NProgress.done();
 
-const getTeamOptionsMenuWithLinks = teams =>
+const getTeamOptionsMenuWithLinksLeft = teams =>
   teams.map(t => ({
     text: t.name,
     avatarUrl: t.avatarUrl,
-    href: `/discussion?teamSlug=${t.slug}`,
-    as: `/team/${t.slug}/d`,
+    href: `/project?teamSlug=${t.slug}`,
+    as: `/team/${t.slug}/projects`,
     simple: false,
     highlighterSlug: `/team/${t.slug}/`,
   }));
 
-const menuUnderTeamList = (team, isTL) => [
+const menuUnderTeamListLeftTL = team => [
   {
     separator: true,
   },
   {
-    text: 'Create new team',
+    text: 'Team Settings',
+    href: `/settings/team-members?teamSlug=${team.slug}`,
+    as: `/team/${team.slug}/settings/team-members`,
+    simple: true,
+    highlighterSlug: '/settings/team-',
+  },
+  {
+    text: 'Create new Team',
     href: '/create-team',
     simple: true,
     highlighterSlug: '/create-team',
   },
-  isTL
-    ? {
-        text: 'Settings',
-        href: `/settings/team-members?teamSlug=${team.slug}`,
-        as: `/team/${team.slug}/settings/team-members`,
-        simple: true,
-        highlighterSlug: '/settings',
-      }
-    : {
-        text: 'Settings',
-        href: '/settings/your-profile',
-        simple: true,
-        highlighterSlug: '/settings',
-      },
+];
+
+const menuUnderTeamListLeft = () => [
+  {
+    separator: true,
+  },
+  {
+    text: 'Create new Team',
+    href: '/create-team',
+    simple: true,
+    highlighterSlug: '/create-team',
+  },
+];
+
+const menuUnderTeamListRight = () => [
+  {
+    text: 'Your Settings',
+    href: '/settings/your-settings',
+    simple: true,
+    highlighterSlug: '/your-settings',
+  },
   {
     text: 'Log out',
     href: `${LOG_OUT_URL}/logout`,
@@ -138,11 +152,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
         teamSlug = query.teamSlug;
       }
 
-      if (pathname.includes('/login')) {
-        firstGridItem = false;
-      }
-
-      if (pathname.includes('/invitation')) {
+      if (pathname.includes('/login') || pathname.includes('/invitation')) {
         firstGridItem = false;
       }
 
@@ -188,7 +198,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
       // Add teamRequired: false to some pages that don't require team
 
       const { store, firstGridItem } = this.props;
-      const { currentTeam } = store;
+      const { currentTeam, currentUser } = store;
 
       if (store.isLoggingIn) {
         return (
@@ -200,7 +210,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
         );
       }
 
-      if (!store.currentUser) {
+      if (!currentUser) {
         return (
           <ThemeWrapper pageContext={this.pageContext} firstGridItem={firstGridItem}>
             <Grid item sm={12} xs={12}>
@@ -231,8 +241,8 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
           );
         } else {
           return (
-            <ThemeWrapper pageContext={this.pageContext} firstGridItem={false}>
-              <Grid item sm={12} xs={12}>
+            <ThemeWrapper pageContext={this.pageContext} firstGridItem={firstGridItem}>
+              <Grid item sm={10} xs={12}>
                 <BaseComponent isTL={this.state.isTL} {...this.props} />
               </Grid>
             </ThemeWrapper>
@@ -259,8 +269,10 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
                 }}
               >
                 <MenuWithLinks
-                  options={getTeamOptionsMenuWithLinks(store.teams).concat(
-                    menuUnderTeamList(currentTeam, this.state.isTL),
+                  options={getTeamOptionsMenuWithLinksLeft(store.teams).concat(
+                    this.state.isTL
+                      ? menuUnderTeamListLeftTL(currentTeam)
+                      : menuUnderTeamListLeft(),
                   )}
                 >
                   <Avatar
@@ -270,6 +282,25 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
                         : currentTeam.avatarUrl
                     }
                     alt={`Logo of ${currentTeam.name}`}
+                    style={{
+                      margin: '20px auto',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                    }}
+                  />
+
+                  <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
+                    arrow_drop_down
+                  </i>
+                </MenuWithLinks>
+                <MenuWithLinks options={menuUnderTeamListRight()}>
+                  <Avatar
+                    src={
+                      !currentTeam
+                        ? 'https://storage.googleapis.com/async-await/default-user.png'
+                        : currentUser.avatarUrl
+                    }
+                    alt={`Logo of ${currentUser.displayName}`}
                     style={{
                       margin: '20px auto',
                       cursor: 'pointer',

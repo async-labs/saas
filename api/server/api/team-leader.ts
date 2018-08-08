@@ -20,7 +20,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.post('/teams/add', async (req, res) => {
+router.post('/teams/add', async (req, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
@@ -30,12 +30,11 @@ router.post('/teams/add', async (req, res) => {
 
     res.json(team);
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/teams/update', async (req, res) => {
+router.post('/teams/update', async (req, res, next) => {
   try {
     const { teamId, name, avatarUrl } = req.body;
 
@@ -48,23 +47,21 @@ router.post('/teams/update', async (req, res) => {
 
     res.json(team);
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.get('/teams/get-members', async (req, res) => {
+router.get('/teams/get-members', async (req, res, next) => {
   try {
     const users = await User.getTeamMembers({ userId: req.user.id, teamId: req.query.teamId });
 
     res.json({ users });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.get('/teams/get-invited-users', async (req, res) => {
+router.get('/teams/get-invited-users', async (req, res, next) => {
   try {
     const users = await Invitation.getTeamInvitedUsers({
       userId: req.user.id,
@@ -73,27 +70,23 @@ router.get('/teams/get-invited-users', async (req, res) => {
 
     res.json({ users });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/teams/invite-member', async (req, res) => {
+router.post('/teams/invite-member', async (req, res, next) => {
   try {
     const { teamId, email } = req.body;
-
-    await Invitation.add({ userId: req.user.id, teamId, email });
 
     const newInvitation = await Invitation.add({ userId: req.user.id, teamId, email });
 
     res.json({ newInvitation });
   } catch (err) {
-    logger.debug(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/teams/remove-member', async (req, res) => {
+router.post('/teams/remove-member', async (req, res, next) => {
   try {
     const { teamId, userId } = req.body;
 
@@ -101,8 +94,7 @@ router.post('/teams/remove-member', async (req, res) => {
 
     res.json({ done: 1 });
   } catch (err) {
-    logger.debug(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 

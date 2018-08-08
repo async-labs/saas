@@ -100,8 +100,8 @@
     "@types/node" "*"
 
 "@types/bson@*":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@types/bson/-/bson-1.0.8.tgz#6ad272b3f049e9598ec33aed09cf56d8946b75f1"
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@types/bson/-/bson-1.0.11.tgz#c95ad69bb0b3f5c33b4bb6cc86d86cafb273335c"
   dependencies:
     "@types/node" "*"
 
@@ -144,24 +144,28 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
 
 "@types/mongodb@*":
-  version "3.0.20"
-  resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-3.0.20.tgz#08c9d82a8bdb00f9fb91bd0f56da5a8d68f78f36"
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-3.1.3.tgz#73a2dba96cc10e9c9b0670a1a34a0caefe2c6c37"
   dependencies:
     "@types/bson" "*"
     "@types/events" "*"
     "@types/node" "*"
 
-"@types/mongoose@^5.0.16":
-  version "5.0.16"
-  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.0.16.tgz#1ac781533740f107e6c20cd8b1867aace8a4c25a"
+"@types/mongoose@^5.2.4":
+  version "5.2.4"
+  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.2.4.tgz#ad66ba1d7bff5d854c35ee88a00cdda0df2acd70"
   dependencies:
     "@types/events" "*"
     "@types/mongodb" "*"
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^10.3.3":
+"@types/node@*":
   version "10.3.3"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.3.tgz#8798d9e39af2fa604f715ee6a6b19796528e46c3"
+
+"@types/node@^10.5.7":
+  version "10.5.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.5.7.tgz#960d9feb3ade2233bcc9843c918d740b4f78a7cf"
 
 "@types/passport@^0.4.5":
   version "0.4.5"
@@ -641,9 +645,9 @@ binary-extensions@^1.0.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.11.0.tgz#46aa1751fb6a2f93ee5e689bb1087d4b14c6c205"
 
-bluebird@3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.0.tgz#791420d7f551eea2897453a8a77653f96606d67c"
+bluebird@3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
 
 body-parser@1.18.2:
   version "1.18.2"
@@ -1152,7 +1156,7 @@ debug@2.6.9, debug@^2.1.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.
   dependencies:
     ms "2.0.0"
 
-debug@^3.1.0:
+debug@3.1.0, debug@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   dependencies:
@@ -3467,18 +3471,20 @@ mongodb-core@2.1.19:
     bson "~1.0.4"
     require_optional "~1.0.0"
 
-mongodb-core@3.0.8:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-3.0.8.tgz#8d401f4eab6056c0d874a3d5844a4844f761d4d7"
+mongodb-core@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-3.1.0.tgz#af91f36fd560ed785f4e61e694432df4d3698aad"
   dependencies:
     bson "~1.0.4"
     require_optional "^1.0.1"
+  optionalDependencies:
+    saslprep "^1.0.0"
 
-mongodb@3.0.9:
-  version "3.0.9"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.0.9.tgz#742e685e45ac9c3ead02a91c9ebaae7165bb2def"
+mongodb@3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.1.1.tgz#c018c4b277614e8b1e08426d5bcbe1a7e5cdbd74"
   dependencies:
-    mongodb-core "3.0.8"
+    mongodb-core "3.1.0"
 
 mongodb@^2.0.36:
   version "2.2.35"
@@ -3492,18 +3498,19 @@ mongoose-legacy-pluralize@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
 
-mongoose@^5.1.5:
-  version "5.1.5"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.1.5.tgz#0d0b4dc658deeb7ad9794af7453442ecf7fc7cb0"
+mongoose@^5.2.7:
+  version "5.2.7"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.2.7.tgz#679a682cc744f7fbcc14f23df77e9d8d5dfd043d"
   dependencies:
     async "2.6.1"
     bson "~1.0.5"
     kareem "2.2.1"
     lodash.get "4.4.2"
-    mongodb "3.0.9"
+    mongodb "3.1.1"
+    mongodb-core "3.1.0"
     mongoose-legacy-pluralize "1.0.2"
     mpath "0.4.1"
-    mquery "3.0.0"
+    mquery "3.1.2"
     ms "2.0.0"
     regexp-clone "0.0.1"
     sliced "1.0.1"
@@ -3512,14 +3519,14 @@ mpath@0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/mpath/-/mpath-0.4.1.tgz#ed10388430380bf7bbb5be1391e5d6969cb08e89"
 
-mquery@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/mquery/-/mquery-3.0.0.tgz#e5f387dbabc0b9b69859e550e810faabe0ceabb0"
+mquery@3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/mquery/-/mquery-3.1.2.tgz#46c2ea6d7a08c9b9e0716022fb2990708ddba9ff"
   dependencies:
-    bluebird "3.5.0"
-    debug "2.6.9"
+    bluebird "3.5.1"
+    debug "3.1.0"
     regexp-clone "0.0.1"
-    sliced "0.0.5"
+    sliced "1.0.1"
 
 ms@2.0.0:
   version "2.0.0"
@@ -4501,6 +4508,10 @@ sane@^2.0.0:
   optionalDependencies:
     fsevents "^1.2.3"
 
+saslprep@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/saslprep/-/saslprep-1.0.1.tgz#b644e0ba25b156b652f3cb90df7542f896049ba6"
+
 sax@1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.1.tgz#7b8e656190b228e81a66aea748480d828cd2d37a"
@@ -4619,10 +4630,6 @@ slice-ansi@1.0.0:
   resolved "https://registry.yarnpkg.com/slice-ansi/-/slice-ansi-1.0.0.tgz#044f1a49d8842ff307aad6b505ed178bd950134d"
   dependencies:
     is-fullwidth-code-point "^2.0.0"
-
-sliced@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/sliced/-/sliced-0.0.5.tgz#5edc044ca4eb6f7816d50ba2fc63e25d8fe4707f"
 
 sliced@1.0.1:
   version "1.0.1"
@@ -4846,9 +4853,9 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-stripe@^6.1.1:
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/stripe/-/stripe-6.1.1.tgz#1038792acbf6c9daf131f94c64af69651dd3a969"
+stripe@^6.7.0:
+  version "6.7.0"
+  resolved "https://registry.yarnpkg.com/stripe/-/stripe-6.7.0.tgz#d28a02c0b213e4beacc1413e94946e3014426208"
   dependencies:
     lodash.isplainobject "^4.0.6"
     qs "~6.5.1"

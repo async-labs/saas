@@ -108,7 +108,7 @@ class InvitationClass extends mongoose.Model {
       token = invitation.token;
     } else {
       token = generateToken();
-      while ((await this.find({ token }).count()) > 0) {
+      while ((await this.countDocuments({ token })) > 0) {
         token = generateToken();
       }
 

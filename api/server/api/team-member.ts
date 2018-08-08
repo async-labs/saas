@@ -71,7 +71,7 @@ async function loadTeamData(team, userId, body) {
   return data;
 }
 
-router.post('/get-initial-data', async (req, res) => {
+router.post('/get-initial-data', async (req, res, next) => {
   try {
     const teams = await Team.getList(req.user.id);
 
@@ -89,23 +89,21 @@ router.post('/get-initial-data', async (req, res) => {
 
     res.json({ teams });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.get('/teams', async (req, res) => {
+router.get('/teams', async (req, res, next) => {
   try {
     const teams = await Team.getList(req.user.id);
 
     res.json({ teams });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/discussions/add', async (req, res) => {
+router.post('/discussions/add', async (req, res, next) => {
   try {
     const { name, teamId, memberIds = [] } = req.body;
 
@@ -118,12 +116,11 @@ router.post('/discussions/add', async (req, res) => {
 
     res.json({ discussion });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/discussions/edit', async (req, res) => {
+router.post('/discussions/edit', async (req, res, next) => {
   try {
     const { name, id, memberIds = [] } = req.body;
 
@@ -136,12 +133,11 @@ router.post('/discussions/edit', async (req, res) => {
 
     res.json({ done: 1 });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/discussions/delete', async (req, res) => {
+router.post('/discussions/delete', async (req, res, next) => {
   try {
     const { id } = req.body;
 
@@ -149,12 +145,11 @@ router.post('/discussions/delete', async (req, res) => {
 
     res.json({ done: 1 });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.get('/discussions/list', async (req, res) => {
+router.get('/discussions/list', async (req, res, next) => {
   try {
     const { teamId } = req.query;
 
@@ -167,12 +162,11 @@ router.get('/discussions/list', async (req, res) => {
 
     res.json({ discussions });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/posts/add', async (req, res) => {
+router.post('/posts/add', async (req, res, next) => {
   try {
     const { content, discussionId } = req.body;
 
@@ -180,12 +174,11 @@ router.post('/posts/add', async (req, res) => {
 
     res.json({ post });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/posts/edit', async (req, res) => {
+router.post('/posts/edit', async (req, res, next) => {
   try {
     const { content, id } = req.body;
 
@@ -193,12 +186,11 @@ router.post('/posts/edit', async (req, res) => {
 
     res.json({ done: 1 });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/posts/delete', async (req, res) => {
+router.post('/posts/delete', async (req, res, next) => {
   try {
     const { id } = req.body;
 
@@ -206,12 +198,11 @@ router.post('/posts/delete', async (req, res) => {
 
     res.json({ done: 1 });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.get('/posts/list', async (req, res) => {
+router.get('/posts/list', async (req, res, next) => {
   try {
     const posts = await Post.getList({
       userId: req.user.id,
@@ -220,13 +211,12 @@ router.get('/posts/list', async (req, res) => {
 
     res.json({ posts });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
 // Upload file to S3
-router.get('/aws/get-signed-request-for-upload-to-s3', async (req, res) => {
+router.get('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) => {
   try {
     const { fileName, fileType, prefix, bucket, acl = 'private' } = req.query;
 
@@ -241,12 +231,11 @@ router.get('/aws/get-signed-request-for-upload-to-s3', async (req, res) => {
 
     res.json(returnData);
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
-router.post('/user/update-profile', async (req, res) => {
+router.post('/user/update-profile', async (req, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
@@ -258,8 +247,7 @@ router.post('/user/update-profile', async (req, res) => {
 
     res.json({ updatedUser });
   } catch (err) {
-    logger.error(err);
-    res.json({ error: err.post || err.toString() });
+    next(err);
   }
 });
 
