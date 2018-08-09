@@ -191,21 +191,27 @@ To customize styles, check [this guide](https://github.com/builderbook/builderbo
 
 
 ## Screenshots
-Dashboard showing Topic > Discussion > Post:
-![saas-dashboard](https://user-images.githubusercontent.com/26158226/41631311-c5e23cca-73e8-11e8-900a-04ff5bf386e7.png)
+Dashboard showing Discussion > Posts:
+![1_discussionposts](https://user-images.githubusercontent.com/26158226/43875494-7d909d02-9b45-11e8-902f-e3bd5e7dcbdc.png)
 
 Adding a Post, Markdown vs. HTML view:
-![saas-addpost-markdown](https://user-images.githubusercontent.com/26158226/41631310-c5c5f3a8-73e8-11e8-93b3-a3400e7d1a3b.png)
-![saas-addpost-html](https://user-images.githubusercontent.com/26158226/41631309-c5a4e1e0-73e8-11e8-937b-79e9df6c2e60.png)
+![2_addpost_md](https://user-images.githubusercontent.com/26158226/43875495-7da46080-9b45-11e8-9fa8-8c0a6da77beb.png)
+![3_addpost_html](https://user-images.githubusercontent.com/26158226/43875496-7dc24e74-9b45-11e8-9c6d-704c0b59034e.png)
 
 Settings for Team Members:
-![saas-teammembers](https://user-images.githubusercontent.com/26158226/41631312-c5fe775a-73e8-11e8-87f8-a66b5d59eba9.png)
+![4_teamsettings_members](https://user-images.githubusercontent.com/26158226/43875497-7dd8fbf6-9b45-11e8-8714-951a66bdacbe.png)
+
+Team Billing with Stripe:
+![5_teamsettings_billing](https://user-images.githubusercontent.com/26158226/43875498-7ded796e-9b45-11e8-8b35-aec42fd7283c.png)
+
+Settings for Team Profile:
+![6_teamsettings_profile](https://user-images.githubusercontent.com/26158226/43875499-7e1899d2-9b45-11e8-8302-07a2314c1a03.png)
 
 Settings for Personal Profile:
-![saas-yourprofile](https://user-images.githubusercontent.com/26158226/41631313-c61e0df4-73e8-11e8-808d-b6d1f8042817.png)
+![7_personalprofile](https://user-images.githubusercontent.com/26158226/43875500-7e2c9716-9b45-11e8-9a32-4aaf84375bbe.png)
 
 Menu dropdown to switch between Teams:
-![menudrop-selectteam](https://user-images.githubusercontent.com/26158226/41943540-a7c515a8-7958-11e8-9fd0-5c372ab51c1a.png)
+![8_dropdown_teamselector](https://user-images.githubusercontent.com/26158226/43875501-7e40c254-9b45-11e8-85f7-6c81bbf2813b.png)
 
 
 ## Showcase
