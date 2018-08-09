@@ -52,8 +52,8 @@ const getTeamOptionsMenuWithLinksLeft = teams =>
   teams.map(t => ({
     text: t.name,
     avatarUrl: t.avatarUrl,
-    href: `/project?teamSlug=${t.slug}`,
-    as: `/team/${t.slug}/projects`,
+    href: `/discussion?teamSlug=${t.slug}`,
+    as: `/team/${t.slug}/d`,
     simple: false,
     highlighterSlug: `/team/${t.slug}/`,
   }));
