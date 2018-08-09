@@ -3,6 +3,7 @@ import { action, decorate, observable, runInAction } from 'mobx';
 import {
   createCustomerApiMethod,
   createNewCardAndUpdateCustomerApiMethod,
+  getListOfInvoices,
 } from '../api/team-leader';
 import { updateProfile } from '../api/team-member';
 import { Store } from './index';
@@ -26,6 +27,18 @@ class User {
     exp_month: number;
     exp_year: number;
   };
+  public stripeListOfInvoices: {
+    object: string;
+    data: [
+      {
+        amount_paid: number;
+        teamName: string;
+        date: number;
+        hosted_invoice_url: string;
+      }
+    ],
+    has_more: boolean;
+  };
 
   constructor(params) {
     this.store = params.store;
@@ -40,6 +53,7 @@ class User {
 
     this.hasCardInformation = params.hasCardInformation;
     this.stripeCard = params.stripeCard;
+    this.stripeListOfInvoices = params.stripeListOfInvoices;
   }
 
   public async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {
@@ -85,6 +99,18 @@ class User {
       throw error;
     }
   }
+
+  public async getListOfInvoices() {
+    try {
+      const { stripeListOfInvoices } = await getListOfInvoices();
+      runInAction(() => {
+        this.stripeListOfInvoices = stripeListOfInvoices;
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 }
 
 decorate(User, {
@@ -96,6 +122,7 @@ decorate(User, {
 
   hasCardInformation: observable,
   stripeCard: observable,
+  stripeListOfInvoices: observable,
 
   updateProfile: action,
 });

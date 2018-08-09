@@ -134,12 +134,12 @@ router.post('/subscribe-team', async (req, res, next) => {
   const { teamId } = req.body;
 
   try {
-    const { isSubscriptionActive } = await Team.subscribeTeam({
+    const { isSubscriptionActive, stripeSubscription } = await Team.subscribeTeam({
       teamLeaderId: req.user.id,
       teamId,
     });
 
-    res.json({ isSubscriptionActive });
+    res.json({ isSubscriptionActive, stripeSubscription });
   } catch (err) {
     next(err);
   }
@@ -155,6 +155,17 @@ router.post('/cancel-subscription', async (req, res, next) => {
     });
 
     res.json({ isSubscriptionActive });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/get-list-of-invoices-for-customer', async (req, res, next) => {
+  try {
+    const { stripeListOfInvoices } = await User.getListOfInvoicesForCustomer({
+      userId: req.user.id,
+    });
+    res.json({ stripeListOfInvoices });
   } catch (err) {
     next(err);
   }

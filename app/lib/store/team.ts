@@ -30,6 +30,7 @@ class Team {
   public memberIds: IObservableArray<string> = observable([]);
 
   public isSubscriptionActive: boolean;
+  public isPaymentFailed: boolean;
 
   public members: Map<string, User> = new Map();
   public invitedUsers: Map<string, Invitation> = new Map();
@@ -38,6 +39,17 @@ class Team {
   public currentDiscussionSlug?: string;
   public discussions: IObservableArray<Discussion> = observable([]);
   public isLoadingDiscussions = false;
+
+  public stripeSubscription: {
+    id: string;
+    object: string;
+    application_fee_percent: number;
+    billing: string;
+    cancel_at_period_end: boolean;
+    billing_cycle_anchor: number;
+    canceled_at: number;
+    created: number;
+  };
 
   private isLoadingMembers = false;
   private isInitialMembersLoaded = false;
@@ -53,6 +65,8 @@ class Team {
     this.currentDiscussionSlug = params.currentDiscussionSlug || null;
 
     this.isSubscriptionActive = params.isSubscriptionActive;
+    this.stripeSubscription = params.stripeSubscription;
+    this.isPaymentFailed = params.isPaymentFailed;
 
     this.store = params.store;
 
@@ -287,12 +301,11 @@ class Team {
 
   public async createSubscription({ teamId }: { teamId: string }) {
     try {
-      const { isSubscriptionActive } = await createSubscriptionApiMethod({ teamId });
-
-      // console.log(isSubscriptionActive);
+      const { isSubscriptionActive, stripeSubscription } = await createSubscriptionApiMethod({ teamId });
 
       runInAction(() => {
         this.isSubscriptionActive = isSubscriptionActive;
+        this.stripeSubscription = stripeSubscription;
       });
     } catch (error) {
       console.error(error);
@@ -325,6 +338,8 @@ decorate(Team, {
   isInitialMembersLoaded: observable,
 
   isSubscriptionActive: observable,
+  stripeSubscription: observable,
+  isPaymentFailed: observable,
 
   edit: action,
   setInitialMembers: action,

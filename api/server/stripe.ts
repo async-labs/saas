@@ -1,6 +1,7 @@
 import * as bodyParser from 'body-parser';
 import * as stripe from 'stripe';
 import logger from './logs';
+import Team from './models/Team';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -75,9 +76,11 @@ function stripeWebHooks({ server }) {
       try {
         const event = await verifyWebHook(req);
         logger.info(event.id);
-        const { customer } = event.data.object;
-        logger.info(JSON.stringify(customer));
-        // backend logic for failed payment for subscription
+        const { subscription } = event.data.object;
+        logger.info(JSON.stringify(subscription));
+        await Team.cancelSubscriptionAfterFailedPayment({
+          subscriptionId: JSON.stringify(subscription),
+        });
 
         res.sendStatus(200);
       } catch (err) {
@@ -85,6 +88,11 @@ function stripeWebHooks({ server }) {
       }
     },
   );
+}
+
+function getListOfInvoices({ customerId }) {
+  logger.debug('getting list of invoices for customer', customerId);
+  return stripeInstance.invoices.list({ customer: customerId });
 }
 
 export {
@@ -95,4 +103,5 @@ export {
   createNewCard,
   updateCustomer,
   stripeWebHooks,
+  getListOfInvoices,
 };

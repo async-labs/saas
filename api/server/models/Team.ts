@@ -44,6 +44,10 @@ const mongoSchema = new mongoose.Schema({
     canceled_at: Number,
     created: Number,
   },
+  isPaymentFailed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 interface ITeamDocument extends mongoose.Document {
@@ -59,13 +63,14 @@ interface ITeamDocument extends mongoose.Document {
   stripeSubscription: {
     id: string;
     object: string;
-    application_fee_percent: number,
-    billing: string,
-    cancel_at_period_end: boolean,
-    billing_cycle_anchor: number,
-    canceled_at: number,
-    created: number,
+    application_fee_percent: number;
+    billing: string;
+    cancel_at_period_end: boolean;
+    billing_cycle_anchor: number;
+    canceled_at: number;
+    created: number;
   };
+  isPaymentFailed: boolean;
 }
 
 interface ITeamModel extends mongoose.Model<ITeamDocument> {
@@ -73,9 +78,9 @@ interface ITeamModel extends mongoose.Model<ITeamDocument> {
     name,
     userId,
   }: {
-    userId: string;
-    name: string;
-    avatarUrl: string;
+  userId: string;
+  name: string;
+  avatarUrl: string;
   }): Promise<ITeamDocument>;
   updateTeam({
     userId,
@@ -83,10 +88,10 @@ interface ITeamModel extends mongoose.Model<ITeamDocument> {
     name,
     avatarUrl,
   }: {
-    userId: string;
-    teamId: string;
-    name: string;
-    avatarUrl: string;
+  userId: string;
+  teamId: string;
+  name: string;
+  avatarUrl: string;
   }): Promise<ITeamDocument>;
   findBySlug(slug: string): Promise<ITeamDocument>;
   getList(userId: string): Promise<ITeamDocument[]>;
@@ -95,23 +100,28 @@ interface ITeamModel extends mongoose.Model<ITeamDocument> {
     teamLeaderId,
     userId,
   }: {
-    teamId: string;
-    teamLeaderId: string;
-    userId: string;
+  teamId: string;
+  teamLeaderId: string;
+  userId: string;
   }): Promise<void>;
   subscribeTeam({
     teamLeaderId,
     teamId,
   }: {
-    teamLeaderId: string;
-    teamId: string;
+  teamLeaderId: string;
+  teamId: string;
   }): Promise<ITeamDocument>;
   cancelSubscription({
     teamLeaderId,
     teamId,
   }: {
-    teamLeaderId: string;
-    teamId: string;
+  teamLeaderId: string;
+  teamId: string;
+  }): Promise<ITeamDocument>;
+  cancelSubscriptionAfterFailedPayment({
+    subscriptionId,
+  }: {
+  subscriptionId: string;
   }): Promise<ITeamDocument>;
 }
 
@@ -144,7 +154,9 @@ class TeamClass extends mongoose.Model {
     return team;
   }
 
-  public static async updateTeam({ userId, teamId, name, avatarUrl }) {
+  public static async updateTeam({
+    userId, teamId, name, avatarUrl,
+  }) {
     const team = await this.findById(teamId, 'slug name defaultTeam teamLeaderId');
 
     if (!team) {
@@ -167,7 +179,10 @@ class TeamClass extends mongoose.Model {
     //   await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: modifier.slug } });
     // }
 
-    return this.findById(teamId, 'name avatarUrl slug defaultTeam').lean();
+    return this.findById(
+      teamId,
+      'name avatarUrl slug defaultTeam isSubscriptionActive stripeSubscription',
+    ).lean();
   }
 
   public static findBySlug(slug: string) {
@@ -211,6 +226,8 @@ class TeamClass extends mongoose.Model {
       teamLeaderId,
     });
 
+    await User.getListOfInvoicesForCustomer({ userId: teamLeaderId });
+
     return this.findByIdAndUpdate(
       teamId,
       {
@@ -224,9 +241,7 @@ class TeamClass extends mongoose.Model {
   }
 
   public static async cancelSubscription({ teamLeaderId, teamId }) {
-    const team = await this.findById(teamId).select(
-      'teamLeaderId isSubscriptionActive stripeSubscription',
-    );
+    const team = await this.findById(teamId).select('teamLeaderId isSubscriptionActive stripeSubscription');
 
     if (team.teamLeaderId !== teamLeaderId) {
       throw new Error('You do not have permission to subscribe Team.');
@@ -249,6 +264,32 @@ class TeamClass extends mongoose.Model {
       { new: true, runValidators: true },
     )
       .select('isSubscriptionActive stripeSubscription')
+      .lean();
+  }
+
+  public static async cancelSubscriptionAfterFailedPayment({ subscriptionId }) {
+    const team = await this.find({ 'stripeSubscription.id': subscriptionId })
+      .select('teamLeaderId isSubscriptionActive stripeSubscription isPaymentFailed')
+      .lean();
+    if (!team.isSubscriptionActive) {
+      throw new Error('Team is already unsubscribed.');
+    }
+    if (team.isPaymentFailed) {
+      throw new Error('Team is already unsubscribed after failed payment.');
+    }
+    const cancelledSubscriptionObj = await cancelSubscription({
+      subscriptionId,
+    });
+    return this.findByIdAndUpdate(
+      team._id,
+      {
+        stripeSubscription: cancelledSubscriptionObj,
+        isSubscriptionActive: false,
+        isPaymentFailed: true,
+      },
+      { new: true, runValidators: true },
+    )
+      .select('isSubscriptionActive stripeSubscription isPaymentFailed')
       .lean();
   }
 }

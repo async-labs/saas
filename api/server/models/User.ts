@@ -9,7 +9,13 @@ import getEmailTemplate from './EmailTemplate';
 import Invitation from './Invitation';
 import Team from './Team';
 
-import { createCustomer, createNewCard, retrieveCard, updateCustomer } from '../stripe';
+import {
+  createCustomer,
+  createNewCard,
+  getListOfInvoices,
+  retrieveCard,
+  updateCustomer,
+} from '../stripe';
 
 const mongoSchema = new mongoose.Schema({
   googleId: {
@@ -70,6 +76,26 @@ const mongoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  stripeListOfInvoices: {
+    object: String,
+    has_more: Boolean,
+    data: [
+      {
+        id: String,
+        object: String,
+        amount_paid: Number,
+        date: Number,
+        customer: String,
+        subscription: String,
+        hosted_invoice_url: String,
+        billing: String,
+        paid: Boolean,
+        number: String,
+        teamId: String,
+        teamName: String,
+      },
+    ],
+  },
 });
 
 export interface IUserDocument extends mongoose.Document {
@@ -103,6 +129,26 @@ export interface IUserDocument extends mongoose.Document {
     exp_year: number;
     funding: string;
   };
+  stripeListOfInvoices: {
+    object: string;
+    has_more: boolean;
+    data: [
+      {
+        id: string;
+        object: string;
+        amount_paid: number;
+        date: number;
+        customer: string;
+        subscription: string;
+        hosted_invoice_url: string;
+        billing: string;
+        paid: boolean;
+        number: string;
+        teamId: string;
+        teamName: string;
+      }
+    ]
+  };
 }
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -113,9 +159,9 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     name,
     avatarUrl,
   }: {
-    userId: string;
-    name: string;
-    avatarUrl: string;
+  userId: string;
+  name: string;
+  avatarUrl: string;
   }): Promise<IUserDocument[]>;
 
   getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<IUserDocument[]>;
@@ -127,28 +173,29 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     displayName,
     avatarUrl,
   }: {
-    googleId: string;
-    email: string;
-    displayName: string;
-    avatarUrl: string;
-    googleToken: { refreshToken?: string; accessToken?: string };
+  googleId: string;
+  email: string;
+  displayName: string;
+  avatarUrl: string;
+  googleToken: { refreshToken?: string; accessToken?: string };
   }): Promise<IUserDocument>;
 
   createCustomer({
     userId,
     stripeToken,
   }: {
-    userId: string;
-    stripeToken: object;
+  userId: string;
+  stripeToken: object;
   }): Promise<IUserDocument>;
 
   createNewCardUpdateCustomer({
     userId,
     stripeToken,
   }: {
-    userId: string;
-    stripeToken: object;
+  userId: string;
+  stripeToken: object;
   }): Promise<IUserDocument>;
+  getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<IUserDocument>;
 }
 
 // mongoSchema.pre('save', function(next) {
@@ -221,6 +268,30 @@ class UserClass extends mongoose.Model {
       .lean();
   }
 
+  public static async getListOfInvoicesForCustomer({ userId }) {
+    const user = await this.findById(userId, 'stripeCustomer');
+    logger.debug('called static method on User');
+    const newListOfInvoices = await getListOfInvoices({
+      customerId: user.stripeCustomer.id,
+    });
+    for (const invoiceObject of newListOfInvoices.data) {
+      const team = await Team.findOne({
+        'stripeSubscription.id': invoiceObject.subscription,
+      })
+        .select('name')
+        .lean();
+      logger.debug(team.name);
+      (invoiceObject as any).teamId = team._id;
+      (invoiceObject as any).teamName = team.name;
+    }
+    const modifier = {
+      stripeListOfInvoices: newListOfInvoices,
+    };
+    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
+      .select('stripeListOfInvoices')
+      .lean();
+  }
+
   public static async getTeamMembers({ userId, teamId }) {
     const team = await this.checkPermissionAndGetTeam({ userId, teamId });
 
@@ -229,7 +300,9 @@ class UserClass extends mongoose.Model {
       .lean();
   }
 
-  public static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
+  public static async signInOrSignUp({
+    googleId, email, googleToken, displayName, avatarUrl,
+  }) {
     const user = await this.findOne({ googleId })
       .select(this.publicFields().join(' '))
       .lean();
@@ -307,6 +380,8 @@ class UserClass extends mongoose.Model {
       'slug',
       'isGithubConnected',
       'defaultTeamSlug',
+      'stripeCard',
+      'stripeListOfInvoices',
     ];
   }
 

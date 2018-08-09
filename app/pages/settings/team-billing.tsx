@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react';
+import moment from 'moment';
 import Head from 'next/head';
 import * as React from 'react';
 
@@ -16,7 +17,6 @@ import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
 
 const { StripePublishableKey } = env;
-// console.log(StripePublishableKey);
 
 const styleGrid = {
   height: '100%',
@@ -97,50 +97,97 @@ class TeamBilling extends React.Component<Props, State> {
   private renderSubscriptionButton() {
     const { currentTeam, currentUser } = this.props.store;
 
-    // const subscriptionDate = new Date(currentTeam.stripeSubscription.timestamp * 1000);
+    let subscriptionDate;
+    let billingDay;
+    if (currentTeam && currentTeam.stripeSubscription) {
+      subscriptionDate = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format('MMM Do YYYY');
+      billingDay = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format('Do');
+    }
 
-    if (currentTeam && !currentTeam.isSubscriptionActive && currentUser && !currentUser.hasCardInformation) {
-      return (<StripeCheckout
-        stripeKey={StripePublishableKey}
-        token={this.onToken}
-        name="Buy subscription"
-        email={this.props.store.currentUser.email}
-        allowRememberMe={false}
-        panelLabel="Confirm ($50/month)"
-        description={`Subscription for ${currentTeam.name}`}
-      >
-        <Button variant="raised" color="primary">
-          Buy subscription
-        </Button>
-      </StripeCheckout>);
-    } else if (currentTeam && !currentTeam.isSubscriptionActive && currentUser && currentUser.hasCardInformation) {
-      return (<Button variant="raised" color="primary" onClick={this.createSubscriptionOnClick}>
-          Buy subscription
-        </Button>);
-    } else {
-      return (<React.Fragment>
-      <span>
-        {' '}
-        <i
-          className="material-icons"
-          color="action"
-          style={{ verticalAlign: 'text-bottom' }}
+    if (
+      currentTeam &&
+      !currentTeam.isSubscriptionActive &&
+      currentUser &&
+      (!currentUser.hasCardInformation || currentTeam.isPaymentFailed)
+    ) {
+      return (
+        <StripeCheckout
+          stripeKey={StripePublishableKey}
+          token={this.addCard}
+          name="Buy subscription"
+          email={this.props.store.currentUser.email}
+          allowRememberMe={false}
+          panelLabel="Confirm ($50/month)"
+          description={`Subscription for ${currentTeam.name}`}
         >
-          done
-        </i>{' '}
-        Subscription is active.
-        TODO: display billing date (new Date(timestamp*1000))
-        TODO: display invoices
-      </span>
-      <p />
-      <Button variant="outlined" color="primary" onClick={this.cancelSubscriptionOnClick}>
-        Unsubscribe Team
-      </Button>
-    </React.Fragment>);
+          <Button variant="raised" color="primary">
+            Buy subscription
+          </Button>
+          <p />
+          {currentTeam.isPaymentFailed ? (
+            <p>
+              Team was automatically unsubscribed due to failed payment. You
+              will be prompt to update card information if you choose to
+              re-subscribe Team.
+            </p>
+          ) : null}
+        </StripeCheckout>
+      );
+    } else if (
+      currentTeam &&
+      !currentTeam.isSubscriptionActive &&
+      currentUser &&
+      currentUser.hasCardInformation &&
+      !currentTeam.isPaymentFailed
+    ) {
+      return (
+        <React.Fragment>
+          <Button
+            variant="raised"
+            color="primary"
+            onClick={this.createSubscriptionOnClick}
+          >
+            Buy subscription
+          </Button>
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <span>
+            {' '}
+            <i
+              className="material-icons"
+              color="action"
+              style={{ verticalAlign: 'text-bottom' }}
+            >
+              done
+            </i>{' '}
+            Subscription is active.
+            <p>
+              You subscribed <b>{currentTeam.name}</b> on{' '}
+              <b>{subscriptionDate}</b>.
+            </p>
+            <p>
+              You will be billed on <b>{billingDay} day</b> of each month unless you
+              cancel subscription or subscription is cancelled automatically due to failed payment.
+            </p>
+          </span>
+          <p />
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={this.cancelSubscriptionOnClick}
+          >
+            Unsubscribe Team
+          </Button>
+          <p />
+        </React.Fragment>
+      );
     }
   }
 
-  private onToken = async token => {
+  private addCard = async token => {
     const { currentTeam, currentUser } = this.props.store;
 
     NProgress.start();

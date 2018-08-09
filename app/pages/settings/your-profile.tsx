@@ -9,10 +9,13 @@ import StripeCheckout from 'react-stripe-checkout';
 
 import env from '../../lib/env';
 
+import moment from 'moment';
+
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
 } from '../../lib/api/team-member';
+
 import notify from '../../lib/notifier';
 import { resizeImage } from '../../lib/resizeImage';
 import { Store } from '../../lib/store';
@@ -26,7 +29,7 @@ const styleGrid = {
 };
 
 type MyProps = { store: Store; isTL: boolean; error?: string };
-type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
+type MyState = { newName: string; newAvatarUrl: string; disabled: boolean; showInvoices: boolean; };
 
 class YourProfile extends React.Component<MyProps, MyState> {
   public static getInitialProps({ query }) {
@@ -42,6 +45,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
       newName: this.props.store.currentUser.displayName,
       newAvatarUrl: this.props.store.currentUser.avatarUrl,
       disabled: false,
+      showInvoices: false,
     };
   }
 
@@ -169,10 +173,73 @@ class YourProfile extends React.Component<MyProps, MyState> {
                 </StripeCheckout>
               </span>
             )}
+            <p />
+            <br />
+            <h4>Payment history</h4>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={this.showListOfInvoicesOnClick}
+            >
+              Show payment history
+            </Button>
+            {this.renderInvoices()}
             <br />
           </Grid>
         </Grid>
       </div>
+    );
+  }
+
+  private showListOfInvoicesOnClick = async () => {
+    const { currentUser } = this.props.store;
+    NProgress.start();
+    this.setState({ disabled: true });
+    try {
+      await currentUser.getListOfInvoices();
+      this.setState({ showInvoices: true });
+    } catch (err) {
+      notify(err);
+    } finally {
+      this.setState({ disabled: false });
+      NProgress.done();
+    }
+  };
+
+  private renderInvoices() {
+    const { currentUser } = this.props.store;
+    const { showInvoices } = this.state;
+    if (!showInvoices) {
+      return null;
+    }
+    return (
+      <React.Fragment>
+        {currentUser && !currentUser.stripeListOfInvoices ? (
+          <React.Fragment>
+            <p>You have no history of payments.</p>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            {currentUser.stripeListOfInvoices.data.map((invoice, i) => (
+              <React.Fragment>
+                <p>Your history of payments:</p>
+                <li key={i}>
+                  ${invoice.amount_paid / 100} was paid on{' '}
+                  {moment(invoice.date * 1000).format('MMM Do YYYY')}{' '}
+                  for Team '{invoice.teamName}' -{' '}
+                  <a
+                    href={invoice.hosted_invoice_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    See invoice
+                  </a>
+                </li>
+              </React.Fragment>
+            ))}
+          </React.Fragment>
+        )}
+      </React.Fragment>
     );
   }
 
