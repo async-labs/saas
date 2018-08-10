@@ -249,7 +249,6 @@ All code in this repository is provided under the [MIT License](https://github.c
 ```
 ├── server
 │   ├── api
-│   │   ├── admin.ts
 │   │   ├── index.ts
 │   │   ├── public.ts
 │   │   ├── team-leader.ts
@@ -261,7 +260,6 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   ├── Post.ts
 │   │   ├── Purchase.ts
 │   │   ├── Team.ts
-│   │   ├── Topic.ts
 │   │   ├── User.ts
 │   ├── utils
 │   │   ├── slugify.ts
@@ -291,6 +289,7 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   ├── AutoComplete.tsx
 │   │   ├── AvatarwithMenu.tsx
 │   │   ├── Confirm.tsx
+│   │   ├── Loading.tsx
 │   │   ├── LoginButton.tsx
 │   │   ├── MenuWithLinks.tsx
 │   │   ├── MenuWithMenuItems.tsx
@@ -300,6 +299,7 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   ├── CreateDiscussionForm.tsx
 │   │   ├── DiscussionActionMenu.tsx
 │   │   ├── DiscussionList.tsx
+│   │   ├── DiscussionListItem.tsx
 │   │   ├── EditDiscussionForm.tsx
 │   ├── posts
 │   │   ├── PostContent.tsx
@@ -308,14 +308,10 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   ├── PostForm.tsx
 │   ├── teams
 │   │   ├── InviteMember.tsx
-│   ├── topics
-│   │   ├── CreateTopicForm.tsx
-│   │   ├── EditTopicForm.tsx
-│   │   ├── TopicActionMenu.tsx
-│   │   ├── TopicList.tsx
+│   ├── users
+│   │   ├── MemberChooser.tsx
 ├── lib
 │   ├── api
-│   │   ├── admin.ts
 │   │   ├── getRootUrl.ts
 │   │   ├── makeQueryString.ts
 │   │   ├── public.ts
@@ -328,29 +324,26 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   ├── invitation.ts
 │   │   ├── post.ts
 │   │   ├── team.ts
-│   │   ├── topic.ts
 │   │   ├── user.ts
 │   ├── confirm.ts
 │   ├── context.ts
 │   ├── env.js
 │   ├── gtag.js
 │   ├── notifier.ts
+│   ├── resizeImage.ts
 │   ├── sharedStyles.ts
 │   ├── withAuth.tsx
 │   ├── withLayout.tsx
 │   ├── withStore.tsx
 ├── pages
-│   ├── discussions
-│   │   ├── detail.tsx
 │   ├── settings
-│   │   ├── create-team.tsx
 │   │   ├── team-billing.tsx
 │   │   ├── team-members.tsx
 │   │   ├── team-profile.tsx
 │   │   ├── your-profile.tsx
-│   ├── topics
-│   │   ├── detail.tsx
 │   ├── _document.tsx
+│   ├── create-team.tsx
+│   ├── discussion.tsx
 │   ├── invitation.tsx
 │   ├── login.tsx
 ├── server
@@ -358,6 +351,7 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   ├── routesWithSlug.ts
 ├── static
 │   ├── robots.txt
+├── .babelrc
 ├── .eslintrc.js
 ├── .gitignore
 ├── .npmignore
@@ -366,5 +360,6 @@ All code in this repository is provided under the [MIT License](https://github.c
 ├── package.json
 ├── tsconfig.json
 ├── tsconfig.server.json
+├── .tslint.json
 ├── yarn.lock
 ```
