@@ -29,7 +29,7 @@ const styleGrid = {
 };
 
 type MyProps = { store: Store; isTL: boolean; error?: string };
-type MyState = { newName: string; newAvatarUrl: string; disabled: boolean; showInvoices: boolean; };
+type MyState = { newName: string; newAvatarUrl: string; disabled: boolean; showInvoices: boolean };
 
 class YourProfile extends React.Component<MyProps, MyState> {
   public static getInitialProps({ query }) {
@@ -176,11 +176,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
             <p />
             <br />
             <h4>Payment history</h4>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={this.showListOfInvoicesOnClick}
-            >
+            <Button variant="outlined" color="primary" onClick={this.showListOfInvoicesOnClick}>
               Show payment history
             </Button>
             {this.renderInvoices()}
@@ -225,13 +221,9 @@ class YourProfile extends React.Component<MyProps, MyState> {
                 <p>Your history of payments:</p>
                 <li key={i}>
                   ${invoice.amount_paid / 100} was paid on{' '}
-                  {moment(invoice.date * 1000).format('MMM Do YYYY')}{' '}
-                  for Team '{invoice.teamName}' -{' '}
-                  <a
-                    href={invoice.hosted_invoice_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  {moment(invoice.date * 1000).format('MMM Do YYYY')} for Team '{invoice.teamName}'
+                  -{' '}
+                  <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">
                     See invoice
                   </a>
                 </li>

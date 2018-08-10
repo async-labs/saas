@@ -226,8 +226,6 @@ class TeamClass extends mongoose.Model {
       teamLeaderId,
     });
 
-    await User.getListOfInvoicesForCustomer({ userId: teamLeaderId });
-
     return this.findByIdAndUpdate(
       teamId,
       {

@@ -139,6 +139,8 @@ router.post('/subscribe-team', async (req, res, next) => {
       teamId,
     });
 
+    await User.getListOfInvoicesForCustomer({ userId: req.user.id });
+
     res.json({ isSubscriptionActive, stripeSubscription });
   } catch (err) {
     next(err);

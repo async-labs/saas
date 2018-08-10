@@ -380,6 +380,8 @@ class UserClass extends mongoose.Model {
       'slug',
       'isGithubConnected',
       'defaultTeamSlug',
+      'hasCardInformation',
+      'stripeCustomer',
       'stripeCard',
       'stripeListOfInvoices',
     ];
