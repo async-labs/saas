@@ -202,13 +202,16 @@ Settings for Team Members:
 ![4_teamsettings_members](https://user-images.githubusercontent.com/26158226/43875497-7dd8fbf6-9b45-11e8-8714-951a66bdacbe.png)
 
 Team Billing:
-![5_teamsettings_billing](https://user-images.githubusercontent.com/26158226/43932516-670ba4fa-9bf9-11e8-9e12-045267742bdb.png)
+![5_teamsettings_billing](https://user-images.githubusercontent.com/26158226/43932879-6ede3a74-9bfb-11e8-8a03-ca3133bd91b6.png)
 
 Settings for Team Profile:
 ![6_teamsettings_profile](https://user-images.githubusercontent.com/26158226/43875499-7e1899d2-9b45-11e8-8302-07a2314c1a03.png)
 
 Settings for Personal Profile:
-![7_personalprofile](https://user-images.githubusercontent.com/26158226/43932558-a6e06372-9bf9-11e8-8f2c-4ce66277de7a.png)
+![7a_personalprofile](https://user-images.githubusercontent.com/26158226/43932880-705d78d8-9bfb-11e8-9215-d1ec47c14b55.png)
+
+Add/Update card with Stripe:
+![7b_personalprofile_stripe](https://user-images.githubusercontent.com/26158226/43932882-716a00c0-9bfb-11e8-93f9-3b0d2f2c348e.png)
 
 Menu dropdown to switch between Teams:
 ![8_dropdown_teamselector](https://user-images.githubusercontent.com/26158226/43875501-7e40c254-9b45-11e8-85f7-6c81bbf2813b.png)
