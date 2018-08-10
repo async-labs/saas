@@ -201,14 +201,14 @@ Adding a Post, Markdown vs. HTML view:
 Settings for Team Members:
 ![4_teamsettings_members](https://user-images.githubusercontent.com/26158226/43875497-7dd8fbf6-9b45-11e8-8714-951a66bdacbe.png)
 
-Team Billing with Stripe:
-![5_teamsettings_billing](https://user-images.githubusercontent.com/26158226/43875498-7ded796e-9b45-11e8-8b35-aec42fd7283c.png)
+Team Billing:
+![5_teamsettings_billing](https://user-images.githubusercontent.com/26158226/43932516-670ba4fa-9bf9-11e8-9e12-045267742bdb.png)
 
 Settings for Team Profile:
 ![6_teamsettings_profile](https://user-images.githubusercontent.com/26158226/43875499-7e1899d2-9b45-11e8-8302-07a2314c1a03.png)
 
 Settings for Personal Profile:
-![7_personalprofile](https://user-images.githubusercontent.com/26158226/43875500-7e2c9716-9b45-11e8-9a32-4aaf84375bbe.png)
+![7_personalprofile](https://user-images.githubusercontent.com/26158226/43932558-a6e06372-9bf9-11e8-8f2c-4ce66277de7a.png)
 
 Menu dropdown to switch between Teams:
 ![8_dropdown_teamselector](https://user-images.githubusercontent.com/26158226/43875501-7e40c254-9b45-11e8-85f7-6c81bbf2813b.png)
