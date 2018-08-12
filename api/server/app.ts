@@ -45,7 +45,7 @@ server.use(express.json());
 
 const MongoStore = mongoSessionStore(session);
 const sessionOptions = {
-  name: 'async-await.sid',
+  name: process.env.SESSION_NAME,
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({
     mongooseConnection: mongoose.connection,

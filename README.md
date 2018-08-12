@@ -64,6 +64,7 @@ To run locally, you will need to run two apps: `api` and `app`.
   # Used in api/server/app.ts
   MONGO_URL="xxxxxx"
   MONGO_URL_TEST="xxxxxx"
+  SESSION_NAME="xxxxxx"
   SESSION_SECRET="xxxxxx"
 
   # Used in api/server/google.ts
@@ -100,7 +101,7 @@ To run locally, you will need to run two apps: `api` and `app`.
   Important: The above environmental variables are available on the server only. You should add your `.env` file to `.gitignore` inside the `api` folder so that your secret keys are not stored on a remote Github repo.
   
   - To get `MONGO_URL` and `MONGO_URL_TEST`, we recommend a [free MongoDB at mLab](https://docs.mlab.com/).
-  - Specify your own secret key for Express session `SESSION_SECRET`: https://github.com/expressjs/session#secret
+  - Specify your own name and secret keys for Express session: [SESSION_NAME](https://github.com/expressjs/session#name) and [SESSION_SECRET](https://github.com/expressjs/session#express)
   - Get `Google_clientID` and `Google_clientSecret` by following the [official OAuth tutorial](https://developers.google.com/identity/sign-in/web/sign-in#before_you_begin). <br/>
     Important: For Google OAuth app, callback URL is: http://localhost:8000/oauth2callback <br/>
     Important: You have to enable Google+ API in your Google Cloud Platform account.
