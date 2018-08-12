@@ -14,8 +14,9 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 - [Deploy](#deploy)
 - [Built with](#built-with)
 - [Screenshots](#screenshots)
-- [Contributing](#contributing)
 - [Showcase](#showcase)
+- [Hire our team](#hire-our-team)
+- [Contributing](#contributing)
 - [Team](#team)
 - [License](#license)
 - [Project structure](#project-structure)
@@ -221,17 +222,25 @@ Menu dropdown to switch between Teams:
 ## Showcase
 Check out projects built with the code in this open source app. Feel free to add your own project by creating a pull request.
 - [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee) : Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
-- [Async homepage and blog](https://async-await.com/): Communication tool for engineering teams to achieve deep work.
 - [Builder Book](https://github.com/builderbook/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
 - [Harbor](https://github.com/builderbook/harbor): Open source web app that allows anyone with a Gmail account to automatically charge for advice sent via email.
+- [Async](https://async-await.com/): upcoming communication and project management tool for small teams of software engineers (early September 2018).
+- [Async homepage and blog](https://async-await.com/): homepage and blog for Async.
+
+
+## Hire our team
+If you're interested in hiring our team to build custom SaaS features, fill out our [form](https://goo.gl/forms/4kk6mvowOjkQY21y2).
+
+We currently have 1 spot avaialble (30-40h/week engagement).
+We charge $100/h and are selective about type of product and client.
+
+If you are a small team, who works best in a calm environment and builds a SaaS product that solves a real problem - we want to hear from you.
 
 
 ## Contributing
 If you'd like to contribute, check our [todo list](https://github.com/async-labs/saas/issues/1) for features you can discuss and add. To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
 
 Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book).
-
-If you're interested in hiring our team to build custom SaaS features, fill out our [form](https://goo.gl/forms/4kk6mvowOjkQY21y2).
 
 
 ## Team
