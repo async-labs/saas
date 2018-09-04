@@ -221,19 +221,22 @@ Menu dropdown to switch between Teams:
 
 ## Showcase
 Check out projects built with the code in this open source app. Feel free to add your own project by creating a pull request.
+- [Async](https://async-await.com/): asynchronous communication and project management tool for small teams of software engineers.
 - [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee) : Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
 - [Builder Book](https://github.com/builderbook/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
 - [Harbor](https://github.com/builderbook/harbor): Open source web app that allows anyone with a Gmail account to automatically charge for advice sent via email.
-- [Async](https://async-await.com/): asynchronous communication and project management tool for small teams of software engineers.
+
 
 
 ## Hire our team
 If you're interested in hiring our team to build custom SaaS features, fill out our [form](https://goo.gl/forms/4kk6mvowOjkQY21y2).
 
-We currently have 1 spot avaialble (30h/week engagement).
+We currently have 1 spot avaialble (up to 40h/week engagement).
 We charge $100/h and are selective about the type of product and client.
 
 If you are a small team, who works best in a calm environment and builds a SaaS product that solves a real problem - we want to hear from you.
+
+[Async](https://async-await.com) is the largest project in our portfolio to this date.
 
 
 ## Contributing
