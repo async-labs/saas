@@ -224,8 +224,7 @@ Check out projects built with the code in this open source app. Feel free to add
 - [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee) : Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
 - [Builder Book](https://github.com/builderbook/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
 - [Harbor](https://github.com/builderbook/harbor): Open source web app that allows anyone with a Gmail account to automatically charge for advice sent via email.
-- [Async](https://async-await.com/): upcoming communication and project management tool for small teams of software engineers (early September 2018).
-- [Async homepage and blog](https://async-await.com/): homepage and blog for Async.
+- [Async](https://async-await.com/): asynchronous communication and project management tool for small teams of software engineers.
 
 
 ## Hire our team
