@@ -119,7 +119,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
     try {
       this.setState({ disabled: true });
 
-      await discussion.edit({ name, memberIds });
+      await discussion.edit({ name, memberIds: [discussion.store.currentUser._id, ...memberIds] });
 
       this.setState({ name: '', memberIds: [] });
       notify('You successfully edited Discussion.');

@@ -16,7 +16,7 @@ const env = { GA_TRACKING_ID, PRODUCTION_URL_APP, PRODUCTION_URL_API, StripePubl
 class MyDocument extends Document {
   public render() {
     return (
-      <html lang="en" style={{ overflow: 'overlay' }}>
+      <html lang="en" style={{ overflow: 'overlay', overflowX: 'hidden' }}>
         <Head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,7 +29,7 @@ class MyDocument extends Document {
           />
           <link
             rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Muli:300,400:latin"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400:latin"
           />
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
           <link
@@ -120,11 +120,12 @@ class MyDocument extends Document {
         </Head>
         <body
           style={{
-            font: '15px Muli',
+            font: '15px Roboto',
             color: '#fff',
             fontWeight: 300,
             lineHeight: '1.5em',
             padding: '0px 0px 0px 0px !important',
+            letterSpacing: '0.01em',
           }}
         >
           <Main />

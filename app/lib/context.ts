@@ -10,7 +10,7 @@ const theme = createMuiTheme({
     type: 'dark',
   },
   typography: {
-    fontFamily: 'Muli',
+    fontFamily: 'Roboto',
     fontSize: 14,
   },
 });

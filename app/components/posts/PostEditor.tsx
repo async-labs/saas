@@ -112,7 +112,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
                 input: {
                   border: 'none',
                   outline: 'none',
-                  font: '16px Muli',
+                  font: '16px Roboto',
                   color: '#fff',
                   fontWeight: 300,
                   height: '100vh', // TODO: check on Mobile

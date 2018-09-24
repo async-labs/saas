@@ -6,7 +6,7 @@ const styleBigAvatar = {
 
 const styleRaisedButton = {
   margin: '15px',
-  font: '14px Muli',
+  font: '14px Roboto',
 };
 
 const styleToolbar = {
@@ -17,7 +17,7 @@ const styleToolbar = {
 
 const styleLoginButton = {
   borderRadius: '2px',
-  font: '16px Muli',
+  font: '16px Roboto',
   fontWeight: 400,
   letterSpacing: '0.01em',
   color: '#fff',
@@ -25,7 +25,7 @@ const styleLoginButton = {
 };
 
 const styleTextField = {
-  font: '15px Muli',
+  font: '15px Roboto',
   color: '#222',
   fontWeight: '300',
 };

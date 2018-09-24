@@ -58,7 +58,7 @@ function getSuggestions(suggestions, inputValue, selectedItems) {
     const keep =
       (!inputValue ||
         (selectedValues.indexOf(suggestion.value) === -1 &&
-          suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1)) &&
+          suggestion.label.toLowerCase().startsWith(inputValue.replace(/^@/, '').toLowerCase()))) &&
       count < 20;
 
     if (keep) {
