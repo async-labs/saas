@@ -48,9 +48,9 @@ Router.onRouteChangeComplete = url => {
 
 Router.onRouteChangeError = () => NProgress.done();
 
-const getTeamOptionsMenuWithLinksLeft = teams =>
+const getTeamOptionsMenuWithLinksLeft = (teams, currentUserId) =>
   teams.map(t => ({
-    text: t.name,
+    text: t.teamLeaderId === currentUserId ? `${t.name} ( You're TL )` : `${t.name} ( You're TM )`,
     avatarUrl: t.avatarUrl,
     href: `/discussion?teamSlug=${t.slug}`,
     as: `/team/${t.slug}/d`,
@@ -276,7 +276,7 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
                   style={{ display: 'flex', justifyContent: 'space-between', margin: '0px 10px' }}
                 >
                   <MenuWithLinks
-                    options={getTeamOptionsMenuWithLinksLeft(store.teams).concat(
+                    options={getTeamOptionsMenuWithLinksLeft(store.teams, currentUser._id).concat(
                       this.state.isTL
                         ? menuUnderTeamListLeftTL(currentTeam)
                         : menuUnderTeamListLeft(),

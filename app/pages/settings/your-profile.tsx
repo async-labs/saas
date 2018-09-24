@@ -70,6 +70,20 @@ class YourProfile extends React.Component<MyProps, MyState> {
         <Grid container style={styleGrid}>
           <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
             <h3>Your Profile</h3>
+            <h4 style={{ marginTop: '40px' }}>Your account</h4>
+            <p>
+              <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
+                done
+              </i>{' '}
+              You signed up on Async using your Google account.
+              <li>
+                {' '}
+                Your Google/Async email: <b>{currentUser.email}</b>
+              </li>
+              <li>
+                Your Google/Async username: <b>{currentUser.displayName}</b>
+              </li>
+            </p>
             <form onSubmit={this.onSubmit} autoComplete="off">
               <h4>Your name</h4>
               <TextField
