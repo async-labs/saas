@@ -38,10 +38,6 @@ class CreateTeam extends React.Component<MyProps> {
     }
 
     const file = document.getElementById('upload-file').files[0];
-    if (file == null) {
-      notify('Team logo is required.');
-      return;
-    }
 
     try {
       this.setState({ disabled: true });
@@ -53,6 +49,12 @@ class CreateTeam extends React.Component<MyProps> {
       });
 
       console.log(`Returned to client: ${team._id}, ${team.name}, ${team.slug}`);
+
+      if (file == null) {
+        Router.push(`/team/${team.slug}/settings/team-members`);
+        notify('You successfully created Team.<p />Redirecting...');
+        return;
+      }
 
       const bucket = 'saas-teams-avatars';
       const prefix = team.slug;
@@ -129,7 +131,7 @@ class CreateTeam extends React.Component<MyProps> {
               />
               <p />
               <br />
-              <h4>Team logo</h4>
+              <h4 style={{ marginTop: '40px' }}>Team logo (optional)</h4>
               <Avatar
                 src={newAvatarUrl}
                 style={{

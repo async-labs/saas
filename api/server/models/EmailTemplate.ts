@@ -38,16 +38,16 @@ async function insertTemplates() {
           Note that any data you save on the demo app will be deleted after 30 days.
         </p>
         <p>
-          We used our SaaS boilerplate to build 
-          <a href="https://async-await.com" target="blank">Async</a>, 
-          a communication and project management tool for small teams of software engineers.
+          We used our SaaS boilerplate to build
+          <a href="https://async-await.com" target="blank"> Async</a>,
+           a communication and project management tool for small teams of software engineers.
         <br/>
-          If you're learning how to build your own web app or SaaS product, check out our 
-          <a href="https://builderbook.org/book" target="blank">book</a>. 
+          If you're learning how to build your own web app or SaaS product, check out our
+          <a href="https://builderbook.org/book" target="blank"> book</a>.
         </p>
         <p>
-          If you want to hire our team to help you build a SaaS product, please apply using this 
-          <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank">form</a>.
+          If you want to hire us to help you build a SaaS business, please apply using this
+          <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank"> form</a>.
         </p>
         Kelly & Timur, Team Async
       `,

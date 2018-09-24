@@ -152,7 +152,11 @@ function withLayout(BaseComponent, { teamRequired = true } = {}) {
         teamSlug = query.teamSlug;
       }
 
-      if (pathname.includes('/login') || pathname.includes('/invitation')) {
+      if (
+        pathname.includes('/login') ||
+        pathname.includes('/invitation') ||
+        pathname.includes('/create-team')
+      ) {
         firstGridItem = false;
       }
 
