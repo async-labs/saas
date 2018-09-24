@@ -20,7 +20,7 @@ class MenuWithMenuItems extends React.PureComponent<{
           aria-owns={menuElm ? menuOptions.id : null}
           data-id={menuOptions.dataId}
           aria-haspopup="true"
-          style={{ fontSize: '13px', opacity: 0.7, cursor: 'pointer' }}
+          style={{ fontSize: '14px', opacity: 0.7, cursor: 'pointer' }}
           className="material-icons"
           onClick={e => this.handleClick(e)}
         >

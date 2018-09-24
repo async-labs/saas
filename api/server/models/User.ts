@@ -270,23 +270,21 @@ class UserClass extends mongoose.Model {
 
   public static async getListOfInvoicesForCustomer({ userId }) {
     const user = await this.findById(userId, 'stripeCustomer');
+
     logger.debug('called static method on User');
+
     const newListOfInvoices = await getListOfInvoices({
       customerId: user.stripeCustomer.id,
     });
-    for (const invoiceObject of newListOfInvoices.data) {
-      const team = await Team.findOne({
-        'stripeSubscription.id': invoiceObject.subscription,
-      })
-        .select('name')
-        .lean();
-      logger.debug(team.name);
-      (invoiceObject as any).teamId = team._id;
-      (invoiceObject as any).teamName = team.name;
-    }
+
     const modifier = {
       stripeListOfInvoices: newListOfInvoices,
     };
+
+    if (!newListOfInvoices) {
+      throw new Error('There is no payment history.');
+    }
+
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('stripeListOfInvoices')
       .lean();

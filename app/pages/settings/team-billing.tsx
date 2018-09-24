@@ -28,17 +28,18 @@ const styleGridItem = {
 };
 
 type Props = { store: Store; isTL: boolean; teamSlug: string };
-type State = { disabled: boolean; };
+type State = { disabled: boolean; showInvoices: boolean };
 
 class TeamBilling extends React.Component<Props, State> {
   public state = {
     newName: '',
     disabled: false,
+    showInvoices: false,
   };
 
   public render() {
     const { store, isTL } = this.props;
-    const { currentTeam } = store;
+    const { currentTeam, currentUser } = store;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
@@ -86,8 +87,68 @@ class TeamBilling extends React.Component<Props, State> {
           <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
             <h3>Team Billing</h3>
             <p />
+            <h4 style={{ marginTop: '40px' }}>Team Subscription</h4>
             {this.renderSubscriptionButton()}
             <p />
+            <br />
+            <h4>Card information</h4>
+            {currentUser && !currentUser.stripeCard ? (
+              <StripeCheckout
+                stripeKey={StripePublishableKey}
+                token={this.addCard}
+                name="Add card information"
+                email={currentUser.email}
+                allowRememberMe={false}
+                panelLabel="Add card"
+                description={'This is your default payment method.'}
+              >
+                <Button variant="raised" color="primary">
+                  Add card
+                </Button>
+              </StripeCheckout>
+            ) : (
+              <span>
+                {' '}
+                <i
+                  className="material-icons"
+                  color="action"
+                  style={{ verticalAlign: 'text-bottom' }}
+                >
+                  done
+                </i>{' '}
+                Your default payment method:
+                <li>
+                  {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
+                </li>
+                <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
+                <li>
+                  Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
+                </li>
+                <p />
+                <StripeCheckout
+                  stripeKey={StripePublishableKey}
+                  token={this.addNewCardOnClick}
+                  name="Add new card information"
+                  email={currentUser.email}
+                  allowRememberMe={false}
+                  panelLabel="Update card"
+                  description={'New card will be your default card.'}
+                >
+                  <Button variant="outlined" color="primary">
+                    Update card
+                  </Button>
+                </StripeCheckout>
+              </span>
+            )}
+            <p />
+            <br />
+            <h4>Payment history</h4>
+            <Button variant="outlined" color="primary" onClick={this.showListOfInvoicesOnClick}>
+              Show payment history
+            </Button>
+            {this.renderInvoices()}
+            <p />
+            <br />
           </Grid>
         </Grid>
       </div>
@@ -100,7 +161,9 @@ class TeamBilling extends React.Component<Props, State> {
     let subscriptionDate;
     let billingDay;
     if (currentTeam && currentTeam.stripeSubscription) {
-      subscriptionDate = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format('MMM Do YYYY');
+      subscriptionDate = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format(
+        'MMM Do YYYY',
+      );
       billingDay = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format('Do');
     }
 
@@ -121,14 +184,13 @@ class TeamBilling extends React.Component<Props, State> {
           description={`Subscription for ${currentTeam.name}`}
         >
           <Button variant="raised" color="primary">
-            Buy subscription
+            Buy subscription 1
           </Button>
           <p />
           {currentTeam.isPaymentFailed ? (
             <p>
-              Team was automatically unsubscribed due to failed payment. You
-              will be prompt to update card information if you choose to
-              re-subscribe Team.
+              Team was automatically unsubscribed due to failed payment. You will be prompt to
+              update card information if you choose to re-subscribe Team.
             </p>
           ) : null}
         </StripeCheckout>
@@ -142,12 +204,8 @@ class TeamBilling extends React.Component<Props, State> {
     ) {
       return (
         <React.Fragment>
-          <Button
-            variant="raised"
-            color="primary"
-            onClick={this.createSubscriptionOnClick}
-          >
-            Buy subscription
+          <Button variant="raised" color="primary" onClick={this.createSubscriptionOnClick}>
+            Buy subscription 2
           </Button>
         </React.Fragment>
       );
@@ -156,47 +214,103 @@ class TeamBilling extends React.Component<Props, State> {
         <React.Fragment>
           <span>
             {' '}
-            <i
-              className="material-icons"
-              color="action"
-              style={{ verticalAlign: 'text-bottom' }}
-            >
+            <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
               done
             </i>{' '}
             Subscription is active.
             <p>
-              You subscribed <b>{currentTeam.name}</b> on{' '}
-              <b>{subscriptionDate}</b>.
+              You subscribed <b>{currentTeam.name}</b> on <b>{subscriptionDate}</b>.
             </p>
             <p>
-              You will be billed on <b>{billingDay} day</b> of each month unless you
-              cancel subscription or subscription is cancelled automatically due to failed payment.
+              You will be billed on <b>{billingDay} day</b> of each month unless you cancel
+              subscription or subscription is cancelled automatically due to failed payment.
             </p>
           </span>
           <p />
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={this.cancelSubscriptionOnClick}
-          >
+          <Button variant="outlined" color="primary" onClick={this.cancelSubscriptionOnClick}>
             Unsubscribe Team
           </Button>
-          <p />
+          <br />
         </React.Fragment>
       );
     }
   }
 
+  private showListOfInvoicesOnClick = async () => {
+    const { currentUser } = this.props.store;
+    NProgress.start();
+    this.setState({ disabled: true });
+    try {
+      await currentUser.getListOfInvoices();
+      this.setState({ showInvoices: true });
+    } catch (err) {
+      notify(err);
+    } finally {
+      this.setState({ disabled: false });
+      NProgress.done();
+    }
+  };
+
+  private renderInvoices() {
+    const { currentUser } = this.props.store;
+    const { showInvoices } = this.state;
+    if (!showInvoices) {
+      return null;
+    }
+    return (
+      <React.Fragment>
+        {currentUser && !currentUser.stripeListOfInvoices ? (
+          <React.Fragment>
+            <p>You have no history of payments.</p>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            {currentUser.stripeListOfInvoices.data.map((invoice, i) => (
+              <React.Fragment>
+                <p>Your history of payments:</p>
+                <li key={i}>
+                  ${invoice.amount_paid / 100} was paid on{' '}
+                  {moment(invoice.date * 1000).format('MMM Do YYYY')} for Team '{invoice.teamName}'
+                  -{' '}
+                  <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">
+                    See invoice
+                  </a>
+                </li>
+              </React.Fragment>
+            ))}
+          </React.Fragment>
+        )}
+      </React.Fragment>
+    );
+  }
+
   private addCard = async token => {
-    const { currentTeam, currentUser } = this.props.store;
+    const { currentUser } = this.props.store;
 
     NProgress.start();
     this.setState({ disabled: true });
 
     try {
       await currentUser.createCustomer({ token });
-      await currentTeam.createSubscription({ teamId: currentTeam._id });
+      await currentUser.createCustomer({ token });
       notify('Success!');
+    } catch (err) {
+      notify(err);
+    } finally {
+      this.setState({ disabled: false });
+      NProgress.done();
+    }
+  };
+
+  private addNewCardOnClick = async token => {
+    const { currentUser } = this.props.store;
+
+    NProgress.start();
+    this.setState({ disabled: true });
+
+    try {
+      await currentUser.createNewCardAndUpdateCustomer({ token });
+      notify('You successfully updated card information.');
     } catch (err) {
       notify(err);
     } finally {

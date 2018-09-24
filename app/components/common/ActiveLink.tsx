@@ -7,12 +7,12 @@ const ActiveLink = ({ linkText, href, as, hasIcon, highlighterSlug, store }) => 
 
   const styleAnchor = {
     fontWeight: 400,
-    fontSize: '13px',
+    fontSize: '14px',
   };
 
   const styleAnchorSelectedWithIcon = {
     fontWeight: 400,
-    fontSize: '13px',
+    fontSize: '14px',
     position: 'relative',
     left: '-14px',
   };
