@@ -152,7 +152,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
       await discussion.addPost(content);
 
-      this.setState({ name: '', memberIds: [] });
+      this.setState({ name: '', memberIds: [], content: '' });
       notify('You successfully added new Discussion.');
 
       Router.push(
