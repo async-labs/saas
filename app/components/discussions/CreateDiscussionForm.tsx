@@ -157,7 +157,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
       Router.push(
         `/discussion?teamSlug=${currentTeam.slug}&discussionSlug=${discussion.slug}`,
-        `/team/${currentTeam.slug}/d/${discussion.slug}`,
+        `/team/${currentTeam.slug}/discussions/${discussion.slug}`,
       );
     } catch (error) {
       console.log(error);

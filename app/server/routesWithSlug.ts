@@ -1,10 +1,10 @@
 export default function routesWithSlug({ server, app }) {
-  server.get('/team/:teamSlug/d/:discussionSlug', (req, res) => {
+  server.get('/team/:teamSlug/discussions/:discussionSlug', (req, res) => {
     const { teamSlug, discussionSlug } = req.params;
     app.render(req, res, '/discussion', { teamSlug, discussionSlug });
   });
 
-  server.get('/team/:teamSlug/d', (req, res) => {
+  server.get('/team/:teamSlug/discussions', (req, res) => {
     const { teamSlug } = req.params;
     app.render(req, res, '/discussion', { teamSlug });
   });

@@ -108,6 +108,10 @@ class Team {
     }
   }
 
+  public getDiscussionBySlug(slug): Discussion {
+    return this.discussions.find(d => d.slug === slug);
+  }
+
   public setInitialDiscussionSlug(slug: string) {
     if (!this.initialDiscussionSlug) {
       this.initialDiscussionSlug = slug;
@@ -138,12 +142,23 @@ class Team {
     this.isLoadingDiscussions = true;
 
     try {
-      const { discussions = [] } = await getDiscussionList({ teamId: this._id });
+      const { discussions = [] } = await getDiscussionList({
+        teamId: this._id,
+      });
+      const newList: Discussion[] = [];
 
       runInAction(() => {
-        discussions.forEach(t =>
-          this.discussions.push(new Discussion({ team: this, store: this.store, ...t })),
-        );
+        discussions.forEach(d => {
+          const disObj = this.discussions.find(obj => obj._id === d._id);
+          if (disObj) {
+            disObj.changeLocalCache(d);
+            newList.push(disObj);
+          } else {
+            newList.push(new Discussion({ team: this, store: this.store, ...d }));
+          }
+        });
+
+        this.discussions.replace(newList);
       });
     } finally {
       runInAction(() => {
@@ -207,7 +222,7 @@ class Team {
 
           Router.push(
             `/discussion?teamSlug=${this.slug}&discussionSlug=${d.slug}`,
-            `/team/${this.slug}/d/${d.slug}`,
+            `/team/${this.slug}/discussions/${d.slug}`,
           );
         } else {
           Router.push(`/discussion?teamSlug=${this.slug}`, `/team/${this.slug}/d`);

@@ -10,7 +10,7 @@ import { observer } from 'mobx-react';
 import Loading from '../components/common/Loading';
 import PostDetail from '../components/posts/PostDetail';
 import PostForm from '../components/posts/PostForm';
-import { Store } from '../lib/store';
+import { Discussion, Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 import withLayout from '../lib/withLayout';
 
@@ -25,43 +25,62 @@ type Props = {
   isServer: boolean;
 };
 
-class Discussion extends React.Component<Props> {
+class DiscussionComp extends React.Component<Props> {
   public state = {
     drawerState: false,
     selectedPost: null,
   };
 
   public componentDidMount() {
-    this.changeDiscussion(this.props);
+    this.changeDiscussion();
   }
 
-  public componentWillReceiveProps(nextProps) {
-    this.changeDiscussion(nextProps);
+  public componentDidUpdate(prevProps: Props) {
+    if (prevProps.discussionSlug !== this.props.discussionSlug) {
+      this.changeDiscussion();
+    }
   }
 
-  public changeDiscussion(props: Props) {
-    const { teamSlug, discussionSlug, store } = props;
+  public getDiscussion(slug: string): Discussion {
+    const { store, teamSlug } = this.props;
+    const { currentTeam } = store;
+
+    if (!slug && currentTeam.discussions.length > 0) {
+      Router.replace(
+        `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
+        `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
+      );
+      return;
+    }
+
+    if (slug && store.currentTeam) {
+      return store.currentTeam.getDiscussionBySlug(slug);
+    }
+
+    return null;
+  }
+
+  public changeDiscussion() {
+    const { teamSlug, discussionSlug, store, isServer } = this.props;
     const { currentTeam } = store;
 
     if (!currentTeam || currentTeam.slug !== teamSlug) {
       return;
     }
 
-    if (!discussionSlug && currentTeam.currentDiscussionSlug) {
-      Router.push(
-        `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.currentDiscussionSlug}`,
-        `/team/${teamSlug}/d/${currentTeam.currentDiscussionSlug}`,
+    if (!discussionSlug && currentTeam.discussions.length > 0) {
+      Router.replace(
+        `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
+        `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
       );
 
       return;
     }
 
-    currentTeam.setCurrentDiscussion({ slug: discussionSlug });
+    const discussion = this.getDiscussion(discussionSlug);
 
-    if (currentTeam && currentTeam.currentDiscussion) {
-      if (!props.isServer) {
-        currentTeam.currentDiscussion.loadPosts();
-      }
+    if (!isServer && discussion) {
+      discussion.loadPosts().catch(e => console.error(e));
     }
   }
 
@@ -75,27 +94,28 @@ class Discussion extends React.Component<Props> {
   };
 
   public renderPosts() {
-    const { store, isServer } = this.props;
-    const { currentTeam } = store;
+    const { isServer } = this.props;
 
-    const { currentDiscussion } = currentTeam;
+    const discussion = this.getDiscussion(this.props.discussionSlug);
 
-    if (currentDiscussion.isLoadingPosts && currentDiscussion.posts.length === 0) {
+    if (discussion && discussion.isLoadingPosts && discussion.posts.length === 0) {
       return <p>Empty discussion</p>;
     }
 
     let loading = 'loading Posts ...';
-    if (currentDiscussion.posts.length > 0) {
+    if (discussion && discussion.posts.length > 0) {
       loading = 'checking for newer Posts ...';
     }
 
     return (
       <React.Fragment>
-        {currentDiscussion.posts.map(p => (
-          <PostDetail key={p._id} post={p} onEditClick={this.onEditClickCallback} />
-        ))}
+        {discussion
+          ? discussion.posts.map(p => (
+              <PostDetail key={p._id} post={p} onEditClick={this.onEditClickCallback} />
+            ))
+          : null}
 
-        {currentDiscussion.isLoadingPosts && !isServer ? (
+        {discussion && discussion.isLoadingPosts && !isServer ? (
           <Loading text={loading} />
         ) : (
           <p style={{ height: '1.0em' }} />
@@ -105,7 +125,7 @@ class Discussion extends React.Component<Props> {
   }
 
   public render() {
-    const { store } = this.props;
+    const { store, discussionSlug } = this.props;
     const { currentTeam } = store;
     const { selectedPost, drawerState } = this.state;
 
@@ -113,9 +133,9 @@ class Discussion extends React.Component<Props> {
       return <div style={styleGridItem}>No Team is found.</div>;
     }
 
-    const { currentDiscussion } = currentTeam;
+    const discussion = this.getDiscussion(discussionSlug);
 
-    if (!currentDiscussion && !currentTeam.isLoadingDiscussions) {
+    if (!discussion) {
       if (currentTeam.isLoadingDiscussions) {
         return (
           <div style={styleGridItem}>
@@ -123,56 +143,64 @@ class Discussion extends React.Component<Props> {
           </div>
         );
       } else {
-        return <div style={styleGridItem}>No discussion is found.</div>;
+        return (
+          <React.Fragment>
+            <Head>
+              <title>No discussion is found.</title>
+            </Head>
+            <div style={styleGridItem}>
+              <p>No discussion is found.</p>
+            </div>
+          </React.Fragment>
+        );
       }
     }
 
-    // if (currentTeam.isLoadingDiscussions) {
-    //   return (
-    //     <div style={styleGridItem}>
-    //       <Loading text="loading Discussions ..." />
-    //     </div>
-    //   );
-    // }
-
-    // if (!currentDiscussion) {
-    //   return <div style={styleGridItem}>No discussion is found.</div>;
-    // }
+    const title = discussion ? `${discussion.name} · Discussion` : 'Discussions';
 
     return (
       <div style={{ height: '100%', padding: '0px 20px' }}>
         <Head>
-          <title>{currentDiscussion.name}</title>
+          <title>{title}</title>
           <meta
             name="description"
-            content={`Discussion ${currentDiscussion.name} by Team ${currentTeam.name}`}
+            content={
+              discussion
+                ? `Discussion ${discussion.name} by Team ${currentTeam.name}`
+                : 'Discussions'
+            }
           />
         </Head>
-        <h4 style={{ marginBottom: '1em' }}>{currentDiscussion.name}</h4>
+        <h4>
+          <span style={{ fontWeight: 300 }}>Discussion : </span>
+          {(discussion && discussion.name) || 'No Discussion is found.'}
+        </h4>{' '}
         Visible to :{' '}
-        {currentDiscussion.members.map(m => (
-          <Tooltip
-            title={m.displayName}
-            placement="right"
-            disableFocusListener
-            disableTouchListener
-            key={m._id}
-          >
-            <Avatar
-              role="presentation"
-              src={m.avatarUrl}
-              alt={m.avatarUrl}
-              key={m._id}
-              style={{
-                margin: '0px 5px',
-                display: 'inline-flex',
-                width: '30px',
-                height: '30px',
-                verticalAlign: 'middle',
-              }}
-            />
-          </Tooltip>
-        ))}
+        {discussion
+          ? discussion.members.map(m => (
+              <Tooltip
+                title={m.displayName}
+                placement="right"
+                disableFocusListener
+                disableTouchListener
+                key={m._id}
+              >
+                <Avatar
+                  role="presentation"
+                  src={m.avatarUrl}
+                  alt={m.avatarUrl}
+                  key={m._id}
+                  style={{
+                    margin: '0px 5px',
+                    display: 'inline-flex',
+                    width: '30px',
+                    height: '30px',
+                    verticalAlign: 'middle',
+                  }}
+                />
+              </Tooltip>
+            ))
+          : null}
         <p />
         {this.renderPosts()}
         <Button
@@ -188,7 +216,7 @@ class Discussion extends React.Component<Props> {
         <PostForm
           post={selectedPost}
           open={drawerState}
-          members={currentDiscussion.members}
+          members={discussion.members}
           onFinished={() => {
             this.setState({ drawerState: false, selectedPost: null });
           }}
@@ -198,4 +226,4 @@ class Discussion extends React.Component<Props> {
   }
 }
 
-export default withAuth(withLayout(observer(Discussion)));
+export default withAuth(withLayout(observer(DiscussionComp)));

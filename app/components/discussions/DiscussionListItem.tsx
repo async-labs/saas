@@ -17,7 +17,7 @@ class DiscussionListItem extends React.Component<Props> {
     const { store, discussion, team } = this.props;
     const trimmingLength = 16;
 
-    const selectedDiscussion = store.currentUrl === `/team/${team.slug}/d/${discussion.slug}`;
+    const selectedDiscussion = store.currentUrl === `/team/${team.slug}/discussions/${discussion.slug}`;
 
     return (
       <Paper
@@ -34,7 +34,7 @@ class DiscussionListItem extends React.Component<Props> {
             prefetch
             scroll={false}
             href={`/discussion?teamSlug=${team.slug}&discussionSlug=${discussion.slug}`}
-            as={`/team/${team.slug}/d/${discussion.slug}`}
+            as={`/team/${team.slug}/discussions/${discussion.slug}`}
           >
             <a style={{ fontWeight: 300 }}>
               {discussion.name.length > trimmingLength

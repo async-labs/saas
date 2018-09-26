@@ -53,7 +53,7 @@ const getTeamOptionsMenuWithLinksLeft = (teams, currentUserId) =>
     text: t.teamLeaderId === currentUserId ? `${t.name} ( You're TL )` : `${t.name} ( You're TM )`,
     avatarUrl: t.avatarUrl,
     href: `/discussion?teamSlug=${t.slug}`,
-    as: `/team/${t.slug}/d`,
+    as: `/team/${t.slug}/discussions`,
     simple: false,
     highlighterSlug: `/team/${t.slug}/`,
   }));

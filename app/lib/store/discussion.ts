@@ -33,7 +33,7 @@ class Discussion {
   }
 
   get members() {
-    return this.memberIds.map(id => this.team.members.get(id));
+    return this.memberIds.map(id => this.team.members.get(id)).filter(u => !!u);
   }
 
   public setInitialPosts(posts) {

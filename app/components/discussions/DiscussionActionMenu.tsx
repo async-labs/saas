@@ -91,7 +91,7 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
     }
 
     const selectedDiscussion = currentTeam.discussions.find(d => d._id === id);
-    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/d/${selectedDiscussion.slug}`;
+    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/discussions/${selectedDiscussion.slug}`;
 
     try {
       if (window.navigator) {
