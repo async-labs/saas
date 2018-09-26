@@ -31,7 +31,6 @@ const mongoSchema = new mongoose.Schema({
 });
 
 mongoSchema.index({ name: 'text' });
-mongoSchema.index({ topicId: 1, slug: 1 }, { unique: true });
 
 interface IDiscussionDocument extends mongoose.Document {
   createdUserId: string;
