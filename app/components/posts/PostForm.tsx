@@ -8,7 +8,7 @@ import NProgress from 'nprogress';
 import React from 'react';
 
 import notify from '../../lib/notifier';
-import { Post, Store, User } from '../../lib/store';
+import { Discussion, Post, Store, User } from '../../lib/store';
 
 import PostEditor from './PostEditor';
 
@@ -26,6 +26,7 @@ type MyProps = {
   onFinished?: () => void;
   open?: boolean;
   classes: { paper: string };
+  discussion: Discussion;
 };
 
 type MyState = {
@@ -101,7 +102,7 @@ class PostForm extends React.Component<MyProps, MyState> {
 
     const { content } = this.state;
     const htmlContent = marked(he.decode(content));
-    const { post, onFinished, store } = this.props;
+    const { post, onFinished, store, discussion } = this.props;
     const isEditing = !!post;
 
     if (!content) {
@@ -133,13 +134,7 @@ class PostForm extends React.Component<MyProps, MyState> {
 
     const { currentTeam } = store;
     if (!currentTeam) {
-      notify('Team have not selected');
-      return;
-    }
-
-    const { currentDiscussion } = currentTeam;
-    if (!currentDiscussion) {
-      notify('Discussion have not selected');
+      notify('Team is not selected or does not exist.');
       return;
     }
 
@@ -147,12 +142,12 @@ class PostForm extends React.Component<MyProps, MyState> {
     this.setState({ disabled: true });
 
     try {
-      await currentDiscussion.addPost(content);
+      await discussion.addPost(content);
 
       this.setState({ content: '' });
       NProgress.done();
       this.setState({ disabled: false });
-      notify('You successfully published Post');
+      notify('You successfully published Post.');
     } catch (error) {
       console.log(error);
       notify(error);

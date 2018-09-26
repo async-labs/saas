@@ -214,6 +214,7 @@ class DiscussionComp extends React.Component<Props> {
         <p />
         <br />
         <PostForm
+          discussion={discussion}
           post={selectedPost}
           open={drawerState}
           members={discussion.members}

@@ -8,6 +8,8 @@ import ActiveLink from '../common/ActiveLink';
 import CreateDiscussionForm from './CreateDiscussionForm';
 import DiscussionListItem from './DiscussionListItem';
 
+import notify from '../../lib/notifier';
+
 type Props = { store?: Store; team: Team };
 
 class DiscussionList extends React.Component<Props> {
@@ -15,9 +17,13 @@ class DiscussionList extends React.Component<Props> {
     discussionFormOpen: false,
   };
 
+  public componentDidMount() {
+    this.props.team.loadDiscussions().catch(err => notify(err));
+  }
+
   public componentDidUpdate(prevProps: Props) {
     if (this.props.team._id !== prevProps.team._id) {
-      this.props.team.loadDiscussions();
+      this.props.team.loadDiscussions().catch(err => notify(err));
     }
   }
 
@@ -30,8 +36,8 @@ class DiscussionList extends React.Component<Props> {
           hasIcon
           linkText="Discussions"
           href={`/discussion?teamSlug=${team.slug}`}
-          as={`/team/${team.slug}/d`}
-          highlighterSlug={`/${team.slug}/d`}
+          as={`/team/${team.slug}/discussions`}
+          highlighterSlug={`/team/${team.slug}/discussions`}
         />
 
         <Tooltip title="Add Discussion" placement="right" disableFocusListener disableTouchListener>

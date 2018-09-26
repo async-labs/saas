@@ -76,6 +76,8 @@ class Team {
 
     if (params.initialDiscussions) {
       this.setInitialDiscussions(params.initialDiscussions);
+    } else {
+      this.loadDiscussions();
     }
   }
 
@@ -225,7 +227,7 @@ class Team {
             `/team/${this.slug}/discussions/${d.slug}`,
           );
         } else {
-          Router.push(`/discussion?teamSlug=${this.slug}`, `/team/${this.slug}/d`);
+          Router.push(`/discussion?teamSlug=${this.slug}`, `/team/${this.slug}/discussions`);
         }
       }
     });

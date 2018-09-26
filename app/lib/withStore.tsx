@@ -32,14 +32,14 @@ export default function withStore(BaseComponent) {
         Object.assign(props, (await BaseComponent.getInitialProps(ctx)) || {});
       }
 
-      const { teamSlug, topicSlug, discussionSlug } = props;
+      const { teamSlug, discussionSlug } = props;
       let initialData = {};
 
       if (user) {
         try {
           initialData = await getInitialData({
             request: ctx.req,
-            data: { teamSlug, topicSlug, discussionSlug },
+            data: { teamSlug, discussionSlug },
           });
         } catch (error) {
           console.log(error);

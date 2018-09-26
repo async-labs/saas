@@ -37,7 +37,7 @@ export default function withAuth(
           asUrl = '/create-team';
         } else {
           redirectUrl = `/discussion?teamSlug=${user.defaultTeamSlug}`;
-          asUrl = `/team/${user.defaultTeamSlug}/d`;
+          asUrl = `/team/${user.defaultTeamSlug}/discussions`;
         }
       }
 

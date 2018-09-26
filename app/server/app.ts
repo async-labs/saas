@@ -58,21 +58,21 @@ app.prepare().then(() => {
     let redirectUrl = 'login';
 
     if (req.user) {
-      if (!req.user.defaultTeamSlug) {
-        redirectUrl = 'settings/create-team';
+      if (!req.user.isAdmin && !req.user.defaultTeamSlug) {
+        redirectUrl = 'create-team';
       } else {
-        redirectUrl = `team/${req.user.defaultTeamSlug}/d`;
+        redirectUrl = `team/${req.user.defaultTeamSlug}/discussions`;
       }
     }
 
     res.redirect(`${ROOT_URL}/${redirectUrl}`);
   });
 
+  routesWithSlug({ server, app });
+
   server.get('/robots.txt', (_, res) => {
     res.sendFile(path.join(__dirname, '../static', 'robots.txt'));
   });
-
-  routesWithSlug({ server, app });
 
   server.get('*', (req, res) => {
     handle(req, res);

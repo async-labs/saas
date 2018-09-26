@@ -23,6 +23,10 @@ router.use((req, res, next) => {
 async function loadDiscussionsData(team, userId, body) {
   const { discussionSlug } = body;
 
+  if (!discussionSlug) {
+    return {};
+  }
+
   const { discussions } = await Discussion.getList({
     userId,
     teamId: team._id,
@@ -41,10 +45,6 @@ async function loadDiscussionsData(team, userId, body) {
 
       break;
     }
-  }
-
-  if (discussionSlug) {
-    data.currentDiscussionSlug = discussionSlug;
   }
 
   return data;
