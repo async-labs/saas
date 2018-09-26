@@ -17,7 +17,8 @@ class DiscussionListItem extends React.Component<Props> {
     const { store, discussion, team } = this.props;
     const trimmingLength = 16;
 
-    const selectedDiscussion = store.currentUrl === `/team/${team.slug}/discussions/${discussion.slug}`;
+    const selectedDiscussion =
+      store.currentUrl === `/team/${team.slug}/discussions/${discussion.slug}`;
 
     return (
       <Paper
@@ -36,7 +37,7 @@ class DiscussionListItem extends React.Component<Props> {
             href={`/discussion?teamSlug=${team.slug}&discussionSlug=${discussion.slug}`}
             as={`/team/${team.slug}/discussions/${discussion.slug}`}
           >
-            <a style={{ fontWeight: 300 }}>
+            <a style={{ fontWeight: 300 }} key={discussion._id}>
               {discussion.name.length > trimmingLength
                 ? `${discussion.name.substring(0, trimmingLength)}...`
                 : discussion.name}

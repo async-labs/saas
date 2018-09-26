@@ -106,7 +106,7 @@ export default function auth({ ROOT_URL, server }) {
         if (!req.user.defaultTeamSlug) {
           redirectUrlAfterLogin = '/create-team';
         } else {
-          redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/d`;
+          redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
         }
       }
 
