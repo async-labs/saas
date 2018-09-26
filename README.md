@@ -194,29 +194,29 @@ To customize styles, check [this guide](https://github.com/builderbook/builderbo
 
 ## Screenshots
 Dashboard showing Discussion > Posts:
-![1_discussionposts](https://user-images.githubusercontent.com/26158226/43875494-7d909d02-9b45-11e8-902f-e3bd5e7dcbdc.png)
+![1_discussion](https://user-images.githubusercontent.com/26158226/46056102-e5d7fc00-c103-11e8-9690-29ed4d01253d.png)
 
 Adding a Post, Markdown vs. HTML view:
-![2_addpost_md](https://user-images.githubusercontent.com/26158226/43875495-7da46080-9b45-11e8-9fa8-8c0a6da77beb.png)
-![3_addpost_html](https://user-images.githubusercontent.com/26158226/43875496-7dc24e74-9b45-11e8-9c6d-704c0b59034e.png)
+![2_markdown](https://user-images.githubusercontent.com/26158226/46056242-93e3a600-c104-11e8-978d-3452dba56e2a.png)
+![3_html](https://user-images.githubusercontent.com/26158226/46056104-e5d7fc00-c103-11e8-8534-6d9204d0a959.png)
 
 Settings for Team Members:
-![4_teamsettings_members](https://user-images.githubusercontent.com/26158226/43875497-7dd8fbf6-9b45-11e8-8714-951a66bdacbe.png)
+![4_teammember](https://user-images.githubusercontent.com/26158226/46056105-e5d7fc00-c103-11e8-969b-1ed3f8d2924d.png)
 
 Team Billing:
-![5_teamsettings_billing](https://user-images.githubusercontent.com/26158226/43932879-6ede3a74-9bfb-11e8-8a03-ca3133bd91b6.png)
+![5_teambilling](https://user-images.githubusercontent.com/26158226/46056106-e5d7fc00-c103-11e8-9746-7356a4e76dc8.png)
 
 Settings for Team Profile:
-![6_teamsettings_profile](https://user-images.githubusercontent.com/26158226/43875499-7e1899d2-9b45-11e8-8302-07a2314c1a03.png)
+![6_teamprofile](https://user-images.githubusercontent.com/26158226/46056108-e8d2ec80-c103-11e8-8cb7-8d68bec4ed85.png)
 
 Settings for Personal Profile:
-![7a_personalprofile](https://user-images.githubusercontent.com/26158226/43932880-705d78d8-9bfb-11e8-9215-d1ec47c14b55.png)
+![7_personalprofile](https://user-images.githubusercontent.com/26158226/46056109-e96b8300-c103-11e8-958f-3ea66eafb028.png)
 
 Add/Update card with Stripe:
-![7b_personalprofile_stripe](https://user-images.githubusercontent.com/26158226/43932882-716a00c0-9bfb-11e8-93f9-3b0d2f2c348e.png)
+![8_stripe](https://user-images.githubusercontent.com/26158226/46056110-e96b8300-c103-11e8-89d8-b4de80a258db.png)
 
 Menu dropdown to switch between Teams:
-![8_dropdown_teamselector](https://user-images.githubusercontent.com/26158226/43875501-7e40c254-9b45-11e8-85f7-6c81bbf2813b.png)
+![9_switchteam](https://user-images.githubusercontent.com/26158226/46056111-ea9cb000-c103-11e8-8def-8a3c23988088.png)
 
 
 ## Showcase
