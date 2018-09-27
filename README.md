@@ -84,6 +84,8 @@ To run locally, you will need to run two apps: `api` and `app`.
   MAILCHIMP_REGION="xxxxxx"
   MAILCHIMP_SAAS_ALL_LIST_ID="xxxxxx"
 
+  # All env variables above this line are needed for successful user signup
+
   # Used in api/server/stripe.ts
   Stripe_Test_SecretKey="sk_test_xxxxxx"
   Stripe_Live_SecretKey="sk_live_xxxxxx"
@@ -98,9 +100,6 @@ To run locally, you will need to run two apps: `api` and `app`.
 
   PRODUCTION_URL_APP="https://saas-app.async-await.com"
   PRODUCTION_URL_API="https://saas-api.async-await.com"
-
-  SESSION_NAME="xxxxxx"
-  SESSION_SECRET="xxxxxx"
   ```
   Important: The above environmental variables are available on the server only. You should add your `.env` file to `.gitignore` inside the `api` folder so that your secret keys are not stored on a remote Github repo.
   
