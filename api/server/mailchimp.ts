@@ -9,6 +9,7 @@ const LIST_IDS = {
 
 function callAPI({ path, method, data }) {
   const ROOT_URI = `https://${process.env.MAILCHIMP_REGION}.api.mailchimp.com/3.0`;
+  // For us, MAILCHIMP_REGION has value of 'us17'.
 
   const API_KEY = process.env.MAILCHIMP_API_KEY;
 

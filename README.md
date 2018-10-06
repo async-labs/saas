@@ -81,7 +81,7 @@ To run locally, you will need to run two apps: `api` and `app`.
 
   # Used in api/server/mailchimp.ts
   MAILCHIMP_API_KEY="xxxxxx"
-  MAILCHIMP_REGION="xxxxxx"
+  MAILCHIMP_REGION="xxxx"
   MAILCHIMP_SAAS_ALL_LIST_ID="xxxxxx"
 
   # All env variables above this line are needed for successful user signup
