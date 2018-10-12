@@ -218,7 +218,7 @@ class PostClass extends mongoose.Model {
 
     deletePostFiles([post]);
 
-    await this.remove({ _id: id });
+    await this.deleteOne({ _id: id });
   }
 
   public static async checkPermission({ userId, discussionId, post = null }) {

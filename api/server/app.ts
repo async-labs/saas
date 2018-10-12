@@ -25,11 +25,16 @@ const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_API;
 
 const MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
 
+const options = {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+};
+
 mongoose.connect(
   MONGO_URL,
-  { useNewUrlParser: true, useFindAndModify: false },
+  options,
 );
-mongoose.set('useCreateIndex', true);
 
 const server = express();
 

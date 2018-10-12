@@ -89,7 +89,7 @@ class InvitationClass extends mongoose.Model {
       if (team.memberIds.includes(registeredUser._id.toString())) {
         throw new Error('This user is already Team Member.');
       } else {
-        await Team.update({ _id: team._id }, { $addToSet: { memberIds: registeredUser._id } });
+        await Team.updateOne({ _id: team._id }, { $addToSet: { memberIds: registeredUser._id } });
 
         if (registeredUser._id !== team.teamLeaderId && !registeredUser.defaultTeamSlug) {
           await User.findByIdAndUpdate(registeredUser._id, {
@@ -188,7 +188,7 @@ class InvitationClass extends mongoose.Model {
       .lean();
 
     if (team && team.memberIds.includes(userId)) {
-      this.remove({ token }).exec();
+      this.deleteOne({ token }).exec();
     }
   }
 
@@ -203,14 +203,14 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Invitation not found');
     }
 
-    await this.remove({ token });
+    await this.deleteOne({ token });
 
     const team = await Team.findById(invitation.teamId)
       .select('memberIds slug teamLeaderId')
       .lean();
 
     if (team && !team.memberIds.includes(user._id)) {
-      await Team.update({ _id: team._id }, { $addToSet: { memberIds: user._id } });
+      await Team.updateOne({ _id: team._id }, { $addToSet: { memberIds: user._id } });
 
       if (user._id !== team.teamLeaderId && !user.defaultTeamSlug) {
         await User.findByIdAndUpdate(user._id, { $set: { defaultTeamSlug: team.slug } });

@@ -177,9 +177,9 @@ class DiscussionClass extends mongoose.Model {
         .lean(),
     );
 
-    await Post.remove({ discussionId: id });
+    await Post.deleteMany({ discussionId: id });
 
-    await this.remove({ _id: id });
+    await this.deleteOne({ _id: id });
 
     return { teamId: discussion.teamId };
   }
