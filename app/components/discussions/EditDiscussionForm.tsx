@@ -80,7 +80,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
               >
                 Cancel
               </Button>
-              <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
+              <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
                 Update Discussion
               </Button>
             </DialogActions>

@@ -80,7 +80,7 @@ class PostForm extends React.Component<MyProps, MyState> {
               <Button variant="outlined" onClick={this.closeDrawer} disabled={this.state.disabled}>
                 Cancel
               </Button>{' '}
-              <Button type="submit" variant="raised" color="primary" disabled={this.state.disabled}>
+              <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
                 {isEditing ? 'Save changes' : 'Publish'}
               </Button>
             </div>

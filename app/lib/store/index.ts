@@ -9,7 +9,7 @@ import { Post } from './post';
 import { Team } from './team';
 import { User } from './user';
 
-mobx.configure({ enforceActions: true });
+mobx.configure({ enforceActions: 'observed' });
 
 class Store {
   public isServer: boolean;

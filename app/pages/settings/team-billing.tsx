@@ -102,7 +102,7 @@ class TeamBilling extends React.Component<Props, State> {
                 panelLabel="Add card"
                 description={'This is your default payment method.'}
               >
-                <Button variant="raised" color="primary">
+                <Button variant="contained" color="primary">
                   Add card
                 </Button>
               </StripeCheckout>
@@ -183,7 +183,7 @@ class TeamBilling extends React.Component<Props, State> {
           panelLabel="Confirm ($50/month)"
           description={`Subscription for ${currentTeam.name}`}
         >
-          <Button variant="raised" color="primary">
+          <Button variant="contained" color="primary">
             Buy subscription 1
           </Button>
           <p />
@@ -204,7 +204,7 @@ class TeamBilling extends React.Component<Props, State> {
     ) {
       return (
         <React.Fragment>
-          <Button variant="raised" color="primary" onClick={this.createSubscriptionOnClick}>
+          <Button variant="contained" color="primary" onClick={this.createSubscriptionOnClick}>
             Buy subscription 2
           </Button>
         </React.Fragment>

@@ -158,7 +158,7 @@ class CreateTeam extends React.Component<MyProps> {
               <br />
               <br />
               <br />
-              <Button variant="raised" color="primary" type="submit" disabled={this.state.disabled}>
+              <Button variant="contained" color="primary" type="submit" disabled={this.state.disabled}>
                 Create new team
               </Button>
             </form>

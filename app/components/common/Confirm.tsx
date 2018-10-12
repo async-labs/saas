@@ -33,7 +33,7 @@ class Confirm extends React.Component {
           <Button onClick={this.handleClose} variant="outlined" color="primary" autoFocus>
             Cancel
           </Button>
-          <Button onClick={this.handleYes} variant="raised" color="primary">
+          <Button onClick={this.handleYes} variant="contained" color="primary">
             OK
           </Button>
         </DialogActions>

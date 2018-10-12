@@ -82,7 +82,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                 </Button>{' '}
                 <Button
                   type="submit"
-                  variant="raised"
+                  variant="contained"
                   color="primary"
                   disabled={this.state.disabled}
                 >
