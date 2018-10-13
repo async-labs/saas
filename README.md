@@ -23,6 +23,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 
 
 ## Features
+- Server-side rendering
 - User authentication with Google, cookie, and session.
 - Production-ready Express server with compression, parser, and helmet.
 - Transactional emails (`AWS SES`): welcome, team invitation, and payment.
