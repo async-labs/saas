@@ -23,7 +23,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 
 
 ## Features
-- Server-side rendering
+- Server-side rendering for [fast initial load and SEO](https://hackernoon.com/server-side-vs-client-side-rendering-in-react-apps-443efd6f2e87).
 - User authentication with Google, cookie, and session.
 - Production-ready Express server with compression, parser, and helmet.
 - Transactional emails (`AWS SES`): welcome, team invitation, and payment.
