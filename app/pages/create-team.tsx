@@ -1,4 +1,4 @@
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import * as React from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -12,7 +12,10 @@ import { getSignedRequestForUpload, uploadFileUsingSignedPutRequest } from '../l
 import notify from '../lib/notifier';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
-import withLayout from '../lib/withLayout';
+
+import env from '../lib/env';
+
+import Layout from '../components/layout';
 
 const styleGrid = {
   height: '100%',
@@ -56,7 +59,8 @@ class CreateTeam extends React.Component<MyProps> {
         return;
       }
 
-      const bucket = 'saas-teams-avatars';
+      const { BUCKET_FOR_TEAM_AVATARS } = env;
+      const bucket = BUCKET_FOR_TEAM_AVATARS;
       const prefix = team.slug;
 
       const responseFromApiServerForUpload = await getSignedRequestForUpload({
@@ -110,63 +114,70 @@ class CreateTeam extends React.Component<MyProps> {
     const { newAvatarUrl } = this.state;
 
     return (
-      <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+      <Layout {...this.props}>
         <Head>
           <title>Create Team</title>
           <meta name="description" content="Create a new Team" />
         </Head>
-        <Grid container style={styleGrid}>
-          <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
-            <h3>Create team</h3>
-            <p />
-            <form onSubmit={this.onSubmit}>
-              <h4>Team name</h4>
-              <TextField
-                value={this.state.newName}
-                label="Type your team's name."
-                helperText="Team name as seen by your team members."
-                onChange={event => {
-                  this.setState({ newName: event.target.value });
-                }}
-              />
+        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+          <Grid container style={styleGrid}>
+            <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
+              <h3>Create team</h3>
               <p />
-              <br />
-              <h4 style={{ marginTop: '40px' }}>Team logo (optional)</h4>
-              <Avatar
-                src={newAvatarUrl}
-                style={{
-                  display: 'inline-flex',
-                  verticalAlign: 'middle',
-                  marginRight: 20,
-                  width: 60,
-                  height: 60,
-                }}
-              />
-              <label htmlFor="upload-file">
-                <Button variant="outlined" color="primary" component="span">
-                  Select team logo
+              <form onSubmit={this.onSubmit}>
+                <h4>Team name</h4>
+                <TextField
+                  value={this.state.newName}
+                  label="Type your team's name."
+                  helperText="Team name as seen by your team members."
+                  onChange={event => {
+                    this.setState({ newName: event.target.value });
+                  }}
+                />
+                <p />
+                <br />
+                <h4 style={{ marginTop: '40px' }}>Team logo (optional)</h4>
+                <Avatar
+                  src={newAvatarUrl}
+                  style={{
+                    display: 'inline-flex',
+                    verticalAlign: 'middle',
+                    marginRight: 20,
+                    width: 60,
+                    height: 60,
+                  }}
+                />
+                <label htmlFor="upload-file">
+                  <Button variant="outlined" color="primary" component="span">
+                    Select team logo
+                  </Button>
+                </label>
+                <input
+                  accept="image/*"
+                  name="upload-file"
+                  id="upload-file"
+                  type="file"
+                  style={{ display: 'none' }}
+                  onChange={this.previewAvatar}
+                />
+                <br />
+                <br />
+                <br />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={this.state.disabled}
+                >
+                  Create new team
                 </Button>
-              </label>
-              <input
-                accept="image/*"
-                name="upload-file"
-                id="upload-file"
-                type="file"
-                style={{ display: 'none' }}
-                onChange={this.previewAvatar}
-              />
-              <br />
-              <br />
-              <br />
-              <Button variant="contained" color="primary" type="submit" disabled={this.state.disabled}>
-                Create new team
-              </Button>
-            </form>
+              </form>
+            </Grid>
           </Grid>
-        </Grid>
-      </div>
+        </div>
+      </Layout>
     );
   }
 }
 
-export default withAuth(withLayout(inject('store')(observer(CreateTeam)), { teamRequired: false }));
+export default withAuth((observer(CreateTeam), { teamRequired: false }));

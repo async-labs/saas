@@ -7,6 +7,8 @@ import NProgress from 'nprogress';
 import React from 'react';
 import { Mention, MentionsInput } from 'react-mentions';
 
+import env from '../../lib/env';
+
 import getRootUrl from '../../lib/api/getRootUrl';
 import {
   getSignedRequestForUpload,
@@ -214,18 +216,21 @@ class PostEditor extends React.Component<MyProps, MyState> {
     const { store } = this.props;
     const { currentTeam } = store;
 
-    const file = document.getElementById('upload-file').files[0];
+    const fileElm = document.getElementById('upload-file') as HTMLFormElement;
+    const file = fileElm.files[0];
 
     if (file == null) {
-      notify('No file selected.');
+      notify('No file selected for upload.');
       return;
     }
 
     NProgress.start();
 
-    document.getElementById('upload-file').value = '';
+    fileElm.value = '';
 
-    const bucket = 'async-posts';
+    const { BUCKET_FOR_POSTS } = env;
+    const bucket = BUCKET_FOR_POSTS;
+
     const prefix = `${currentTeam.slug}`;
 
     const { width, height } = await getImageDimension(file);

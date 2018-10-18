@@ -56,7 +56,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 ## Run locally
 To run locally, you will need to run two apps: `api` and `app`.
 
-#### Running `api` app:
+#### Running `api` locally:
 - Before running, create a `.env` file inside the `api` folder with the environmental variables listed below.<br/> 
   This file _must_ have values for the `required` variables.<br/>
   To use all features and third-party integrations, also add the `optional` variables. <br/>
@@ -115,20 +115,36 @@ To run locally, you will need to run two apps: `api` and `app`.
   yarn dev
   ```
 
-#### Running `app` app:
+#### Running `app` locally:
 - Navigate to the `app` folder, run `yarn` to add all packages, then run the command below and navigate to `http://localhost:3000`:
   ```
-  GA_TRACKING_ID=UA-xxxxxxxxx-x StripePublishableKey=pk_xxxxxx yarn dev
+  GA_TRACKING_ID=UA-xxxxxxxxx-x StripePublishableKey=pk_test_xxxxxxxxxxxxxxx BUCKET_FOR_POSTS=xxxxxx BUCKET_FOR_TEAM_AVATARS=xxxxxx yarn dev
   ```
   - To get `GA_TRACKING_ID`, set up Google Analytics and follow [these instructions](https://support.google.com/analytics/answer/1008080?hl=en) to find your tracking ID.
   - To get `StripePublishableKey`, go to your Stripe dashboard, click `Developers`, then click `API keys`.
   
-  You are welcome to remove Google Analytics integration or pass universally available variables inside the code. If you do so, your command to run `app` will be:
+As you can see, we don't have `PRODUCTION_URL_APP` and `PRODUCTION_URL_API` env variables in the above command. In dev environment, corresponding values are`http://localhost:3000` and `http://localhost:8000`.
+
+For successful file uploading, make sure your buckets have proper CORS configuration. Go to your AWS account, find your bucket, go to `Permissions > CORS configuration`, add:
   ```
-  yarn dev
+  <?xml version="1.0" encoding="UTF-8"?>
+  <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <CORSRule>
+      <AllowedOrigin>http://localhost:3000</AllowedOrigin>
+      <AllowedOrigin>https://saas-app.async-await.com</AllowedOrigin>
+      <AllowedMethod>POST</AllowedMethod>
+      <AllowedMethod>GET</AllowedMethod>
+      <AllowedMethod>PUT</AllowedMethod>
+      <AllowedMethod>DELETE</AllowedMethod>
+      <AllowedMethod>HEAD</AllowedMethod>
+      <ExposeHeader>ETag</ExposeHeader>
+      <ExposeHeader>x-amz-meta-custom-header</ExposeHeader>
+      <AllowedHeader>*</AllowedHeader>
+  </CORSRule>
+  </CORSConfiguration>
   ```
 
-Internal and external API requests will be sent from `http://localhost:3000` to `http://localhost:8000`.
+Make sure to update allowed origin with your actual `PRODUCTION_URL_APP`. In our case, it's `https://saas-app.async-await.com`.
 
 
 ## Deploy
@@ -141,7 +157,7 @@ To deploy the two apps (`api` and `app`), follow the instructions below.
         "NODE_ENV": "production"
     },
     "dotenv": true,
-    "alias": "saas-api.async-await.com",
+    "alias": "your-api-url.com",
     "scale": {
       "sfo1": {
         "min": 1,
@@ -159,10 +175,13 @@ To deploy the two apps (`api` and `app`), follow the instructions below.
         "NODE_ENV": "production",
         "GA_TRACKING_ID": "UA-xxxxxxxxx-x",
         "StripePublishableKey": "pk_live_xxxxxx",
-        "PRODUCTION_URL_APP": "https://saas-app.async-await.com",
-        "PRODUCTION_URL_API": "https://saas-api.async-await.com"
+        "PRODUCTION_URL_APP": "https://your-app-url.com",
+        "PRODUCTION_URL_API": "https://your-api-url.com",
+        "BUCKET_FOR_POSTS": "xxxxxx",
+        "BUCKET_FOR_TEAM_AVATARS": "xxxxxx"
+        
     },
-    "alias": "saas-app.async-await.com",
+    "alias": "your-app-url.com",
     "scale": {
       "sfo1": {
         "min": 1,

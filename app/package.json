@@ -52,6 +52,7 @@
     "@types/nprogress": "^0.0.29",
     "@types/react": "^16.4.16",
     "@types/react-dom": "^16.0.9",
+    "@types/styled-jsx": "^2.2.7",
     "jest": "^23.6.0",
     "nodemon": "^1.18.4",
     "ts-node": "^7.0.1",

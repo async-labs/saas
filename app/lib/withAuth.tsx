@@ -1,22 +1,66 @@
+import { inject, observer } from 'mobx-react';
 import Router from 'next/router';
 import React from 'react';
 
-import { Store } from './store';
-import withStore from './withStore';
+import * as gtag from './gtag';
+import { getStore, Store } from './store';
+
+Router.onRouteChangeStart = () => {
+  NProgress.start();
+};
+
+Router.onRouteChangeComplete = url => {
+  NProgress.done();
+  gtag.pageview(url);
+
+  const store = getStore();
+  if (store) {
+    store.changeCurrentUrl(url);
+  }
+};
+
+Router.onRouteChangeError = () => NProgress.done();
 
 export default function withAuth(
   BaseComponent,
-  { loginRequired = true, logoutRequired = false } = {},
+  { loginRequired = true, logoutRequired = false, teamRequired = true } = {},
 ) {
-  class App extends React.Component<{ store: Store }> {
-    public static async getInitialProps(ctx) {
-      const props: any = {};
+  BaseComponent = inject('store')(BaseComponent);
 
-      if (BaseComponent.getInitialProps) {
-        Object.assign(props, (await BaseComponent.getInitialProps(ctx)) || {});
+  class WithAuth extends React.Component<{ store: Store }> {
+    public static async getInitialProps(ctx) {
+      const { query, req, pathname } = ctx;
+
+      let baseComponentProps = {};
+
+      let firstGridItem = true;
+
+      if (
+        pathname.includes('/login') ||
+        pathname.includes('/signup') ||
+        pathname.includes('/invitation') ||
+        pathname.includes('/create-team')
+      ) {
+        firstGridItem = false;
       }
 
-      return props;
+      const {
+        teamSlug,
+        discussionSlug,
+      } = query;
+
+      if (BaseComponent.getInitialProps) {
+        baseComponentProps = await BaseComponent.getInitialProps(ctx);
+      }
+
+      return {
+        ...baseComponentProps,
+        teamSlug,
+        discussionSlug,
+        isServer: !!req,
+        teamRequired,
+        firstGridItem,
+      };
     }
 
     public componentDidMount() {
@@ -62,5 +106,5 @@ export default function withAuth(
     }
   }
 
-  return withStore(App);
+  return inject('store')(observer(WithAuth));
 }

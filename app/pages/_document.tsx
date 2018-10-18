@@ -1,19 +1,59 @@
 import htmlescape from 'htmlescape';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
-import JssProvider from 'react-jss/lib/JssProvider';
 
-import getContext from '../lib/context';
+import flush from 'styled-jsx/server';
 
 const {
   GA_TRACKING_ID,
   PRODUCTION_URL_APP,
   PRODUCTION_URL_API,
   StripePublishableKey,
+  BUCKET_FOR_POSTS,
+  BUCKET_FOR_TEAM_AVATARS,
 } = process.env;
-const env = { GA_TRACKING_ID, PRODUCTION_URL_APP, PRODUCTION_URL_API, StripePublishableKey };
+
+const env = {
+  GA_TRACKING_ID,
+  PRODUCTION_URL_APP,
+  PRODUCTION_URL_API,
+  StripePublishableKey,
+  BUCKET_FOR_POSTS,
+  BUCKET_FOR_TEAM_AVATARS,
+};
 
 class MyDocument extends Document {
+  public static getInitialProps = ctx => {
+    // Render app and page and get the context of the page with collected side effects.
+    let pageContext;
+    const page = ctx.renderPage(Component => {
+      const WrappedComponent = props => {
+        pageContext = props.pageContext;
+        return <Component {...props} />;
+      };
+
+      return WrappedComponent;
+    });
+
+    return {
+      ...page,
+      pageContext,
+      // Styles fragment is rendered after the app and page rendering finish.
+      styles: (
+        <React.Fragment>
+          <style
+            id="jss-server-side"
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: pageContext && pageContext.sheetsRegistry.toString(),
+            }}
+          />
+          {flush() || null}
+        </React.Fragment>
+      ),
+    };
+  };
+
   public render() {
     return (
       <html lang="en" style={{ overflow: 'overlay', overflowX: 'hidden' }}>
@@ -73,6 +113,12 @@ class MyDocument extends Document {
                 color: #fff;
                 border: 1px solid #ddd;
                 font-size: 14px;
+              }
+              pre code {
+                font-size: 13px;
+                background: #303030;
+                color: #fff;
+                padding: 0px;
               }
               code {
                 font-size: 13px;
@@ -137,29 +183,5 @@ class MyDocument extends Document {
     );
   }
 }
-
-MyDocument.getInitialProps = ({ renderPage }) => {
-  const pageContext = getContext();
-  const page = renderPage(Component => props => (
-    <JssProvider
-      registry={pageContext.sheetsRegistry}
-      generateClassName={pageContext.generateClassName}
-    >
-      <Component pageContext={pageContext} {...props} />
-    </JssProvider>
-  ));
-
-  return {
-    ...page,
-    pageContext,
-    styles: (
-      <style
-        id="jss-server-side"
-        // eslint-disable-next-line
-        dangerouslySetInnerHTML={{ __html: pageContext.sheetsRegistry.toString() }}
-      />
-    ),
-  };
-};
 
 export default MyDocument;

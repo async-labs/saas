@@ -944,6 +944,13 @@
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
 
+"@types/styled-jsx@^2.2.7":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@types/styled-jsx/-/styled-jsx-2.2.7.tgz#f7ebdd48949f1d95b04807f7161bbee8e8d749b3"
+  integrity sha512-bwwW60WiFZ0vfpxU7Ymvi8A0sOPX89gJYfbBO4Y5qOsuyMFQYs+uo/kACEPurwafQ9dv/ce2CsNre90Hk5bVKg==
+  dependencies:
+    "@types/react" "*"
+
 "@types/tapable@*":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.4.tgz#b4ffc7dc97b498c969b360a41eee247f82616370"

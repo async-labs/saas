@@ -1,26 +1,23 @@
-import { inject, Provider } from 'mobx-react';
 import React from 'react';
 
 import { getUser } from './api/public';
 import { getInitialData } from './api/team-member';
 import { getStore, initStore, Store } from './store';
 
-export default function withStore(BaseComponent) {
-  BaseComponent = inject('store')(BaseComponent);
-
-  class App extends React.Component {
-    public static async getInitialProps(ctx) {
-      const props: any = {};
-
-      // if store initialized already do not load data again
-      if (getStore()) {
-        if (BaseComponent.getInitialProps) {
-          Object.assign(props, (await BaseComponent.getInitialProps(ctx)) || {});
-        }
-
-        return props;
+export default function withStore(App) {
+  class AppWithMobx extends React.Component {
+    public static async getInitialProps(appContext) {
+      let appProps = {};
+      if (typeof App.getInitialProps === 'function') {
+        appProps = await App.getInitialProps.call(App, appContext);
       }
 
+      // if store initialized already, do not load data again
+      if (getStore()) {
+        return appProps;
+      }
+
+      const { ctx } = appContext;
       let user = null;
       try {
         user = ctx.req ? ctx.req.user : await getUser();
@@ -28,12 +25,11 @@ export default function withStore(BaseComponent) {
         console.log(error);
       }
 
-      if (BaseComponent.getInitialProps) {
-        Object.assign(props, (await BaseComponent.getInitialProps(ctx)) || {});
-      }
-
-      const { teamSlug, discussionSlug } = props;
       let initialData = {};
+      const {
+        teamSlug,
+        discussionSlug,
+      } = ctx.query;
 
       if (user) {
         try {
@@ -42,18 +38,17 @@ export default function withStore(BaseComponent) {
             data: { teamSlug, discussionSlug },
           });
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }
 
-      Object.assign(props, {
+      return {
+        ...appProps,
         initialState: { user, teamSlug, currentUrl: ctx.asPath, ...initialData },
-      });
-
-      return props;
+      };
     }
 
-    public store: Store;
+    private store: Store;
 
     constructor(props) {
       super(props);
@@ -62,13 +57,9 @@ export default function withStore(BaseComponent) {
     }
 
     public render() {
-      return (
-        <Provider store={this.store}>
-          <BaseComponent {...this.props} />
-        </Provider>
-      );
+      return <App {...this.props} mobxStore={this.store} />;
     }
   }
 
-  return App;
+  return AppWithMobx;
 }

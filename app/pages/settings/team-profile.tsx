@@ -16,6 +16,8 @@ import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
 import withLayout from '../../lib/withLayout';
 
+import env from '../../lib/env';
+
 const styleGrid = {
   height: '100%',
 };
@@ -69,16 +71,22 @@ class TeamProfile extends React.Component<MyProps, MyState> {
     const { store } = this.props;
     const { currentTeam } = store;
 
-    const file = document.getElementById('upload-file').files[0];
-    document.getElementById('upload-file').value = '';
-    const bucket = 'saas-teams-avatars';
-    const prefix = `${currentTeam.slug}`;
+    const fileElm = document.getElementById('upload-file') as HTMLFormElement;
+    const file = fileElm.files[0];
 
     if (file == null) {
-      return notify('No file selected.');
+      notify('No file selected for upload.');
+      return;
     }
 
     NProgress.start();
+
+    fileElm.value = '';
+
+    const { BUCKET_FOR_TEAM_AVATARS } = env;
+    const bucket = BUCKET_FOR_TEAM_AVATARS;
+
+    const prefix = `${currentTeam.slug}`;
 
     try {
       this.setState({ disabled: true });
