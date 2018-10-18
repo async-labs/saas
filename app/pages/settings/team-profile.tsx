@@ -7,6 +7,8 @@ import NProgress from 'nprogress';
 import * as React from 'react';
 
 import SettingList from '../../components/common/SettingList';
+import Layout from '../../components/layout';
+
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
@@ -14,7 +16,6 @@ import {
 import notify from '../../lib/notifier';
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
-import withLayout from '../../lib/withLayout';
 
 import env from '../../lib/env';
 
@@ -118,108 +119,115 @@ class TeamProfile extends React.Component<MyProps, MyState> {
   };
 
   public render() {
-    const { store, isTL } = this.props;
-    const { currentTeam } = store;
+    const { store } = this.props;
+    const { currentTeam, currentUser } = store;
     const { newName, newAvatarUrl } = this.state;
+    const isTL = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
-        <div style={{ padding: '20px' }}>
-          <p>You did not select any team.</p>
-          <p>
-            To access this page, please select an existing team or create a new team if you have no
-            teams.
-          </p>
-        </div>
+        <Layout {...this.props}>
+          <div style={{ padding: '20px' }}>
+            <p>You did not select any team.</p>
+            <p>
+              To access this page, please select an existing team or create a new team if you have
+              no teams.
+            </p>
+          </div>
+        </Layout>
       );
     }
 
     if (!isTL) {
       return (
-        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+        <Layout {...this.props}>
           <Head>
             <title>Profile for {currentTeam.name}</title>
             <meta name="description" content="Only the Team Leader can access this page" />
           </Head>
-          <Grid container style={styleGrid}>
-            <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} />
+          <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+            <Grid container style={styleGrid}>
+              <Grid item sm={2} xs={12} style={styleGridItem}>
+                <SettingList store={store} isTeamSettings={true} />
+              </Grid>
+              <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
+                <h3>Team Profile</h3>
+                <p />
+                <p>Only the Team Leader can access this page.</p>
+                <p>Create your own team to become a Team Leader.</p>
+              </Grid>
             </Grid>
-            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-              <h3>Team Profile</h3>
-              <p />
-              <p>Only the Team Leader can access this page.</p>
-              <p>Create your own team to become a Team Leader.</p>
-            </Grid>
-          </Grid>
-        </div>
+          </div>
+        </Layout>
       );
     }
     return (
-      <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+      <Layout {...this.props}>
         <Head>
           <title>Setting for {currentTeam.name}</title>
           <meta name="description" content={`Settings for ${currentTeam.name}`} />
         </Head>
-        <Grid container style={styleGrid}>
-          <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} />
-          </Grid>
-          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-            <h3>Team Profile</h3>
-            <p />
-            <form onSubmit={this.onSubmit}>
-              <h4>Team name</h4>
-              <TextField
-                value={newName}
-                helperText="Team name as seen by your team members"
-                onChange={event => {
-                  this.setState({ newName: event.target.value });
+        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+          <Grid container style={styleGrid}>
+            <Grid item sm={2} xs={12} style={styleGridItem}>
+              <SettingList store={store} isTeamSettings={true} />
+            </Grid>
+            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
+              <h3>Team Profile</h3>
+              <p />
+              <form onSubmit={this.onSubmit}>
+                <h4>Team name</h4>
+                <TextField
+                  value={newName}
+                  helperText="Team name as seen by your team members"
+                  onChange={event => {
+                    this.setState({ newName: event.target.value });
+                  }}
+                />
+                <br />
+                <br />
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  type="submit"
+                  disabled={this.state.disabled}
+                >
+                  Update name
+                </Button>
+              </form>
+              <br />
+              <h4>Team logo</h4>
+              <Avatar
+                src={newAvatarUrl}
+                style={{
+                  display: 'inline-flex',
+                  verticalAlign: 'middle',
+                  marginRight: 20,
+                  width: 60,
+                  height: 60,
                 }}
+              />
+              <label htmlFor="upload-file">
+                <Button variant="outlined" color="primary" component="span">
+                  Update logo
+                </Button>
+              </label>
+              <input
+                accept="image/*"
+                name="upload-file"
+                id="upload-file"
+                type="file"
+                style={{ display: 'none' }}
+                onChange={this.uploadFile}
               />
               <br />
               <br />
-              <Button
-                variant="outlined"
-                color="primary"
-                type="submit"
-                disabled={this.state.disabled}
-              >
-                Update name
-              </Button>
-            </form>
-            <br />
-            <h4>Team logo</h4>
-            <Avatar
-              src={newAvatarUrl}
-              style={{
-                display: 'inline-flex',
-                verticalAlign: 'middle',
-                marginRight: 20,
-                width: 60,
-                height: 60,
-              }}
-            />
-            <label htmlFor="upload-file">
-              <Button variant="outlined" color="primary" component="span">
-                Update logo
-              </Button>
-            </label>
-            <input
-              accept="image/*"
-              name="upload-file"
-              id="upload-file"
-              type="file"
-              style={{ display: 'none' }}
-              onChange={this.uploadFile}
-            />
-            <br />
-            <br />
+            </Grid>
           </Grid>
-        </Grid>
-      </div>
+        </div>
+      </Layout>
     );
   }
 }
 
-export default withAuth(withLayout(TeamProfile));
+export default withAuth(TeamProfile);

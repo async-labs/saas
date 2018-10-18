@@ -8,11 +8,11 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 
 import Loading from '../components/common/Loading';
+import Layout from '../components/layout';
 import PostDetail from '../components/posts/PostDetail';
 import PostForm from '../components/posts/PostForm';
 import { Discussion, Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
-import withLayout from '../lib/withLayout';
 
 const styleGridItem = {
   padding: '10px 20px',
@@ -130,7 +130,11 @@ class DiscussionComp extends React.Component<Props> {
     const { selectedPost, drawerState } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return <div style={styleGridItem}>No Team is found.</div>;
+      return (
+        <Layout {...this.props}>
+          <div style={styleGridItem}>No Team is found.</div>
+        </Layout>
+      );
     }
 
     const discussion = this.getDiscussion(discussionSlug);
@@ -138,20 +142,22 @@ class DiscussionComp extends React.Component<Props> {
     if (!discussion) {
       if (currentTeam.isLoadingDiscussions) {
         return (
-          <div style={styleGridItem}>
-            <Loading text="loading Discussions ..." />
-          </div>
+          <Layout {...this.props}>
+            <div style={styleGridItem}>
+              <Loading text="loading Discussions ..." />
+            </div>
+          </Layout>
         );
       } else {
         return (
-          <React.Fragment>
+          <Layout {...this.props}>
             <Head>
               <title>No discussion is found.</title>
             </Head>
             <div style={styleGridItem}>
               <p>No discussion is found.</p>
             </div>
-          </React.Fragment>
+          </Layout>
         );
       }
     }
@@ -159,7 +165,7 @@ class DiscussionComp extends React.Component<Props> {
     const title = discussion ? `${discussion.name} · Discussion` : 'Discussions';
 
     return (
-      <div style={{ height: '100%', padding: '0px 20px' }}>
+      <Layout {...this.props}>
         <Head>
           <title>{title}</title>
           <meta
@@ -171,60 +177,62 @@ class DiscussionComp extends React.Component<Props> {
             }
           />
         </Head>
-        <h4>
-          <span style={{ fontWeight: 300 }}>Discussion : </span>
-          {(discussion && discussion.name) || 'No Discussion is found.'}
-        </h4>{' '}
-        Visible to :{' '}
-        {discussion
-          ? discussion.members.map(m => (
-              <Tooltip
-                title={m.displayName}
-                placement="right"
-                disableFocusListener
-                disableTouchListener
-                key={m._id}
-              >
-                <Avatar
-                  role="presentation"
-                  src={m.avatarUrl}
-                  alt={m.avatarUrl}
+        <div style={{ height: '100%', padding: '0px 20px' }}>
+          <h4>
+            <span style={{ fontWeight: 300 }}>Discussion : </span>
+            {(discussion && discussion.name) || 'No Discussion is found.'}
+          </h4>{' '}
+          Visible to :{' '}
+          {discussion
+            ? discussion.members.map(m => (
+                <Tooltip
+                  title={m.displayName}
+                  placement="right"
+                  disableFocusListener
+                  disableTouchListener
                   key={m._id}
-                  style={{
-                    margin: '0px 5px',
-                    display: 'inline-flex',
-                    width: '30px',
-                    height: '30px',
-                    verticalAlign: 'middle',
-                  }}
-                />
-              </Tooltip>
-            ))
-          : null}
-        <p />
-        {this.renderPosts()}
-        <Button
-          onClick={this.showFormToAddNewPost}
-          variant="outlined"
-          color="primary"
-          style={{ verticalAlign: 'baseline' }}
-        >
-          Add new post
-        </Button>
-        <p />
-        <br />
-        <PostForm
-          discussion={discussion}
-          post={selectedPost}
-          open={drawerState}
-          members={discussion.members}
-          onFinished={() => {
-            this.setState({ drawerState: false, selectedPost: null });
-          }}
-        />
-      </div>
+                >
+                  <Avatar
+                    role="presentation"
+                    src={m.avatarUrl}
+                    alt={m.avatarUrl}
+                    key={m._id}
+                    style={{
+                      margin: '0px 5px',
+                      display: 'inline-flex',
+                      width: '30px',
+                      height: '30px',
+                      verticalAlign: 'middle',
+                    }}
+                  />
+                </Tooltip>
+              ))
+            : null}
+          <p />
+          {this.renderPosts()}
+          <Button
+            onClick={this.showFormToAddNewPost}
+            variant="outlined"
+            color="primary"
+            style={{ verticalAlign: 'baseline' }}
+          >
+            Add new post
+          </Button>
+          <p />
+          <br />
+          <PostForm
+            discussion={discussion}
+            post={selectedPost}
+            open={drawerState}
+            members={discussion.members}
+            onFinished={() => {
+              this.setState({ drawerState: false, selectedPost: null });
+            }}
+          />
+        </div>
+      </Layout>
     );
   }
 }
 
-export default withAuth(withLayout(observer(DiscussionComp)));
+export default withAuth(observer(DiscussionComp));

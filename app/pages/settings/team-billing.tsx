@@ -10,11 +10,11 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import NProgress from 'nprogress';
 import SettingList from '../../components/common/SettingList';
+import Layout from '../../components/layout';
 import env from '../../lib/env';
 import notify from '../../lib/notifier';
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
-import withLayout from '../../lib/withLayout';
 
 const { StripePublishableKey } = env;
 
@@ -38,120 +38,127 @@ class TeamBilling extends React.Component<Props, State> {
   };
 
   public render() {
-    const { store, isTL } = this.props;
+    const { store } = this.props;
     const { currentTeam, currentUser } = store;
+    const isTL = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
-        <div style={{ padding: '20px' }}>
-          <p>You did not select any team.</p>
-          <p>
-            To access this page, please select existing team or create new team if you have no
-            teams.
-          </p>
-        </div>
+        <Layout {...this.props}>
+          <div style={{ padding: '20px' }}>
+            <p>You did not select any team.</p>
+            <p>
+              To access this page, please select existing team or create new team if you have no
+              teams.
+            </p>
+          </div>
+        </Layout>
       );
     }
 
     if (!isTL) {
       return (
-        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
-          <Head>
-            <title>Team Billing</title>
-            <meta name="description" content="description" />
-          </Head>
-          <Grid container style={styleGrid}>
-            <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} />
+        <Layout {...this.props}>
+          <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+            <Head>
+              <title>Team Billing</title>
+              <meta name="description" content="description" />
+            </Head>
+            <Grid container style={styleGrid}>
+              <Grid item sm={2} xs={12} style={styleGridItem}>
+                <SettingList store={store} isTeamSettings={true} />
+              </Grid>
+              <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
+                <h3>Team Billing</h3>
+                <p>Only Team Leader can access this page.</p>
+                <p>Create your own team to become Team Leader.</p>
+              </Grid>
             </Grid>
-            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-              <h3>Team Billing</h3>
-              <p>Only Team Leader can access this page.</p>
-              <p>Create your own team to become Team Leader.</p>
-            </Grid>
-          </Grid>
-        </div>
+          </div>
+        </Layout>
       );
     }
 
     return (
-      <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+      <Layout {...this.props}>
         <Head>
           <title>Team Billing</title>
           <meta name="description" content="description" />
         </Head>
-        <Grid container style={styleGrid}>
-          <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} />
-          </Grid>
-          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-            <h3>Team Billing</h3>
-            <p />
-            <h4 style={{ marginTop: '40px' }}>Team Subscription</h4>
-            {this.renderSubscriptionButton()}
-            <p />
-            <br />
-            <h4>Card information</h4>
-            {currentUser && !currentUser.stripeCard ? (
-              <StripeCheckout
-                stripeKey={StripePublishableKey}
-                token={this.addCard}
-                name="Add card information"
-                email={currentUser.email}
-                allowRememberMe={false}
-                panelLabel="Add card"
-                description={'This is your default payment method.'}
-              >
-                <Button variant="contained" color="primary">
-                  Add card
-                </Button>
-              </StripeCheckout>
-            ) : (
-              <span>
-                {' '}
-                <i
-                  className="material-icons"
-                  color="action"
-                  style={{ verticalAlign: 'text-bottom' }}
-                >
-                  done
-                </i>{' '}
-                Your default payment method:
-                <li>
-                  {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
-                </li>
-                <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
-                <li>
-                  Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
-                </li>
-                <p />
+        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+          <Grid container style={styleGrid}>
+            <Grid item sm={2} xs={12} style={styleGridItem}>
+              <SettingList store={store} isTeamSettings={true} />
+            </Grid>
+            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
+              <h3>Team Billing</h3>
+              <p />
+              <h4 style={{ marginTop: '40px' }}>Team Subscription</h4>
+              {this.renderSubscriptionButton()}
+              <p />
+              <br />
+              <h4>Card information</h4>
+              {currentUser && !currentUser.stripeCard ? (
                 <StripeCheckout
                   stripeKey={StripePublishableKey}
-                  token={this.addNewCardOnClick}
-                  name="Add new card information"
+                  token={this.addCard}
+                  name="Add card information"
                   email={currentUser.email}
                   allowRememberMe={false}
-                  panelLabel="Update card"
-                  description={'New card will be your default card.'}
+                  panelLabel="Add card"
+                  description={'This is your default payment method.'}
                 >
-                  <Button variant="outlined" color="primary">
-                    Update card
+                  <Button variant="contained" color="primary">
+                    Add card
                   </Button>
                 </StripeCheckout>
-              </span>
-            )}
-            <p />
-            <br />
-            <h4>Payment history</h4>
-            <Button variant="outlined" color="primary" onClick={this.showListOfInvoicesOnClick}>
-              Show payment history
-            </Button>
-            {this.renderInvoices()}
-            <p />
-            <br />
+              ) : (
+                <span>
+                  {' '}
+                  <i
+                    className="material-icons"
+                    color="action"
+                    style={{ verticalAlign: 'text-bottom' }}
+                  >
+                    done
+                  </i>{' '}
+                  Your default payment method:
+                  <li>
+                    {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
+                  </li>
+                  <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
+                  <li>
+                    Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
+                  </li>
+                  <p />
+                  <StripeCheckout
+                    stripeKey={StripePublishableKey}
+                    token={this.addNewCardOnClick}
+                    name="Add new card information"
+                    email={currentUser.email}
+                    allowRememberMe={false}
+                    panelLabel="Update card"
+                    description={'New card will be your default card.'}
+                  >
+                    <Button variant="outlined" color="primary">
+                      Update card
+                    </Button>
+                  </StripeCheckout>
+                </span>
+              )}
+              <p />
+              <br />
+              <h4>Payment history</h4>
+              <Button variant="outlined" color="primary" onClick={this.showListOfInvoicesOnClick}>
+                Show payment history
+              </Button>
+              {this.renderInvoices()}
+              <p />
+              <br />
+            </Grid>
           </Grid>
-        </Grid>
-      </div>
+        </div>
+      </Layout>
     );
   }
 
@@ -364,4 +371,4 @@ class TeamBilling extends React.Component<Props, State> {
   };
 }
 
-export default withAuth(withLayout(observer(TeamBilling)));
+export default withAuth(observer(TeamBilling));

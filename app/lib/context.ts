@@ -1,4 +1,3 @@
-import blueGrey from '@material-ui/core/colors/blueGrey';
 import grey from '@material-ui/core/colors/grey';
 import { createGenerateClassName, createMuiTheme } from '@material-ui/core/styles';
 import { SheetsRegistry } from 'react-jss';
@@ -6,12 +5,11 @@ import { SheetsRegistry } from 'react-jss';
 const theme = createMuiTheme({
   palette: {
     primary: { main: grey[300] },
-    secondary: { main: blueGrey[300] },
+    secondary: { main: grey[500] },
     type: 'dark',
   },
   typography: {
-    fontFamily: 'Roboto',
-    fontSize: 14,
+    useNextVariants: true,
   },
 });
 

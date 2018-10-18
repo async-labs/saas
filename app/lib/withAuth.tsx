@@ -2,6 +2,7 @@ import { inject, observer } from 'mobx-react';
 import Router from 'next/router';
 import React from 'react';
 
+import * as NProgress from 'nprogress';
 import * as gtag from './gtag';
 import { getStore, Store } from './store';
 

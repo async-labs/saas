@@ -180,4 +180,4 @@ class CreateTeam extends React.Component<MyProps> {
   }
 }
 
-export default withAuth((observer(CreateTeam), { teamRequired: false }));
+export default withAuth(observer(CreateTeam), { teamRequired: false });

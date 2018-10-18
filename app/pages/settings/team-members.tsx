@@ -14,12 +14,12 @@ import TableRow from '@material-ui/core/TableRow';
 
 import MenuWithMenuItems from '../../components/common/MenuWithMenuItems';
 import SettingList from '../../components/common/SettingList';
+import Layout from '../../components/layout';
 import InviteMember from '../../components/teams/InviteMember';
 import confirm from '../../lib/confirm';
 import notify from '../../lib/notifier';
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
-import withLayout from '../../lib/withLayout';
 
 const styleGrid = {
   height: '100%',
@@ -109,153 +109,164 @@ class TeamMembers extends React.Component<MyProps, MyState> {
   // TODO: MobX when member gets removed
 
   public render() {
-    const { store, isTL } = this.props;
+    const { store } = this.props;
     const { currentTeam, currentUser } = store;
+    const isTL = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
-        <div style={{ padding: '20px' }}>
-          <p>You did not select any team.</p>
-          <p>
-            To access this page, please select existing team or create new team if you have no
-            teams.
-          </p>
-        </div>
+        <Layout {...this.props}>
+          <div style={{ padding: '20px' }}>
+            <p>You did not select any team.</p>
+            <p>
+              To access this page, please select existing team or create new team if you have no
+              teams.
+            </p>
+          </div>
+        </Layout>
       );
     }
 
     if (!isTL) {
       return (
-        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+        <Layout {...this.props}>
           <Head>
             <title>Team Members</title>
             <meta name="description" content="Only the Team Leader can access this page" />
           </Head>
-          <Grid container style={styleGrid}>
-            <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTL={isTL} />
+          <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+            <Grid container style={styleGrid}>
+              <Grid item sm={2} xs={12} style={styleGridItem}>
+                <SettingList store={store} isTeamSettings={true} />
+              </Grid>
+              <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
+                <h3>Team Members</h3>
+                <p>Only the Team Leader can access this page.</p>
+                <p>Create your own team to become a Team Leader.</p>
+              </Grid>
             </Grid>
-            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-              <h3>Team Members</h3>
-              <p>Only the Team Leader can access this page.</p>
-              <p>Create your own team to become a Team Leader.</p>
-            </Grid>
-          </Grid>
-        </div>
+          </div>
+        </Layout>
       );
     }
 
     return (
-      <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+      <Layout {...this.props}>
         <Head>
           <title>Team Members</title>
           <meta name="description" content={`Add or edit members for Team ${currentTeam.name}`} />
         </Head>
-        <Grid container style={styleGrid}>
-          <Grid item sm={2} xs={12} style={styleGridItem}>
-            <SettingList store={store} isTL={isTL} />
-          </Grid>
-          <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-            <h3>Team Members</h3>
-            <p />
-            <h4 style={{ marginRight: 20, display: 'inline' }}>
-              Current Team ( {Array.from(currentTeam.members.values()).length} / 20 )
-            </h4>
-            <Button
-              onClick={this.inviteMember}
-              variant="outlined"
-              color="primary"
-              style={{ verticalAlign: 'baseline' }}
-            >
-              Invite member
-            </Button>
-            <p />
-            <Paper>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Team member</TableCell>
-                    <TableCell>Status</TableCell>
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  {Array.from(currentTeam.members.values()).map(m => (
-                    <TableRow key={m._id}>
-                      <TableCell component="th" scope="row">
-                        <Avatar
-                          role="presentation"
-                          src={m.avatarUrl}
-                          alt={m.avatarUrl}
-                          key={m._id}
-                          style={{
-                            margin: '0px 5px',
-                            display: 'inline-flex',
-                            width: '30px',
-                            height: '30px',
-                            verticalAlign: 'middle',
-                          }}
-                        />{' '}
-                        {m.displayName}
-                      </TableCell>
-                      <TableCell>
-                        {isTL && m._id !== currentUser._id ? (
-                          <div style={{ display: 'inline-flex' }}>
-                            <div style={{ paddingRight: 10 }}>Team Member</div> {this.renderMenu(m)}
-                          </div>
-                        ) : (
-                          <div style={{ display: 'inline-flex' }}>
-                            <div style={{ paddingRight: 10 }}>Team Leader</div>
-                          </div>
-                        )}
-                      </TableCell>
+        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+          <Grid container style={styleGrid}>
+            <Grid item sm={2} xs={12} style={styleGridItem}>
+              <SettingList store={store} isTeamSettings={true} />
+            </Grid>
+            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
+              <h3>Team Members</h3>
+              <p />
+              <h4 style={{ marginRight: 20, display: 'inline' }}>
+                Current Team ( {Array.from(currentTeam.members.values()).length} / 20 )
+              </h4>
+              <Button
+                onClick={this.inviteMember}
+                variant="outlined"
+                color="primary"
+                style={{ verticalAlign: 'baseline' }}
+              >
+                Invite member
+              </Button>
+              <p />
+              <Paper>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Team member</TableCell>
+                      <TableCell>Status</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Paper>
+                  </TableHead>
 
-            <br />
-
-            {Array.from(currentTeam.invitedUsers.values()).length > 0 ? (
-              <div>
-                <h4>
-                  Invited users ( {Array.from(currentTeam.invitedUsers.values()).length} /{' '}
-                  {20 - Array.from(currentTeam.members.values()).length} )
-                </h4>
-                <Paper>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Email</TableCell>
-                        <TableCell>Status</TableCell>
+                  <TableBody>
+                    {Array.from(currentTeam.members.values()).map(m => (
+                      <TableRow key={m._id}>
+                        <TableCell component="th" scope="row">
+                          <Avatar
+                            role="presentation"
+                            src={m.avatarUrl}
+                            alt={m.avatarUrl}
+                            key={m._id}
+                            style={{
+                              margin: '0px 5px',
+                              display: 'inline-flex',
+                              width: '30px',
+                              height: '30px',
+                              verticalAlign: 'middle',
+                            }}
+                          />{' '}
+                          {m.displayName}
+                        </TableCell>
+                        <TableCell>
+                          {isTL && m._id !== currentUser._id ? (
+                            <div style={{ display: 'inline-flex' }}>
+                              <div style={{ paddingRight: 10 }}>Team Member</div>{' '}
+                              {this.renderMenu(m)}
+                            </div>
+                          ) : (
+                            <div style={{ display: 'inline-flex' }}>
+                              <div style={{ paddingRight: 10 }}>Team Leader</div>
+                            </div>
+                          )}
+                        </TableCell>
                       </TableRow>
-                    </TableHead>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Paper>
 
-                    <TableBody>
-                      {Array.from(currentTeam.invitedUsers.values()).map(i => (
-                        <TableRow key={i._id}>
-                          <TableCell component="th" scope="row">
-                            {i.email}{' '}
-                          </TableCell>
-                          <TableCell>Email sent</TableCell>
+              <br />
+
+              {Array.from(currentTeam.invitedUsers.values()).length > 0 ? (
+                <div>
+                  <h4>
+                    Invited users ( {Array.from(currentTeam.invitedUsers.values()).length} /{' '}
+                    {20 - Array.from(currentTeam.members.values()).length} )
+                  </h4>
+                  <Paper>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Email</TableCell>
+                          <TableCell>Status</TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Paper>
-              </div>
-            ) : null}
-            <br />
-            <br />
-            <p />
-          </Grid>
+                      </TableHead>
 
-          <InviteMember open={this.state.inviteMemberOpen} onClose={this.handleInviteMemberClose} />
-        </Grid>
-      </div>
+                      <TableBody>
+                        {Array.from(currentTeam.invitedUsers.values()).map(i => (
+                          <TableRow key={i._id}>
+                            <TableCell component="th" scope="row">
+                              {i.email}{' '}
+                            </TableCell>
+                            <TableCell>Email sent</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Paper>
+                </div>
+              ) : null}
+              <br />
+              <br />
+              <p />
+            </Grid>
+
+            <InviteMember
+              open={this.state.inviteMemberOpen}
+              onClose={this.handleInviteMemberClose}
+            />
+          </Grid>
+        </div>
+      </Layout>
     );
   }
 }
 
-export default withAuth(withLayout(observer(TeamMembers)));
+export default withAuth(observer(TeamMembers));

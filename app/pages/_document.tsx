@@ -1,7 +1,6 @@
 import htmlescape from 'htmlescape';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
-
 import flush from 'styled-jsx/server';
 
 const {

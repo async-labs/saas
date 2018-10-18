@@ -812,6 +812,11 @@
   dependencies:
     "@types/express" "*"
 
+"@types/htmlescape@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/htmlescape/-/htmlescape-1.1.1.tgz#8aa7ac246f9a69999b84873f072f2e30e1334f03"
+  integrity sha1-iqesJG+aaZmbhIc/By8uMOEzTwM=
+
 "@types/http-proxy-middleware@*":
   version "0.17.5"
   resolved "https://registry.yarnpkg.com/@types/http-proxy-middleware/-/http-proxy-middleware-0.17.5.tgz#efdeb4be652744422d57929f3c4ea31a2e627a45"
@@ -829,6 +834,14 @@
   dependencies:
     "@types/events" "*"
     "@types/node" "*"
+
+"@types/jss@*":
+  version "9.5.7"
+  resolved "https://registry.yarnpkg.com/@types/jss/-/jss-9.5.7.tgz#fa57a6d0b38a3abef8a425e3eb6a53495cb9d5a0"
+  integrity sha512-OZimStu2QdDMtZ0h72JXqvLVbWUjXd5ZLk8vxLmfuC/nM1AabRyyGoxSufnzixrbpEcVcyy/JV5qeQu2JnjVZw==
+  dependencies:
+    csstype "^2.0.0"
+    indefinite-observable "^1.0.1"
 
 "@types/jss@^9.5.6":
   version "9.5.6"
@@ -913,6 +926,16 @@
     "@types/node" "*"
     "@types/react" "*"
 
+"@types/react-jss@^8.6.0":
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/@types/react-jss/-/react-jss-8.6.0.tgz#ce8009fb65e1986431cec372dff18d7087cf7a48"
+  integrity sha512-kZvjHPPHJMKZqCgQWxNnYrBAsMquqj6J2ncIgG/Eq9AxNJobbPlCc0h2GtHe8Ap3aXi8Lgzj5JSWO9X5S2g8NQ==
+  dependencies:
+    "@types/jss" "*"
+    "@types/react" "*"
+    "@types/theming" "*"
+    csstype "^2.0.0"
+
 "@types/react-loadable@*":
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/@types/react-loadable/-/react-loadable-5.4.1.tgz#bc76978c6d9039e5808797b5ee35f6ae18b7329f"
@@ -955,6 +978,13 @@
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.4.tgz#b4ffc7dc97b498c969b360a41eee247f82616370"
   integrity sha512-78AdXtlhpCHT0K3EytMpn4JNxaf5tbqbLcbIRoQIHzpTIyjpxLQKRoxU55ujBXAtg3Nl2h/XWvfDa9dsMOd0pQ==
+
+"@types/theming@*":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@types/theming/-/theming-1.3.0.tgz#749099bf624756a4e8f8feb525da691715af32ac"
+  integrity sha512-8eN66FZiqnINj+aRNpu19BgIcIgpely4hOFyg89pu+hvt1/ZCisdTc0lvz1LrQ+FbvjhhpjaEHFnMvRswu/Icw==
+  dependencies:
+    "@types/react" "*"
 
 "@types/uglify-js@*":
   version "3.0.3"

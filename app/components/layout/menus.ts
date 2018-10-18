@@ -63,8 +63,8 @@ const getTeamOptionsMenuWithLinksLeft = ({
 
 const menuUnderTeamListRight = () => [
   {
-    text: 'Your Settings',
-    href: '/settings/your-settings',
+    text: 'Your Profile',
+    href: '/settings/your-profile',
     simple: true,
   },
   {

@@ -6,6 +6,8 @@ import Head from 'next/head';
 import NProgress from 'nprogress';
 import * as React from 'react';
 
+import Layout from '../../components/layout';
+
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
@@ -15,7 +17,6 @@ import notify from '../../lib/notifier';
 import { resizeImage } from '../../lib/resizeImage';
 import { Store } from '../../lib/store';
 import withAuth from '../../lib/withAuth';
-import withLayout from '../../lib/withLayout';
 
 import env from '../../lib/env';
 
@@ -56,85 +57,91 @@ class YourProfile extends React.Component<MyProps, MyState> {
     const { newName, newAvatarUrl } = this.state;
 
     return (
-      <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+      <Layout {...this.props}>
         <Head>
           <title>Your Profile at Async</title>
           <meta name="description" content="description" />
         </Head>
-        <Grid container style={styleGrid}>
-          <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
-            <h3>Your Profile</h3>
-            <h4 style={{ marginTop: '40px' }}>Your account</h4>
-            <p>
-              <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
-                done
-              </i>{' '}
-              You signed up on Async using your Google account.
-              <li>
-                {' '}
-                Your Google/Async email: <b>{currentUser.email}</b>
-              </li>
-              <li>
-                Your Google/Async username: <b>{currentUser.displayName}</b>
-              </li>
-            </p>
-            <form onSubmit={this.onSubmit} autoComplete="off">
-              <h4>Your name</h4>
-              <TextField
-                autoComplete="off"
-                value={newName}
-                helperText="Your name as seen by your team members"
-                onChange={event => {
-                  this.setState({ newName: event.target.value });
+        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+          <Grid container style={styleGrid}>
+            <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
+              <h3>Your Profile</h3>
+              <h4 style={{ marginTop: '40px' }}>Your account</h4>
+              <p>
+                <i
+                  className="material-icons"
+                  color="action"
+                  style={{ verticalAlign: 'text-bottom' }}
+                >
+                  done
+                </i>{' '}
+                You signed up on Async using your Google account.
+                <li>
+                  {' '}
+                  Your Google/Async email: <b>{currentUser.email}</b>
+                </li>
+                <li>
+                  Your Google/Async username: <b>{currentUser.displayName}</b>
+                </li>
+              </p>
+              <form onSubmit={this.onSubmit} autoComplete="off">
+                <h4>Your name</h4>
+                <TextField
+                  autoComplete="off"
+                  value={newName}
+                  helperText="Your name as seen by your team members"
+                  onChange={event => {
+                    this.setState({ newName: event.target.value });
+                  }}
+                />
+                <br />
+                <br />
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  type="submit"
+                  disabled={this.state.disabled}
+                >
+                  Update name
+                </Button>
+              </form>
+
+              <br />
+              <h4>Your photo</h4>
+              <Avatar
+                src={newAvatarUrl}
+                style={{
+                  display: 'inline-flex',
+                  verticalAlign: 'middle',
+                  marginRight: 20,
+                  width: 60,
+                  height: 60,
                 }}
               />
+              <label htmlFor="upload-file">
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  component="span"
+                  disabled={this.state.disabled}
+                >
+                  Update photo
+                </Button>
+              </label>
+              <input
+                accept="image/*"
+                name="upload-file"
+                id="upload-file"
+                type="file"
+                style={{ display: 'none' }}
+                onChange={this.uploadFile}
+              />
+              <p />
               <br />
-              <br />
-              <Button
-                variant="outlined"
-                color="primary"
-                type="submit"
-                disabled={this.state.disabled}
-              >
-                Update name
-              </Button>
-            </form>
-
-            <br />
-            <h4>Your photo</h4>
-            <Avatar
-              src={newAvatarUrl}
-              style={{
-                display: 'inline-flex',
-                verticalAlign: 'middle',
-                marginRight: 20,
-                width: 60,
-                height: 60,
-              }}
-            />
-            <label htmlFor="upload-file">
-              <Button
-                variant="outlined"
-                color="primary"
-                component="span"
-                disabled={this.state.disabled}
-              >
-                Update photo
-              </Button>
-            </label>
-            <input
-              accept="image/*"
-              name="upload-file"
-              id="upload-file"
-              type="file"
-              style={{ display: 'none' }}
-              onChange={this.uploadFile}
-            />
-            <p />
-            <br />
+            </Grid>
           </Grid>
-        </Grid>
-      </div>
+        </div>
+      </Layout>
     );
   }
 
@@ -226,4 +233,4 @@ class YourProfile extends React.Component<MyProps, MyState> {
   };
 }
 
-export default withAuth(withLayout(YourProfile, { teamRequired: false }));
+export default withAuth(YourProfile, { teamRequired: false });
