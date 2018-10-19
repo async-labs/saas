@@ -17,6 +17,8 @@ import {
   updateCustomer,
 } from '../stripe';
 
+mongoose.set('useFindAndModify', false);
+
 const mongoSchema = new mongoose.Schema({
   googleId: {
     type: String,
@@ -218,7 +220,7 @@ class UserClass extends mongoose.Model {
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('displayName avatarUrl slug')
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static async createCustomer({ userId, stripeToken }) {
@@ -241,7 +243,7 @@ class UserClass extends mongoose.Model {
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('stripeCustomer stripeCard hasCardInformation')
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static async createNewCardUpdateCustomer({ userId, stripeToken }) {
@@ -265,7 +267,7 @@ class UserClass extends mongoose.Model {
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('stripeCard')
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static async getListOfInvoicesForCustomer({ userId }) {
@@ -287,7 +289,7 @@ class UserClass extends mongoose.Model {
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('stripeListOfInvoices')
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static async getTeamMembers({ userId, teamId }) {
@@ -295,7 +297,7 @@ class UserClass extends mongoose.Model {
 
     return this.find({ _id: { $in: team.memberIds } })
       .select(this.publicFields().join(' '))
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static async signInOrSignUp({
@@ -303,7 +305,7 @@ class UserClass extends mongoose.Model {
   }) {
     const user = await this.findOne({ googleId })
       .select(this.publicFields().join(' '))
-      .lean();
+      .setOptions({ lean: true });
 
     if (user) {
       if (_.isEmpty(googleToken)) {
@@ -392,7 +394,7 @@ class UserClass extends mongoose.Model {
 
     const team = await Team.findById(teamId)
       .select('memberIds')
-      .lean();
+      .setOptions({ lean: true });
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');

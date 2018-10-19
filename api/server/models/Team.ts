@@ -6,6 +6,8 @@ import User from './User';
 
 import { cancelSubscription, createSubscription } from '../stripe';
 
+mongoose.set('useFindAndModify', false);
+
 const mongoSchema = new mongoose.Schema({
   teamLeaderId: {
     type: String,
@@ -182,15 +184,15 @@ class TeamClass extends mongoose.Model {
     return this.findById(
       teamId,
       'name avatarUrl slug defaultTeam isSubscriptionActive stripeSubscription',
-    ).lean();
+    ).setOptions({ lean: true });
   }
 
   public static findBySlug(slug: string) {
-    return this.findOne({ slug }).lean();
+    return this.findOne({ slug }).setOptions({ lean: true });
   }
 
   public static getList(userId: string) {
-    return this.find({ memberIds: userId }).lean();
+    return this.find({ memberIds: userId }).setOptions({ lean: true });
   }
 
   public static async removeMember({ teamId, teamLeaderId, userId }) {
@@ -235,7 +237,7 @@ class TeamClass extends mongoose.Model {
       { new: true, runValidators: true },
     )
       .select('isSubscriptionActive stripeSubscription')
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static async cancelSubscription({ teamLeaderId, teamId }) {
@@ -262,13 +264,13 @@ class TeamClass extends mongoose.Model {
       { new: true, runValidators: true },
     )
       .select('isSubscriptionActive stripeSubscription')
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static async cancelSubscriptionAfterFailedPayment({ subscriptionId }) {
-    const team = await this.find({ 'stripeSubscription.id': subscriptionId })
+    const team: any = await this.find({ 'stripeSubscription.id': subscriptionId })
       .select('teamLeaderId isSubscriptionActive stripeSubscription isPaymentFailed')
-      .lean();
+      .setOptions({ lean: true });
     if (!team.isSubscriptionActive) {
       throw new Error('Team is already unsubscribed.');
     }
@@ -288,7 +290,7 @@ class TeamClass extends mongoose.Model {
       { new: true, runValidators: true },
     )
       .select('isSubscriptionActive stripeSubscription isPaymentFailed')
-      .lean();
+      .setOptions({ lean: true });
   }
 }
 

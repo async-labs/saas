@@ -13,6 +13,8 @@ import logger from '../logs';
 import Discussion from './Discussion';
 import Team from './Team';
 
+mongoose.set('useFindAndModify', false);
+
 function deletePostFiles(posts: IPostDocument[]) {
   const imgRegEx = /\<img.+data-src=[\"|\'](.+?)[\"|\']/g;
   const files: { [key: string]: string[] } = {};
@@ -191,7 +193,7 @@ class PostClass extends mongoose.Model {
 
     const post = await this.findById(id)
       .select('createdUserId discussionId')
-      .lean();
+      .setOptions({ lean: true });
 
     await this.checkPermission({ userId, discussionId: post.discussionId, post });
 
@@ -212,7 +214,7 @@ class PostClass extends mongoose.Model {
 
     const post = await this.findById(id)
       .select('createdUserId discussionId content')
-      .lean();
+      .setOptions({ lean: true });
 
     await this.checkPermission({ userId, discussionId: post.discussionId, post });
 
@@ -232,7 +234,7 @@ class PostClass extends mongoose.Model {
 
     const discussion = await Discussion.findById(discussionId)
       .select('teamId memberIds slug')
-      .lean();
+      .setOptions({ lean: true });
 
     if (!discussion) {
       throw new Error('Discussion not found');
@@ -244,7 +246,7 @@ class PostClass extends mongoose.Model {
 
     const team = await Team.findById(discussion.teamId)
       .select('memberIds slug')
-      .lean();
+      .setOptions({ lean: true });
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');

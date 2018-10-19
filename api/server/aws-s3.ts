@@ -9,9 +9,9 @@ async function checkPrefix(prefix, user) {
     return;
   }
 
-  const teams: any[] = await Team.find({ memberIds: user.id })
+  const teams = await Team.find({ memberIds: user.id })
     .select('slug')
-    .lean();
+    .setOptions({ lean: true });
 
   if (!teams.find(t => t.slug === prefix)) {
     throw new Error('Wrong prefix.');

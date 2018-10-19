@@ -10,6 +10,8 @@ const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_APP } = process.env;
 const ROOT_URL = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
+mongoose.set('useFindAndModify', false);
+
 const mongoSchema = new mongoose.Schema({
   teamId: {
     type: String,
@@ -76,14 +78,14 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const team = await Team.findById(teamId).lean();
+    const team = await Team.findById(teamId).setOptions({ lean: true });
     if (!team || team.teamLeaderId !== userId) {
       throw new Error('Team does not exist or you have no permission');
     }
 
     const registeredUser = await User.findOne({ email })
       .select('defaultTeamSlug')
-      .lean();
+      .setOptions({ lean: true });
 
     if (registeredUser) {
       if (team.memberIds.includes(registeredUser._id.toString())) {
@@ -102,7 +104,7 @@ class InvitationClass extends mongoose.Model {
     let token;
     const invitation = await this.findOne({ teamId, email })
       .select('token')
-      .lean();
+      .setOptions({ lean: true });
 
     if (invitation) {
       token = invitation.token;
@@ -133,13 +135,13 @@ class InvitationClass extends mongoose.Model {
       logger.error('Email sending error:', err);
     });
 
-    return await this.findOne({ teamId, email }).lean();
+    return await this.findOne({ teamId, email }).setOptions({ lean: true });
   }
 
   public static async getTeamInvitedUsers({ userId, teamId }) {
     const team = await Team.findOne({ _id: teamId })
       .select('teamLeaderId')
-      .lean();
+      .setOptions({ lean: true });
 
     if (userId !== team.teamLeaderId) {
       throw new Error('You have no permission.');
@@ -147,7 +149,7 @@ class InvitationClass extends mongoose.Model {
 
     return this.find({ teamId })
       .select('email')
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static async getTeamByToken({ token }) {
@@ -155,7 +157,7 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const invitation = await this.findOne({ token }).lean();
+    const invitation = await this.findOne({ token }).setOptions({ lean: true });
 
     if (!invitation) {
       throw new Error('Invitation not found');
@@ -163,7 +165,7 @@ class InvitationClass extends mongoose.Model {
 
     const team = await Team.findById(invitation.teamId)
       .select('name slug avatarUrl memberIds')
-      .lean();
+      .setOptions({ lean: true });
 
     if (!team) {
       throw new Error('Team does not exist');
@@ -177,7 +179,7 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const invitation = await this.findOne({ token }).lean();
+    const invitation = await this.findOne({ token }).setOptions({ lean: true });
 
     if (!invitation) {
       throw new Error('Invitation not found');
@@ -185,7 +187,7 @@ class InvitationClass extends mongoose.Model {
 
     const team = await Team.findById(invitation.teamId)
       .select('name slug avatarUrl memberIds')
-      .lean();
+      .setOptions({ lean: true });
 
     if (team && team.memberIds.includes(userId)) {
       this.deleteOne({ token }).exec();
@@ -197,7 +199,7 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const invitation = await this.findOne({ token }).lean();
+    const invitation = await this.findOne({ token }).setOptions({ lean: true });
 
     if (!invitation || invitation.email !== user.email) {
       throw new Error('Invitation not found');
@@ -207,7 +209,7 @@ class InvitationClass extends mongoose.Model {
 
     const team = await Team.findById(invitation.teamId)
       .select('memberIds slug teamLeaderId')
-      .lean();
+      .setOptions({ lean: true });
 
     if (team && !team.memberIds.includes(user._id)) {
       await Team.updateOne({ _id: team._id }, { $addToSet: { memberIds: user._id } });

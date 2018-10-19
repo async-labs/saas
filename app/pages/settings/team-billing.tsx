@@ -191,7 +191,7 @@ class TeamBilling extends React.Component<Props, State> {
           description={`Subscription for ${currentTeam.name}`}
         >
           <Button variant="contained" color="primary">
-            Buy subscription 1
+            Buy subscription (has no card)
           </Button>
           <p />
           {currentTeam.isPaymentFailed ? (
@@ -212,7 +212,7 @@ class TeamBilling extends React.Component<Props, State> {
       return (
         <React.Fragment>
           <Button variant="contained" color="primary" onClick={this.createSubscriptionOnClick}>
-            Buy subscription 2
+            Buy subscription (has card)
           </Button>
         </React.Fragment>
       );
@@ -292,14 +292,14 @@ class TeamBilling extends React.Component<Props, State> {
   }
 
   private addCard = async token => {
-    const { currentUser } = this.props.store;
+    const { currentUser, currentTeam } = this.props.store;
 
     NProgress.start();
     this.setState({ disabled: true });
 
     try {
       await currentUser.createCustomer({ token });
-      await currentUser.createCustomer({ token });
+      await currentTeam.createSubscription({ teamId: currentTeam._id });
       notify('Success!');
     } catch (err) {
       notify(err);

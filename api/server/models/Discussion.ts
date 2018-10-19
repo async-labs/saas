@@ -5,6 +5,8 @@ import { generateNumberSlug } from '../utils/slugify';
 import Post, { deletePostFiles } from './Post';
 import Team from './Team';
 
+mongoose.set('useFindAndModify', false);
+
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
     type: String,
@@ -85,7 +87,7 @@ class DiscussionClass extends mongoose.Model {
 
     const team = await Team.findById(teamId)
       .select('memberIds teamLeaderId')
-      .lean();
+      .setOptions({ lean: true });
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');
@@ -106,7 +108,7 @@ class DiscussionClass extends mongoose.Model {
 
     const filter: any = { teamId, memberIds: userId };
 
-    const discussions: any[] = await this.find(filter).lean();
+    const discussions: any[] = await this.find(filter).setOptions({ lean: true });
 
     return { discussions };
   }
@@ -137,7 +139,7 @@ class DiscussionClass extends mongoose.Model {
 
     const discussion = await this.findById(id)
       .select('teamId createdUserId')
-      .lean();
+      .setOptions({ lean: true });
 
     const { team } = await this.checkPermission({
       userId,
@@ -167,14 +169,14 @@ class DiscussionClass extends mongoose.Model {
 
     const discussion = await this.findById(id)
       .select('teamId')
-      .lean();
+      .setOptions({ lean: true });
 
     await this.checkPermission({ userId, teamId: discussion.teamId });
 
     deletePostFiles(
       await Post.find({ discussionId: id })
         .select('content')
-        .lean(),
+        .setOptions({ lean: true }),
     );
 
     await Post.deleteMany({ discussionId: id });
@@ -185,7 +187,7 @@ class DiscussionClass extends mongoose.Model {
   }
 
   public static findBySlug(teamId: string, slug: string) {
-    return this.findOne({ teamId, slug }).lean();
+    return this.findOne({ teamId, slug }).setOptions({ lean: true });
   }
 }
 

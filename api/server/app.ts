@@ -98,7 +98,7 @@ server.get('/uploaded-file', async (req, res) => {
   if (teamSlug) {
     const team = await Team.findOne({ slug: teamSlug })
       .select('memberIds')
-      .lean();
+      .setOptions({ lean: true });
 
     if (!team || !team.memberIds.includes(req.user.id)) {
       res.status(401).end('You do not have permission.');
