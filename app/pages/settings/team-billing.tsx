@@ -191,7 +191,7 @@ class TeamBilling extends React.Component<Props, State> {
           description={`Subscription for ${currentTeam.name}`}
         >
           <Button variant="contained" color="primary">
-            Buy subscription (has no card)
+            Buy subscription
           </Button>
           <p />
           {currentTeam.isPaymentFailed ? (
@@ -212,7 +212,7 @@ class TeamBilling extends React.Component<Props, State> {
       return (
         <React.Fragment>
           <Button variant="contained" color="primary" onClick={this.createSubscriptionOnClick}>
-            Buy subscription (has card)
+            Buy subscription (use current card)
           </Button>
         </React.Fragment>
       );
