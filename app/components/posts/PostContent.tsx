@@ -79,7 +79,7 @@ class PostContent extends React.Component<{ html: string }> {
     return (
       <div
         ref={elm => (this.postBodyElm = elm)}
-        style={{ fontSize: '15px', lineHeight: '2em', fontWeight: 300 }}
+        style={{ fontSize: '15px', lineHeight: '2em', fontWeight: 300, wordBreak: 'break-all' }}
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: html }}
       />

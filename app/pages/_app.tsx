@@ -6,10 +6,21 @@ import React from 'react';
 import JssProvider from 'react-jss/lib/JssProvider';
 
 import getContext from '../lib/context';
+import { isMobile } from '../lib/isMobile';
 import { Store } from '../lib/store';
 import withStore from '../lib/withStore';
 
-class MyApp extends App<{ mobxStore: Store }> {
+class MyApp extends App<{ mobxStore: Store, isMobile: boolean }> {
+  public static async getInitialProps({ Component, ctx }) {
+    const pageProps = { isMobile: isMobile({ req: ctx.req }) };
+
+    if (Component.getInitialProps) {
+      Object.assign(pageProps, await Component.getInitialProps(ctx));
+    }
+
+    return { pageProps };
+  }
+
   public pageContext: any;
 
   constructor(props) {

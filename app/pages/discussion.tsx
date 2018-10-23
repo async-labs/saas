@@ -23,6 +23,7 @@ type Props = {
   teamSlug: string;
   discussionSlug: string;
   isServer: boolean;
+  isMobile: boolean;
 };
 
 class DiscussionComp extends React.Component<Props> {
@@ -111,7 +112,12 @@ class DiscussionComp extends React.Component<Props> {
       <React.Fragment>
         {discussion
           ? discussion.posts.map(p => (
-              <PostDetail key={p._id} post={p} onEditClick={this.onEditClickCallback} />
+              <PostDetail
+                key={p._id}
+                post={p}
+                onEditClick={this.onEditClickCallback}
+                isMobile={this.props.isMobile}
+              />
             ))
           : null}
 
@@ -226,7 +232,13 @@ class DiscussionComp extends React.Component<Props> {
             open={drawerState}
             members={discussion.members}
             onFinished={() => {
-              this.setState({ drawerState: false, selectedPost: null });
+              this.setState({ drawerState: false });
+
+              setTimeout(() => {
+                this.setState({
+                  selectedPost: null,
+                });
+              }, 500);
             }}
           />
         </div>

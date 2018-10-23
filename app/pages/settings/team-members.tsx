@@ -1,6 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import Hidden from '@material-ui/core/Hidden';
 import Paper from '@material-ui/core/Paper';
 import { observer } from 'mobx-react';
 import Head from 'next/head';
@@ -28,6 +29,10 @@ const styleGrid = {
 const styleGridItem = {
   padding: '0px 20px',
   borderRight: '0.5px #aaa solid',
+};
+
+const styleTableCell = {
+  padding: '15px 56px 15px 15px',
 };
 
 const getMenuOptions = member => ({
@@ -167,6 +172,7 @@ class TeamMembers extends React.Component<MyProps, MyState> {
               <h4 style={{ marginRight: 20, display: 'inline' }}>
                 Current Team ( {Array.from(currentTeam.members.values()).length} / 20 )
               </h4>
+              <p />
               <Button
                 onClick={this.inviteMember}
                 variant="outlined"
@@ -180,31 +186,33 @@ class TeamMembers extends React.Component<MyProps, MyState> {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Team member</TableCell>
-                      <TableCell>Status</TableCell>
+                      <TableCell style={styleTableCell}>Person</TableCell>
+                      <TableCell style={styleTableCell}>Role</TableCell>
                     </TableRow>
                   </TableHead>
 
                   <TableBody>
                     {Array.from(currentTeam.members.values()).map(m => (
                       <TableRow key={m._id}>
-                        <TableCell component="th" scope="row">
-                          <Avatar
-                            role="presentation"
-                            src={m.avatarUrl}
-                            alt={m.avatarUrl}
-                            key={m._id}
-                            style={{
-                              margin: '0px 5px',
-                              display: 'inline-flex',
-                              width: '30px',
-                              height: '30px',
-                              verticalAlign: 'middle',
-                            }}
-                          />{' '}
+                        <TableCell style={styleTableCell} component="th" scope="row">
+                          <Hidden smDown>
+                            <Avatar
+                              role="presentation"
+                              src={m.avatarUrl}
+                              alt={m.avatarUrl}
+                              key={m._id}
+                              style={{
+                                margin: '0px 5px',
+                                display: 'inline-flex',
+                                width: '30px',
+                                height: '30px',
+                                verticalAlign: 'middle',
+                              }}
+                            />{' '}
+                          </Hidden>
                           {m.displayName}
                         </TableCell>
-                        <TableCell>
+                        <TableCell style={styleTableCell}>
                           {isTL && m._id !== currentUser._id ? (
                             <div style={{ display: 'inline-flex' }}>
                               <div style={{ paddingRight: 10 }}>Team Member</div>{' '}
@@ -234,18 +242,18 @@ class TeamMembers extends React.Component<MyProps, MyState> {
                     <Table>
                       <TableHead>
                         <TableRow>
-                          <TableCell>Email</TableCell>
-                          <TableCell>Status</TableCell>
+                          <TableCell style={styleTableCell}>Email</TableCell>
+                          <TableCell style={styleTableCell}>Status</TableCell>
                         </TableRow>
                       </TableHead>
 
                       <TableBody>
                         {Array.from(currentTeam.invitedUsers.values()).map(i => (
                           <TableRow key={i._id}>
-                            <TableCell component="th" scope="row">
+                            <TableCell style={styleTableCell} component="th" scope="row">
                               {i.email}{' '}
                             </TableCell>
-                            <TableCell>Email sent</TableCell>
+                            <TableCell style={styleTableCell}>Sent</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -261,8 +269,10 @@ class TeamMembers extends React.Component<MyProps, MyState> {
             <InviteMember
               open={this.state.inviteMemberOpen}
               onClose={this.handleInviteMemberClose}
+              store={this.props.store}
             />
           </Grid>
+          <br />
         </div>
       </Layout>
     );

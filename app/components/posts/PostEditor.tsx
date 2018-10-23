@@ -81,7 +81,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
           </Button>
         </div>
 
-        <div style={{ display: 'inline', float: 'right' }}>
+        <div style={{ display: 'inline', float: 'left' }}>
           <input
             accept="image/*"
             name="upload-file"
@@ -92,7 +92,9 @@ class PostEditor extends React.Component<MyProps, MyState> {
           />
           <label htmlFor="upload-file">
             <Button color="primary" component="span">
-              Upload file
+              <i className="material-icons" style={{ fontSize: '22px' }}>
+                insert_photo
+              </i>
             </Button>
           </label>
         </div>

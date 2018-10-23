@@ -140,6 +140,7 @@ class YourProfile extends React.Component<MyProps, MyState> {
               <br />
             </Grid>
           </Grid>
+          <br />
         </div>
       </Layout>
     );

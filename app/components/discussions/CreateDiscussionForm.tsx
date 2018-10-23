@@ -80,6 +80,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                 >
                   Cancel
                 </Button>{' '}
+                <p />
                 <Button
                   type="submit"
                   variant="contained"

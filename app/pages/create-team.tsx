@@ -135,7 +135,6 @@ class CreateTeam extends React.Component<MyProps> {
                   }}
                 />
                 <p />
-                <br />
                 <h4 style={{ marginTop: '40px' }}>Team logo (optional)</h4>
                 <Avatar
                   src={newAvatarUrl}
@@ -160,7 +159,7 @@ class CreateTeam extends React.Component<MyProps> {
                   style={{ display: 'none' }}
                   onChange={this.previewAvatar}
                 />
-                <br />
+                <p />
                 <br />
                 <br />
                 <Button
@@ -174,6 +173,7 @@ class CreateTeam extends React.Component<MyProps> {
               </form>
             </Grid>
           </Grid>
+          <br />
         </div>
       </Layout>
     );

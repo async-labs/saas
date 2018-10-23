@@ -80,7 +80,12 @@ class PostForm extends React.Component<MyProps, MyState> {
               <Button variant="outlined" onClick={this.closeDrawer} disabled={this.state.disabled}>
                 Cancel
               </Button>{' '}
-              <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={this.state.disabled}
+              >
                 {isEditing ? 'Save changes' : 'Publish'}
               </Button>
             </div>
@@ -115,14 +120,13 @@ class PostForm extends React.Component<MyProps, MyState> {
       NProgress.start();
       try {
         await post.edit({ content, htmlContent });
-        NProgress.done();
-        this.setState({ disabled: false });
         notify('You successfully edited Post');
       } catch (error) {
         console.log(error);
         notify(error);
-        NProgress.done();
+      } finally {
         this.setState({ disabled: false });
+        NProgress.done();
       }
 
       if (onFinished) {
@@ -143,16 +147,14 @@ class PostForm extends React.Component<MyProps, MyState> {
 
     try {
       await discussion.addPost(content);
-
       this.setState({ content: '' });
-      NProgress.done();
-      this.setState({ disabled: false });
       notify('You successfully published Post.');
     } catch (error) {
       console.log(error);
       notify(error);
-      NProgress.done();
+    } finally {
       this.setState({ disabled: false });
+      NProgress.done();
     }
 
     if (onFinished) {

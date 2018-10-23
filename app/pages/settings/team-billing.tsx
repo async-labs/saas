@@ -157,6 +157,7 @@ class TeamBilling extends React.Component<Props, State> {
               <br />
             </Grid>
           </Grid>
+          <br />
         </div>
       </Layout>
     );
