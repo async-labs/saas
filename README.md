@@ -251,9 +251,10 @@ Check out projects built with the code in this open source app. Feel free to add
 
 
 ## Hire our team
-If you're interested in hiring our team to build custom SaaS features or provide consulting, fill out our [form](https://goo.gl/forms/4kk6mvowOjkQY21y2).
+We can build a SaaS MVP from scratch in 4-6 weeks for a fixed price of $10-20K.
+If you're interested, please fill out our [form](https://goo.gl/forms/4kk6mvowOjkQY21y2).
 
-If you are a small team, who works best in a calm environment and builds a SaaS product that solves a real problem - we want to hear from you.
+If you are a small team who works best in a calm environment and builds a SaaS product that solves a real problem - we want to hear from you.
 
 [Async](https://async-await.com) is the largest project in our portfolio to this date.
 
