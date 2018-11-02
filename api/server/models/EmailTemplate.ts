@@ -46,8 +46,9 @@ async function insertTemplates() {
           <a href="https://builderbook.org/book" target="blank"> book</a>.
         </p>
         <p>
-          If you want to hire us to help you build a SaaS business, please apply using this
-          <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank"> form</a>.
+        We can build any SaaS MVP from scratch in 4-6 weeks for a fixed price of $10-20K.<br/>
+        If you're interested, please fill out our
+        <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank"> form</a>.
         </p>
         Kelly & Timur, Team Async
       `,
