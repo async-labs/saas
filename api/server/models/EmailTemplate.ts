@@ -42,11 +42,16 @@ async function insertTemplates() {
           <a href="https://async-await.com" target="blank"> Async</a>,
            a communication and project management tool for small teams of software engineers.
         <br/>
-          If you're learning how to build your own web app or SaaS product, check out our
+          <a href="https://app.async-await.com/signup" target="blank">Sign up</a>
+          at Async to check it out.
+        </p>
+        <p>
+          If you're learning how to build your own SaaS web application, check out our
           <a href="https://builderbook.org/book" target="blank"> book</a>.
         </p>
         <p>
-        We can build any SaaS MVP from scratch in 4-6 weeks for a fixed price of $10-20K.<br/>
+        We can build any SaaS MVP from scratch in 4-8 weeks for a fixed price of $15-20K (
+        <a href="https://goo.gl/jCU6Es" target="blank">example estimate</a>).<br/>
         If you're interested, please fill out our
         <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank"> form</a>.
         </p>
