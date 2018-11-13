@@ -32,8 +32,6 @@ const mongoSchema = new mongoose.Schema({
   },
 });
 
-mongoSchema.index({ name: 'text' });
-
 interface IDiscussionDocument extends mongoose.Document {
   createdUserId: string;
   teamId: string;

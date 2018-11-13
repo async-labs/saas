@@ -13,6 +13,7 @@ node_modules/
 .coverage
 .env
 now.json
+.note
 
 compiled/
 production-server/

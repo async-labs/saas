@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon server/app.ts",
     "build": "next build && tsc --project tsconfig.server.json",
+    "postinstall": "next build && rm -rf production-server/ && tsc --project tsconfig.server.json",
     "start": "NODE_ENV=production node production-server/server/app.js",
     "now": "now && now alias",
     "now-rm": "now rm saas-app --safe --yes",
