@@ -99,8 +99,12 @@ class DiscussionComp extends React.Component<Props> {
 
     const discussion = this.getDiscussion(this.props.discussionSlug);
 
-    if (discussion && discussion.isLoadingPosts && discussion.posts.length === 0) {
-      return <p>Empty discussion</p>;
+    if (discussion && discussion.isLoadingPosts) {
+      return <p>Loading Posts...</p>;
+    }
+
+    if (discussion && !discussion.isLoadingPosts && discussion.posts.length === 0) {
+      return <p>Empty Discussion.</p>;
     }
 
     let loading = 'loading Posts ...';
