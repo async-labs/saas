@@ -1,5 +1,5 @@
+import { Strategy as GoogleStrategy } from '@passport-next/passport-google-oauth2';
 import * as passport from 'passport';
-import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
 
 import logger from './logs';
 import Invitation from './models/Invitation';
@@ -42,7 +42,7 @@ export default function auth({ ROOT_URL, server }) {
   };
 
   passport.use(
-    new Strategy(
+    new GoogleStrategy(
       {
         clientID,
         clientSecret,

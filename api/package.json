@@ -24,6 +24,7 @@
     "coverageDirectory": "./.coverage"
   },
   "dependencies": {
+    "@passport-next/passport-google-oauth2": "^1.0.0",
     "@types/mongoose": "5.2.19",
     "@types/node": "10.11.7",
     "aws-sdk": "2.333.0",
