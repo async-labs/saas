@@ -28,6 +28,7 @@
     "helmet": "3.14.0",
     "htmlescape": "1.1.1",
     "isomorphic-unfetch": "3.0.0",
+    "keycode": "^2.2.0",
     "lodash": "4.17.11",
     "marked": "0.5.1",
     "mobx": "5.5.0",

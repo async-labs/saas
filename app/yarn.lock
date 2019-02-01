@@ -4756,7 +4756,7 @@ junk@^1.0.1:
   resolved "https://registry.yarnpkg.com/junk/-/junk-1.0.3.tgz#87be63488649cbdca6f53ab39bec9ccd2347f592"
   integrity sha1-h75jSIZJy9ym9Tqzm+yczSNH9ZI=
 
-keycode@^2.1.9:
+keycode@^2.1.9, keycode@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.2.0.tgz#3d0af56dc7b8b8e5cba8d0a97f107204eec22b04"
   integrity sha1-PQr1bce4uOXLqNCpfxByBO7CKwQ=
