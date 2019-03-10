@@ -15,7 +15,6 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 - [Built with](#built-with)
 - [Screenshots](#screenshots)
 - [Showcase](#showcase)
-- [Hire our team](#hire-our-team)
 - [Contributing](#contributing)
 - [Team](#team)
 - [License](#license)
@@ -249,15 +248,6 @@ Check out projects built with the code in this open source app. Feel free to add
 - [Harbor](https://github.com/builderbook/harbor): Open source web app that allows anyone with a Gmail account to automatically charge for advice sent via email.
 
 
-
-## Hire our team
-We can build any functional SaaS MVP from scratch in 4-6 weeks for a fixed price of $10-20K ([example estimate](https://goo.gl/fw7YQU)).
-If you're interested, please fill out our [form](https://goo.gl/forms/4kk6mvowOjkQY21y2).
-
-If you are a small team who works best in a calm environment and builds a SaaS product that solves a real problem - we want to hear from you.
-
-[Async](https://async-await.com) is the largest project in our portfolio to this date. [Sign up](https://app.async-await.com/signup) at Async to check it out.
-
 ## Contributing
 If you'd like to contribute, check our [todo list](https://github.com/async-labs/saas/issues/1) for features you can discuss and add. To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
 
@@ -269,6 +259,7 @@ Want to support this project? Sign up at [async](https://async-await.com) and/or
 - [Delgermurun Purevkhuu](https://github.com/delgermurun)
 - [Timur Zhiyentayev](https://github.com/tima101)
 
+You can contact us at team@async-await.com.
 
 ## License
 All code in this repository is provided under the [MIT License](https://github.com/async-labs/saas/blob/master/LICENSE.md).
