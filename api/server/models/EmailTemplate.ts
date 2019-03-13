@@ -49,12 +49,6 @@ async function insertTemplates() {
           If you're learning how to build your own SaaS web application, check out our
           <a href="https://builderbook.org/book" target="blank"> book</a>.
         </p>
-        <p>
-        We can build any SaaS MVP from scratch in 4-8 weeks for a fixed price of $15-20K (
-        <a href="https://goo.gl/jCU6Es" target="blank">example estimate</a>).<br/>
-        If you're interested, please fill out our
-        <a href="https://goo.gl/forms/fnt6CkOOsaSUilIC3" target="blank"> form</a>.
-        </p>
         Kelly & Timur, Team Async
       `,
     },
