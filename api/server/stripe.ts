@@ -1,7 +1,7 @@
 import * as bodyParser from 'body-parser';
 import * as stripe from 'stripe';
 import logger from './logs';
-import Team from './models/Team';
+// import Team from './models/Team';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -60,7 +60,7 @@ function updateCustomer({ customerId, newCardId }) {
 }
 
 function verifyWebHook(request) {
-  const event = stripeInstance.webhooks.constructEvent<any>(
+  const event = stripeInstance.webhooks.constructEvent(
     request.body,
     request.headers['stripe-signature'],
     ENDPOINT_SECRET,
@@ -75,12 +75,14 @@ function stripeWebHooks({ server }) {
     async (req, res, next) => {
       try {
         const event = await verifyWebHook(req);
-        logger.info(event.id);
-        const { subscription } = event.data.object;
-        logger.info(JSON.stringify(subscription));
-        await Team.cancelSubscriptionAfterFailedPayment({
-          subscriptionId: JSON.stringify(subscription),
-        });
+        logger.info(event);
+        logger.info(event.data);
+        logger.info(event.data.object);
+        // const { subscription } = event.data.object;
+        // logger.info(JSON.stringify(subscription));
+        // await Team.cancelSubscriptionAfterFailedPayment({
+        //   subscriptionId: JSON.stringify(subscription),
+        // });
 
         res.sendStatus(200);
       } catch (err) {

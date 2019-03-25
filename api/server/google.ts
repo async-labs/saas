@@ -1,4 +1,3 @@
-// import { Strategy as GoogleStrategy } from '@passport-next/passport-google-oauth2';
 import * as passport from 'passport';
 import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
 
@@ -48,7 +47,6 @@ export default function auth({ ROOT_URL, server }) {
         clientID,
         clientSecret,
         callbackURL: `${ROOT_URL}/oauth2callback`,
-        userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
       },
       verify,
     ),
