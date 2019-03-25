@@ -1,7 +1,7 @@
 import * as bodyParser from 'body-parser';
 import * as stripe from 'stripe';
 import logger from './logs';
-// import Team from './models/Team';
+import Team from './models/Team';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -75,13 +75,14 @@ function stripeWebHooks({ server }) {
     async (req, res, next) => {
       try {
         const event = await verifyWebHook(req);
-        logger.info(JSON.stringify(event.data.object));
+        // logger.info(JSON.stringify(event.data.object));
         // @ts-ignore
+        // some problem with @types/stripe ?
         const { subscription} = event.data.object;
-        logger.info(JSON.stringify(subscription));
-        // await Team.cancelSubscriptionAfterFailedPayment({
-        //   subscriptionId: JSON.stringify(subscription),
-        // });
+        // logger.info(JSON.stringify(subscription));
+        await Team.cancelSubscriptionAfterFailedPayment({
+          subscriptionId: JSON.stringify(subscription),
+        });
 
         res.sendStatus(200);
       } catch (err) {
