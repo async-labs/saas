@@ -75,11 +75,10 @@ function stripeWebHooks({ server }) {
     async (req, res, next) => {
       try {
         const event = await verifyWebHook(req);
-        logger.info(event);
-        logger.info(event.data);
-        logger.info(event.data.object);
-        // const { subscription } = event.data.object;
-        // logger.info(JSON.stringify(subscription));
+        logger.info(JSON.stringify(event.data.object));
+        // @ts-ignore
+        const { subscription} = event.data.object;
+        logger.info(JSON.stringify(subscription));
         // await Team.cancelSubscriptionAfterFailedPayment({
         //   subscriptionId: JSON.stringify(subscription),
         // });
