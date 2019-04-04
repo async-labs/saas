@@ -5,6 +5,7 @@
     "allowJs": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
     "removeComments": false,
     "preserveConstEnums": true,
     "noUnusedLocals": true,

@@ -5,6 +5,7 @@
     "module": "esnext",
     "jsx": "preserve",
     "allowJs": true,
+    "alwaysStrict": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "noUnusedLocals": true,
