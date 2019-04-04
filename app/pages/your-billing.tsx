@@ -9,12 +9,11 @@ import Grid from '@material-ui/core/Grid';
 
 import Button from '@material-ui/core/Button';
 import NProgress from 'nprogress';
-import SettingList from '../../components/common/SettingList';
-import Layout from '../../components/layout';
-import env from '../../lib/env';
-import notify from '../../lib/notifier';
-import { Store } from '../../lib/store';
-import withAuth from '../../lib/withAuth';
+import Layout from '../components/layout';
+import env from '../lib/env';
+import notify from '../lib/notifier';
+import { Store } from '../lib/store';
+import withAuth from '../lib/withAuth';
 
 const { StripePublishableKey } = env;
 
@@ -22,15 +21,15 @@ const styleGrid = {
   height: '100%',
 };
 
-const styleGridItem = {
-  padding: '0px 20px',
-  borderRight: '0.5px #707070 solid',
-};
+// const styleGridItem = {
+//   padding: '0px 20px',
+//   borderRight: '0.5px #707070 solid',
+// };
 
 type Props = { store: Store; isTL: boolean; teamSlug: string };
 type State = { disabled: boolean; showInvoices: boolean };
 
-class TeamBilling extends React.Component<Props, State> {
+class YourBilling extends React.Component<Props, State> {
   public state = {
     newName: '',
     disabled: false,
@@ -45,7 +44,7 @@ class TeamBilling extends React.Component<Props, State> {
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: '20px' }}>
+          <div style={{ padding: '0px 20px', fontSize: '15px', height: '100%' }}>
             <p>You did not select any team.</p>
             <p>
               To access this page, please select existing team or create new team if you have no
@@ -59,17 +58,14 @@ class TeamBilling extends React.Component<Props, State> {
     if (!isTL) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+          <div style={{ padding: '0px 20px', fontSize: '15px', height: '100%' }}>
             <Head>
-              <title>Team Billing</title>
+              <title>Your Billing</title>
               <meta name="description" content="description" />
             </Head>
             <Grid container style={styleGrid}>
-              <Grid item sm={2} xs={12} style={styleGridItem}>
-                <SettingList store={store} isTeamSettings={true} />
-              </Grid>
-              <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-                <h3>Team Billing</h3>
+              <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
+                <h3>Your Billing</h3>
                 <p>Only Team Leader can access this page.</p>
                 <p>Create your own team to become Team Leader.</p>
               </Grid>
@@ -82,18 +78,15 @@ class TeamBilling extends React.Component<Props, State> {
     return (
       <Layout {...this.props}>
         <Head>
-          <title>Team Billing</title>
+          <title>Your Billing</title>
           <meta name="description" content="description" />
         </Head>
-        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+        <div style={{ padding: '0px 20px', fontSize: '15px', height: '100%' }}>
           <Grid container style={styleGrid}>
-            <Grid item sm={2} xs={12} style={styleGridItem}>
-              <SettingList store={store} isTeamSettings={true} />
-            </Grid>
-            <Grid item sm={10} xs={12} style={{ padding: '0px 20px' }}>
-              <h3>Team Billing</h3>
+            <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
+              <h3>Your Billing</h3>
               <p />
-              <h4 style={{ marginTop: '40px' }}>Team Subscription</h4>
+              <h4 style={{ marginTop: '40px' }}>Paid plan</h4>
               {this.renderSubscriptionButton()}
               <p />
               <br />
@@ -230,7 +223,7 @@ class TeamBilling extends React.Component<Props, State> {
               You subscribed <b>{currentTeam.name}</b> on <b>{subscriptionDate}</b>.
             </p>
             <p>
-              You will be billed on <b>{billingDay} day</b> of each month unless you cancel
+              You will be billed $50 on <b>{billingDay} day</b> of each month unless you cancel
               subscription or subscription is cancelled automatically due to failed payment.
             </p>
           </span>
@@ -372,4 +365,4 @@ class TeamBilling extends React.Component<Props, State> {
   };
 }
 
-export default withAuth(observer(TeamBilling));
+export default withAuth(observer(YourBilling));

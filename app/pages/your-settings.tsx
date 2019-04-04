@@ -6,19 +6,19 @@ import Head from 'next/head';
 import NProgress from 'nprogress';
 import * as React from 'react';
 
-import Layout from '../../components/layout';
+import Layout from '../components/layout';
 
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
-} from '../../lib/api/team-member';
+} from '../lib/api/team-member';
 
-import notify from '../../lib/notifier';
-import { resizeImage } from '../../lib/resizeImage';
-import { Store } from '../../lib/store';
-import withAuth from '../../lib/withAuth';
+import notify from '../lib/notifier';
+import { resizeImage } from '../lib/resizeImage';
+import { Store } from '../lib/store';
+import withAuth from '../lib/withAuth';
 
-import env from '../../lib/env';
+import env from '../lib/env';
 
 const styleGrid = {
   height: '100%',
@@ -27,7 +27,7 @@ const styleGrid = {
 type MyProps = { store: Store; isTL: boolean; error?: string };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
-class YourProfile extends React.Component<MyProps, MyState> {
+class YourSettings extends React.Component<MyProps, MyState> {
   public static getInitialProps({ query }) {
     const { error } = query;
 
@@ -59,13 +59,13 @@ class YourProfile extends React.Component<MyProps, MyState> {
     return (
       <Layout {...this.props}>
         <Head>
-          <title>Your Profile at Async</title>
+          <title>Your Settings at Async</title>
           <meta name="description" content="description" />
         </Head>
-        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+        <div style={{ padding: '0px 20px', fontSize: '15px', height: '100%' }}>
           <Grid container style={styleGrid}>
             <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
-              <h3>Your Profile</h3>
+              <h3>Your Settings</h3>
               <h4 style={{ marginTop: '40px' }}>Your account</h4>
               <p>
                 <i
@@ -234,4 +234,4 @@ class YourProfile extends React.Component<MyProps, MyState> {
   };
 }
 
-export default withAuth(YourProfile, { teamRequired: false });
+export default withAuth(YourSettings, { teamRequired: false });

@@ -9,19 +9,14 @@ export default function routesWithSlug({ server, app }) {
     app.render(req, res, '/discussion', { teamSlug });
   });
 
-  server.get('/team/:teamSlug/settings/team-members', (req, res) => {
+  server.get('/team/:teamSlug/team-settings', (req, res) => {
     const { teamSlug } = req.params;
-    app.render(req, res, '/settings/team-members', { teamSlug });
+    app.render(req, res, '/team-settings', { teamSlug });
   });
 
-  server.get('/team/:teamSlug/settings/team-billing', (req, res) => {
+  server.get('/team/:teamSlug/your-billing', (req, res) => {
     const { teamSlug } = req.params;
-    app.render(req, res, '/settings/team-billing', { teamSlug });
-  });
-
-  server.get('/team/:teamSlug/settings/team-profile', (req, res) => {
-    const { teamSlug } = req.params;
-    app.render(req, res, '/settings/team-profile', { teamSlug });
+    app.render(req, res, '/your-billing', { teamSlug });
   });
 
   server.get('/invitation/:teamSlug', (req, res) => {
