@@ -24,7 +24,7 @@ const styleGrid = {
   height: '100%',
 };
 
-type MyProps = { store: Store; isTL: boolean; error?: string };
+type MyProps = { store: Store; isTL: boolean; error?: string; isMobile: boolean; };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class YourSettings extends React.Component<MyProps, MyState> {
@@ -62,7 +62,7 @@ class YourSettings extends React.Component<MyProps, MyState> {
           <title>Your Settings at Async</title>
           <meta name="description" content="description" />
         </Head>
-        <div style={{ padding: '0px 20px', fontSize: '15px', height: '100%' }}>
+        <div style={{ padding: this.props.isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
           <Grid container style={styleGrid}>
             <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
               <h3>Your Settings</h3>

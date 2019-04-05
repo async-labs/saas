@@ -10,7 +10,7 @@ import DiscussionListItem from './DiscussionListItem';
 
 import notify from '../../lib/notifier';
 
-type Props = { store?: Store; team: Team };
+type Props = { store?: Store; team: Team; isMobile: boolean };
 
 class DiscussionList extends React.Component<Props> {
   public state = {
@@ -51,13 +51,21 @@ class DiscussionList extends React.Component<Props> {
         <ul style={{ listStyle: 'none', padding: '0px' }}>
           {team &&
             team.orderedDiscussions.map(d => {
-              return <DiscussionListItem key={d._id} discussion={d} team={team} />;
+              return (
+                <DiscussionListItem
+                  key={d._id}
+                  discussion={d}
+                  team={team}
+                  isMobile={this.props.isMobile}
+                />
+              );
             })}
         </ul>
 
         <CreateDiscussionForm
           open={this.state.discussionFormOpen}
           onClose={this.handleDiscussionFormClose}
+          isMobile={this.props.isMobile}
         />
       </div>
     );

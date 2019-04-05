@@ -10,11 +10,12 @@ type Props = {
   store?: Store;
   discussion: Discussion;
   team: Team;
+  isMobile: boolean;
 };
 
 class DiscussionListItem extends React.Component<Props> {
   public render() {
-    const { store, discussion, team } = this.props;
+    const { store, discussion, team, isMobile } = this.props;
     const trimmingLength = 16;
 
     const selectedDiscussion =
@@ -49,7 +50,7 @@ class DiscussionListItem extends React.Component<Props> {
               marginRight: '-12px',
             }}
           >
-            <DiscussionActionMenu discussion={discussion} />
+            <DiscussionActionMenu discussion={discussion} isMobile={isMobile}/>
           </div>
         </li>
       </Paper>

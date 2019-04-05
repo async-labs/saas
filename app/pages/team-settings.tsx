@@ -55,7 +55,7 @@ const getMenuItemOptions = (member, component) => [
   },
 ];
 
-type MyProps = { teamSlug: string; store: Store; isTL: boolean };
+type MyProps = { teamSlug: string; store: Store; isTL: boolean; isMobile: boolean; };
 type MyState = { inviteMemberOpen: boolean; newName: string; newAvatarUrl: string; disabled: boolean };
 
 class TeamSettings extends React.Component<MyProps, MyState> {
@@ -203,7 +203,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
   // TODO: MobX when member gets removed
 
   public render() {
-    const { store } = this.props;
+    const { store, isMobile } = this.props;
     const { currentTeam, currentUser } = store;
     const { newName, newAvatarUrl } = this.state;
     const isTL = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
@@ -211,7 +211,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: '20px' }}>
+          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
             <p>You did not select any team.</p>
             <p>
               To access this page, please select existing team or create new team if you have no
@@ -229,7 +229,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
             <title>Team Settings</title>
             <meta name="description" content="Only the Team Leader can access this page" />
           </Head>
-          <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+          <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '14px', height: '100%' }}>
             <Grid container style={styleGrid}>
               <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
                 <h3>Team Settings</h3>
@@ -248,7 +248,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
           <title>Team Settings</title>
           <meta name="description" content={`Add or edit members for Team ${currentTeam.name}`} />
         </Head>
-        <div style={{ padding: '0px 20px', fontSize: '15px', height: '100%' }}>
+        <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
           <Grid container style={styleGrid}>
             <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
               <h3>Team Settings</h3>

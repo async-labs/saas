@@ -26,7 +26,7 @@ const styleGrid = {
 //   borderRight: '0.5px #707070 solid',
 // };
 
-type Props = { store: Store; isTL: boolean; teamSlug: string };
+type Props = { store: Store; isTL: boolean; teamSlug: string; isMobile: boolean };
 type State = { disabled: boolean; showInvoices: boolean };
 
 class YourBilling extends React.Component<Props, State> {
@@ -37,14 +37,14 @@ class YourBilling extends React.Component<Props, State> {
   };
 
   public render() {
-    const { store } = this.props;
+    const { store, isMobile } = this.props;
     const { currentTeam, currentUser } = store;
     const isTL = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: '0px 20px', fontSize: '15px', height: '100%' }}>
+          <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
             <p>You did not select any team.</p>
             <p>
               To access this page, please select existing team or create new team if you have no
@@ -58,11 +58,11 @@ class YourBilling extends React.Component<Props, State> {
     if (!isTL) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: '0px 20px', fontSize: '15px', height: '100%' }}>
-            <Head>
-              <title>Your Billing</title>
-              <meta name="description" content="description" />
-            </Head>
+          <Head>
+            <title>Your Billing</title>
+            <meta name="description" content="description" />
+          </Head>
+          <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
             <Grid container style={styleGrid}>
               <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
                 <h3>Your Billing</h3>
@@ -81,7 +81,7 @@ class YourBilling extends React.Component<Props, State> {
           <title>Your Billing</title>
           <meta name="description" content="description" />
         </Head>
-        <div style={{ padding: '0px 20px', fontSize: '15px', height: '100%' }}>
+        <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
           <Grid container style={styleGrid}>
             <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
               <h3>Your Billing</h3>

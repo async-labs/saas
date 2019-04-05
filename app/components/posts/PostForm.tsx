@@ -87,9 +87,6 @@ class PostForm extends React.Component<MyProps, MyState> {
                   variant="contained"
                   color="primary"
                   disabled={this.state.disabled}
-                  onClick={() => {
-                    this.setState({ isDraft: false });
-                  }}
                 >
                   {isEditing ? 'Save changes' : 'Publish Post'}
                 </Button>

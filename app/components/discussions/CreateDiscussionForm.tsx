@@ -25,6 +25,7 @@ type Props = {
   onClose: () => void;
   open: boolean;
   classes: { paper: string };
+  isMobile: boolean;
 };
 
 type State = {
@@ -52,6 +53,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       open,
       classes: { paper },
       store,
+      isMobile,
     } = this.props;
 
     return (
@@ -89,6 +91,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                 >
                   Create Discussion
                 </Button>
+                {isMobile ? <p /> : null}
               </div>
               <p />
               <br />

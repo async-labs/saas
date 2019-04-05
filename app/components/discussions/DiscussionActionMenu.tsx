@@ -45,7 +45,7 @@ const getMenuItemOptions = (discussion, component) => [
   },
 ];
 
-class DiscussionActionMenu extends React.Component<{ discussion: Discussion; store?: Store }> {
+class DiscussionActionMenu extends React.Component<{ discussion: Discussion; store?: Store; isMobile: boolean; }> {
   public state = {
     discussionFormOpen: false,
   };
@@ -76,6 +76,7 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
             open={true}
             onClose={this.handleDiscussionFormClose}
             discussion={discussion}
+            isMobile={this.props.isMobile}
           />
         ) : null}
       </React.Fragment>

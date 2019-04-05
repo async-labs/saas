@@ -21,7 +21,7 @@ const styleGrid = {
   height: '100%',
 };
 
-type MyProps = { store: Store; isTL: boolean };
+type MyProps = { store: Store; isTL: boolean; isMobile: boolean; };
 
 class CreateTeam extends React.Component<MyProps> {
   public state = {
@@ -121,7 +121,7 @@ class CreateTeam extends React.Component<MyProps> {
         </Head>
         <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
           <Grid container style={styleGrid}>
-            <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
+            <Grid item sm={12} xs={12} style={{ padding: this.props.isMobile ? '0px' : '0px 30px' }}>
               <h3>Create team</h3>
               <p />
               <form onSubmit={this.onSubmit}>

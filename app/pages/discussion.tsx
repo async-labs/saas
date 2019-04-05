@@ -140,7 +140,7 @@ class DiscussionComp extends React.Component<Props> {
             }
           />
         </Head>
-        <div style={{ padding: '0px 30px' }}>
+        <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
           <h4>
             <span style={{ fontWeight: 300 }}>Discussion : </span>
             {(discussion && discussion.name) || 'No Discussion is found.'}

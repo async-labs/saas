@@ -157,7 +157,7 @@ class PostDetail extends React.Component<{
           )}
           <div
             style={{
-              margin: isMobile ? '0px' : '0px 20px 0px 70px',
+              margin: isMobile ? '0px'  : '0px 20px 0px 70px',
               fontWeight: 300,
               lineHeight: '1em',
             }}
