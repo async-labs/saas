@@ -7,7 +7,7 @@ import React from 'react';
 
 import confirm from '../../lib/confirm';
 import notify from '../../lib/notifier';
-import { Post, Store } from '../../lib/store';
+import { Post, Store, User } from '../../lib/store';
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 
 import PostContent from './PostContent';
@@ -30,23 +30,43 @@ const getMenuOptions = post => ({
   id: `post-menu-${post._id}`,
 });
 
-const getMenuItemOptions = (post, component) => [
-  {
-    text: 'Edit',
-    dataId: post._id,
-    onClick: component.editPost,
-  },
-  {
-    text: 'Delete',
-    dataId: post._id,
-    onClick: component.deletePost,
-  },
-];
+const getMenuItemOptions = (post: Post, currentUser: User, component) => {
+  const items = [];
+
+  if (post.createdUserId !== currentUser._id) {
+    items.push({
+      text: 'Show Markdown',
+      dataId: post._id,
+      onClick: component.showMarkdown,
+    });
+  }
+
+  if (post.createdUserId === currentUser._id) {
+    const isFirstPost = post.discussion.posts.indexOf(post) === 0;
+
+    items.push({
+      text: 'Edit',
+      dataId: post._id,
+      onClick: component.editPost,
+    });
+
+    if (!isFirstPost) {
+      items.push({
+        text: 'Delete',
+        dataId: post._id,
+        onClick: component.deletePost,
+      });
+    }
+  }
+
+  return items;
+};
 
 class PostDetail extends React.Component<{
   post: Post;
   store?: Store;
   onEditClick: (post) => void;
+  onShowMarkdownClick: (post) => void;
   isMobile: boolean;
 }> {
   public editPost = () => {
@@ -71,6 +91,13 @@ class PostDetail extends React.Component<{
     });
   };
 
+  public showMarkdown = () => {
+    const { post, onShowMarkdownClick } = this.props;
+    if (onShowMarkdownClick) {
+      onShowMarkdownClick(post);
+    }
+  };
+
   public render() {
     const { post, isMobile } = this.props;
 
@@ -88,7 +115,7 @@ class PostDetail extends React.Component<{
     return (
       <MenuWithMenuItems
         menuOptions={getMenuOptions(post)}
-        itemOptions={getMenuItemOptions(post, this)}
+        itemOptions={getMenuItemOptions(post, store.currentUser, this)}
       />
     );
   }
@@ -97,59 +124,61 @@ class PostDetail extends React.Component<{
     const createdDate = moment(post.createdAt).format('MMM Do YYYY');
     const lastEditedDate = moment(post.lastUpdatedAt).fromNow();
     return (
-      <div>
-        {post.user && (
-          <Tooltip
-            title={post.user.displayName}
-            placement="top"
-            disableFocusListener
-            disableTouchListener
-          >
-            <Avatar
-              src={post.user.avatarUrl}
-              alt={post.user.displayName}
-              style={{
-                width: '40px',
-                height: '40px',
-                margin: '0px 10px 0px 5px',
-                cursor: 'pointer',
-                float: 'left',
-              }}
-            />
-          </Tooltip>
-        )}
+      <React.Fragment>
         <div
           style={{
-            float: 'right',
-            margin: '-10px -0px auto auto',
+            float: 'left',
+            margin: '-12px 10px 0px -15px',
             zIndex: 1000,
           }}
         >
           {this.renderMenu()}
         </div>
-        <div
-          style={{
-            margin: isMobile ? '0px' : '0px 20px 0px 70px',
-            fontWeight: 300,
-            lineHeight: '1em',
-          }}
-        >
-          <span style={{ fontSize: '12px', fontWeight: 400 }}>
-            {`By: ${post.user && post.user.displayName}` || 'User'}
-            <span style={styleLineSeparator}>|</span>
-            {`Created: ${post.createdAt && createdDate}` || ''}
+        <div id={`post-${post._id}`}>
+          {post.user && (
+            <Tooltip
+              title={post.user.displayName}
+              placement="top"
+              disableFocusListener
+              disableTouchListener
+            >
+              <Avatar
+                src={post.user.avatarUrl}
+                alt={post.user.displayName}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  margin: '0px 10px 0px 5px',
+                  cursor: 'pointer',
+                  float: 'left',
+                }}
+              />
+            </Tooltip>
+          )}
+          <div
+            style={{
+              margin: isMobile ? '0px' : '0px 20px 0px 70px',
+              fontWeight: 300,
+              lineHeight: '1em',
+            }}
+          >
+            <span style={{ fontSize: '12px', fontWeight: 400 }}>
+              {`By: ${post.user && post.user.displayName}` || 'User'}
+              <span style={styleLineSeparator}>|</span>
+              {`Created: ${post.createdAt && createdDate}` || ''}
 
-            {post.isEdited ? (
-              <React.Fragment>
-                <span style={styleLineSeparator}>|</span>
-                Last edited: {lastEditedDate}
-              </React.Fragment>
-            ) : null}
-          </span>
+              {post.isEdited ? (
+                <React.Fragment>
+                  <span style={styleLineSeparator}>|</span>
+                  Last edited: {lastEditedDate}
+                </React.Fragment>
+              ) : null}
+            </span>
 
-          <PostContent html={post.htmlContent} />
+            <PostContent html={post.htmlContent} />
+          </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

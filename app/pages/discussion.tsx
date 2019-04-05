@@ -1,5 +1,5 @@
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import Head from 'next/head';
 import Router from 'next/router';
@@ -14,10 +14,6 @@ import PostForm from '../components/posts/PostForm';
 import { Discussion, Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-const styleGridItem = {
-  padding: '10px 20px',
-};
-
 type Props = {
   store: Store;
   teamSlug: string;
@@ -28,8 +24,10 @@ type Props = {
 
 class DiscussionComp extends React.Component<Props> {
   public state = {
-    drawerState: false,
+    disabled: false,
+    showMarkdownClicked: false,
     selectedPost: null,
+    isDeletingNotification: false,
   };
 
   public componentDidMount() {
@@ -89,60 +87,15 @@ class DiscussionComp extends React.Component<Props> {
     this.setState({ drawerState: true, selectedPost: null });
   };
 
-  public onEditClickCallback = post => {
-    this.setState({ selectedPost: post, drawerState: true });
-    console.log(`Page: ${this.state.selectedPost}`);
-  };
-
-  public renderPosts() {
-    const { isServer } = this.props;
-
-    const discussion = this.getDiscussion(this.props.discussionSlug);
-
-    if (discussion && discussion.isLoadingPosts) {
-      return <p>Loading Posts...</p>;
-    }
-
-    if (discussion && !discussion.isLoadingPosts && discussion.posts.length === 0) {
-      return <p>Empty Discussion.</p>;
-    }
-
-    let loading = 'loading Posts ...';
-    if (discussion && discussion.posts.length > 0) {
-      loading = 'checking for newer Posts ...';
-    }
-
-    return (
-      <React.Fragment>
-        {discussion
-          ? discussion.posts.map(p => (
-              <PostDetail
-                key={p._id}
-                post={p}
-                onEditClick={this.onEditClickCallback}
-                isMobile={this.props.isMobile}
-              />
-            ))
-          : null}
-
-        {discussion && discussion.isLoadingPosts && !isServer ? (
-          <Loading text={loading} />
-        ) : (
-          <p style={{ height: '1.0em' }} />
-        )}
-      </React.Fragment>
-    );
-  }
-
   public render() {
-    const { store, discussionSlug } = this.props;
+    const { store, discussionSlug, isMobile } = this.props;
     const { currentTeam } = store;
-    const { selectedPost, drawerState } = this.state;
+    const { selectedPost } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
         <Layout {...this.props}>
-          <div style={styleGridItem}>No Team is found.</div>
+          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>No Team is found.</div>
         </Layout>
       );
     }
@@ -153,7 +106,7 @@ class DiscussionComp extends React.Component<Props> {
       if (currentTeam.isLoadingDiscussions) {
         return (
           <Layout {...this.props}>
-            <div style={styleGridItem}>
+            <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
               <Loading text="loading Discussions ..." />
             </div>
           </Layout>
@@ -164,7 +117,7 @@ class DiscussionComp extends React.Component<Props> {
             <Head>
               <title>No discussion is found.</title>
             </Head>
-            <div style={styleGridItem}>
+            <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
               <p>No discussion is found.</p>
             </div>
           </Layout>
@@ -187,7 +140,7 @@ class DiscussionComp extends React.Component<Props> {
             }
           />
         </Head>
-        <div style={{ height: '100%', padding: '0px 20px' }}>
+        <div style={{ padding: '0px 30px' }}>
           <h4>
             <span style={{ fontWeight: 300 }}>Discussion : </span>
             {(discussion && discussion.name) || 'No Discussion is found.'}
@@ -220,35 +173,84 @@ class DiscussionComp extends React.Component<Props> {
             : null}
           <p />
           {this.renderPosts()}
-          <Button
-            onClick={this.showFormToAddNewPost}
-            variant="outlined"
-            color="primary"
-            style={{ verticalAlign: 'baseline' }}
-          >
-            Add new post
-          </Button>
+          {discussion && !discussion.isLoadingPosts ? (
+            <React.Fragment>
+              {selectedPost ? null : (
+                <PostForm
+                  post={null}
+                  discussion={discussion}
+                  members={discussion.members}
+                  isMobile={this.props.isMobile}
+                />
+              )}
+            </React.Fragment>
+          ) : null}
+          <p />
           <p />
           <br />
-          <PostForm
-            discussion={discussion}
-            post={selectedPost}
-            open={drawerState}
-            members={discussion.members}
-            onFinished={() => {
-              this.setState({ drawerState: false });
-
-              setTimeout(() => {
-                this.setState({
-                  selectedPost: null,
-                });
-              }, 500);
-            }}
-          />
         </div>
       </Layout>
     );
   }
+
+  private renderPosts() {
+    const { isServer } = this.props;
+    const { selectedPost, showMarkdownClicked } = this.state;
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+
+    if (!discussion.isLoadingPosts && discussion.posts.length === 0) {
+      return <p>Empty Discussion.</p>;
+    }
+
+    let loading = 'loading Posts ...';
+    if (discussion.posts.length > 0) {
+      loading = 'checking for newer Posts ...';
+    }
+
+    return (
+      <React.Fragment>
+        {discussion
+          ? discussion.posts.map(p =>
+              selectedPost && selectedPost._id === p._id ? (
+                <PostForm
+                  key={p._id}
+                  post={p}
+                  readOnly={showMarkdownClicked}
+                  discussion={discussion}
+                  members={discussion.members}
+                  onFinished={() => {
+                    setImmediate(() => {
+                      this.setState({
+                        selectedPost: null,
+                        showMarkdownClicked: false,
+                      });
+                    });
+                  }}
+                />
+              ) : (
+                <PostDetail
+                  key={p._id}
+                  post={p}
+                  onEditClick={this.onEditClickCallback}
+                  onShowMarkdownClick={this.onSnowMarkdownClickCallback}
+                  isMobile={this.props.isMobile}
+                />
+              ),
+            )
+          : null}
+
+        {discussion && discussion.isLoadingPosts && !isServer ? <Loading text={loading} /> : null}
+      </React.Fragment>
+    );
+  }
+
+  private onEditClickCallback = post => {
+    this.setState({ selectedPost: post, showMarkdownClicked: false });
+  };
+
+  private onSnowMarkdownClickCallback = post => {
+    this.setState({ selectedPost: post, showMarkdownClicked: true });
+  };
 }
 
 export default withAuth(observer(DiscussionComp));

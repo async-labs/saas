@@ -1,5 +1,4 @@
 import Button from '@material-ui/core/Button';
-import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import he from 'he';
 import marked from 'marked';
@@ -27,6 +26,8 @@ type MyProps = {
   open?: boolean;
   classes: { paper: string };
   discussion: Discussion;
+  readOnly?: boolean;
+  isMobile?: boolean;
 };
 
 type MyState = {
@@ -60,49 +61,102 @@ class PostForm extends React.Component<MyProps, MyState> {
   };
 
   public render() {
-    const { classes, open, members } = this.props;
-    const isEditing = !!this.props.post;
+    const { members, post, isMobile, readOnly } = this.props;
+    const isEditing = !!post;
 
-    const { paper } = classes;
+    let title = 'Add Post';
+    if (readOnly) {
+      title = 'Show Markdown';
+    } else if (isEditing) {
+      title = 'Edit Post';
+    }
 
     return (
-      <Drawer
-        anchor="right"
-        open={open}
-        classes={{ paper }}
-        transitionDuration={{ enter: 500, exit: 500 }}
-      >
-        <div style={{ width: '100%', height: '100%', padding: '20px' }}>
-          <h3>{isEditing ? 'Edit Post' : 'Add Post'}</h3>
-          <form style={{ width: '100%', height: '100%' }} onSubmit={this.onSubmit}>
-            <p />
-            <div style={{ margin: '20px 0px' }}>
-              <Button variant="outlined" onClick={this.closeDrawer} disabled={this.state.disabled}>
-                Cancel
-              </Button>{' '}
+      <div style={{ height: '100%', margin: '0px 20px' }}>
+        <p />
+        <br />
+        <h3>{title} </h3>
+        <form style={{ width: '100%', height: '100%' }} onSubmit={this.onSubmit} autoComplete="off">
+          <p />
+          <br />
+          <div>
+            {readOnly ? null : (
+              <React.Fragment>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={this.state.disabled}
+                  onClick={() => {
+                    this.setState({ isDraft: false });
+                  }}
+                >
+                  {isEditing ? 'Save changes' : 'Publish Post'}
+                </Button>
+                {isMobile ? <p /> : null}
+              </React.Fragment>
+            )}
+            {post ? (
               <Button
-                type="submit"
-                variant="contained"
-                color="primary"
+                variant="outlined"
+                onClick={this.closeForm}
                 disabled={this.state.disabled}
+                style={{ marginLeft: '10px' }}
               >
-                {isEditing ? 'Save changes' : 'Publish'}
+                {readOnly ? 'Go back' : 'Cancel'}
               </Button>
-            </div>
-            <p />
-            <PostEditor
-              content={this.state.content}
-              onChanged={content => this.setState({ content })}
-              members={members}
-            />
-            <br />
-          </form>
-        </div>
-      </Drawer>
+            ) : null}
+          </div>
+          <p />
+          <br />
+          <PostEditor
+            readOnly={readOnly}
+            content={this.state.content}
+            onChanged={this.onContentChanged}
+            members={members}
+            textareaHeight="100%"
+          />
+          <p />
+          <div style={{ margin: '20px 0px' }}>
+            {readOnly ? null : (
+              <React.Fragment>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={this.state.disabled}
+                  onClick={() => {
+                    this.setState({ isDraft: false });
+                  }}
+                >
+                  {isEditing && !post.isDraft ? 'Save changes' : 'Publish Post'}
+                </Button>
+                {isMobile ? <p /> : null}
+              </React.Fragment>
+            )}
+            {post ? (
+              <Button
+                variant="outlined"
+                onClick={this.closeForm}
+                disabled={this.state.disabled}
+                style={{ marginLeft: '10px' }}
+              >
+                {readOnly ? 'Go back' : 'Cancel'}
+              </Button>
+            ) : null}
+          </div>
+          <p />
+          <br />
+        </form>
+      </div>
     );
   }
 
-  public onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  private onContentChanged = (content: string) => {
+    this.setState({ content });
+  };
+
+  private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { content } = this.state;
@@ -162,7 +216,7 @@ class PostForm extends React.Component<MyProps, MyState> {
     }
   };
 
-  public closeDrawer = () => {
+  private closeForm = () => {
     this.setState({ content: '', postId: null });
 
     const { onFinished } = this.props;
