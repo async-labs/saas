@@ -98,6 +98,7 @@ const mongoSchema = new mongoose.Schema({
       },
     ],
   },
+  darkTheme: Boolean,
 });
 
 export interface IUserDocument extends mongoose.Document {
@@ -151,6 +152,7 @@ export interface IUserDocument extends mongoose.Document {
       }
     ]
   };
+  darkTheme: boolean;
 }
 
 interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -198,12 +200,8 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
   stripeToken: object;
   }): Promise<IUserDocument>;
   getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<IUserDocument>;
+  toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 }
-
-// mongoSchema.pre('save', function(next) {
-//   if (!this.createdAt) this.createdAt = new Date();
-//   next();
-// });
 
 class UserClass extends mongoose.Model {
   public static async updateProfile({ userId, name, avatarUrl }) {
@@ -384,6 +382,7 @@ class UserClass extends mongoose.Model {
       'stripeCustomer',
       'stripeCard',
       'stripeListOfInvoices',
+      'darkTheme',
     ];
   }
 
@@ -401,6 +400,10 @@ class UserClass extends mongoose.Model {
     }
 
     return team;
+  }
+
+  public static toggleTheme({ userId, darkTheme }) {
+    return this.updateOne({ _id: userId }, { darkTheme: !!darkTheme });
   }
 }
 

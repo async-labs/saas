@@ -21,13 +21,19 @@ class DiscussionListItem extends React.Component<Props> {
     const selectedDiscussion =
       store.currentUrl === `/team/${team.slug}/discussions/${discussion.slug}`;
 
+    const isThemeDark = store.currentUser.darkTheme === true;
+
+    const selectedItemBorder = isThemeDark
+      ? '1px rgba(255, 255, 255, 0.75) solid'
+      : '1px rgba(0, 0, 0, 0.75) solid';
+
     return (
       <Paper
         key={discussion._id}
         style={{
           margin: '10px 10px 5px 0px',
           padding: '8px',
-          border: selectedDiscussion ? '1px rgba(255,255,255,0.5) solid' : 'none',
+          border: selectedDiscussion ? selectedItemBorder : 'none',
         }}
         elevation={selectedDiscussion ? 24 : 1}
       >
@@ -50,7 +56,7 @@ class DiscussionListItem extends React.Component<Props> {
               marginRight: '-12px',
             }}
           >
-            <DiscussionActionMenu discussion={discussion} isMobile={isMobile}/>
+            <DiscussionActionMenu discussion={discussion} isMobile={isMobile} />
           </div>
         </li>
       </Paper>

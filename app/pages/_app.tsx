@@ -25,7 +25,7 @@ class MyApp extends App<{ mobxStore: Store, isMobile: boolean }> {
 
   constructor(props) {
     super(props);
-    this.pageContext = getContext();
+    this.pageContext = getContext({ store: props.mobxStore });
   }
 
   public componentDidMount() {

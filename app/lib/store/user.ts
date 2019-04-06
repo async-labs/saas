@@ -5,7 +5,7 @@ import {
   createNewCardAndUpdateCustomerApiMethod,
   getListOfInvoices,
 } from '../api/team-leader';
-import { updateProfile } from '../api/team-member';
+import { toggleTheme, updateProfile } from '../api/team-member';
 import { Store } from './index';
 
 class User {
@@ -36,9 +36,11 @@ class User {
         date: number;
         hosted_invoice_url: string;
       }
-    ],
+    ];
     has_more: boolean;
   };
+
+  public darkTheme: boolean = true;
 
   constructor(params) {
     this.store = params.store;
@@ -54,6 +56,7 @@ class User {
     this.hasCardInformation = params.hasCardInformation;
     this.stripeCard = params.stripeCard;
     this.stripeListOfInvoices = params.stripeListOfInvoices;
+    this.darkTheme = !!params.darkTheme;
   }
 
   public async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {
@@ -111,6 +114,12 @@ class User {
       throw error;
     }
   }
+
+  public async toggleTheme(darkTheme: boolean) {
+    this.darkTheme = darkTheme;
+    await toggleTheme({ darkTheme });
+    window.location.reload();
+  }
 }
 
 decorate(User, {
@@ -125,6 +134,7 @@ decorate(User, {
   stripeListOfInvoices: observable,
 
   updateProfile: action,
+  toggleTheme: action,
 });
 
 export { User };

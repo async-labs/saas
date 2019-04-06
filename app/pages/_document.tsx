@@ -54,6 +54,8 @@ class MyDocument extends Document {
   };
 
   public render() {
+    const isThemeDark = (this.props as any).pageContext.theme.palette.type === 'dark';
+
     return (
       <html lang="en" style={{ overflow: 'overlay', overflowX: 'hidden' }}>
         <Head>
@@ -73,7 +75,11 @@ class MyDocument extends Document {
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
           <link
             rel="stylesheet"
-            href="https://storage.googleapis.com/async-await/nprogress.min.css?v=1"
+            href={
+              isThemeDark
+                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
+                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
+            }
           />
           <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
 
@@ -85,8 +91,8 @@ class MyDocument extends Document {
               }
               a,
               a:focus {
-                font-weight: 600;
-                color: #fff;
+                font-weight: 400;
+                color: ${isThemeDark ? '#fff' : '#000'};
                 text-decoration: none;
                 outline: none;
               }
@@ -97,54 +103,51 @@ class MyDocument extends Document {
               }
               hr {
                 border: 0.5px #707070 solid;
+                color: ${isThemeDark ? '#fff' : '#000'};
               }
               blockquote {
                 padding: 0 0.5em;
                 margin: 20px 1em;
-                color: #fff;
                 border-left: 0.25em solid #dfe2e5;
+                color: ${isThemeDark ? '#fff' : '#000'};
               }
               pre {
                 display: block;
                 overflow-x: auto;
                 padding: 0.5em;
-                background: #303030;
-                color: #fff;
+                background: ${isThemeDark ? '#303030' : '#d0d0d0'};
                 border: 1px solid #ddd;
                 font-size: 14px;
+                color: ${isThemeDark ? '#fff' : '#000'};
               }
               pre code {
                 font-size: 13px;
-                background: #303030;
-                color: #fff;
+                background: ${isThemeDark ? '#303030' : '#d0d0d0'};
                 padding: 0px;
+                color: ${isThemeDark ? '#fff' : '#000'};
               }
               code {
                 font-size: 13px;
-                background: #303030;
-                color: #fff;
+                background: ${isThemeDark ? '#303030' : '#d0d0d0'};
                 padding: 3px 5px;
+                color: ${isThemeDark ? '#fff' : '#000'};
               }
               mark {
                 background-color: #ffff0060;
               }
-
-              .lazy-load-image-body .image-placeholder {
-                background-color: #ddd;
-                display: flex;
-                margin-bottom: 10px;
-                width: 100%;
-              }
-              .lazy-load-image-body .image-placeholder-text {
-                color: #111;
-                font-weight: 400;
-                align-self: center;
-                text-align: center;
-                width: 100%;
-                overflow: hidden;
-              }
               summary:focus {
                 outline: none;
+              }
+              table {
+                border-collapse: collapse;
+                margin: 15px 0px;
+              }
+              table, th, td {
+                border: 1px solid #a1a1a1;
+              }
+              th, td {
+                line-height: 1.5em;
+                padding: 10px;
               }
             `}
           </style>
@@ -166,7 +169,7 @@ class MyDocument extends Document {
         <body
           style={{
             font: '15px Roboto',
-            color: '#fff',
+            color: isThemeDark ? '#fff' : '#000',
             fontWeight: 300,
             lineHeight: '1.5em',
             padding: '0px 0px 0px 0px !important',

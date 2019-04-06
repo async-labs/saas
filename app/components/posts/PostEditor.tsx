@@ -71,6 +71,9 @@ class PostEditor extends React.Component<MyProps, MyState> {
 
     const membersMinusCurrentUser = members.filter(member => member._id !== currentUser._id);
 
+    const isThemeDark = store.currentUser.darkTheme === true;
+    const textareaBackgroundColor = isThemeDark ? '#303030' : '#fff';
+
     return (
       <div style={{ marginTop: '20px' }}>
         <div style={{ display: 'inline-flex' }}>
@@ -119,8 +122,9 @@ class PostEditor extends React.Component<MyProps, MyState> {
             width: '100%',
             height: '100%',
             padding: '10px 15px',
-            border: '1px solid rgba(255, 255, 255, 0.5)',
-            overflow: 'auto',
+            border: isThemeDark
+              ? '1px solid rgba(255, 255, 255, 0.5)'
+              : '1px solid rgba(0, 0, 0, 0.5)',
           }}
         >
           {htmlContent ? (
@@ -132,10 +136,11 @@ class PostEditor extends React.Component<MyProps, MyState> {
                   border: 'none',
                   outline: 'none',
                   font: '16px Roboto',
-                  color: '#fff',
+                  color: isThemeDark ? '#fff' : '#000',
                   fontWeight: 300,
                   height: '100vh', // TODO: check on Mobile
                   lineHeight: '1.5em',
+                  backgroundColor: content ? textareaBackgroundColor : 'transparent',
                 },
                 suggestions: {
                   list: {
