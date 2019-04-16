@@ -71,7 +71,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
 
     const membersMinusCurrentUser = members.filter(member => member._id !== currentUser._id);
 
-    const isThemeDark = store.currentUser.darkTheme === true;
+    const isThemeDark = store && store.currentUser && store.currentUser.darkTheme === true;
     const textareaBackgroundColor = isThemeDark ? '#303030' : '#fff';
 
     return (

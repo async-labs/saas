@@ -92,7 +92,7 @@ class Layout extends React.Component<MyProps> {
     const { store, firstGridItem, children, teamRequired, isMobile } = this.props;
     const { currentTeam, currentUser } = store;
 
-    const isThemeDark = currentUser.darkTheme === true;
+    const isThemeDark = currentUser && currentUser.darkTheme === true;
 
     if (store.isLoggingIn) {
       return (

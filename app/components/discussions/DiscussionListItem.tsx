@@ -21,7 +21,7 @@ class DiscussionListItem extends React.Component<Props> {
     const selectedDiscussion =
       store.currentUrl === `/team/${team.slug}/discussions/${discussion.slug}`;
 
-    const isThemeDark = store.currentUser.darkTheme === true;
+    const isThemeDark = store && store.currentUser && store.currentUser.darkTheme === true;
 
     const selectedItemBorder = isThemeDark
       ? '1px rgba(255, 255, 255, 0.75) solid'
