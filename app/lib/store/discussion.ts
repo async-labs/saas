@@ -16,6 +16,7 @@ class Discussion {
   public posts: IObservableArray<Post> = observable([]);
 
   public isLoadingPosts = false;
+  public notificationType: string;
 
   constructor(params) {
     this._id = params._id;
@@ -73,6 +74,7 @@ class Discussion {
 
     this.name = data.name;
     this.memberIds.replace(data.memberIds || []);
+    this.notificationType = data.notificationType;
   }
 
   public async edit(data) {
@@ -135,6 +137,7 @@ decorate(Discussion, {
   memberIds: observable,
   posts: observable,
   isLoadingPosts: observable,
+  notificationType: observable,
 
   setInitialPosts: action,
   loadPosts: action,

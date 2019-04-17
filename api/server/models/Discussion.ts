@@ -30,6 +30,12 @@ const mongoSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
+  notificationType: {
+    type: String,
+    enum: ['default', 'email'],
+    required: true,
+    default: 'default',
+  },
 });
 
 interface IDiscussionDocument extends mongoose.Document {
@@ -55,11 +61,13 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
     userId,
     teamId,
     memberIds,
+    notificationType,
   }: {
     name: string;
     userId: string;
     teamId: string;
     memberIds: string[];
+    notificationType: string;
   }): Promise<IDiscussionDocument>;
 
   edit({
@@ -67,11 +75,13 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
     id,
     name,
     memberIds,
+    notificationType,
   }: {
     userId: string;
     id: string;
     name: string;
     memberIds: string[];
+    notificationType: string;
   }): Promise<{ teamId: string }>;
 
   delete({ userId, id }: { userId: string; id: string }): Promise<{ teamId: string }>;
@@ -111,7 +121,7 @@ class DiscussionClass extends mongoose.Model {
     return { discussions };
   }
 
-  public static async add({ name, userId, teamId, memberIds = [] }) {
+  public static async add({ name, userId, teamId, memberIds = [], notificationType }) {
     if (!name) {
       throw new Error('Bad data');
     }
@@ -127,10 +137,11 @@ class DiscussionClass extends mongoose.Model {
       slug,
       memberIds: uniq([userId, ...memberIds]),
       createdAt: new Date(),
+      notificationType,
     });
   }
 
-  public static async edit({ userId, id, name, memberIds = [] }) {
+  public static async edit({ userId, id, name, memberIds = [], notificationType }) {
     if (!id) {
       throw new Error('Bad data');
     }
@@ -146,7 +157,7 @@ class DiscussionClass extends mongoose.Model {
     });
 
     if (discussion.createdUserId !== userId && team.teamLeaderId !== userId) {
-      throw new Error('Permission denied. Only create user or team leader can update.');
+      throw new Error('Permission denied. Only author or team leader can edit Discussion.');
     }
 
     await this.updateOne(
@@ -154,6 +165,7 @@ class DiscussionClass extends mongoose.Model {
       {
         name,
         memberIds: uniq([userId, ...memberIds]),
+        notificationType,
       },
     );
 

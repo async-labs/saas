@@ -105,13 +105,14 @@ router.get('/teams', async (req, res, next) => {
 
 router.post('/discussions/add', async (req, res, next) => {
   try {
-    const { name, teamId, memberIds = [] } = req.body;
+    const { name, teamId, memberIds = [], notificationType } = req.body;
 
     const discussion = await Discussion.add({
       userId: req.user.id,
       name,
       teamId,
       memberIds,
+      notificationType,
     });
 
     res.json({ discussion });
@@ -122,13 +123,14 @@ router.post('/discussions/add', async (req, res, next) => {
 
 router.post('/discussions/edit', async (req, res, next) => {
   try {
-    const { name, id, memberIds = [] } = req.body;
+    const { name, id, memberIds = [], notificationType } = req.body;
 
     await Discussion.edit({
       userId: req.user.id,
       name,
       id,
       memberIds,
+      notificationType,
     });
 
     res.json({ done: 1 });
