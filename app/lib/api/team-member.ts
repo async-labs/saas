@@ -97,3 +97,8 @@ export const toggleTheme = data =>
   sendRequestAndGetResponse(`${BASE_PATH}/user/toggle-theme`, {
     body: JSON.stringify(data),
   });
+
+export const sendUserIdsToLambda = data =>
+  sendRequestAndGetResponse('/api-gateway-for-lambda', {
+    body: JSON.stringify(data),
+  });

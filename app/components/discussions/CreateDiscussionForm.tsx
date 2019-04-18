@@ -14,7 +14,7 @@ import NProgress from 'nprogress';
 import React from 'react';
 
 import notify from '../../lib/notifier';
-import { Store } from '../../lib/store';
+import { Discussion, Post, Store } from '../../lib/store';
 import PostEditor from '../posts/PostEditor';
 import MemberChooser from '../users/MemberChooser';
 
@@ -195,7 +195,18 @@ class CreateDiscussionForm extends React.Component<Props, State> {
         notificationType,
       });
 
-      await discussion.addPost(content);
+      const post = await discussion.addPost(content);
+
+      if (discussion.notificationType === 'email') {
+        const userIdsForLambda = discussion.memberIds.filter(d => d !== discussion.createdUserId);
+        console.log(userIdsForLambda);
+        await discussion.sendUserIdsToLambda({
+          discussionName: discussion.name,
+          postContent: post.content,
+          authorName: post.user.displayName,
+          userIds: userIdsForLambda,
+        });
+      }
 
       this.setState({ name: '', memberIds: [], content: '' });
       notify('You successfully added new Discussion.');

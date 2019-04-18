@@ -1,7 +1,13 @@
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
 import NProgress from 'nprogress';
 
-import { addPost, deletePost, editDiscussion, getPostList } from '../api/team-member';
+import {
+  addPost,
+  deletePost,
+  editDiscussion,
+  getPostList,
+  sendUserIdsToLambda,
+} from '../api/team-member';
 import { Post, Store, Team } from './index';
 
 class Discussion {
@@ -93,9 +99,14 @@ class Discussion {
     }
   }
 
-  public addPostToLocalCache(data) {
+  public addPostToLocalCache(data): Post {
     const postObj = new Post({ discussion: this, store: this.store, ...data });
-    this.posts.push(postObj);
+
+    if (postObj.discussion.memberIds.includes(this.store.currentUser._id)) {
+      this.posts.push(postObj);
+    }
+
+    return postObj;
   }
 
   public editPostFromLocalCache(data) {
@@ -108,7 +119,7 @@ class Discussion {
     this.posts.remove(post);
   }
 
-  public async addPost(content: string) {
+  public async addPost(content: string): Promise<Post> {
     const { post } = await addPost({
       discussionId: this._id,
       content,
@@ -116,6 +127,13 @@ class Discussion {
 
     runInAction(() => {
       this.addPostToLocalCache(post);
+    });
+
+    return new Promise<Post>(resolve => {
+      runInAction(() => {
+        const obj = this.addPostToLocalCache(post);
+        resolve(obj);
+      });
     });
   }
 
@@ -127,6 +145,15 @@ class Discussion {
 
     runInAction(() => {
       this.posts.remove(post);
+    });
+  }
+
+  public async sendUserIdsToLambda({ discussionName, postContent, authorName, userIds }) {
+    await sendUserIdsToLambda({
+      discussionName,
+      postContent,
+      authorName,
+      userIds,
     });
   }
 }
