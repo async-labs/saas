@@ -17,7 +17,7 @@
     "typeRoots": ["./node_modules/@types"],
     "lib": ["es2015", "es2016"],
     "module": "commonjs",
-    "outDir": "production-server/"
-  },
-  "include": ["./server/**/*.ts"]
+    "outDir": ".build/",
+    "rootDir": "./"
+  }
 }
