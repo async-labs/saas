@@ -3,6 +3,19 @@ import * as mongoose from 'mongoose';
 import { sendEmailNotification } from './src/sendEmailForNewPost';
 
 export const sendEmailForNewPost = async event => {
+  console.log('Received event:', JSON.stringify(event, null, 2));
+
+  if (
+    event.discussionName === undefined ||
+    event.postContent === undefined ||
+    event.authorName === undefined ||
+    event.userIds === undefined
+  ) {
+    return { message: 'Some data is missing from body of POST request', event };
+  }
+
+  console.log(event.discussionName, event.postContent, event.authorName, event.userIds);
+
   const dev = process.env.NODE_ENV !== 'production';
 
   const MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
