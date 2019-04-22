@@ -9,6 +9,8 @@
 
 - Development deploy: Run `sls deploy`
 - Production deploy: Run `NODE_ENV=production sls deploy`
+- If files did not change: Add `--force`
+- Deploy particular function: `NODE_ENV=production sls deploy function --function sendEmailForNewPost`
 
 ### Testing (run/invoking)
 

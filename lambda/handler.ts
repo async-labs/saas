@@ -19,26 +19,6 @@ export const sendEmailForNewPost = async event => {
     await mongoose.disconnect();
   }
 
-  if (!dev && process.env.MONGO_URL2 && process.env.PRODUCTION_URL_APP2) {
-    await mongoose.connect(process.env.MONGO_URL2, {
-      useNewUrlParser: true,
-      useFindAndModify: false,
-    });
-
-    try {
-      await sendEmailNotification(process.env.PRODUCTION_URL_APP2);
-    } catch (error) {
-      console.error(error.stack);
-
-      return {
-        error: error.message,
-        event,
-      };
-    } finally {
-      await mongoose.disconnect();
-    }
-  }
-
   return { message: 'Email was sent successfully!', event };
 
   // return {
