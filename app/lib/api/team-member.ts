@@ -102,7 +102,7 @@ export const toggleTheme = data =>
     body: JSON.stringify(data),
   });
 
-export const sendUserIdsToLambda = data =>
+export const sendDataToLambda = data =>
   sendRequestAndGetResponse(`${LAMBDA_API_ENDPOINT}/`, {
     externalServer: true,
     body: JSON.stringify(data),

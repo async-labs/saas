@@ -6,7 +6,7 @@ import {
   deletePost,
   editDiscussion,
   getPostList,
-  sendUserIdsToLambda,
+  sendDataToLambda,
 } from '../api/team-member';
 import { Post, Store, Team } from './index';
 
@@ -33,6 +33,7 @@ class Discussion {
     this.name = params.name;
     this.slug = params.slug;
     this.memberIds.replace(params.memberIds || []);
+    this.notificationType = params.notificationType;
 
     if (params.initialPosts) {
       this.setInitialPosts(params.initialPosts);
@@ -45,8 +46,7 @@ class Discussion {
 
   public setInitialPosts(posts) {
     const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
-
-    this.posts.replace(postObjs);
+    this.posts.replace(postObjs.filter(p => p.createdUserId === this.store.currentUser._id));
   }
 
   public async loadPosts() {
@@ -62,11 +62,8 @@ class Discussion {
 
       runInAction(() => {
         const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
-        this.posts.replace(postObjs);
+        this.posts.replace(postObjs.filter(p => p.createdUserId === this.store.currentUser._id));
       });
-    } catch (error) {
-      console.error(error);
-      throw error;
     } finally {
       runInAction(() => {
         this.isLoadingPosts = false;
@@ -99,19 +96,28 @@ class Discussion {
     }
   }
 
-  public addPostToLocalCache(data): Post {
+  public addPostToLocalCache(data) {
+    const oldPost = this.posts.find(t => t._id === data._id);
+    if (oldPost) {
+      this.posts.remove(oldPost);
+    }
+
     const postObj = new Post({ discussion: this, store: this.store, ...data });
 
-    if (postObj.discussion.memberIds.includes(this.store.currentUser._id)) {
-      this.posts.push(postObj);
+    if (postObj.createdUserId !== this.store.currentUser._id) {
+      return;
     }
+
+    this.posts.push(postObj);
 
     return postObj;
   }
 
   public editPostFromLocalCache(data) {
-    const post = this.posts.find(t => t._id === data.id);
-    post.changeLocalCache(data);
+    const post = this.posts.find(t => t._id === data._id);
+    if (post) {
+      post.changeLocalCache(data);
+    }
   }
 
   public removePostFromLocalCache(postId) {
@@ -123,10 +129,6 @@ class Discussion {
     const { post } = await addPost({
       discussionId: this._id,
       content,
-    });
-
-    runInAction(() => {
-      this.addPostToLocalCache(post);
     });
 
     return new Promise<Post>(resolve => {
@@ -148,13 +150,19 @@ class Discussion {
     });
   }
 
-  public async sendUserIdsToLambda({ discussionName, postContent, authorName, userIds }) {
-    await sendUserIdsToLambda({
-      discussionName,
-      postContent,
-      authorName,
-      userIds,
-    });
+  public async sendDataToLambdaApiMethod({ discussionName, postContent, authorName, userIds }) {
+    console.log(discussionName, authorName, postContent, userIds);
+    try {
+      await sendDataToLambda({
+        discussionName,
+        postContent,
+        authorName,
+        userIds,
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
 

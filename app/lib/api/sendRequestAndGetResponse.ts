@@ -24,6 +24,8 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
 
   const qs = (opts.qs && `?${makeQueryString(opts.qs)}`) || '';
 
+  console.log(`${path}${qs}`);
+
   const response = await fetch(
     externalServer ? `${path}${qs}` : `${getRootUrl()}${path}${qs}`,
     Object.assign({ method: 'POST', credentials: 'include' }, opts, { headers }),

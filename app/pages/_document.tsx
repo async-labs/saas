@@ -10,6 +10,7 @@ const {
   StripePublishableKey,
   BUCKET_FOR_POSTS,
   BUCKET_FOR_TEAM_AVATARS,
+  LAMBDA_API_ENDPOINT,
 } = process.env;
 
 const env = {
@@ -19,6 +20,7 @@ const env = {
   StripePublishableKey,
   BUCKET_FOR_POSTS,
   BUCKET_FOR_TEAM_AVATARS,
+  LAMBDA_API_ENDPOINT,
 };
 
 class MyDocument extends Document {

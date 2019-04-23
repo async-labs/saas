@@ -115,22 +115,6 @@ class PostForm extends React.Component<MyProps, MyState> {
           />
           <p />
           <div style={{ margin: '20px 0px' }}>
-            {readOnly ? null : (
-              <React.Fragment>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={this.state.disabled}
-                  onClick={() => {
-                    this.setState({ isDraft: false });
-                  }}
-                >
-                  {isEditing && !post.isDraft ? 'Save changes' : 'Publish Post'}
-                </Button>
-                {isMobile ? <p /> : null}
-              </React.Fragment>
-            )}
             {post ? (
               <Button
                 variant="outlined"
@@ -223,4 +207,4 @@ class PostForm extends React.Component<MyProps, MyState> {
   };
 }
 
-export default withStyles(styles)<MyProps>(inject('store')(observer(PostForm)));
+export default withStyles(styles)(inject('store')(observer(PostForm)));

@@ -14,7 +14,7 @@ import NProgress from 'nprogress';
 import React from 'react';
 
 import notify from '../../lib/notifier';
-import { Discussion, Post, Store } from '../../lib/store';
+import { Store } from '../../lib/store';
 import PostEditor from '../posts/PostEditor';
 import MemberChooser from '../users/MemberChooser';
 
@@ -116,22 +116,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
               </FormControl>
               <p />
               <br />
-              <PostEditor
-                content={this.state.content}
-                onChanged={content => this.setState({ content })}
-                members={Array.from(store.currentTeam.members.values())}
-              />
-              <p />
-              <br />
-              <div style={{ margin: '20px 0px' }}>
-                <Button
-                  variant="outlined"
-                  onClick={this.handleClose}
-                  disabled={this.state.disabled}
-                >
-                  Cancel
-                </Button>{' '}
-                <p />
+              <div>
                 <Button
                   type="submit"
                   variant="contained"
@@ -141,6 +126,43 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                   Create Discussion
                 </Button>
                 {isMobile ? <p /> : null}
+                <Button
+                  variant="outlined"
+                  onClick={this.handleClose}
+                  disabled={this.state.disabled}
+                  style={{ marginLeft: isMobile ? '0px' : '20px' }}
+                >
+                  Cancel
+                </Button>{' '}
+              </div>
+              <p />
+              <PostEditor
+                content={this.state.content}
+                onChanged={content => this.setState({ content })}
+                members={Array.from(store.currentTeam.members.values())}
+              />
+              <p />
+              <div>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={this.state.disabled}
+                >
+                  Create Discussion
+                </Button>
+                {isMobile ? <p /> : null}
+                <Button
+                  variant="outlined"
+                  onClick={this.handleClose}
+                  disabled={this.state.disabled}
+                  style={{ marginLeft: isMobile ? '0px' : '20px' }}
+                >
+                  Cancel
+                </Button>{' '}
+                <p />
+                <br />
+                <br />
               </div>
             </form>
           </div>
@@ -180,27 +202,28 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       return;
     }
 
-    if (!memberIds || memberIds.length < 1) {
-      notify('Please assign at least one person to this Discussion.');
-      return;
-    }
-
+    // if (!memberIds || memberIds.length < 1) {
+    //   notify('Please assign at least one person to this Discussion.');
+    //   return;
+    // }
+    this.setState({ disabled: true });
     NProgress.start();
-    try {
-      this.setState({ disabled: true });
 
+    try {
       const discussion = await currentTeam.addDiscussion({
         name,
         memberIds,
         notificationType,
       });
 
+      // await discussion.addPost(content);
+
       const post = await discussion.addPost(content);
 
       if (discussion.notificationType === 'email') {
-        const userIdsForLambda = discussion.memberIds.filter(d => d !== discussion.createdUserId);
-        console.log(userIdsForLambda);
-        await discussion.sendUserIdsToLambda({
+        const userIdsForLambda = discussion.memberIds.filter(m => m !== discussion.createdUserId);
+        console.log(discussion.notificationType, userIdsForLambda);
+        await discussion.sendDataToLambdaApiMethod({
           discussionName: discussion.name,
           postContent: post.content,
           authorName: post.user.displayName,
