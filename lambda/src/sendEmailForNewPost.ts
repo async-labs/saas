@@ -12,17 +12,19 @@ import User from './api/models/User';
 async function sendEmailNotification({
   productionUrlApp,
   discussionName,
+  discussionLink,
   postContent,
   authorName,
   userIds,
 }: {
   productionUrlApp: string;
   discussionName: string;
+  discussionLink: string;
   postContent: string;
   authorName: string;
   userIds: string[];
 }) {
-  console.log(productionUrlApp, discussionName, postContent, authorName, userIds);
+  console.log(productionUrlApp, discussionName, discussionLink, postContent, authorName, userIds);
 
   const emailTemplate = await EmailTemplate.findOne({ name: 'newPost' }).setOptions({
     lean: true,
@@ -36,6 +38,7 @@ async function sendEmailNotification({
     'newPost',
     {
       discussionName,
+      discussionLink,
       postContent,
       authorName,
     },

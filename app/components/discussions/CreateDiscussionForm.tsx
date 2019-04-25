@@ -18,6 +18,10 @@ import { Store } from '../../lib/store';
 import PostEditor from '../posts/PostEditor';
 import MemberChooser from '../users/MemberChooser';
 
+const dev = process.env.NODE_ENV !== 'production';
+const { PRODUCTION_URL_APP } = process.env;
+const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
+
 const styles = {
   paper: {
     width: '100%',
@@ -225,6 +229,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
         console.log(discussion.notificationType, userIdsForLambda);
         await discussion.sendDataToLambdaApiMethod({
           discussionName: discussion.name,
+          discussionLink: `${URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
           postContent: post.content,
           authorName: post.user.displayName,
           userIds: userIdsForLambda,

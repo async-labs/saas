@@ -150,11 +150,12 @@ class Discussion {
     });
   }
 
-  public async sendDataToLambdaApiMethod({ discussionName, postContent, authorName, userIds }) {
-    console.log(discussionName, authorName, postContent, userIds);
+  public async sendDataToLambdaApiMethod({ discussionName, discussionLink, postContent, authorName, userIds }) {
+    console.log(discussionName, discussionLink, authorName, postContent, userIds);
     try {
       await sendDataToLambda({
         discussionName,
+        discussionLink,
         postContent,
         authorName,
         userIds,

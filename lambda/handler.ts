@@ -7,6 +7,7 @@ export const sendEmailForNewPost = async event => {
 
   if (
     event.discussionName === undefined ||
+    event.discussionLink === undefined ||
     event.postContent === undefined ||
     event.authorName === undefined ||
     event.userIds === undefined
@@ -14,7 +15,7 @@ export const sendEmailForNewPost = async event => {
     return { message: 'Some data is missing from body of POST request', event };
   }
 
-  console.log(event.discussionName, event.postContent, event.authorName, event.userIds);
+  console.log(event.discussionName, event.discussionLink, event.postContent, event.authorName, event.userIds);
 
   const dev = process.env.NODE_ENV !== 'production';
 
@@ -22,12 +23,13 @@ export const sendEmailForNewPost = async event => {
 
   await mongoose.connect(MONGO_URL, { useNewUrlParser: true, useFindAndModify: false });
 
-  const { discussionName, postContent, authorName, userIds } = event;
+  const { discussionName, discussionLink, postContent, authorName, userIds } = event;
 
   try {
     await sendEmailNotification({
       productionUrlApp: process.env.PRODUCTION_URL_APP,
       discussionName,
+      discussionLink,
       postContent,
       authorName,
       userIds,
