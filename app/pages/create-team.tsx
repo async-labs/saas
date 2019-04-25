@@ -54,7 +54,7 @@ class CreateTeam extends React.Component<MyProps> {
       console.log(`Returned to client: ${team._id}, ${team.name}, ${team.slug}`);
 
       if (file == null) {
-        Router.push(`/team/${team.slug}/settings/team-members`);
+        Router.push(`/team/${team.slug}/settings`);
         notify('You successfully created Team.<p />Redirecting...');
         return;
       }
@@ -84,7 +84,7 @@ class CreateTeam extends React.Component<MyProps> {
 
       document.getElementById('upload-file').value = '';
 
-      Router.push(`/team/${team.slug}/settings/team-members`);
+      Router.push(`/team/${team.slug}/settings`);
 
       notify('You successfully created Team. Redirecting ...');
     } catch (error) {
