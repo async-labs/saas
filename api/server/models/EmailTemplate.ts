@@ -1,4 +1,4 @@
-import Handlebars from 'handlebars';
+import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
 interface IEmailTemplateDocument extends mongoose.Document {
@@ -31,7 +31,7 @@ async function insertTemplates() {
     {
       name: 'welcome',
       subject: 'Welcome to SaaS by Async',
-      message: `{{userName}},
+      message: `<%= userName %>,
         <p>
           Thanks for signing up on our <a href="https://github.com/async-labs/saas" target="blank">SaaS boilerplate</a>!
          <br/>
@@ -55,31 +55,57 @@ async function insertTemplates() {
     {
       name: 'invitation',
       subject: 'You are invited to join a Team at async-await.com',
-      message: `You've been invited to join <b>{{teamName}}</b>.
-        <br/>Click here to accept the invitation: {{invitationURL}}
+      message: `You've been invited to join <b><%= teamName%></b>.
+        <br/>Click here to accept the invitation: <%= invitationURL%>
+      `,
+    },
+    {
+      name: 'newPost',
+      subject: 'New Post was created in Discussion: <%= discussionName %>',
+      message: `<p>New Post in Discussion: "<%= discussionName%>" by <%= authorName%></p>
+        New Post: "<%= postContent %>"
+        <p>---</p>
+        <p>View it at <a href="<%= discussionLink %>"><%= discussionLink %></a>.</p>
       `,
     },
   ];
 
   for (const t of templates) {
-    if ((await EmailTemplate.countDocuments({ name: t.name })) === 0) {
-      EmailTemplate.create(
-        Object.assign({}, t, { message: t.message.replace(/\n/g, '').replace(/[ ]+/g, ' ') }),
-      );
+    const et = await EmailTemplate.findOne({ name: t.name });
+    const message = t.message
+      .replace(/\n/g, '')
+      .replace(/[ ]+/g, ' ')
+      .trim();
+
+    if (!et) {
+      EmailTemplate.create(Object.assign({}, t, { message }));
+    } else if (et.subject !== t.subject || et.message !== message) {
+      EmailTemplate.updateOne({ _id: et._id }, { $set: { message, subject: t.subject } }).exec();
     }
   }
 }
 
 insertTemplates();
 
-export default async function getEmailTemplate(name, params) {
-  const source = await EmailTemplate.findOne({ name });
+export default async function getEmailTemplate(
+  name: string,
+  params: any,
+  template?: IEmailTemplateDocument,
+) {
+  const source =
+    template ||
+    (await EmailTemplate.findOne({ name }).setOptions({
+      lean: true,
+    }));
+
   if (!source) {
-    throw new Error('not found');
+    throw new Error('Email Template is not found.');
   }
 
   return {
-    message: Handlebars.compile(source.message)(params),
-    subject: Handlebars.compile(source.subject)(params),
+    message: _.template(source.message)(params),
+    subject: _.template(source.subject)(params),
   };
 }
+
+export { EmailTemplate, IEmailTemplateDocument };

@@ -1,19 +1,71 @@
-// import * as _ from 'lodash';
+import * as _ from 'lodash';
 // import * as moment from 'moment';
 
-// import sendEmail from './api/aws-ses';
-// import getEmailTemplate, {
-//   EmailTemplate,
-//   IEmailTemplateDocument,
-// } from './api/models/EmailTemplate';
-// import User, { IUserDocument } from './api/models/User';
+import sendEmail from './api/aws-ses';
+import getEmailTemplate, { EmailTemplate } from './api/models/EmailTemplate';
+import User from './api/models/User';
 
-async function sendEmailNotification(productionUrlApp: string) {
-  console.log(productionUrlApp);
-  // pass more arguments
-  // get email template for new post
-  // find users
-  // send email with passed data to each user with sendEmail()
+// interface IUserDocumentWithId extends IUserDocument {
+//   _id: string;
+// }
+
+async function sendEmailNotification({
+  productionUrlApp,
+  discussionName,
+  postContent,
+  authorName,
+  userIds,
+}: {
+  productionUrlApp: string;
+  discussionName: string;
+  postContent: string;
+  authorName: string;
+  userIds: string[];
+}) {
+  console.log(productionUrlApp, discussionName, postContent, authorName, userIds);
+
+  const emailTemplate = await EmailTemplate.findOne({ name: 'newPost' }).setOptions({
+    lean: true,
+  });
+
+  if (!emailTemplate) {
+    throw new Error('newPost Email template not found');
+  }
+
+  const templateWithData = await getEmailTemplate(
+    'newPost',
+    {
+      discussionName,
+      postContent,
+      authorName,
+    },
+    emailTemplate,
+  );
+
+  const users = await User.find()
+    .select('email')
+    .setOptions({ lean: true });
+
+  const usersToNotify = users.filter(user => userIds.includes(user._id));
+
+  const jobs = _.flatten(
+    usersToNotify
+      .filter(user => !!user.email)
+      .map(async user => {
+        try {
+          await sendEmail({
+            from: `From async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+            to: [user.email],
+            subject: templateWithData.subject,
+            body: templateWithData.message,
+          });
+        } catch (err) {
+          console.error(err.stack);
+        }
+      }),
+  );
+
+  await Promise.all(jobs);
 }
 
 export { sendEmailNotification };

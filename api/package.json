@@ -35,7 +35,6 @@
     "express-session": "1.15.6",
     "front-matter": "3.0.1",
     "googleapis": "38.0.0",
-    "handlebars": "4.1.1",
     "he": "1.2.0",
     "helmet": "3.16.0",
     "highlight.js": "9.15.6",

@@ -34,7 +34,7 @@ class InviteMember extends React.Component<Props, State> {
         <DialogTitle id="invite-memter-dialog-title">Invite member</DialogTitle>
         <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
           <TextField
-            autoFocus
+            autoComplete="off"
             value={this.state.email}
             placeholder="Email"
             onChange={event => {
@@ -42,6 +42,7 @@ class InviteMember extends React.Component<Props, State> {
             }}
           />
           <p />
+          <br />
           <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
             Cancel
           </Button>{' '}

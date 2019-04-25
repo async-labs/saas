@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 
 import sendEmail from '../aws-ses';
 import logger from '../logs';
-import getEmailTemplate from './EmailTemplate';
+import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
 import Team from './Team';
 import User, { IUserDocument } from './User';
 
@@ -121,10 +121,22 @@ class InvitationClass extends mongoose.Model {
       });
     }
 
-    const template = await getEmailTemplate('invitation', {
-      teamName: team.name,
-      invitationURL: `${ROOT_URL}/invitation?token=${token}`,
+    const emailTemplate = await EmailTemplate.findOne({ name: 'invitation' }).setOptions({
+      lean: true,
     });
+
+    if (!emailTemplate) {
+      throw new Error('invitation Email template not found');
+    }
+
+    const template = await getEmailTemplate(
+      'invitation',
+      {
+        teamName: team.name,
+        invitationURL: `${ROOT_URL}/invitation?token=${token}`,
+      },
+      emailTemplate,
+    );
 
     await sendEmail({
       from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,

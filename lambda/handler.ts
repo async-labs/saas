@@ -22,8 +22,16 @@ export const sendEmailForNewPost = async event => {
 
   await mongoose.connect(MONGO_URL, { useNewUrlParser: true, useFindAndModify: false });
 
+  const { discussionName, postContent, authorName, userIds } = event;
+
   try {
-    await sendEmailNotification(process.env.PRODUCTION_URL_APP);
+    await sendEmailNotification({
+      productionUrlApp: process.env.PRODUCTION_URL_APP,
+      discussionName,
+      postContent,
+      authorName,
+      userIds,
+    });
   } catch (error) {
     console.error(error.stack);
 
