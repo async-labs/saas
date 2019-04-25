@@ -5,7 +5,7 @@ import sendEmail from '../aws-ses';
 import logger from '../logs';
 import { subscribe } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
-import getEmailTemplate from './EmailTemplate';
+import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
 import Invitation from './Invitation';
 import Team from './Team';
 
@@ -150,7 +150,7 @@ export interface IUserDocument extends mongoose.Document {
         teamId: string;
         teamName: string;
       }
-    ]
+    ];
   };
   darkTheme: boolean;
 }
@@ -163,9 +163,9 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     name,
     avatarUrl,
   }: {
-  userId: string;
-  name: string;
-  avatarUrl: string;
+    userId: string;
+    name: string;
+    avatarUrl: string;
   }): Promise<IUserDocument[]>;
 
   getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<IUserDocument[]>;
@@ -177,27 +177,27 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     displayName,
     avatarUrl,
   }: {
-  googleId: string;
-  email: string;
-  displayName: string;
-  avatarUrl: string;
-  googleToken: { refreshToken?: string; accessToken?: string };
+    googleId: string;
+    email: string;
+    displayName: string;
+    avatarUrl: string;
+    googleToken: { refreshToken?: string; accessToken?: string };
   }): Promise<IUserDocument>;
 
   createCustomer({
     userId,
     stripeToken,
   }: {
-  userId: string;
-  stripeToken: object;
+    userId: string;
+    stripeToken: object;
   }): Promise<IUserDocument>;
 
   createNewCardUpdateCustomer({
     userId,
     stripeToken,
   }: {
-  userId: string;
-  stripeToken: object;
+    userId: string;
+    stripeToken: object;
   }): Promise<IUserDocument>;
   getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<IUserDocument>;
   toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
@@ -298,9 +298,7 @@ class UserClass extends mongoose.Model {
       .setOptions({ lean: true });
   }
 
-  public static async signInOrSignUp({
-    googleId, email, googleToken, displayName, avatarUrl,
-  }) {
+  public static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
     const user = await this.findOne({ googleId })
       .select(this.publicFields().join(' '))
       .setOptions({ lean: true });
@@ -339,9 +337,21 @@ class UserClass extends mongoose.Model {
 
     const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
 
-    const template = await getEmailTemplate('welcome', {
-      userName: displayName,
+    const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
+      lean: true,
     });
+
+    if (!emailTemplate) {
+      throw new Error('welcome Email template not found');
+    }
+
+    const template = await getEmailTemplate(
+      'welcome',
+      {
+        userName: displayName,
+      },
+      emailTemplate,
+    );
 
     if (!hasInvitation) {
       try {
