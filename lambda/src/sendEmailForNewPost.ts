@@ -49,7 +49,11 @@ async function sendEmailNotification({
     .select('email')
     .setOptions({ lean: true });
 
-  const usersToNotify = users.filter(user => userIds.includes(user._id));
+  console.log('users', users);
+
+  const usersToNotify = users.filter(user => userIds.includes(user._id.toString()));
+
+  console.log('usersToNotify', usersToNotify);
 
   const jobs = _.flatten(
     usersToNotify
@@ -62,6 +66,7 @@ async function sendEmailNotification({
             subject: templateWithData.subject,
             body: templateWithData.message,
           });
+          console.log('email is sent');
         } catch (err) {
           console.error(err.stack);
         }
