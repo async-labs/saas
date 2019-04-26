@@ -220,8 +220,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
         notificationType,
       });
 
-      // await discussion.addPost(content);
-
       const post = await discussion.addPost(content);
 
       if (discussion.notificationType === 'email') {

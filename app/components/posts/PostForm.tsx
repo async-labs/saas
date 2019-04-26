@@ -11,6 +11,10 @@ import { Discussion, Post, Store, User } from '../../lib/store';
 
 import PostEditor from './PostEditor';
 
+const dev = process.env.NODE_ENV !== 'production';
+const { PRODUCTION_URL_APP } = process.env;
+const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
+
 const styles = {
   paper: {
     width: '100%', // TODO: should 100% when isMobile is true
@@ -181,9 +185,22 @@ class PostForm extends React.Component<MyProps, MyState> {
     this.setState({ disabled: true });
 
     try {
-      await discussion.addPost(content);
+      const newPost = await discussion.addPost(content);
+
+      if (discussion.notificationType === 'email') {
+        const userIdsForLambda = discussion.memberIds.filter(m => m !== discussion.createdUserId);
+        console.log(discussion.notificationType, userIdsForLambda);
+        await discussion.sendDataToLambdaApiMethod({
+          discussionName: discussion.name,
+          discussionLink: `${URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
+          postContent: newPost.content,
+          authorName: newPost.user.displayName,
+          userIds: userIdsForLambda,
+        });
+      }
       this.setState({ content: '' });
-      notify('You successfully published Post.');
+      notify('You successfully published new Post.');
+
     } catch (error) {
       console.log(error);
       notify(error);
