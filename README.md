@@ -178,8 +178,7 @@ To deploy the two apps (`api` and `app`), follow the instructions below.
         "PRODUCTION_URL_API": "https://your-api-url.com",
         "BUCKET_FOR_POSTS": "xxxxxx",
         "BUCKET_FOR_TEAM_AVATARS": "xxxxxx",
-        "LAMBDA_API_ENDPOINT": "xxxxxx",
-        
+        "LAMBDA_API_ENDPOINT": "xxxxxx",        
     },
     "alias": "your-app-url.com",
     "scale": {

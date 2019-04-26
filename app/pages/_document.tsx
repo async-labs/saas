@@ -4,6 +4,7 @@ import React from 'react';
 import flush from 'styled-jsx/server';
 
 const {
+  NODE_ENV,
   GA_TRACKING_ID,
   PRODUCTION_URL_APP,
   PRODUCTION_URL_API,
@@ -14,6 +15,7 @@ const {
 } = process.env;
 
 const env = {
+  NODE_ENV,
   GA_TRACKING_ID,
   PRODUCTION_URL_APP,
   PRODUCTION_URL_API,
