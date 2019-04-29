@@ -14,13 +14,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
-import MenuWithMenuItems from '../components/common/MenuWithMenuItems';
 import Layout from '../components/layout';
 import InviteMember from '../components/teams/InviteMember';
-import {
-  getSignedRequestForUpload,
-  uploadFileUsingSignedPutRequest,
-} from '../lib/api/team-member';
+import { getSignedRequestForUpload, uploadFileUsingSignedPutRequest } from '../lib/api/team-member';
 import confirm from '../lib/confirm';
 import notify from '../lib/notifier';
 import { Store } from '../lib/store';
@@ -32,31 +28,13 @@ const styleGrid = {
   height: '100%',
 };
 
-// const styleGridItem = {
-//   padding: '0px 20px',
-//   borderRight: '0.5px #aaa solid',
-// };
-
-const styleTableCell = {
-  padding: '15px 56px 15px 15px',
+type MyProps = { teamSlug: string; store: Store; isTL: boolean; isMobile: boolean };
+type MyState = {
+  inviteMemberOpen: boolean;
+  newName: string;
+  newAvatarUrl: string;
+  disabled: boolean;
 };
-
-const getMenuOptions = member => ({
-  dataId: member._id,
-  id: `post-menu-${member._id}`,
-  tooltipTitle: 'Manage member',
-});
-
-const getMenuItemOptions = (member, component) => [
-  {
-    text: 'Remove member',
-    dataId: member._id,
-    onClick: component.removeMember,
-  },
-];
-
-type MyProps = { teamSlug: string; store: Store; isTL: boolean; isMobile: boolean; };
-type MyState = { inviteMemberOpen: boolean; newName: string; newAvatarUrl: string; disabled: boolean };
 
 class TeamSettings extends React.Component<MyProps, MyState> {
   constructor(props) {
@@ -150,10 +128,21 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     this.setState({ inviteMemberOpen: false });
   };
 
-  public inviteMember = () => {
+  public inviteMember = async () => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('You have not selected a Team.');
+      return;
+    }
+
+    const ifTeamLeaderMustBeCustomer = await currentTeam.checkIfTeamLeaderMustBeCustomer();
+    if (ifTeamLeaderMustBeCustomer) {
+      notify(
+        'To add a third team member, you have to become a paid customer.' +
+          '<p />' +
+          ' To become a paid customer,' +
+          ' navigate to Billing page.',
+      );
       return;
     }
 
@@ -187,17 +176,6 @@ class TeamSettings extends React.Component<MyProps, MyState> {
       },
     });
   };
-
-  public renderMenu(member) {
-    return (
-      <div>
-        <MenuWithMenuItems
-          menuOptions={getMenuOptions(member)}
-          itemOptions={getMenuItemOptions(member, this)}
-        />
-      </div>
-    );
-  }
 
   // TODO: MobX for when new user is invited
   // TODO: MobX when member gets removed
@@ -310,94 +288,79 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                 onClick={this.inviteMember}
                 variant="outlined"
                 color="primary"
-                style={{ verticalAlign: 'middle', float: 'right' }}
+                style={{ float: 'right', marginTop: '-20px' }}
               >
                 Invite member
               </Button>
               <p />
-              <br />
-              <Paper>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell style={styleTableCell}>Person</TableCell>
-                      <TableCell style={styleTableCell}>Role</TableCell>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Person</TableCell>
+                    <TableCell>Role</TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {Array.from(currentTeam.members.values()).map(m => (
+                    <TableRow key={m._id}>
+                      <TableCell style={{ width: '300px' }}>
+                        <Hidden smDown>
+                          <Avatar
+                            role="presentation"
+                            src={m.avatarUrl}
+                            alt={m.avatarUrl}
+                            key={m._id}
+                            style={{
+                              margin: '0px 5px',
+                              display: 'inline-flex',
+                              width: '30px',
+                              height: '30px',
+                              verticalAlign: 'middle',
+                            }}
+                          />
+                        </Hidden>
+                        {m.displayName}
+                      </TableCell>
+                      <TableCell>
+                        {isTL && m._id !== currentUser._id ? 'Team Member' : 'Team Leader'}
+                      </TableCell>
                     </TableRow>
-                  </TableHead>
+                  ))}
+                </TableBody>
+              </Table>
 
-                  <TableBody>
-                    {Array.from(currentTeam.members.values()).map(m => (
-                      <TableRow key={m._id}>
-                        <TableCell style={styleTableCell} component="th" scope="row">
-                          <Hidden smDown>
-                            <Avatar
-                              role="presentation"
-                              src={m.avatarUrl}
-                              alt={m.avatarUrl}
-                              key={m._id}
-                              style={{
-                                margin: '0px 5px',
-                                display: 'inline-flex',
-                                width: '30px',
-                                height: '30px',
-                                verticalAlign: 'middle',
-                              }}
-                            />{' '}
-                          </Hidden>
-                          {m.displayName}
-                        </TableCell>
-                        <TableCell style={styleTableCell}>
-                          {isTL && m._id !== currentUser._id ? (
-                            <div style={{ display: 'inline-flex' }}>
-                              <div style={{ paddingRight: 10 }}>Team Member</div>{' '}
-                              {this.renderMenu(m)}
-                            </div>
-                          ) : (
-                            <div style={{ display: 'inline-flex' }}>
-                              <div style={{ paddingRight: 10 }}>Team Leader</div>
-                            </div>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Paper>
-
+              <p />
               <br />
 
               {Array.from(currentTeam.invitedUsers.values()).length > 0 ? (
-                <div>
+                <React.Fragment>
                   <h4>
                     Invited users ( {Array.from(currentTeam.invitedUsers.values()).length} /{' '}
                     {20 - Array.from(currentTeam.members.values()).length} )
                   </h4>
-                  <Paper>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell style={styleTableCell}>Email</TableCell>
-                          <TableCell style={styleTableCell}>Status</TableCell>
-                        </TableRow>
-                      </TableHead>
+                  <p />
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Email</TableCell>
+                        <TableCell>Status</TableCell>
+                      </TableRow>
+                    </TableHead>
 
-                      <TableBody>
-                        {Array.from(currentTeam.invitedUsers.values()).map(i => (
-                          <TableRow key={i._id}>
-                            <TableCell style={styleTableCell} component="th" scope="row">
-                              {i.email}{' '}
-                            </TableCell>
-                            <TableCell style={styleTableCell}>Sent</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </Paper>
-                </div>
+                    <TableBody>
+                      {Array.from(currentTeam.invitedUsers.values()).map(i => (
+                        <TableRow key={i._id}>
+                          <TableCell style={{ width: '300px' }}>{i.email}</TableCell>
+                          <TableCell>Sent</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </React.Fragment>
               ) : null}
-              <br />
-              <br />
               <p />
+              <br />
             </Grid>
 
             <InviteMember

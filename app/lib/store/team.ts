@@ -342,6 +342,20 @@ class Team {
       throw error;
     }
   }
+
+  public async checkIfTeamLeaderMustBeCustomer() {
+    let ifTeamLeaderMustBeCustomerOnClient: boolean;
+
+    if (this && this.memberIds.length < 2) {
+      ifTeamLeaderMustBeCustomerOnClient = false;
+    } else if (this && this.memberIds.length >= 2 && this.isSubscriptionActive) {
+      ifTeamLeaderMustBeCustomerOnClient = false;
+    } else if (this && this.memberIds.length >= 2 && !this.isSubscriptionActive) {
+      ifTeamLeaderMustBeCustomerOnClient = true;
+    }
+
+    return ifTeamLeaderMustBeCustomerOnClient;
+  }
 }
 
 decorate(Team, {

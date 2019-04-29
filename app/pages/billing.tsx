@@ -101,6 +101,7 @@ class YourBilling extends React.Component<Props, State> {
                   panelLabel="Add card"
                   description={'This is your default payment method.'}
                 >
+                  <p>No card is added.</p>
                   <Button variant="contained" color="primary">
                     Add card
                   </Button>
@@ -184,6 +185,7 @@ class YourBilling extends React.Component<Props, State> {
           panelLabel="Confirm ($50/month)"
           description={`Subscription for ${currentTeam.name}`}
         >
+          <p>You are not a paying customer.</p>
           <Button variant="contained" color="primary">
             Buy subscription
           </Button>
@@ -205,8 +207,10 @@ class YourBilling extends React.Component<Props, State> {
     ) {
       return (
         <React.Fragment>
+          <p>You are not a paying customer.</p>
+          <p>Buy subscription using your current card, see below section for current card information.</p>
           <Button variant="contained" color="primary" onClick={this.createSubscriptionOnClick}>
-            Buy subscription (use current card)
+            Buy subscription
           </Button>
         </React.Fragment>
       );
