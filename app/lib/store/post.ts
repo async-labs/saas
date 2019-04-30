@@ -35,10 +35,14 @@ export class Post {
   }
 
   public async edit(data) {
+    console.log(this.store.socket);
+    console.log(this.store.socket.id);
+
     try {
       await editPost({
         id: this._id,
         content: data.content,
+        socketId: (this.store.socket && this.store.socket.id) || null,
       });
 
       runInAction(() => {

@@ -39,6 +39,7 @@ class Team {
   public currentDiscussionSlug?: string;
   public discussions: IObservableArray<Discussion> = observable([]);
   public isLoadingDiscussions = false;
+  public discussion: Discussion;
 
   public stripeSubscription: {
     id: string;
@@ -194,6 +195,7 @@ class Team {
   public async addDiscussion(data): Promise<Discussion> {
     const { discussion } = await addDiscussion({
       teamId: this._id,
+      socketId: (this.store.socket && this.store.socket.id) || null,
       ...data,
     });
 
@@ -208,6 +210,7 @@ class Team {
   public async deleteDiscussion(id: string) {
     await deleteDiscussion({
       id,
+      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
@@ -356,6 +359,36 @@ class Team {
 
     return ifTeamLeaderMustBeCustomerOnClient;
   }
+
+  public leaveSocketRoom() {
+    if (this.store.socket) {
+      this.store.socket.off('discussionEvent', this.handleDiscussionRealtimeEvent);
+    }
+  }
+
+  public joinSocketRoom() {
+    if (this.store.socket) {
+      this.store.socket.on('discussionEvent', this.handleDiscussionRealtimeEvent);
+    }
+  }
+
+  public changeLocalCache(data) {
+    this.name = data.name;
+    this.memberIds.replace(data.memberIds || []);
+  }
+
+  private handleDiscussionRealtimeEvent = data => {
+    console.log('discussion realtime event', data);
+    const { action: actionName } = data;
+
+    if (actionName === 'added') {
+      this.addDiscussionToLocalCache(data.discussion);
+    } else if (actionName === 'edited') {
+      this.editDiscussionFromLocalCache(data.discussion);
+    } else if (actionName === 'deleted') {
+      this.removeDiscussionFromLocalCache(data.id);
+    }
+  };
 }
 
 decorate(Team, {

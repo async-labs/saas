@@ -35,6 +35,10 @@ class Discussion {
     this.memberIds.replace(params.memberIds || []);
     this.notificationType = params.notificationType;
 
+    if (params.initialDiscussions) {
+      this.setInitialDiscussions(params.initialDiscussions);
+    }
+
     if (params.initialPosts) {
       this.setInitialPosts(params.initialPosts);
     }
@@ -46,7 +50,7 @@ class Discussion {
 
   public setInitialPosts(posts) {
     const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
-    this.posts.replace(postObjs.filter(p => p.createdUserId === this.store.currentUser._id));
+    this.posts.replace(postObjs);
   }
 
   public async loadPosts() {
@@ -62,7 +66,7 @@ class Discussion {
 
       runInAction(() => {
         const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
-        this.posts.replace(postObjs.filter(p => p.createdUserId === this.store.currentUser._id));
+        this.posts.replace(postObjs);
       });
     } finally {
       runInAction(() => {
@@ -84,6 +88,7 @@ class Discussion {
     try {
       await editDiscussion({
         id: this._id,
+        socketId: (this.store.socket && this.store.socket.id) || null,
         ...data,
       });
 
@@ -126,9 +131,14 @@ class Discussion {
   }
 
   public async addPost(content: string): Promise<Post> {
+
+    console.log(this.store.socket);
+    console.log(this.store.socket.id);
+
     const { post } = await addPost({
       discussionId: this._id,
       content,
+      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     return new Promise<Post>(resolve => {
@@ -143,6 +153,7 @@ class Discussion {
     await deletePost({
       id: post._id,
       discussionId: this._id,
+      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
@@ -150,7 +161,13 @@ class Discussion {
     });
   }
 
-  public async sendDataToLambdaApiMethod({ discussionName, discussionLink, postContent, authorName, userIds }) {
+  public async sendDataToLambdaApiMethod({
+    discussionName,
+    discussionLink,
+    postContent,
+    authorName,
+    userIds,
+  }) {
     console.log(discussionName, discussionLink, authorName, postContent, userIds);
     try {
       await sendDataToLambda({
@@ -165,6 +182,81 @@ class Discussion {
       throw error;
     }
   }
+
+  public addDiscussionToLocalCache(data): Discussion {
+    const obj = new Discussion({ team: this.team, store: this.store, ...data });
+
+    if (obj.memberIds.includes(this.store.currentUser._id)) {
+      this.team.discussions.push(obj);
+    }
+
+    return obj;
+  }
+
+  public editDiscussionFromLocalCache(data) {
+    const discussion = this.team.discussions.find(item => item._id === data._id);
+    if (discussion) {
+      if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
+        discussion.changeLocalCache(data);
+      } else {
+        this.removeDiscussionFromLocalCache(data._id);
+      }
+    } else if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
+      this.addDiscussionToLocalCache(data);
+    }
+  }
+
+  public removeDiscussionFromLocalCache(discussionId: string) {
+    const discussion = this.team.discussions.find(item => item._id === discussionId);
+    this.team.discussions.remove(discussion);
+  }
+
+  public handlePostRealtimeEvent(data) {
+    const { action: actionName } = data;
+
+    if (actionName === 'added') {
+      this.addPostToLocalCache(data.post);
+    } else if (actionName === 'edited') {
+      this.editPostFromLocalCache(data.post);
+    } else if (actionName === 'deleted') {
+      this.removePostFromLocalCache(data.id);
+    }
+  }
+
+  public leaveSocketRoom() {
+    if (this.store.socket) {
+      this.store.socket.off('discussionEvent', this.handleDiscussionRealtimeEvent);
+    }
+  }
+
+  public joinSocketRoom() {
+    if (this.store.socket) {
+      this.store.socket.on('discussionEvent', this.handleDiscussionRealtimeEvent);
+    }
+  }
+
+  private setInitialDiscussions(discussions) {
+    const discussionObjs = discussions.map(
+      d => new Discussion({ team: this.team, store: this.store, ...d }),
+    );
+
+    this.team.discussions.replace(
+      discussionObjs.filter(d => !d.isDraft || d.createdUserId === this.store.currentUser._id),
+    );
+  }
+
+  private handleDiscussionRealtimeEvent = data => {
+    console.log('discussion realtime event', data);
+    const { action: actionName } = data;
+
+    if (actionName === 'added') {
+      this.addDiscussionToLocalCache(data.discussion);
+    } else if (actionName === 'edited') {
+      this.editDiscussionFromLocalCache(data.discussion);
+    } else if (actionName === 'deleted') {
+      this.removeDiscussionFromLocalCache(data.id);
+    }
+  };
 }
 
 decorate(Discussion, {
@@ -184,6 +276,9 @@ decorate(Discussion, {
   removePostFromLocalCache: action,
   addPost: action,
   deletePost: action,
+  addDiscussionToLocalCache: action,
+  editDiscussionFromLocalCache: action,
+  removeDiscussionFromLocalCache: action,
 });
 
 export { Discussion };

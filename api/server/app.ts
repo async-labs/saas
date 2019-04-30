@@ -5,12 +5,14 @@ import * as dotenv from 'dotenv';
 import * as express from 'express';
 import * as session from 'express-session';
 import * as helmet from 'helmet';
+import * as httpModule from 'http';
 import * as mongoose from 'mongoose';
 import * as path from 'path';
 
 import api from './api';
 import { signRequestForLoad } from './aws-s3';
 import auth from './google';
+import { setup as realtime } from './realtime';
 import { stripeWebHooks } from './stripe';
 
 import logger from './logs';
@@ -76,6 +78,9 @@ server.use(sessionMiddleware);
 
 auth({ server, ROOT_URL });
 api(server);
+
+const http = new httpModule.Server(server);
+realtime({ http, origin: PRODUCTION_URL_APP, sessionMiddleware });
 
 server.get('/uploaded-file', async (req, res) => {
   if (!req.user) {

@@ -26,6 +26,7 @@
   "dependencies": {
     "@types/mongoose": "5.3.23",
     "@types/node": "11.11.6",
+    "@types/socket.io": "^2.1.2",
     "aws-sdk": "2.428.0",
     "compression": "1.7.4",
     "connect-mongo": "2.0.3",
@@ -46,6 +47,7 @@
     "passport-google-oauth": "2.0.0",
     "qs": "6.7.0",
     "request": "2.88.0",
+    "socket.io": "^2.2.0",
     "stripe": "6.28.0",
     "typescript": "3.3.4000",
     "winston": "3.2.1"

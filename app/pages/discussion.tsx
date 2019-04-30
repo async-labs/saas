@@ -30,6 +30,9 @@ class DiscussionComp extends React.Component<Props> {
   };
 
   public componentDidMount() {
+    this.props.store.socket.on('postEvent', this.handlePostEvent);
+    this.props.store.socket.on('reconnect', this.handleSocketReconnect);
+
     this.changeDiscussion();
   }
 
@@ -37,6 +40,17 @@ class DiscussionComp extends React.Component<Props> {
     if (prevProps.discussionSlug !== this.props.discussionSlug) {
       this.changeDiscussion();
     }
+  }
+
+  public componentWillUnmount() {
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.leaveSocketRoom();
+    }
+
+    this.props.store.socket.off('postEvent', this.handlePostEvent);
+    this.props.store.socket.off('reconnect', this.handleSocketReconnect);
+
   }
 
   public getDiscussion(slug: string): Discussion {
@@ -249,6 +263,25 @@ class DiscussionComp extends React.Component<Props> {
 
   private onSnowMarkdownClickCallback = post => {
     this.setState({ selectedPost: post, showMarkdownClicked: true });
+  };
+
+  private handlePostEvent = data => {
+    console.log('post realtime event', data);
+
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.handlePostRealtimeEvent(data);
+    }
+  };
+
+  private handleSocketReconnect = () => {
+    console.log('pages/discussion.tsx: socket re-connected');
+
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.loadPosts();
+      discussion.joinSocketRoom();
+    }
   };
 }
 
