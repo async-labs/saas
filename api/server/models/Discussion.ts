@@ -82,7 +82,7 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
     name: string;
     memberIds: string[];
     notificationType: string;
-  }): Promise<{ teamId: string }>;
+  }): Promise<IDiscussionDocument>;
 
   delete({ userId, id }: { userId: string; id: string }): Promise<{ teamId: string }>;
 }
@@ -160,16 +160,17 @@ class DiscussionClass extends mongoose.Model {
       throw new Error('Permission denied. Only author or team leader can edit Discussion.');
     }
 
-    await this.updateOne(
+    const updatedObj = await this.findOneAndUpdate(
       { _id: id },
       {
         name,
         memberIds: uniq([userId, ...memberIds]),
         notificationType,
       },
+      { runValidators: true, new: true },
     );
 
-    return { teamId: discussion.teamId };
+    return updatedObj;
   }
 
   public static async delete({ userId, id }) {

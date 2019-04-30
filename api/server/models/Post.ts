@@ -140,7 +140,7 @@ interface IPostModel extends mongoose.Model<IPostDocument> {
     content: string;
     userId: string;
     id: string;
-  }): Promise<{ discussionId: string; htmlContent: string }>;
+  }): Promise<IPostDocument>;
 
   uploadFile({
     userId,
@@ -199,12 +199,13 @@ class PostClass extends mongoose.Model {
 
     const htmlContent = markdownToHtml(content);
 
-    await this.updateOne(
+    const updatedObj = await this.findOneAndUpdate(
       { _id: id },
       { content, htmlContent, isEdited: true, lastUpdatedAt: new Date() },
+      { runValidators: true, new: true },
     );
 
-    return { discussionId: post.discussionId, htmlContent };
+    return updatedObj;
   }
 
   public static async delete({ userId, id }) {

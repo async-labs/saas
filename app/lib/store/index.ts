@@ -1,5 +1,8 @@
 import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
+import * as io from 'socket.io-client';
+
+import getRootUrl from '../api/getRootUrl';
 
 import { addTeam } from '../api/team-leader';
 import { getTeamList } from '../api/team-member';
@@ -24,7 +27,17 @@ class Store {
   public currentUrl: string = '';
   public isLoggingIn = true;
 
-  constructor({ initialState = {}, isServer }: { initialState?: any; isServer: boolean }) {
+  public socket: SocketIOClient.Socket;
+
+  constructor({
+    initialState = {},
+    isServer,
+    socket = null,
+  }: {
+    initialState?: any;
+    isServer: boolean;
+    socket?: SocketIOClient.Socket;
+  }) {
     this.isServer = !!isServer;
 
     this.setCurrentUser(initialState.user, !initialState.teams, initialState.teamSlug);
@@ -34,6 +47,30 @@ class Store {
     }
 
     this.currentUrl = initialState.currentUrl || '';
+
+    this.socket = socket;
+
+    if (socket) {
+      socket.on('teamEvent', this.handleTeamRealtimeEvent);
+
+      socket.on('disconnect', () => {
+        console.log('socket: ## disconnected');
+      });
+
+      socket.on('reconnect', attemptNumber => {
+        console.log('socket: $$ reconnected', attemptNumber);
+
+        if (this.currentTeam) {
+          this.currentTeam.leaveSocketRoom();
+
+          this.loadCurrentTeamData();
+
+          setTimeout(() => {
+            this.currentTeam.joinSocketRoom();
+          }, 500);
+        }
+      });
+    }
   }
 
   public changeCurrentUrl(url: string) {
@@ -119,17 +156,78 @@ class Store {
     }
   }
 
+  public addTeamToLocalCache(data): Team {
+    const teamObj = new Team({ user: this.currentUser, store: this, ...data });
+    this.teams.unshift(teamObj);
+
+    return teamObj;
+  }
+
+  public editTeamFromLocalCache(data) {
+    const team = this.teams.find(item => item._id === data._id);
+
+    if (team) {
+      if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
+        team.changeLocalCache(data);
+      } else {
+        this.removeTeamFromLocalCache(data._id);
+      }
+    } else if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
+      this.addTeamToLocalCache(data);
+    }
+  }
+
+  public removeTeamFromLocalCache(teamId: string) {
+    const team = this.teams.find(t => t._id === teamId);
+
+    this.teams.remove(team);
+  }
+
   private setCurrentUser(user, isLoadTeam: boolean, selectedTeamSlug: string) {
     if (user) {
-      this.currentUser = new User(user);
+      this.currentUser = new User({ store: this, ...user });
+
+      if (this.socket && this.socket.disconnected) {
+        this.socket.connect();
+      }
     } else {
       this.currentUser = null;
+      if (this.socket && this.socket.connected) {
+        this.socket.disconnect();
+      }
     }
 
-    this.isLoggingIn = false;
+    runInAction(() => {
+      this.isLoggingIn = false;
+    });
 
     if (user && isLoadTeam) {
       this.loadTeams(selectedTeamSlug);
+    }
+  }
+
+  private handleTeamRealtimeEvent = data => {
+    console.log('team realtime event', data);
+    const { action: actionName } = data;
+
+    if (actionName === 'added') {
+      this.addTeamToLocalCache(data.team);
+    } else if (actionName === 'edited') {
+      this.editTeamFromLocalCache(data.team);
+    } else if (actionName === 'deleted') {
+      this.removeTeamFromLocalCache(data.id);
+    }
+  };
+
+  private loadCurrentTeamData() {
+    if (this.currentTeam) {
+      this.currentTeam
+        .loadInitialMembers()
+        .catch(err => console.error('Error while loading Users', err));
+
+      this.currentTeam
+        .loadDiscussions()
+        .catch(err => console.error('Error while loading Discussions', err));
     }
   }
 }
@@ -155,19 +253,48 @@ decorate(Store, {
 let store: Store = null;
 
 function initStore(initialState = {}) {
-  if (!process.browser) {
+  const isServer = typeof window === 'undefined';
+  const dev = process.env.NODE_ENV !== 'production';
+
+  if (isServer) {
     return new Store({ initialState, isServer: true });
   } else {
-    if (store === null) {
-      store = new Store({ initialState, isServer: false });
+    const win: any = window;
+
+    if (!store) {
+      const globalStore: Store = win.__STORE__;
+
+      if (dev) {
+        // save initialState globally and use saved state when initialState is empty
+        // initialState becomes "empty" on some HMR
+        if (!win.__INITIAL_STATE__) {
+          // TODO: when store changed, save it to win.__INITIAL_STATE__. So we can keep latest store for HMR
+          win.__INITIAL_STATE__ = initialState;
+        } else if (Object.keys(initialState).length === 0) {
+          initialState = win.__INITIAL_STATE__;
+        }
+
+        if (globalStore && globalStore.socket) {
+          globalStore.socket.removeAllListeners();
+          globalStore.socket.disconnect();
+        }
+      }
+
+      const socket = io(getRootUrl());
+
+      store = new Store({ initialState, socket, isServer: false });
+
+      if (dev) {
+        win.__STORE__ = store;
+      }
     }
 
-    return store;
+    return store || win.__STORE__;
   }
 }
 
 function getStore() {
-  return store;
+  return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
 }
 
 export { Discussion, Post, Team, User, Store, initStore, getStore };
