@@ -80,7 +80,7 @@ auth({ server, ROOT_URL });
 api(server);
 
 const http = new httpModule.Server(server);
-realtime({ http, origin: PRODUCTION_URL_APP, sessionMiddleware });
+realtime({ http, origin: dev ? 'http://localhost:3000' : PRODUCTION_URL_APP, sessionMiddleware });
 
 server.get('/uploaded-file', async (req, res) => {
   if (!req.user) {

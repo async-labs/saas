@@ -131,7 +131,6 @@ class Discussion {
   }
 
   public async addPost(content: string): Promise<Post> {
-
     console.log(this.store.socket);
     console.log(this.store.socket.id);
 

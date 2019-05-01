@@ -145,8 +145,9 @@ class Store {
     for (const team of this.teams) {
       if (team.slug === slug) {
         found = true;
-        team.loadInitialMembers().catch(err => console.log(err));
         this.currentTeam = team;
+        team.joinSocketRoom();
+        this.loadCurrentTeamData();
         break;
       }
     }
@@ -183,7 +184,7 @@ class Store {
     this.teams.remove(team);
   }
 
-  private setCurrentUser(user, isLoadTeam: boolean, selectedTeamSlug: string) {
+  private async setCurrentUser(user, isLoadTeam: boolean, selectedTeamSlug: string) {
     if (user) {
       this.currentUser = new User({ store: this, ...user });
 
@@ -242,9 +243,6 @@ decorate(Store, {
   isLoggingIn: observable,
 
   changeCurrentUrl: action,
-  setCurrentUser: action,
-  changeUserState: action,
-  setTeams: action,
   addTeam: action,
   loadTeams: action,
   setCurrentTeam: action,

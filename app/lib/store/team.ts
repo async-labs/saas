@@ -362,13 +362,19 @@ class Team {
 
   public leaveSocketRoom() {
     if (this.store.socket) {
-      this.store.socket.off('discussionEvent', this.handleDiscussionRealtimeEvent);
+      console.log('leaving socket team room', this.name);
+      this.store.socket.emit('leaveTeam', this._id);
+
+      this.discussion.leaveSocketRoom();
     }
   }
 
   public joinSocketRoom() {
     if (this.store.socket) {
-      this.store.socket.on('discussionEvent', this.handleDiscussionRealtimeEvent);
+      console.log('joining socket team room', this.name);
+      this.store.socket.emit('joinTeam', this._id);
+
+      this.discussion.joinSocketRoom();
     }
   }
 
@@ -376,19 +382,6 @@ class Team {
     this.name = data.name;
     this.memberIds.replace(data.memberIds || []);
   }
-
-  private handleDiscussionRealtimeEvent = data => {
-    console.log('discussion realtime event', data);
-    const { action: actionName } = data;
-
-    if (actionName === 'added') {
-      this.addDiscussionToLocalCache(data.discussion);
-    } else if (actionName === 'edited') {
-      this.editDiscussionFromLocalCache(data.discussion);
-    } else if (actionName === 'deleted') {
-      this.removeDiscussionFromLocalCache(data.id);
-    }
-  };
 }
 
 decorate(Team, {

@@ -205,6 +205,8 @@ router.post('/posts/edit', async (req, res, next) => {
 
     postEdited({ socketId, post: updatedPost });
 
+    // console.log(socketId);
+
     res.json({ done: 1 });
   } catch (err) {
     next(err);

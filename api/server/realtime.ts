@@ -23,6 +23,7 @@ function getSocket(socketId?: string) {
 }
 
 function setup({ http, origin, sessionMiddleware }) {
+
   if (io === null) {
     io = socketio(http, {
       origins: `${origin}:443`,
@@ -50,6 +51,16 @@ function setup({ http, origin, sessionMiddleware }) {
         logger.debug(`Connected to socket => Your User ID is: ${userId}`);
 
         socket.join(`user-${userId}`);
+
+        socket.on('joinTeam', teamId => {
+          logger.debug(`    joinTeam ${teamId}`);
+          socket.join(`team-${teamId}`);
+        });
+
+        socket.on('leaveTeam', teamId => {
+          logger.debug(`** leaveTeam ${teamId}`);
+          socket.leave(`team-${teamId}`);
+        });
 
         socket.on('joinDiscussion', discussionId => {
           logger.debug(`    joinDiscussion ${discussionId}`);

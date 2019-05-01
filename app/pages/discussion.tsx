@@ -34,6 +34,11 @@ class DiscussionComp extends React.Component<Props> {
     this.props.store.socket.on('reconnect', this.handleSocketReconnect);
 
     this.changeDiscussion();
+
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.joinSocketRoom();
+    }
   }
 
   public componentDidUpdate(prevProps: Props) {

@@ -35,7 +35,6 @@ export class Post {
   }
 
   public async edit(data) {
-    console.log(this.store.socket);
     console.log(this.store.socket.id);
 
     try {
