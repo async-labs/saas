@@ -37,6 +37,7 @@ class DiscussionComp extends React.Component<Props> {
       store.currentTeam.loadDiscussions().catch(err => notify(err));
     }
 
+    this.props.store.socket.on('discussionEvent', this.handleDiscussionEvent);
     this.props.store.socket.on('postEvent', this.handlePostEvent);
     this.props.store.socket.on('reconnect', this.handleSocketReconnect);
 
@@ -73,6 +74,7 @@ class DiscussionComp extends React.Component<Props> {
       discussion.leaveSocketRoom();
     }
 
+    this.props.store.socket.off('discussionEvent', this.handleDiscussionEvent);
     this.props.store.socket.off('postEvent', this.handlePostEvent);
     this.props.store.socket.off('reconnect', this.handleSocketReconnect);
   }
@@ -291,6 +293,15 @@ class DiscussionComp extends React.Component<Props> {
 
   private onSnowMarkdownClickCallback = post => {
     this.setState({ selectedPost: post, showMarkdownClicked: true });
+  };
+
+  private handleDiscussionEvent = data => {
+    console.log('discussion realtime event', data);
+
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.handleDiscussionRealtimeEvent(data);
+    }
   };
 
   private handlePostEvent = data => {

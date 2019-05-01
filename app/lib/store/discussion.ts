@@ -109,10 +109,6 @@ class Discussion {
 
     const postObj = new Post({ discussion: this, store: this.store, ...data });
 
-    if (postObj.createdUserId !== this.store.currentUser._id) {
-      return;
-    }
-
     this.posts.push(postObj);
 
     return postObj;
@@ -210,6 +206,19 @@ class Discussion {
     this.team.discussions.remove(discussion);
   }
 
+  public handleDiscussionRealtimeEvent = data => {
+    console.log('discussion realtime event', data);
+    const { action: actionName } = data;
+
+    if (actionName === 'added') {
+      this.addDiscussionToLocalCache(data.discussion);
+    } else if (actionName === 'edited') {
+      this.editDiscussionFromLocalCache(data.discussion);
+    } else if (actionName === 'deleted') {
+      this.removeDiscussionFromLocalCache(data.id);
+    }
+  };
+
   public handlePostRealtimeEvent(data) {
     const { action: actionName } = data;
 
@@ -224,13 +233,17 @@ class Discussion {
 
   public leaveSocketRoom() {
     if (this.store.socket) {
-      this.store.socket.off('discussionEvent', this.handleDiscussionRealtimeEvent);
+      console.log('leaving socket discussion room', this.name);
+      this.store.socket.emit('leaveDiscussion', this._id);
+      this.store.socket.emit('leaveTeam', this.team._id);
     }
   }
 
   public joinSocketRoom() {
     if (this.store.socket) {
-      this.store.socket.on('discussionEvent', this.handleDiscussionRealtimeEvent);
+      console.log('joining socket discussion room', this.name);
+      this.store.socket.emit('joinDiscussion', this._id);
+      this.store.socket.emit('joinTeam', this.team._id);
     }
   }
 
@@ -243,19 +256,6 @@ class Discussion {
       discussionObjs.filter(d => !d.isDraft || d.createdUserId === this.store.currentUser._id),
     );
   }
-
-  private handleDiscussionRealtimeEvent = data => {
-    console.log('discussion realtime event', data);
-    const { action: actionName } = data;
-
-    if (actionName === 'added') {
-      this.addDiscussionToLocalCache(data.discussion);
-    } else if (actionName === 'edited') {
-      this.editDiscussionFromLocalCache(data.discussion);
-    } else if (actionName === 'deleted') {
-      this.removeDiscussionFromLocalCache(data.id);
-    }
-  };
 }
 
 decorate(Discussion, {

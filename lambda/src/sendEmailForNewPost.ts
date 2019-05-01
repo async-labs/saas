@@ -49,8 +49,6 @@ async function sendEmailNotification({
     .select('email')
     .setOptions({ lean: true });
 
-  console.log('users', users);
-
   const usersToNotify = users.filter(user => userIds.includes(user._id.toString()));
 
   console.log('usersToNotify', usersToNotify);

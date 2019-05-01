@@ -2,11 +2,10 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
-import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
-import NProgress from 'nprogress';
 import { observer } from 'mobx-react';
 import Head from 'next/head';
+import NProgress from 'nprogress';
 import * as React from 'react';
 
 import Table from '@material-ui/core/Table';
