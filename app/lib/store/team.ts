@@ -1,4 +1,4 @@
-import { action, computed, decorate, IObservableArray, observable, runInAction } from 'mobx';
+import { decorate, IObservableArray, observable, runInAction } from 'mobx';
 import Router from 'next/router';
 
 import {
@@ -385,41 +385,41 @@ class Team {
 }
 
 decorate(Team, {
-  name: observable,
-  slug: observable,
-  avatarUrl: observable,
-  memberIds: observable,
-  members: observable,
-  invitedUsers: observable,
-  isLoadingMembers: observable,
-  isInitialMembersLoaded: observable,
+  // name: observable,
+  // slug: observable,
+  // avatarUrl: observable,
+  // memberIds: observable,
+  // members: observable,
+  // invitedUsers: observable,
+  // isLoadingMembers: observable,
+  // isInitialMembersLoaded: observable,
 
-  isSubscriptionActive: observable,
-  stripeSubscription: observable,
-  isPaymentFailed: observable,
+  // isSubscriptionActive: observable,
+  // stripeSubscription: observable,
+  // isPaymentFailed: observable,
 
-  edit: action,
-  setInitialMembers: action,
-  loadInitialMembers: action,
-  inviteMember: action,
-  removeMember: action,
+  // edit: action,
+  // setInitialMembers: action,
+  // loadInitialMembers: action,
+  // inviteMember: action,
+  // removeMember: action,
 
-  currentDiscussion: observable,
-  currentDiscussionSlug: observable,
-  isLoadingDiscussions: observable,
-  discussions: observable,
+  // currentDiscussion: observable,
+  // currentDiscussionSlug: observable,
+  // isLoadingDiscussions: observable,
+  // discussions: observable,
 
-  setInitialDiscussions: action,
-  setCurrentDiscussion: action,
-  setInitialDiscussionSlug: action,
-  loadDiscussions: action,
-  addDiscussionToLocalCache: action,
-  editDiscussionFromLocalCache: action,
-  removeDiscussionFromLocalCache: action,
-  addDiscussion: action,
-  deleteDiscussion: action,
+  // setInitialDiscussions: action,
+  // setCurrentDiscussion: action,
+  // setInitialDiscussionSlug: action,
+  // loadDiscussions: action,
+  // addDiscussionToLocalCache: action,
+  // editDiscussionFromLocalCache: action,
+  // removeDiscussionFromLocalCache: action,
+  // addDiscussion: action,
+  // deleteDiscussion: action,
 
-  orderedDiscussions: computed,
+  // orderedDiscussions: computed,
 });
 
 export { Team };

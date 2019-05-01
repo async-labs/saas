@@ -2,7 +2,7 @@ import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
 import * as io from 'socket.io-client';
 
-import getRootUrl from '../api/getRootUrl';
+import getApiUrl from '../api/getRootUrl';
 
 import { addTeam } from '../api/team-leader';
 import { getTeamList } from '../api/team-member';
@@ -278,7 +278,7 @@ function initStore(initialState = {}) {
         }
       }
 
-      const socket = io(getRootUrl());
+      const socket = io(getApiUrl());
 
       store = new Store({ initialState, socket, isServer: false });
 

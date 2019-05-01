@@ -9,7 +9,7 @@ import { Mention, MentionsInput } from 'react-mentions';
 
 import env from '../../lib/env';
 
-// import getRootUrl from '../../lib/api/getRootUrl';
+// import getApiUrl from '../../lib/api/getRootUrl';
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,

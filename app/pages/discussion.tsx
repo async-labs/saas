@@ -10,6 +10,7 @@ import Loading from '../components/common/Loading';
 import Layout from '../components/layout';
 import PostDetail from '../components/posts/PostDetail';
 import PostForm from '../components/posts/PostForm';
+import notify from '../lib/notifier';
 import { Discussion, Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
@@ -30,6 +31,12 @@ class DiscussionComp extends React.Component<Props> {
   };
 
   public componentDidMount() {
+    const { store, isServer, discussionSlug } = this.props;
+
+    if (store.currentTeam && (!isServer || !discussionSlug)) {
+      store.currentTeam.loadDiscussions().catch(err => notify(err));
+    }
+
     this.props.store.socket.on('postEvent', this.handlePostEvent);
     this.props.store.socket.on('reconnect', this.handleSocketReconnect);
 
@@ -42,8 +49,21 @@ class DiscussionComp extends React.Component<Props> {
   }
 
   public componentDidUpdate(prevProps: Props) {
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+
     if (prevProps.discussionSlug !== this.props.discussionSlug) {
+      if (prevProps.discussionSlug) {
+        const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
+        if (prevDiscussion) {
+          prevDiscussion.leaveSocketRoom();
+        }
+      }
+
       this.changeDiscussion();
+
+      if (discussion) {
+        discussion.joinSocketRoom();
+      }
     }
   }
 
@@ -55,12 +75,15 @@ class DiscussionComp extends React.Component<Props> {
 
     this.props.store.socket.off('postEvent', this.handlePostEvent);
     this.props.store.socket.off('reconnect', this.handleSocketReconnect);
-
   }
 
   public getDiscussion(slug: string): Discussion {
     const { store, teamSlug } = this.props;
     const { currentTeam } = store;
+
+    if (!currentTeam) {
+      return;
+    }
 
     if (!slug && currentTeam.discussions.length > 0) {
       Router.replace(
@@ -85,7 +108,7 @@ class DiscussionComp extends React.Component<Props> {
       return;
     }
 
-    if (!discussionSlug && currentTeam.discussions.length > 0) {
+    if (!store.isServer && !discussionSlug && currentTeam.discussions.length > 0) {
       Router.replace(
         `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
         `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
@@ -97,7 +120,7 @@ class DiscussionComp extends React.Component<Props> {
     const discussion = this.getDiscussion(discussionSlug);
 
     if (!isServer && discussion) {
-      discussion.loadPosts().catch(e => console.error(e));
+      discussion.loadPosts().catch(err => notify(err));
     }
   }
 
@@ -284,7 +307,7 @@ class DiscussionComp extends React.Component<Props> {
 
     const discussion = this.getDiscussion(this.props.discussionSlug);
     if (discussion) {
-      discussion.loadPosts();
+      discussion.loadPosts().catch(err => notify(err));
       discussion.joinSocketRoom();
     }
   };

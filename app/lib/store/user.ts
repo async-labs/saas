@@ -42,6 +42,8 @@ class User {
 
   public darkTheme: boolean = true;
 
+  public isLoggedIn: boolean = false;
+
   constructor(params) {
     this.store = params.store;
 
@@ -57,6 +59,7 @@ class User {
     this.stripeCard = params.stripeCard;
     this.stripeListOfInvoices = params.stripeListOfInvoices;
     this.darkTheme = !!params.darkTheme;
+    this.isLoggedIn = !!params.isLoggedIn;
   }
 
   public async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {
@@ -120,6 +123,14 @@ class User {
     await toggleTheme({ darkTheme });
     window.location.reload();
   }
+
+  public login() {
+    this.isLoggedIn = true;
+  }
+
+  public logout() {
+    this.isLoggedIn = false;
+  }
 }
 
 decorate(User, {
@@ -132,9 +143,12 @@ decorate(User, {
   hasCardInformation: observable,
   stripeCard: observable,
   stripeListOfInvoices: observable,
+  isLoggedIn: observable,
 
   updateProfile: action,
   toggleTheme: action,
+  login: action,
+  logout: action,
 });
 
 export { User };

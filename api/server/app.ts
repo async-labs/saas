@@ -33,10 +33,7 @@ const options = {
   useFindAndModify: false,
 };
 
-mongoose.connect(
-  MONGO_URL,
-  options,
-);
+mongoose.connect(MONGO_URL, options);
 
 const server = express();
 
@@ -124,9 +121,6 @@ server.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
-server.listen(port, err => {
-  if (err) {
-    throw err;
-  }
+http.listen(port, () => {
   logger.info(`> Ready on ${ROOT_URL}`);
 });

@@ -1,6 +1,8 @@
 import 'isomorphic-unfetch';
 
-import getRootUrl from './getRootUrl';
+import { getStore } from '../store';
+
+import getApiUrl from './getRootUrl';
 
 import { makeQueryString } from './makeQueryString';
 
@@ -27,7 +29,7 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   console.log(`${path}${qs}`);
 
   const response = await fetch(
-    externalServer ? `${path}${qs}` : `${getRootUrl()}${path}${qs}`,
+    externalServer ? `${path}${qs}` : `${getApiUrl()}${path}${qs}`,
     Object.assign({ method: 'POST', credentials: 'include' }, opts, { headers }),
   );
 
@@ -39,9 +41,20 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
 
   try {
     const data = JSON.parse(text);
+    const store = getStore();
 
     if (data.error) {
+      if (response.status === 201 && data.error === 'You need to log in.' && !externalServer) {
+        if (store && store.currentUser && store.currentUser.isLoggedIn && !store.isServer) {
+          store.currentUser.logout();
+        }
+      }
+
       throw new Error(data.error);
+    }
+
+    if (store && store.currentUser && !store.currentUser.isLoggedIn && !store.isServer) {
+      store.currentUser.login();
     }
 
     return data;
