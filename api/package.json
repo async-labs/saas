@@ -45,6 +45,8 @@
     "mongoose": "5.4.19",
     "passport": "0.4.0",
     "passport-google-oauth": "2.0.0",
+    "passwordless": "^1.1.3",
+    "passwordless-mongostore-bcrypt-node": "^0.1.1",
     "qs": "6.7.0",
     "request": "2.88.0",
     "socket.io": "^2.2.0",

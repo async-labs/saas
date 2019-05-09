@@ -1,5 +1,7 @@
 import * as passport from 'passport';
 import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
+import * as passwordless from 'passwordless';
+import * as PasswordlessMongoStore from 'passwordless-mongostore-bcrypt-node';
 
 import logger from './logs';
 import Invitation from './models/Invitation';
@@ -9,7 +11,45 @@ const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_APP } = process.env;
 const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
-export default function auth({ ROOT_URL, server }) {
+function setupPasswordless({ server, ROOT_URL, MONGO_URL }) {
+  passwordless.init(new PasswordlessMongoStore(MONGO_URL));
+  passwordless.addDelivery((tokenToSend, uidToSend, recipient, callback, req) => {
+    const text = `Hello!\nAccess your account here:
+    http://${ROOT_URL}/logged_in?$token=${tokenToSend}&uid=${encodeURIComponent(uidToSend)}`;
+
+    logger.debug(text, recipient, req.body);
+    callback(null);
+  });
+
+  server.use(passwordless.sessionSupport());
+  server.use(passwordless.acceptToken({ successRedirect: '/' }));
+
+  server.get('/logged_in', passwordless.acceptToken(), (__, res) => {
+    res.redirect('/');
+  });
+
+  server.post(
+    '/sendtoken',
+    passwordless.requestToken(
+      (user, __, callback, req) => {
+        logger.debug(req.body);
+
+        User.find({ email: user }, ret => {
+          if (ret) {
+            callback(null, ret.id);
+          } else {
+            callback(null, null);
+          }
+        });
+      },
+      (__, res) => {
+        res.json({ done: 1 });
+      },
+    ),
+  );
+}
+
+function setupGoogle({ ROOT_URL, server }) {
   const clientID = process.env.Google_clientID;
   const clientSecret = process.env.Google_clientSecret;
 
@@ -119,3 +159,5 @@ export default function auth({ ROOT_URL, server }) {
     res.redirect(`${URL_APP}/login`);
   });
 }
+
+export { setupPasswordless, setupGoogle };
