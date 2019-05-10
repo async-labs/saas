@@ -1,18 +1,18 @@
 import * as passport from 'passport';
 import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
 import * as passwordless from 'passwordless';
-import * as PasswordlessMongoStore from 'passwordless-mongostore-bcrypt-node';
 
 import logger from './logs';
 import Invitation from './models/Invitation';
 import User, { IUserDocument } from './models/User';
+import PasswordlessMongoStore from './passwordless';
 
 const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_APP } = process.env;
 const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
-function setupPasswordless({ server, ROOT_URL, MONGO_URL }) {
-  passwordless.init(new PasswordlessMongoStore(MONGO_URL));
+function setupPasswordless({ server, ROOT_URL }) {
+  passwordless.init(new PasswordlessMongoStore());
 
   passwordless.addDelivery((tokenToSend, uidToSend, recipient, callback, req) => {
     const text = `Hello!\nAccess your account here:
@@ -26,8 +26,6 @@ function setupPasswordless({ server, ROOT_URL, MONGO_URL }) {
   server.use(passwordless.acceptToken({ successRedirect: '/' }));
 
   server.use((req, __, next) => {
-    logger.debug(req.user, typeof req.user);
-
     if (req.user && typeof req.user === 'string') {
       User.findById(req.user, User.publicFields(), (err, user) => {
         req.user = user;
@@ -52,8 +50,7 @@ function setupPasswordless({ server, ROOT_URL, MONGO_URL }) {
             .setOptions({ lean: true });
 
           if (user) {
-            logger.debug('calling callback', callback);
-            callback(null, user._id.toString());
+            callback(null, user._id);
           } else {
             callback(null, null);
           }

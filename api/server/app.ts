@@ -74,7 +74,7 @@ const sessionMiddleware = session(sessionOptions);
 server.use(sessionMiddleware);
 
 setupGoogle({ server, ROOT_URL });
-setupPasswordless({ server, ROOT_URL, MONGO_URL });
+setupPasswordless({ server, ROOT_URL });
 
 api(server);
 
