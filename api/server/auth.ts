@@ -13,40 +13,65 @@ const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
 function setupPasswordless({ server, ROOT_URL, MONGO_URL }) {
   passwordless.init(new PasswordlessMongoStore(MONGO_URL));
+
   passwordless.addDelivery((tokenToSend, uidToSend, recipient, callback, req) => {
     const text = `Hello!\nAccess your account here:
-    http://${ROOT_URL}/logged_in?$token=${tokenToSend}&uid=${encodeURIComponent(uidToSend)}`;
+    http://${ROOT_URL}/auth/logged_in?$token=${tokenToSend}&uid=${encodeURIComponent(uidToSend)}`;
 
     logger.debug(text, recipient, req.body);
-    callback(null);
+    callback();
   });
 
   server.use(passwordless.sessionSupport());
   server.use(passwordless.acceptToken({ successRedirect: '/' }));
 
-  server.get('/logged_in', passwordless.acceptToken(), (__, res) => {
+  server.use((req, __, next) => {
+    logger.debug(req.user, typeof req.user);
+
+    if (req.user && typeof req.user === 'string') {
+      User.findById(req.user, User.publicFields(), (err, user) => {
+        req.user = user;
+        next(err);
+      });
+    } else {
+      next();
+    }
+  });
+
+  server.get('/auth/logged_in', passwordless.acceptToken(), (__, res) => {
     res.redirect('/');
   });
 
   server.post(
-    '/sendtoken',
+    '/auth/send-token',
     passwordless.requestToken(
-      (user, __, callback, req) => {
-        logger.debug(req.body);
+      async (email, __, callback) => {
+        try {
+          const user = await User.findOne({ email })
+            .select('_id')
+            .setOptions({ lean: true });
 
-        User.find({ email: user }, ret => {
-          if (ret) {
-            callback(null, ret.id);
+          if (user) {
+            logger.debug('calling callback', callback);
+            callback(null, user._id.toString());
           } else {
             callback(null, null);
           }
-        });
+        } catch (error) {
+          callback(error);
+        }
       },
-      (__, res) => {
-        res.json({ done: 1 });
-      },
+      { userField: 'email' },
     ),
+    (__, res) => {
+      res.json({ done: 1 });
+    },
   );
+
+  server.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect(`${URL_APP}/login`);
+  });
 }
 
 function setupGoogle({ ROOT_URL, server }) {
@@ -153,11 +178,6 @@ function setupGoogle({ ROOT_URL, server }) {
       res.redirect(`${URL_APP}${redirectUrlAfterLogin}`);
     },
   );
-
-  server.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect(`${URL_APP}/login`);
-  });
 }
 
 export { setupPasswordless, setupGoogle };

@@ -321,7 +321,9 @@ class Team {
 
   public async createSubscription({ teamId }: { teamId: string }) {
     try {
-      const { isSubscriptionActive, stripeSubscription } = await createSubscriptionApiMethod({ teamId });
+      const { isSubscriptionActive, stripeSubscription } = await createSubscriptionApiMethod({
+        teamId,
+      });
 
       runInAction(() => {
         this.isSubscriptionActive = isSubscriptionActive;
@@ -365,7 +367,9 @@ class Team {
       console.log('leaving socket team room', this.name);
       this.store.socket.emit('leaveTeam', this._id);
 
-      this.discussion.leaveSocketRoom();
+      if (this.discussion) {
+        this.discussion.leaveSocketRoom();
+      }
     }
   }
 
@@ -374,7 +378,9 @@ class Team {
       console.log('joining socket team room', this.name);
       this.store.socket.emit('joinTeam', this._id);
 
-      this.discussion.joinSocketRoom();
+      if (this.discussion) {
+        this.discussion.joinSocketRoom();
+      }
     }
   }
 
@@ -393,22 +399,18 @@ decorate(Team, {
   // invitedUsers: observable,
   // isLoadingMembers: observable,
   // isInitialMembersLoaded: observable,
-
   // isSubscriptionActive: observable,
   // stripeSubscription: observable,
   // isPaymentFailed: observable,
-
   // edit: action,
   // setInitialMembers: action,
   // loadInitialMembers: action,
   // inviteMember: action,
   // removeMember: action,
-
   // currentDiscussion: observable,
   // currentDiscussionSlug: observable,
   // isLoadingDiscussions: observable,
   // discussions: observable,
-
   // setInitialDiscussions: action,
   // setCurrentDiscussion: action,
   // setInitialDiscussionSlug: action,
@@ -418,7 +420,6 @@ decorate(Team, {
   // removeDiscussionFromLocalCache: action,
   // addDiscussion: action,
   // deleteDiscussion: action,
-
   // orderedDiscussions: computed,
 });
 
