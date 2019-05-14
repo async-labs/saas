@@ -47,31 +47,30 @@ function MongoStore(options = {}) {
 
 util.inherits(MongoStore, TokenStore);
 
-MongoStore.prototype.authenticate = function authenticate(token, uid, callback) {
+MongoStore.prototype.authenticate = async function authenticate(token, uid, callback) {
   if (!token || !uid || !callback) {
     throw new Error('TokenStore:authenticate called with invalid parameters');
   }
 
-  Collection.findOne({ uid, ttl: { $gt: new Date() } }, (err, item) => {
-    if (err) {
-      callback(err, false, null);
-    } else if (item) {
-      bcrypt.compare(token, item.hashedToken, (err2, res) => {
-        if (err2) {
-          callback(err2, false, null);
-        } else if (res) {
-          callback(null, true, item.originUrl);
-        } else {
-          callback(null, false, null);
-        }
-      });
+  try {
+    const item = await Collection.findOne({ uid, ttl: { $gt: new Date() } });
+
+    if (item) {
+      const res = await bcrypt.compare(token, item.hashedToken);
+      if (res) {
+        callback(null, true, item.originUrl);
+      } else {
+        callback(null, false, null);
+      }
     } else {
       callback(null, false, null);
     }
-  });
+  } catch (error) {
+    callback(error, false, null);
+  }
 };
 
-MongoStore.prototype.storeOrUpdate = function storeOrUpdate(
+MongoStore.prototype.storeOrUpdate = async function storeOrUpdate(
   token,
   uid,
   msToLive,
@@ -82,11 +81,10 @@ MongoStore.prototype.storeOrUpdate = function storeOrUpdate(
     throw new Error('TokenStore:storeOrUpdate called with invalid parameters');
   }
 
-  bcrypt.hash(token, null, null, (err, hashedToken) => {
-    if (err) {
-      return callback(err);
-    }
+  const saltRounds = 10;
 
+  try {
+    const hashedToken = await bcrypt.hash(token, saltRounds);
     const newRecord = {
       hashedToken,
       uid,
@@ -95,42 +93,37 @@ MongoStore.prototype.storeOrUpdate = function storeOrUpdate(
     };
 
     // Insert or update
-    Collection.update({ uid }, newRecord, { upsert: true }, err2 => {
-      if (err2) {
-        callback(err2);
-      } else {
-        callback();
-      }
-    });
-  });
+    await Collection.updateOne({ uid }, newRecord, { upsert: true });
+    callback();
+  } catch (error) {
+    callback(error);
+  }
 };
 
-MongoStore.prototype.invalidateUser = function invalidateUser(uid, callback) {
+MongoStore.prototype.invalidateUser = async function invalidateUser(uid, callback) {
   if (!uid || !callback) {
     throw new Error('TokenStore:invalidateUser called with invalid parameters');
   }
 
-  Collection.remove({ uid }, err => {
-    if (err) {
-      callback(err);
-    } else {
-      callback();
-    }
-  });
+  try {
+    await Collection.deleteOne({ uid });
+    callback();
+  } catch (error) {
+    callback(error);
+  }
 };
 
-MongoStore.prototype.clear = function clear(callback) {
+MongoStore.prototype.clear = async function clear(callback) {
   if (!callback) {
     throw new Error('TokenStore:clear called with invalid parameters');
   }
 
-  Collection.remove({}, err => {
-    if (err) {
-      callback(err);
-    } else {
-      callback();
-    }
-  });
+  try {
+    await Collection.deleteMany({});
+    callback();
+  } catch (error) {
+    callback(error);
+  }
 };
 
 MongoStore.prototype.length = function length(callback) {

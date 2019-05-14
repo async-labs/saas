@@ -16,14 +16,14 @@ function setupPasswordless({ server, ROOT_URL }) {
 
   passwordless.addDelivery((tokenToSend, uidToSend, recipient, callback, req) => {
     const text = `Hello!\nAccess your account here:
-    http://${ROOT_URL}/auth/logged_in?$token=${tokenToSend}&uid=${encodeURIComponent(uidToSend)}`;
+    ${ROOT_URL}/auth/logged_in?token=${tokenToSend}&uid=${encodeURIComponent(uidToSend)}`;
 
     logger.debug(text, recipient, req.body);
     callback();
   });
 
   server.use(passwordless.sessionSupport());
-  server.use(passwordless.acceptToken({ successRedirect: '/' }));
+  server.use(passwordless.acceptToken({ successRedirect: URL_APP }));
 
   server.use((req, __, next) => {
     if (req.user && typeof req.user === 'string') {
@@ -34,10 +34,6 @@ function setupPasswordless({ server, ROOT_URL }) {
     } else {
       next();
     }
-  });
-
-  server.get('/auth/logged_in', passwordless.acceptToken(), (__, res) => {
-    res.redirect('/');
   });
 
   server.post(
@@ -65,7 +61,7 @@ function setupPasswordless({ server, ROOT_URL }) {
     },
   );
 
-  server.get('/logout', (req, res) => {
+  server.get('/logout', passwordless.logout(), (req, res) => {
     req.logout();
     res.redirect(`${URL_APP}/login`);
   });
