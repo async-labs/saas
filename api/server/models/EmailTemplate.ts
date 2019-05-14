@@ -68,6 +68,12 @@ async function insertTemplates() {
         <p>View it at <a href="<%= discussionLink %>"><%= discussionLink %></a>.</p>
       `,
     },
+    {
+      name: 'login',
+      subject: 'Login url for Async SaaS',
+      message: `<p>Hello!<p>
+        <p>Access your account here: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
+    },
   ];
 
   for (const t of templates) {

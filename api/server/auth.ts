@@ -2,7 +2,9 @@ import * as passport from 'passport';
 import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
 import * as passwordless from 'passwordless';
 
+import sendEmail from './aws-ses';
 import logger from './logs';
+import getEmailTemplate from './models/EmailTemplate';
 import Invitation from './models/Invitation';
 import User, { IUserDocument } from './models/User';
 import PasswordlessMongoStore from './passwordless';
@@ -14,12 +16,26 @@ const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 function setupPasswordless({ server, ROOT_URL }) {
   passwordless.init(new PasswordlessMongoStore());
 
-  passwordless.addDelivery((tokenToSend, uidToSend, recipient, callback, req) => {
-    const text = `Hello!\nAccess your account here:
-    ${ROOT_URL}/auth/logged_in?token=${tokenToSend}&uid=${encodeURIComponent(uidToSend)}`;
+  passwordless.addDelivery(async (tokenToSend, uidToSend, recipient, callback) => {
+    try {
+      const template = await getEmailTemplate('login', {
+        loginURL: `${ROOT_URL}/auth/logged_in?token=${tokenToSend}&uid=${encodeURIComponent(
+          uidToSend,
+        )}`,
+      });
 
-    logger.debug(text, recipient, req.body);
-    callback();
+      await sendEmail({
+        from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [recipient],
+        subject: template.subject,
+        body: template.message,
+      });
+
+      callback();
+    } catch (err) {
+      logger.error('Email sending error:', err);
+      callback(err);
+    }
   });
 
   server.use(passwordless.sessionSupport());
