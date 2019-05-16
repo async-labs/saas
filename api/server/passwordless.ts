@@ -10,6 +10,7 @@ interface ITokenDocument extends mongoose.Document {
   uid: string;
   ttl: Date;
   originUrl: string;
+  email: string;
 }
 
 const mongoSchema = new mongoose.Schema({
@@ -27,13 +28,11 @@ const mongoSchema = new mongoose.Schema({
     required: true,
     expires: 0,
   },
-  originUrl: {
-    type: String,
-    required: true,
-  },
+  originUrl: String,
+  email: String,
 });
 
-const Collection = mongoose.model<ITokenDocument>(
+const PasswordlessToken = mongoose.model<ITokenDocument>(
   'PasswordlessToken',
   mongoSchema,
   'passwordless-token',
@@ -53,7 +52,7 @@ MongoStore.prototype.authenticate = async function authenticate(token, uid, call
   }
 
   try {
-    const item = await Collection.findOne({ uid, ttl: { $gt: new Date() } });
+    const item = await PasswordlessToken.findOne({ uid, ttl: { $gt: new Date() } });
 
     if (item) {
       const res = await bcrypt.compare(token, item.hashedToken);
@@ -85,19 +84,36 @@ MongoStore.prototype.storeOrUpdate = async function storeOrUpdate(
 
   try {
     const hashedToken = await bcrypt.hash(token, saltRounds);
-    const newRecord = {
-      hashedToken,
-      uid,
-      ttl: new Date(Date.now() + msToLive),
-      originUrl,
-    };
+    const newRecord = { hashedToken, uid, ttl: new Date(Date.now() + msToLive), originUrl };
 
-    // Insert or update
-    await Collection.updateOne({ uid }, newRecord, { upsert: true });
+    await PasswordlessToken.updateOne(
+      { uid },
+      { $set: newRecord },
+      { upsert: true, runValidators: true },
+    );
     callback();
   } catch (error) {
     callback(error);
   }
+};
+
+MongoStore.prototype.storeOrUpdateByEmail = async function addEmail(email: string) {
+  if (!email) {
+    throw new Error('TokenStore:addEmail called with invalid parameters');
+  }
+
+  const obj = await PasswordlessToken.findOne({ email })
+    .select('uid')
+    .setOptions({ lean: true });
+
+  if (obj) {
+    return obj.uid;
+  }
+
+  const uid = mongoose.Types.ObjectId().toHexString();
+  await PasswordlessToken.updateOne({ uid }, { email }, { upsert: true });
+
+  return uid;
 };
 
 MongoStore.prototype.invalidateUser = async function invalidateUser(uid, callback) {
@@ -106,7 +122,7 @@ MongoStore.prototype.invalidateUser = async function invalidateUser(uid, callbac
   }
 
   try {
-    await Collection.deleteOne({ uid });
+    await PasswordlessToken.deleteOne({ uid });
     callback();
   } catch (error) {
     callback(error);
@@ -119,7 +135,7 @@ MongoStore.prototype.clear = async function clear(callback) {
   }
 
   try {
-    await Collection.deleteMany({});
+    await PasswordlessToken.deleteMany({});
     callback();
   } catch (error) {
     callback(error);
@@ -127,7 +143,7 @@ MongoStore.prototype.clear = async function clear(callback) {
 };
 
 MongoStore.prototype.length = function length(callback) {
-  Collection.countDocuments(callback);
+  PasswordlessToken.countDocuments(callback);
 };
 
 export default MongoStore;

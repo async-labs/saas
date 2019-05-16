@@ -14,7 +14,8 @@ const { PRODUCTION_URL_APP } = process.env;
 const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
 function setupPasswordless({ server, ROOT_URL }) {
-  passwordless.init(new PasswordlessMongoStore());
+  const mongoStore = new PasswordlessMongoStore();
+  passwordless.init(mongoStore);
 
   passwordless.addDelivery(async (tokenToSend, uidToSend, recipient, callback) => {
     try {
@@ -23,6 +24,8 @@ function setupPasswordless({ server, ROOT_URL }) {
           uidToSend,
         )}`,
       });
+
+      logger.debug(template.message);
 
       await sendEmail({
         from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
@@ -64,7 +67,8 @@ function setupPasswordless({ server, ROOT_URL }) {
           if (user) {
             callback(null, user._id);
           } else {
-            callback(null, null);
+            const id = await mongoStore.storeOrUpdateByEmail(email);
+            callback(null, id);
           }
         } catch (error) {
           callback(error);
@@ -111,7 +115,7 @@ function setupGoogle({ ROOT_URL, server }) {
       verified(null, user);
     } catch (err) {
       verified(err);
-      logger.error(err); // eslint-disable-line
+      logger.error(err);
     }
   };
 
