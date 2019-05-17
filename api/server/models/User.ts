@@ -22,8 +22,8 @@ mongoose.set('useFindAndModify', false);
 const mongoSchema = new mongoose.Schema({
   googleId: {
     type: String,
-    required: true,
     unique: true,
+    sparse: true,
   },
   googleToken: {
     accessToken: String,
@@ -183,6 +183,8 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     avatarUrl: string;
     googleToken: { refreshToken?: string; accessToken?: string };
   }): Promise<IUserDocument>;
+
+  signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<IUserDocument>;
 
   createCustomer({
     userId,
@@ -345,13 +347,7 @@ class UserClass extends mongoose.Model {
       throw new Error('welcome Email template not found');
     }
 
-    const template = await getEmailTemplate(
-      'welcome',
-      {
-        userName: displayName,
-      },
-      emailTemplate,
-    );
+    const template = await getEmailTemplate('welcome', { userName: displayName }, emailTemplate);
 
     if (!hasInvitation) {
       try {
@@ -367,10 +363,60 @@ class UserClass extends mongoose.Model {
     }
 
     try {
-      await subscribe({
-        email,
-        listName: 'signups',
-      });
+      await subscribe({ email, listName: 'signups' });
+    } catch (error) {
+      logger.error('Mailchimp error:', error);
+    }
+
+    return _.pick(newUser, this.publicFields());
+  }
+
+  public static async signUpByEmail({ uid, email }) {
+    const user = await this.findOne({ email })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
+
+    if (user) {
+      throw Error('User already exists');
+    }
+
+    const slug = await generateSlug(this, email);
+
+    const newUser = await this.create({
+      _id: uid,
+      createdAt: new Date(),
+      email,
+      slug,
+      defaultTeamSlug: '',
+    });
+
+    const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
+
+    const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
+      lean: true,
+    });
+
+    if (!emailTemplate) {
+      throw new Error('welcome Email template not found');
+    }
+
+    const template = await getEmailTemplate('welcome', { userName: email }, emailTemplate);
+
+    if (!hasInvitation) {
+      try {
+        await sendEmail({
+          from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+          to: [email],
+          subject: template.subject,
+          body: template.message,
+        });
+      } catch (err) {
+        logger.error('Email sending error:', err);
+      }
+    }
+
+    try {
+      await subscribe({ email, listName: 'signups' });
     } catch (error) {
       logger.error('Mailchimp error:', error);
     }
@@ -420,5 +466,10 @@ class UserClass extends mongoose.Model {
 mongoSchema.loadClass(UserClass);
 
 const User = mongoose.model<IUserDocument, IUserModel>('User', mongoSchema);
+User.ensureIndexes(err => {
+  if (err) {
+    logger.error(`User.ensureIndexes: ${err.stack}`);
+  }
+});
 
 export default User;

@@ -26,10 +26,7 @@ export default function withStore(App) {
       }
 
       let initialData = {};
-      const {
-        teamSlug,
-        discussionSlug,
-      } = ctx.query;
+      const { teamSlug, discussionSlug } = ctx.query;
 
       if (user) {
         try {

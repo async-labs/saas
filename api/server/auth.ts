@@ -1,15 +1,93 @@
 import * as passport from 'passport';
 import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
+import * as passwordless from 'passwordless';
 
+import sendEmail from './aws-ses';
 import logger from './logs';
+import getEmailTemplate from './models/EmailTemplate';
 import Invitation from './models/Invitation';
 import User, { IUserDocument } from './models/User';
+import PasswordlessMongoStore from './passwordless';
 
 const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_APP } = process.env;
 const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
 
-export default function auth({ ROOT_URL, server }) {
+function setupPasswordless({ server, ROOT_URL }) {
+  const mongoStore = new PasswordlessMongoStore();
+  passwordless.init(mongoStore);
+
+  passwordless.addDelivery(async (tokenToSend, uidToSend, recipient, callback) => {
+    try {
+      const template = await getEmailTemplate('login', {
+        loginURL: `${ROOT_URL}/auth/logged_in?token=${tokenToSend}&uid=${encodeURIComponent(
+          uidToSend,
+        )}`,
+      });
+
+      logger.debug(template.message);
+
+      await sendEmail({
+        from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [recipient],
+        subject: template.subject,
+        body: template.message,
+      });
+
+      callback();
+    } catch (err) {
+      logger.error('Email sending error:', err);
+      callback(err);
+    }
+  });
+
+  server.use(passwordless.sessionSupport());
+  server.use(passwordless.acceptToken({ successRedirect: URL_APP }));
+
+  server.use((req, __, next) => {
+    if (req.user && typeof req.user === 'string') {
+      User.findById(req.user, User.publicFields(), (err, user) => {
+        req.user = user;
+        next(err);
+      });
+    } else {
+      next();
+    }
+  });
+
+  server.post(
+    '/auth/send-token',
+    passwordless.requestToken(
+      async (email, __, callback) => {
+        try {
+          const user = await User.findOne({ email })
+            .select('_id')
+            .setOptions({ lean: true });
+
+          if (user) {
+            callback(null, user._id);
+          } else {
+            const id = await mongoStore.storeOrUpdateByEmail(email);
+            callback(null, id);
+          }
+        } catch (error) {
+          callback(error);
+        }
+      },
+      { userField: 'email' },
+    ),
+    (__, res) => {
+      res.json({ done: 1 });
+    },
+  );
+
+  server.get('/logout', passwordless.logout(), (req, res) => {
+    req.logout();
+    res.redirect(`${URL_APP}/login`);
+  });
+}
+
+function setupGoogle({ ROOT_URL, server }) {
   const clientID = process.env.Google_clientID;
   const clientSecret = process.env.Google_clientSecret;
 
@@ -37,7 +115,7 @@ export default function auth({ ROOT_URL, server }) {
       verified(null, user);
     } catch (err) {
       verified(err);
-      logger.error(err); // eslint-disable-line
+      logger.error(err);
     }
   };
 
@@ -113,9 +191,6 @@ export default function auth({ ROOT_URL, server }) {
       res.redirect(`${URL_APP}${redirectUrlAfterLogin}`);
     },
   );
-
-  server.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect(`${URL_APP}/login`);
-  });
 }
+
+export { setupPasswordless, setupGoogle };

@@ -10,8 +10,8 @@ import * as mongoose from 'mongoose';
 import * as path from 'path';
 
 import api from './api';
+import { setupGoogle, setupPasswordless } from './auth';
 import { signRequestForLoad } from './aws-s3';
-import auth from './google';
 import { setup as realtime } from './realtime';
 import { stripeWebHooks } from './stripe';
 
@@ -73,7 +73,9 @@ if (!dev) {
 const sessionMiddleware = session(sessionOptions);
 server.use(sessionMiddleware);
 
-auth({ server, ROOT_URL });
+setupGoogle({ server, ROOT_URL });
+setupPasswordless({ server, ROOT_URL });
+
 api(server);
 
 const http = new httpModule.Server(server);
@@ -81,7 +83,7 @@ realtime({ http, origin: dev ? 'http://localhost:3000' : PRODUCTION_URL_APP, ses
 
 server.get('/uploaded-file', async (req, res) => {
   if (!req.user) {
-    res.redirect(dev ? 'http://localhost:3000/login' : `${PRODUCTION_URL_APP}/login`);
+    res.redirect(dev ? 'http://localhost:3000/login' : `${PRODUCTION_URL_APP};/login`);
     return;
   }
 

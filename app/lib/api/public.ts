@@ -23,3 +23,8 @@ export const removeInvitationIfMemberAdded = (token: string) =>
   sendRequestAndGetResponse(`${BASE_PATH}/invitations/remove-invitation-if-member-added`, {
     body: JSON.stringify({ token }),
   });
+
+export const sendLoginToken = (email: string) =>
+  sendRequestAndGetResponse('/auth/send-token', {
+    body: JSON.stringify({ email }),
+  });
