@@ -33,23 +33,6 @@ class LoginButton extends React.PureComponent<
 
     return (
       <React.Fragment>
-        <div>
-          <form autoComplete="off" onSubmit={this.onSubmit}>
-            <TextField
-              required
-              type="email"
-              label="Email"
-              value={this.state.email}
-              onChange={event => {
-                this.setState({ email: event.target.value });
-              }}
-            />
-            <Button type="submit">Submit</Button>
-          </form>
-          <br />
-          <p />
-        </div>
-
         <Button variant="contained" style={styleLoginButton} href={url}>
           <img
             src="https://storage.googleapis.com/async-await-all/G.svg"
@@ -57,6 +40,31 @@ class LoginButton extends React.PureComponent<
           />
           &nbsp;&nbsp;&nbsp; Log in with Google
         </Button>
+        <p />
+        <br />
+        <hr style={{ width: '60px' }} /> <h4>OR</h4> <hr style={{ width: '60px' }} />
+        <p />
+        <br />
+        <div>
+          <form autoComplete="off" onSubmit={this.onSubmit}>
+            <TextField
+              required
+              type="email"
+              label="Email address"
+              value={this.state.email}
+              onChange={event => {
+                this.setState({ email: event.target.value });
+              }}
+              style={{ width: '300px' }}
+            />
+            <p />
+            <Button variant="contained" color="primary" type="submit">
+              Log in with email
+            </Button>
+          </form>
+          <br />
+          <p />
+        </div>
       </React.Fragment>
     );
   }
@@ -72,7 +80,7 @@ class LoginButton extends React.PureComponent<
     try {
       await sendLoginToken(email);
       this.setState({ email: '' });
-      notify('Sent login link. Please check your email.');
+      notify('We emailed you a login link.');
     } catch (error) {
       notify(error);
     }
