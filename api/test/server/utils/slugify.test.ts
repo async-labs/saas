@@ -1,25 +1,23 @@
+import mockingoose from 'mockingoose';
+import User from '../../../server/models/User';
 import { generateSlug } from '../../../server/utils/slugify';
 
-const MockUser = {
-  slugs: ['john-and-jonhson', 'john-and-jonhson-1', 'john'],
-  findOne({ slug }) {
-    if (this.slugs.includes(slug)) {
-      return Promise.resolve({
-        id: 'id', select() {
-          return this.id;
-        },
-      });
-    }
-
-    return Promise.resolve(null);
-  },
-};
-
 describe('slugify', () => {
+
+  const slugs = ['john-and-jonhson', 'john-and-jonhson-1', 'john'];
+
+  const finderMock = query => {
+    if (slugs.includes(query.getQuery().slug)) {
+      return { id: 'id' };
+    }
+  };
+
+  mockingoose(User).toReturn(finderMock, 'findOne');
+
   test('not duplicated', () => {
     expect.assertions(1);
 
-    return generateSlug(MockUser, 'John J Jonhson@#$').then(slug => {
+    return generateSlug(User, 'John J Jonhson@#$').then(slug => {
       expect(slug).toBe('john-j-jonhson');
     });
   });
@@ -27,7 +25,7 @@ describe('slugify', () => {
   test('one time duplicated', () => {
     expect.assertions(1);
 
-    return generateSlug(MockUser, ' John@#$').then(slug => {
+    return generateSlug(User, ' John@#$').then(slug => {
       expect(slug).toBe('john-1');
     });
   });
@@ -35,8 +33,12 @@ describe('slugify', () => {
   test('multiple duplicated', () => {
     expect.assertions(1);
 
-    return generateSlug(MockUser, 'John & Jonhson@#$').then(slug => {
+    return generateSlug(User, 'John & Jonhson@#$').then(slug => {
       expect(slug).toBe('john-and-jonhson-2');
     });
+  });
+
+  afterAll(() => {
+    mockingoose(User).reset();
   });
 });
