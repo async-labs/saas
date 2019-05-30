@@ -6,10 +6,11 @@
   "editor.formatOnSave": true,
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
+  "editor.insertSpaces": true,
   "eslint.autoFixOnSave": true,
   "prettier.eslintIntegration": true,
   "typescript.updateImportsOnFileMove.enabled": "never",
   "tslint.enable": true,
   "tslint.autoFixOnSave": true,
-  "prettier.tslintIntegration": true,
+  "prettier.tslintIntegration": true
 }
