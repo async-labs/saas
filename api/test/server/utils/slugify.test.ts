@@ -1,10 +1,14 @@
-import generateSlug from '../../../server/utils/slugify.ts';
+import { generateSlug } from '../../../server/utils/slugify';
 
 const MockUser = {
   slugs: ['john-and-jonhson', 'john-and-jonhson-1', 'john'],
   findOne({ slug }) {
     if (this.slugs.includes(slug)) {
-      return Promise.resolve({ id: 'id' });
+      return Promise.resolve({
+        id: 'id', select() {
+          return this.id;
+        },
+      });
     }
 
     return Promise.resolve(null);
