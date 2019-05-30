@@ -14,10 +14,18 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "experimentalDecorators": true,
-    "typeRoots": ["./node_modules/@types"],
-    "lib": ["es2015", "es2016"],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "lib": [
+      "es2015",
+      "es2016"
+    ],
     "module": "commonjs",
     "outDir": "production-server/"
   },
-  "include": ["./server/**/*.ts"]
+  "include": [
+    "./server/**/*.ts",
+    "./test/**/*.ts"
+  ]
 }
