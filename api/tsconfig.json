@@ -25,7 +25,6 @@
     "outDir": "production-server/"
   },
   "include": [
-    "./server/**/*.ts",
-    "./test/**/*.ts"
+    "./server/**/*.ts"
   ]
 }
