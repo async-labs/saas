@@ -3821,6 +3821,11 @@ mkdirp@0.x, mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
+mockingoose@^2.13.0:
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/mockingoose/-/mockingoose-2.13.0.tgz#888838c31850953340f7490a02a8f190fea023ce"
+  integrity sha512-3G6nyNks+kot29NOAIm2eyUh+A7cgwoNHVhQcgOyXn/XLieXeJAM+wxHlvn9vfmaSCoQW975ptQxnr0dJCW8lg==
+
 mongodb-core@2.1.20:
   version "2.1.20"
   resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-2.1.20.tgz#fece8dd76b59ee7d7f2d313b65322c160492d8f1"
