@@ -1,39 +1,41 @@
 
-FROM node:10-alpine
-ENV NPM_CONFIG_LOGLEVEL error
-# ENV NODE_ENV production
+FROM node:10-alpine as builder
 
-# see https://github.com/kelektiv/node.bcrypt.js/wiki/Installation-Instructions#alpine-linux-based-images
+ARG LOG_LEVEL=error
+ENV NPM_CONFIG_LOGLEVEL ${LOG_LEVEL}
+
+ARG NODE_ENV=production
+ENV NODE_ENV ${NODE_ENV}
+
+# build dependencies, see https://github.com/kelektiv/node.bcrypt.js/wiki/Installation-Instructions#alpine-linux-based-images
 RUN apk --no-cache add --update --no-progress --virtual builds-deps build-base python 
-
-
-ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 /usr/local/bin/dumb-init
-RUN chmod +x /usr/local/bin/dumb-init
-
-RUN mkdir -p /usr/src/app
-
-RUN addgroup -S nodejs && adduser -S nodejs
-
-WORKDIR /usr/src/app
 
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn install --production --ignore-scripts --frozen-lockfile
+RUN yarn install --ignore-scripts --frozen-lockfile
 
-# see https://github.com/kelektiv/node.bcrypt.js/wiki/Installation-Instructions#alpine-linux-based-images
 RUN npm rebuild bcrypt --build-from-source
 
-ENV HOST "0.0.0.0"
-ENV PORT 8000
-EXPOSE 8000
+FROM node:10-alpine
 
-COPY production-server .
+# repeated ARG's, see Note in https://docs.docker.com/compose/compose-file/#args
+ARG LOG_LEVEL=error
+ENV NPM_CONFIG_LOGLEVEL ${LOG_LEVEL}
 
-RUN chown -R nodejs:nodejs . && \
-  chmod 744 -R .
+ARG NODE_ENV=production
+ENV NODE_ENV ${NODE_ENV}
 
-USER nodejs
+ARG PORT=8000
+ENV PORT ${PORT}
 
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "app"]
+WORKDIR /usr/src/app
+COPY --from=builder node_modules node_modules
+COPY . .
+
+RUN yarn build
+
+EXPOSE ${PORT}
+
+USER node
+CMD ["yarn", "start"]
