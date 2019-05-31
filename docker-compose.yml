@@ -2,12 +2,20 @@ version: "3.7"
 
 services:
   api:
-    build: api
+    build:
+      context: api
+      args:
+        LOG_LEVEL: notice
+        NODE_ENV: development
+        PORT: 8000
     env_file: ./api/.env
+    volumes:
+      - ./api:/usr/src/app
     ports:
       - "8000:8000"
     depends_on:
       - mongo
+    command: yarn dev
 
   # app:
   #   build: app
