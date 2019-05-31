@@ -1,0 +1,37 @@
+version: "3.7"
+
+services:
+  api:
+    build: api
+    env_file: ./api/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+
+  # app:
+  #   build: app
+  #   env_file: ./app/.env
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - api
+
+  mongo:
+    image: mongo
+    restart: always
+    env_file: .env
+    ports:
+      - "27017:27017"
+    # fix for https://github.com/docker-library/mongo/issues/329#issuecomment-460858099
+    volumes:
+      - ./mongo-user.sh:/docker-entrypoint-initdb.d/mongo-user.sh:ro
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    env_file: .env
+    depends_on:
+      - mongo
