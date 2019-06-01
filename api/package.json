@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon server/app.ts",
     "build": "rm -rf production-server/ && tsc --project tsconfig.json",
+    "build:docker": "yarn lint && yarn build && yarn test",
     "postinstall": "rm -rf production-server/ && tsc --project tsconfig.json",
     "start": "NODE_ENV=production node production-server/app.js",
     "now": "now && now alias",

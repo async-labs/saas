@@ -13,7 +13,7 @@ RUN apk --no-cache add --update --no-progress --virtual builds-deps build-base p
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn install --ignore-scripts --frozen-lockfile
+RUN yarn install --ignore-scripts --frozen-lockfile --ignore-optional
 
 RUN npm rebuild bcrypt --build-from-source
 
@@ -33,7 +33,7 @@ WORKDIR /usr/src/app
 COPY --from=builder node_modules node_modules
 COPY . .
 
-RUN yarn build
+RUN yarn build:docker
 
 EXPOSE ${PORT}
 
