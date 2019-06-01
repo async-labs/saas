@@ -1,5 +1,5 @@
 
-FROM node:10-alpine as apibuilder
+FROM node:10-alpine as appbuilder
 
 ARG LOG_LEVEL=error
 ENV NPM_CONFIG_LOGLEVEL ${LOG_LEVEL}
@@ -7,15 +7,13 @@ ENV NPM_CONFIG_LOGLEVEL ${LOG_LEVEL}
 ARG NODE_ENV=production
 ENV NODE_ENV ${NODE_ENV}
 
-# build dependencies, see https://github.com/kelektiv/node.bcrypt.js/wiki/Installation-Instructions#alpine-linux-based-images
+# build dependencies, this one does not have bcrypt, but it may be required by other deps
 RUN apk --no-cache add --update --no-progress --virtual builds-deps build-base python 
 
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn install --force --ignore-scripts --frozen-lockfile --ignore-optional
-
-RUN npm rebuild bcrypt --build-from-source
+RUN yarn install --ignore-scripts --frozen-lockfile --ignore-optional
 
 FROM node:10-alpine
 
@@ -26,11 +24,11 @@ ENV NPM_CONFIG_LOGLEVEL ${LOG_LEVEL}
 ARG NODE_ENV=production
 ENV NODE_ENV ${NODE_ENV}
 
-ARG PORT=8000
+ARG PORT=3000
 ENV PORT ${PORT}
 
-WORKDIR /usr/src/api
-COPY --from=apibuilder node_modules node_modules
+WORKDIR /usr/src/app
+COPY --from=appbuilder node_modules node_modules
 COPY . .
 
 RUN yarn build
@@ -38,6 +36,3 @@ RUN yarn build
 EXPOSE ${PORT}
 
 CMD ["yarn", "start"]
-
-
-# docker build -t saas-boilerplate_api:stable .
