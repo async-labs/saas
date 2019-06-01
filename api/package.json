@@ -13,7 +13,13 @@
     "test": "jest --coverage",
     "processes-8000": "ss -lptn 'sport = :8000'",
     "processes-node": "ps -e|grep node",
-    "kill-processes-at-port": "lsof -i tcp:8000 | awk 'NR!=1 {print $2}' | xargs kill"
+    "kill-processes-at-port": "lsof -i tcp:8000 | awk 'NR!=1 {print $2}' | xargs kill",
+    "docker:build": "yarn lint && yarn build && yarn test && docker image build . -t saas-api:latest",
+    "docker:run": "yarn docker:clean && yarn docker:runHelper",
+    "docker:runHelper": "docker run --name saas-api-latest --env-file .env -d -p 8000:8000 saas-api:latest",
+    "docker:clean": "docker rm -f saas-api-latest || true",
+    "docker:taillogs": "docker logs -f saas-api-latest",
+    "docker:debug": "yarn docker:build && yarn docker:run && yarn docker:taillogs"
   },
   "husky": {
     "hooks": {
