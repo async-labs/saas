@@ -4,21 +4,21 @@
   "license": "MIT",
   "description": "Build your own SaaS business with SaaS boilerplate. Productive stack: React, Material-UI, Next, MobX, WebSockets, Express, Node, Mongoose, MongoDB. Written with TypeScript.",
   "scripts": {
-    "dev": "yarn start:mongo & yarn --cwd ./api dev & yarn --cwd ./app dev",
+    "dev": "yarn --cwd ./api dev & yarn --cwd ./app dev",
     "test": "yarn --cwd ./api test && yarn --cwd ./app test",
     "build": "docker-compose build",
     "postinstall": "yarn --cwd ./api install && yarn --cwd ./app install",
     "start": "docker-compose up",
     "stop": "docker-compose down",
     "clean": "docker-compose rm",
-    "clean:prune": "yarn clean && docker rmi $(docker images -f reference=saas-*:* -q)",
+    "clean:prune": "yarn clean && docker rmi $(docker images -f reference=saas-*:* -q) && yarn clean:dangling",
     "clean:dangling": "docker rmi $(docker images -f dangling=true -q)",
+    "clean:volumes": "docker volume ls -qf dangling=true | xargs -r docker volume rm",
     "start:api": "docker-compose run --service-ports --use-aliases --rm saas-api",
     "start:app": "docker-compose run --service-ports --use-aliases --rm saas-app",
-    "start:mongo": "docker-compose run --service-ports --use-aliases --rm saas-mongo",
+    "start:db": "docker-compose run --service-ports --use-aliases --rm saas-mongo",
     "sh:api": "docker-compose exec saas-api sh",
-    "sh:app": "docker-compose exec saas-app sh",
-    "sh:mongo": "docker-compose exec saas-mongo sh"
+    "sh:app": "docker-compose exec saas-app sh"
   },
   "keywords": [
     "react",
@@ -30,6 +30,7 @@
     "next",
     "mobx",
     "websockets",
-    "express"
+    "express",
+    "docker"
   ]
 }
