@@ -11,9 +11,9 @@ import { styleLoginButton } from '../../lib/sharedStyles';
 
 // TS errors: https://github.com/mui-org/material-ui/issues/8198
 
-const dev = process.env.NODE_ENV !== 'production';
-const { PRODUCTION_URL_API } = env;
-const LOGIN_URL = dev ? 'http://localhost:8000' : PRODUCTION_URL_API;
+const { PRODUCTION_URL_API, DEVELOPMENT_URL_API, NODE_ENV } = env;
+const dev = NODE_ENV !== 'production';
+const LOGIN_URL = dev ? DEVELOPMENT_URL_API : PRODUCTION_URL_API;
 
 class LoginButton extends React.PureComponent<
   { next?: string; invitationToken?: string },

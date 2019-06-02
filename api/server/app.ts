@@ -52,6 +52,9 @@ stripeWebHooks({ server });
 
 server.use(express.json());
 
+const DEVELOPMENT_COOKIE_DOMAIN = process.env.DEVELOPMENT_COOKIE_DOMAIN || 'localhost';
+const PRODUCTION_COOKIE_DOMAIN = process.env.PRODUCTION_COOKIE_DOMAIN || '.async-await.com';
+
 const MongoStore = mongoSessionStore(session);
 const sessionOptions = {
   name: process.env.SESSION_NAME,
@@ -65,7 +68,7 @@ const sessionOptions = {
   cookie: {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
-    domain: dev ? 'localhost' : '.async-await.com',
+    domain: dev ? DEVELOPMENT_COOKIE_DOMAIN : PRODUCTION_COOKIE_DOMAIN,
   } as any,
 };
 
