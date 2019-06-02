@@ -10,8 +10,10 @@ import User, { IUserDocument } from './models/User';
 import PasswordlessMongoStore from './passwordless';
 
 const dev = process.env.NODE_ENV !== 'production';
+
 const { PRODUCTION_URL_APP } = process.env;
-const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
+const DEVELOPMENT_URL_APP = process.env.DEVELOPMENT_URL_APP || 'http://localhost:3000';
+const URL_APP = dev ? DEVELOPMENT_URL_APP : PRODUCTION_URL_APP;
 
 function setupPasswordless({ server, ROOT_URL }) {
   const mongoStore = new PasswordlessMongoStore();

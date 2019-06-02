@@ -8,7 +8,8 @@ import User, { IUserDocument } from './User';
 
 const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_APP } = process.env;
-const ROOT_URL = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
+const DEVELOPMENT_URL_APP = process.env.DEVELOPMENT_URL_APP || 'http://localhost:3000';
+const ROOT_URL = dev ? DEVELOPMENT_URL_APP : PRODUCTION_URL_APP;
 
 mongoose.set('useFindAndModify', false);
 
