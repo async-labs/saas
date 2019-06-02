@@ -7,6 +7,7 @@
     "build": "rm -rf production-server/ && tsc --project tsconfig.json",
     "postinstall": "rm -rf production-server/ && tsc --project tsconfig.json",
     "start": "NODE_ENV=production node production-server/app.js",
+    "start:container": "NODE_ENV=development node production-server/app.js",
     "now": "now && now alias",
     "now-rm": "now rm saas-api --safe --yes",
     "lint": "tslint -p tsconfig.json",
