@@ -2,32 +2,11 @@ import htmlescape from 'htmlescape';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
 import flush from 'styled-jsx/server';
+import env from '../lib/env';
 
 const {
-  NODE_ENV,
   GA_TRACKING_ID,
-  PRODUCTION_URL_APP,
-  PRODUCTION_URL_API,
-  DEVELOPMENT_URL_APP,
-  DEVELOPMENT_URL_API,
-  StripePublishableKey,
-  BUCKET_FOR_POSTS,
-  BUCKET_FOR_TEAM_AVATARS,
-  LAMBDA_API_ENDPOINT,
-} = process.env;
-
-const env = {
-  NODE_ENV,
-  GA_TRACKING_ID,
-  PRODUCTION_URL_APP,
-  PRODUCTION_URL_API,
-  DEVELOPMENT_URL_APP: DEVELOPMENT_URL_APP || 'http://localhost:3000',
-  DEVELOPMENT_URL_API: DEVELOPMENT_URL_API || 'http://localhost:8000',
-  StripePublishableKey,
-  BUCKET_FOR_POSTS,
-  BUCKET_FOR_TEAM_AVATARS,
-  LAMBDA_API_ENDPOINT,
-};
+} = env;
 
 class MyDocument extends Document {
   public static getInitialProps = ctx => {

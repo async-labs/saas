@@ -2,7 +2,7 @@ import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
 import * as io from 'socket.io-client';
 
-import getApiUrl from '../api/getRootUrl';
+import env from '../env';
 
 import { addTeam } from '../api/team-leader';
 import { getTeamList } from '../api/team-member';
@@ -13,6 +13,8 @@ import { Team } from './team';
 import { User } from './user';
 
 mobx.configure({ enforceActions: 'observed' });
+
+const { URL_API, NODE_ENV } = env;
 
 class Store {
   public isServer: boolean;
@@ -252,11 +254,11 @@ let store: Store = null;
 
 function initStore(initialState = {}) {
   const isServer = typeof window === 'undefined';
-  const dev = process.env.NODE_ENV !== 'production';
 
   if (isServer) {
     return new Store({ initialState, isServer: true });
   } else {
+    const dev = NODE_ENV !== 'production';
     const win: any = window;
 
     if (!store) {
@@ -278,7 +280,7 @@ function initStore(initialState = {}) {
         }
       }
 
-      const socket = io(getApiUrl());
+      const socket = io(URL_API);
 
       store = new Store({ initialState, socket, isServer: false });
 

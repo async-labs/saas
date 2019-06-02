@@ -11,20 +11,18 @@ import { styleLoginButton } from '../../lib/sharedStyles';
 
 // TS errors: https://github.com/mui-org/material-ui/issues/8198
 
-const { PRODUCTION_URL_API, DEVELOPMENT_URL_API, NODE_ENV } = env;
-const dev = NODE_ENV !== 'production';
-const LOGIN_URL = dev ? DEVELOPMENT_URL_API : PRODUCTION_URL_API;
+const { URL_API } = env;
 
 class LoginButton extends React.PureComponent<
   { next?: string; invitationToken?: string },
   { email: string }
-> {
+  > {
   public state = { email: '' };
 
   public render() {
     const { next, invitationToken } = this.props;
 
-    let url = `${LOGIN_URL}/auth/google`;
+    let url = `${URL_API}/auth/google`;
     const qs = makeQueryString({ next, invitationToken });
 
     if (qs) {

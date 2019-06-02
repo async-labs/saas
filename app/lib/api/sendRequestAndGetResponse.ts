@@ -2,9 +2,11 @@ import 'isomorphic-unfetch';
 
 import { getStore } from '../store';
 
-import getApiUrl from './getRootUrl';
+import env from './../env';
 
 import { makeQueryString } from './makeQueryString';
+
+const { URL_API } = env;
 
 export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   const { externalServer } = opts;
@@ -27,7 +29,7 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   const qs = (opts.qs && `?${makeQueryString(opts.qs)}`) || '';
 
   const response = await fetch(
-    externalServer ? `${path}${qs}` : `${getApiUrl()}${path}${qs}`,
+    externalServer ? `${path}${qs}` : `${URL_API}${path}${qs}`,
     Object.assign({ method: 'POST', credentials: 'include' }, opts, { headers }),
   );
 
