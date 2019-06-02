@@ -1,7 +1,6 @@
 version: "3.7"
-
 services:
-  api:
+  saas-api:
     build:
       context: api
       args:
@@ -10,16 +9,26 @@ services:
         PORT: 8000
     image: saas-api:dev
     container_name: saas-api
+    networks:
+      default:
+        aliases:
+          - api.saas-dev
     env_file: ./api/.env
-    volumes:
-      - ./api:/usr/src/api
+    # set the environment vard to use hostnames regardless of ./api/.env
+    # so that it's configured for the docker network
+    environment:
+      NODE_ENV: development
+      DEVELOPMENT_URL_APP: http://app.saas-dev:3000
+      DEVELOPMENT_URL_API: http://api.saas-dev:8000
+      DEVELOPMENT_COOKIE_DOMAIN: .saas-dev
+      MONGO_URL_TEST: mongodb://saas:secret@saas-mongo:27017/saas
     ports:
       - "8000:8000"
     depends_on:
-      - mongo
-    command: yarn dev
+      - saas-mongo
+    command: yarn start:container
 
-  app:
+  saas-app:
     build:
       context: app
       args:
@@ -28,16 +37,24 @@ services:
         PORT: 3000
     image: saas-app:dev
     container_name: saas-app
+    networks:
+      default:
+        aliases:
+          - app.saas-dev
     env_file: ./app/.env
-    volumes:
-      - ./app:/usr/src/app
+    # set the environment vard to use hostnames regardless of ./app/.env
+    # so that it's configured for the docker network
+    environment:
+      NODE_ENV: development
+      DEVELOPMENT_URL_APP: http://app.saas-dev:3000
+      DEVELOPMENT_URL_API: http://api.saas-dev:8000
     ports:
       - "3000:3000"
     depends_on:
-      - api
-    command: yarn dev
+      - saas-api
+    command: yarn start:container
 
-  mongo:
+  saas-mongo:
     image: mongo
     env_file: .env
     container_name: saas-mongo
@@ -55,3 +72,6 @@ services:
   #   env_file: .env
   #   depends_on:
   #     - mongo
+networks:
+  default:
+    driver: bridge

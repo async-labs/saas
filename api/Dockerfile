@@ -38,6 +38,3 @@ RUN yarn build
 EXPOSE ${PORT}
 
 CMD ["yarn", "start"]
-
-
-# docker build -t saas-boilerplate_api:stable .
