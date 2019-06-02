@@ -1,6 +1,6 @@
 {
   "window.zoomLevel": 0,
-  "files.autoSave": "afterDelay",
+  "files.autoSave": "off",
   "git.enableSmartCommit": true,
   "git.autofetch": true,
   "editor.formatOnSave": true,
