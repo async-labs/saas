@@ -22,8 +22,13 @@ dotenv.config();
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 8000;
+const appPort = process.env.APP_PORT || 3000;
+
 const { PRODUCTION_URL_APP, PRODUCTION_URL_API } = process.env;
-const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_API;
+const DEVELOPMENT_URL_API = process.env.DEVELOPMENT_URL_API || `http://localhost:${port}`;
+const DEVELOPMENT_URL_APP = process.env.DEVELOPMENT_URL_APP || `http://localhost:${appPort}`;
+
+const ROOT_URL = dev ? DEVELOPMENT_URL_API : PRODUCTION_URL_API;
 
 const MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
 
@@ -37,8 +42,7 @@ mongoose.connect(MONGO_URL, options);
 
 const server = express();
 
-const appPort = process.env.APP_PORT || 3000;
-const origin = dev ? `http://localhost:${appPort}` : PRODUCTION_URL_APP;
+const origin = dev ? DEVELOPMENT_URL_APP : PRODUCTION_URL_APP;
 server.use(cors({ origin, credentials: true }));
 
 server.use(helmet());
@@ -79,11 +83,11 @@ setupPasswordless({ server, ROOT_URL });
 api(server);
 
 const http = new httpModule.Server(server);
-realtime({ http, origin: dev ? 'http://localhost:3000' : PRODUCTION_URL_APP, sessionMiddleware });
+realtime({ http, origin, sessionMiddleware });
 
 server.get('/uploaded-file', async (req, res) => {
   if (!req.user) {
-    res.redirect(dev ? 'http://localhost:3000/login' : `${PRODUCTION_URL_APP};/login`);
+    res.redirect(`${origin}/login`);
     return;
   }
 
