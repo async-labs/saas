@@ -43,8 +43,8 @@ services:
     env_file: ./app/.env
     environment:
       NODE_ENV: development
-      DEVELOPMENT_URL_APP: http://app.saas.localhost:3000
-      DEVELOPMENT_URL_API: http://api.saas.localhost:8000
+      URL_APP: http://app.saas.localhost:3000
+      URL_API: http://api.saas.localhost:8000
     ports:
       - "3000:3000"
     depends_on:

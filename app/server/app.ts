@@ -10,12 +10,8 @@ import routesWithSlug from './routesWithSlug';
 
 mobxReact.useStaticRendering(true);
 
-const { PRODUCTION_URL_APP } = env;
-const dev = env.NODE_ENV !== 'production';
-const port = env.PORT || 3000;
-const DEVELOPMENT_URL_APP = env.DEVELOPMENT_URL_APP || `http://localhost:${port}`;
-
-const ROOT_URL = dev ? DEVELOPMENT_URL_APP : PRODUCTION_URL_APP;
+const { NODE_ENV, PORT, URL_APP } = env;
+const dev = NODE_ENV !== 'production';
 
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -67,7 +63,7 @@ app.prepare().then(() => {
       }
     }
 
-    res.redirect(`${ROOT_URL}/${redirectUrl}`);
+    res.redirect(`${URL_APP}/${redirectUrl}`);
   });
 
   routesWithSlug({ server, app });
@@ -80,10 +76,10 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(port, err => {
+  server.listen(PORT, err => {
     if (err) {
       throw err;
     }
-    console.log(`> Ready on ${ROOT_URL}`);
+    console.log(`> Ready on ${URL_APP}`);
   });
 });
