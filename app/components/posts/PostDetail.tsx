@@ -121,7 +121,7 @@ class PostDetail extends React.Component<{
   }
 
   public renderPostDetail(post: Post, isMobile) {
-    const createdDate = moment(post.createdAt).format('MMM Do YYYY');
+    const createdDate = moment(post.createdAt).local().format('MMM Do YYYY');
     const lastEditedDate = moment(post.lastUpdatedAt).fromNow();
     return (
       <React.Fragment>
@@ -157,7 +157,7 @@ class PostDetail extends React.Component<{
           )}
           <div
             style={{
-              margin: isMobile ? '0px'  : '0px 20px 0px 70px',
+              margin: isMobile ? '0px' : '0px 20px 0px 70px',
               fontWeight: 300,
               lineHeight: '1em',
             }}
