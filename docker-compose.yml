@@ -12,15 +12,14 @@ services:
     networks:
       default:
         aliases:
-          - api.saas-dev
+          - api.saas.localhost
     env_file: ./api/.env
-    # set the environment vard to use hostnames regardless of ./api/.env
-    # so that it's configured for the docker network
     environment:
       NODE_ENV: development
-      DEVELOPMENT_URL_APP: http://app.saas-dev:3000
-      DEVELOPMENT_URL_API: http://api.saas-dev:8000
-      DEVELOPMENT_COOKIE_DOMAIN: .saas-dev
+      DEVELOPMENT_URL_APP: http://app.saas.localhost:3000
+      DEVELOPMENT_URL_API: http://api.saas.localhost:8000
+      # see https://stackoverflow.com/a/22070413
+      DEVELOPMENT_COOKIE_DOMAIN: .saas.localhost
       MONGO_URL_TEST: mongodb://saas:secret@saas-mongo:27017/saas
     ports:
       - "8000:8000"
@@ -40,14 +39,12 @@ services:
     networks:
       default:
         aliases:
-          - app.saas-dev
+          - app.saas.localhost
     env_file: ./app/.env
-    # set the environment vard to use hostnames regardless of ./app/.env
-    # so that it's configured for the docker network
     environment:
       NODE_ENV: development
-      DEVELOPMENT_URL_APP: http://app.saas-dev:3000
-      DEVELOPMENT_URL_API: http://api.saas-dev:8000
+      DEVELOPMENT_URL_APP: http://app.saas.localhost:3000
+      DEVELOPMENT_URL_API: http://api.saas.localhost:8000
     ports:
       - "3000:3000"
     depends_on:
@@ -60,18 +57,20 @@ services:
     container_name: saas-mongo
     ports:
       - "27017:27017"
-    # 20190601 - fix for https://github.com/docker-library/mongo/issues/329#issuecomment-460858099
     volumes:
+      # 20190601 - fix for https://github.com/docker-library/mongo/issues/329#issuecomment-460858099
       - ./mongo-user.sh:/docker-entrypoint-initdb.d/mongo-user.sh:ro
       - /tmp/saas-db:/data/db
-  # mongo-express is optional, only if you want to see mongodb data
-  # mongo-express:
-  #   image: mongo-express
-  #   ports:
-  #     - "8081:8081"
-  #   env_file: .env
-  #   depends_on:
-  #     - mongo
+
+  saas-mongoexp:
+    image: mongo-express
+    container_name: saas-mongoexp
+    ports:
+      - "8081:8081"
+    env_file: .env
+    depends_on:
+      - saas-mongo
+
 networks:
   default:
     driver: bridge
