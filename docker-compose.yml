@@ -39,7 +39,6 @@ services:
 
   mongo:
     image: mongo
-    restart: always
     env_file: .env
     container_name: saas-mongo
     ports:
@@ -47,10 +46,10 @@ services:
     # 20190601 - fix for https://github.com/docker-library/mongo/issues/329#issuecomment-460858099
     volumes:
       - ./mongo-user.sh:/docker-entrypoint-initdb.d/mongo-user.sh:ro
+      - /tmp/saas-db:/data/db
   # mongo-express is optional, only if you want to see mongodb data
   # mongo-express:
   #   image: mongo-express
-  #   restart: always
   #   ports:
   #     - "8081:8081"
   #   env_file: .env
