@@ -1,0 +1,28 @@
+{
+  "name": "saas-boilerplate",
+  "version": "1.2.0",
+  "license": "MIT",
+  "description": "Build your own SaaS business with SaaS boilerplate. Productive stack: React, Material-UI, Next, MobX, WebSockets, Express, Node, Mongoose, MongoDB. Written with TypeScript.",
+  "scripts": {
+    "test": "yarn --cwd ./api test && yarn --cwd ./app test",
+    "build": "yarn test && docker-compose build && yarn clean:dangling",
+    "start": "docker-compose up",
+    "stop": "docker-compose down",
+    "clean": "docker-compose rm",
+    "clean:prune": "docker rmi $(docker images -f reference=saas-*:* -q)",
+    "clean:dangling": "docker rmi $(docker images -f dangling=true -q)",
+    "start:database": "docker-compose run --rm mongo"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "node",
+    "mongo",
+    "saas",
+    "material-ui",
+    "next",
+    "mobx",
+    "websockets",
+    "express"
+  ]
+}
