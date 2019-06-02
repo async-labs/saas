@@ -20,9 +20,9 @@ import { Store } from '../../lib/store';
 import PostEditor from '../posts/PostEditor';
 import MemberChooser from '../users/MemberChooser';
 
-const { NODE_ENV, PRODUCTION_URL_APP } = env;
+const { NODE_ENV, PRODUCTION_URL_APP, DEVELOPMENT_URL_APP } = env;
 const dev = NODE_ENV !== 'production';
-const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
+const URL_APP = dev ? DEVELOPMENT_URL_APP : PRODUCTION_URL_APP;
 
 const styles = {
   paper: {

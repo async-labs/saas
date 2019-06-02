@@ -10,10 +10,12 @@ import routesWithSlug from './routesWithSlug';
 
 mobxReact.useStaticRendering(true);
 
-const dev = process.env.NODE_ENV !== 'production';
-const port = process.env.PORT || 3000;
 const { PRODUCTION_URL_APP } = env;
-const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_APP;
+const dev = env.NODE_ENV !== 'production';
+const port = env.PORT || 3000;
+const DEVELOPMENT_URL_APP = env.DEVELOPMENT_URL_APP || `http://localhost:${port}`;
+
+const ROOT_URL = dev ? DEVELOPMENT_URL_APP : PRODUCTION_URL_APP;
 
 const app = next({ dev });
 const handle = app.getRequestHandler();

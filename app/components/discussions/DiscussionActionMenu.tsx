@@ -10,9 +10,9 @@ import env from '../../lib/env';
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 import EditDiscussionForm from './EditDiscussionForm';
 
-const dev = process.env.NODE_ENV !== 'production';
-const { PRODUCTION_URL_APP } = env;
-const ROOT_URL = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
+const { PRODUCTION_URL_APP, DEVELOPMENT_URL_APP, NODE_ENV } = env;
+const dev = NODE_ENV !== 'production';
+const ROOT_URL = dev ? DEVELOPMENT_URL_APP : PRODUCTION_URL_APP;
 
 const getMenuOptions = discussion => ({
   dataId: discussion._id,
@@ -45,7 +45,11 @@ const getMenuItemOptions = (discussion, component) => [
   },
 ];
 
-class DiscussionActionMenu extends React.Component<{ discussion: Discussion; store?: Store; isMobile: boolean; }> {
+class DiscussionActionMenu extends React.Component<{
+  discussion: Discussion;
+  store?: Store;
+  isMobile: boolean;
+}> {
   public state = {
     discussionFormOpen: false,
   };
@@ -92,7 +96,9 @@ class DiscussionActionMenu extends React.Component<{ discussion: Discussion; sto
     }
 
     const selectedDiscussion = currentTeam.discussions.find(d => d._id === id);
-    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/discussions/${selectedDiscussion.slug}`;
+    const discussionUrl = `${ROOT_URL}/team/${currentTeam.slug}/discussions/${
+      selectedDiscussion.slug
+    }`;
 
     try {
       if (window.navigator) {
