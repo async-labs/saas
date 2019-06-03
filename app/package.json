@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon server/app.ts",
+    "dev": "tsnd --respawn --transpileOnly --project tsconfig.server.json server/app.ts",
     "build": "next build && tsc --project tsconfig.server.json",
     "postinstall": "next build && rm -rf production-server/ & tsc --project tsconfig.server.json",
     "start": "NODE_ENV=production node production-server/server/app.js",
@@ -67,8 +67,8 @@
     "@types/socket.io-client": "^1.4.32",
     "@types/styled-jsx": "2.2.8",
     "jest": "24.5.0",
-    "nodemon": "1.18.10",
     "ts-node": "8.0.3",
+    "ts-node-dev": "^1.0.0-pre.39",
     "tslint": "5.14.0"
   }
 }
