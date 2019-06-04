@@ -11,7 +11,7 @@ function get(name: string): string {
 const mode: string = get('NODE_ENV') || 'development';
 export const NODE_ENV = mode;
 
-const dev: boolean = env !== 'production';
+const dev: boolean = mode !== 'production';
 export const IS_DEV = dev;
 
 const portAPP: number = +get('PORT') || 3000;
