@@ -22,7 +22,7 @@ import notify from '../lib/notifier';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-import env from '../lib/env';
+import { BUCKET_FOR_TEAM_AVATARS } from '../lib/consts';
 
 const styleGrid = {
   height: '100%',
@@ -90,7 +90,6 @@ class TeamSettings extends React.Component<MyProps, MyState> {
 
     fileElm.value = '';
 
-    const { BUCKET_FOR_TEAM_AVATARS } = env;
     const bucket = BUCKET_FOR_TEAM_AVATARS;
 
     const prefix = `${currentTeam.slug}`;
@@ -139,9 +138,9 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     if (ifTeamLeaderMustBeCustomer) {
       notify(
         'To add a third team member, you have to become a paid customer.' +
-          '<p />' +
-          ' To become a paid customer,' +
-          ' navigate to Billing page.',
+        '<p />' +
+        ' To become a paid customer,' +
+        ' navigate to Billing page.',
       );
       return;
     }

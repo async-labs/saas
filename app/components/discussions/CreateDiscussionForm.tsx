@@ -13,14 +13,12 @@ import Router from 'next/router';
 import NProgress from 'nprogress';
 import React from 'react';
 
-import env from '../../lib/env';
-
 import notify from '../../lib/notifier';
 import { Store } from '../../lib/store';
 import PostEditor from '../posts/PostEditor';
 import MemberChooser from '../users/MemberChooser';
 
-const { URL_APP } = env;
+import { URL_APP } from '../../lib/consts';
 
 const styles = {
   paper: {

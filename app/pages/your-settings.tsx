@@ -18,7 +18,7 @@ import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-import env from '../lib/env';
+import { BUCKET_FOR_TEAM_AVATARS } from '../lib/consts';
 
 const styleGrid = {
   height: '100%',
@@ -190,7 +190,6 @@ class YourSettings extends React.Component<MyProps, MyState> {
 
     fileElm.value = '';
 
-    const { BUCKET_FOR_TEAM_AVATARS } = env;
     const bucket = BUCKET_FOR_TEAM_AVATARS;
 
     const prefix = `${currentUser.slug}`;

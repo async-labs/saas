@@ -1,6 +1,4 @@
-import env from './env';
-
-const { GA_TRACKING_ID } = env;
+import { GA_TRACKING_ID } from './consts';
 
 // https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 export const pageview = url => {

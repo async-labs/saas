@@ -2,11 +2,8 @@ import htmlescape from 'htmlescape';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
 import flush from 'styled-jsx/server';
-import env from '../lib/env';
 
-const {
-  GA_TRACKING_ID,
-} = env;
+import * as consts from '../lib/consts';
 
 class MyDocument extends Document {
   public static getInitialProps = ctx => {
@@ -138,7 +135,7 @@ class MyDocument extends Document {
               }
             `}
           </style>
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${consts.GA_TRACKING_ID}`} />
           <script
             /* eslint-disable-next-line react/no-danger */
             dangerouslySetInnerHTML={{
@@ -148,7 +145,7 @@ class MyDocument extends Document {
                   dataLayer.push(arguments);
                 }
                 gtag('js', new Date());
-                gtag('config', '${GA_TRACKING_ID}');
+                gtag('config', '${consts.GA_TRACKING_ID}');
               `,
             }}
           />
@@ -165,7 +162,7 @@ class MyDocument extends Document {
         >
           <Main />
           {/* eslint-disable-next-line react/no-danger */}
-          <script dangerouslySetInnerHTML={{ __html: `__ENV__ = ${htmlescape(env)}` }} />
+          <script dangerouslySetInnerHTML={{ __html: `__ENV__ = ${htmlescape(consts)}` }} />
           <NextScript />
         </body>
       </html>

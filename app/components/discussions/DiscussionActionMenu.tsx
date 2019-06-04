@@ -6,11 +6,10 @@ import confirm from '../../lib/confirm';
 import notify from '../../lib/notifier';
 import { Discussion, Store } from '../../lib/store';
 
-import env from '../../lib/env';
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 import EditDiscussionForm from './EditDiscussionForm';
 
-const { URL_APP } = env;
+import { URL_APP } from '../../lib/consts';
 
 const getMenuOptions = discussion => ({
   dataId: discussion._id,

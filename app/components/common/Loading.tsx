@@ -1,5 +1,7 @@
+import { IS_DEV } from '../../lib/consts';
+
 const Loading = ({ text }) => {
-  if (process.env.NODE_ENV === 'production') {
+  if (IS_DEV) {
     return <p style={{ height: '1.0em' }} />;
   }
 
