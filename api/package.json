@@ -43,7 +43,7 @@
     "compression": "1.7.4",
     "connect-mongo": "2.0.3",
     "cors": "^2.8.5",
-    "dotenv": "7.0.0",
+    "dotenv": "8.0.0",
     "express": "4.16.4",
     "express-session": "1.15.6",
     "front-matter": "3.0.1",
