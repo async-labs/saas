@@ -1,0 +1,25 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug the API",
+      "program": "${workspaceFolder}/api/server/app.ts",
+      "args": [],
+      "console": "internalConsole",
+      "cwd": "${workspaceFolder}/api",
+      "preLaunchTask": "npm: build:api",
+      "outFiles": ["${workspaceFolder}/api/production-server/**/*.js"]
+    },
+    {
+      "name": "Attach to API",
+      "type": "node",
+      "request": "attach",
+      "port": 8000
+    }
+  ]
+}

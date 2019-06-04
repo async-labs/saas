@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "yarn --cwd ./api dev & yarn --cwd ./app dev",
     "test": "yarn --cwd ./api test && yarn --cwd ./app test",
-    "build": "docker-compose build",
     "postinstall": "yarn --cwd ./api install && yarn --cwd ./app install",
+    "build:api": "yarn --cwd ./api build",
+    "build:app": "yarn --cwd ./app build",
+    "build": "docker-compose build",
     "start": "docker-compose up",
     "stop": "docker-compose down",
     "clean": "docker-compose rm",
