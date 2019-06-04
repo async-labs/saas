@@ -75,11 +75,11 @@ setupPasswordless({ server, ROOT_URL });
 api(server);
 
 const http = new httpModule.Server(server);
-realtime({ http, origin: ROOT_URL, sessionMiddleware });
+realtime({ http, origin: URL_APP, sessionMiddleware });
 
 server.get('/uploaded-file', async (req, res) => {
   if (!req.user) {
-    res.redirect(`${ROOT_URL}/login`);
+    res.redirect(`${URL_APP}/login`);
     return;
   }
 
