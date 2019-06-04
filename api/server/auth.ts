@@ -9,11 +9,7 @@ import Invitation from './models/Invitation';
 import User, { IUserDocument } from './models/User';
 import PasswordlessMongoStore from './passwordless';
 
-const dev = process.env.NODE_ENV !== 'production';
-
-const { PRODUCTION_URL_APP } = process.env;
-const DEVELOPMENT_URL_APP = process.env.DEVELOPMENT_URL_APP || 'http://localhost:3000';
-const URL_APP = dev ? DEVELOPMENT_URL_APP : PRODUCTION_URL_APP;
+import { EMAIL_SUPPORT_FROM_ADDRESS, URL_APP } from './config';
 
 function setupPasswordless({ server, ROOT_URL }) {
   const mongoStore = new PasswordlessMongoStore();
@@ -30,7 +26,7 @@ function setupPasswordless({ server, ROOT_URL }) {
       logger.debug(template.message);
 
       await sendEmail({
-        from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [recipient],
         subject: template.subject,
         body: template.message,
