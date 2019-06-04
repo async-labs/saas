@@ -10,16 +10,21 @@
       "name": "Debug the API",
       "program": "${workspaceFolder}/api/server/app.ts",
       "args": [],
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "cwd": "${workspaceFolder}/api",
       "preLaunchTask": "npm: build:api",
       "outFiles": ["${workspaceFolder}/api/production-server/**/*.js"]
     },
     {
-      "name": "Attach to API",
       "type": "node",
-      "request": "attach",
-      "port": 8000
+      "request": "launch",
+      "name": "Debug the APP",
+      "program": "${workspaceFolder}/app/server/app.ts",
+      "args": [],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/app",
+      "preLaunchTask": "npm: build:app",
+      "outFiles": ["${workspaceFolder}/app/production-server/**/*.js"]
     }
   ]
 }
