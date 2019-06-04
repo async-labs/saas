@@ -9,7 +9,10 @@ import Invitation from './models/Invitation';
 import User, { IUserDocument } from './models/User';
 import PasswordlessMongoStore from './passwordless';
 
-import { EMAIL_SUPPORT_FROM_ADDRESS, URL_APP } from './config';
+import {
+  EMAIL_SUPPORT_FROM_ADDRESS, GOOGLE_CLIENTID,
+  GOOGLE_CLIENTSECRET, URL_APP,
+} from './consts';
 
 function setupPasswordless({ server, ROOT_URL }) {
   const mongoStore = new PasswordlessMongoStore();
@@ -86,8 +89,6 @@ function setupPasswordless({ server, ROOT_URL }) {
 }
 
 function setupGoogle({ ROOT_URL, server }) {
-  const clientID = process.env.Google_clientID;
-  const clientSecret = process.env.Google_clientSecret;
 
   const verify = async (accessToken, refreshToken, profile, verified) => {
     let email;
@@ -120,8 +121,8 @@ function setupGoogle({ ROOT_URL, server }) {
   passport.use(
     new Strategy(
       {
-        clientID,
-        clientSecret,
+        clientID: GOOGLE_CLIENTID,
+        clientSecret: GOOGLE_CLIENTSECRET,
         callbackURL: `${ROOT_URL}/oauth2callback`,
       },
       verify,
