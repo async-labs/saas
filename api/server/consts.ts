@@ -1,64 +1,85 @@
 // Import this module on any other module like so:
 // import { IS_DEV } from './consts';
 
-function required(name: string): any {
-  throw new Error(`ENV variable ${name} is required.`);
+// function required(name: string): any {
+//   throw new Error(`ENV variable ${name} is required.`);
+// }
+
+function get(name: string): string {
+  return process.env[name] || null;
 }
 
-const env = process.env;
+const env: string = get('NODE_ENV') || 'development';
+export const NODE_ENV = env;
 
-export const IS_DEV: boolean = env.NODE_ENV !== 'production';
+const dev: boolean = env !== 'production';
+export const IS_DEV = dev;
 
-export const PORT_API: number = +env.PORT || 8000;
+const port: number = +get('PORT') || 8000;
+export const PORT_API = port;
 
-export const PORT_APP: number = +env.APP_PORT || 3000;
+const portAPP: number = +get('APP_PORT') || 3000;
+export const PORT_APP = portAPP;
 
-export const URL_API: string = env.URL_API
-  || (IS_DEV ? (env.DEVELOPMENT_URL_API || `http://localhost:${PORT_API}`) : env.PRODUCTION_URL_API)
-  || required('URL_API') || '';
+let urlAPI: string = get('URL_API');
+if (!urlAPI) {
+  urlAPI = dev ? get('DEVELOPMENT_URL_API') || `http://localhost:${port}` : get('PRODUCTION_URL_API');
+}
+export const URL_API = urlAPI;
 
-export const URL_APP: string = env.URL_APP
-  || IS_DEV ? (env.DEVELOPMENT_URL_APP || `http://localhost:${PORT_APP}`) : env.PRODUCTION_URL_APP
-  || required('URL_APP') || '';
+let urlAPP: string = get('URL_APP');
+if (!urlAPP) {
+  urlAPP = dev ? get('DEVELOPMENT_URL_APP') || `http://localhost:${portAPP}` : get('PRODUCTION_URL_APP');
+}
+export const URL_APP = urlAPP;
 
-export const COOKIE_DOMAIN: string = env.COOKIE_DOMAIN
-  || IS_DEV ? env.DEVELOPMENT_COOKIE_DOMAIN : env.PRODUCTION_COOKIE_DOMAIN
-    || IS_DEV ? 'localhost' : '.async-await.com';
+let cookieDomain: string = get('COOKIE_DOMAIN');
+if (!cookieDomain) {
+  cookieDomain = dev ? get('DEVELOPMENT_COOKIE_DOMAIN') : get('PRODUCTION_COOKIE_DOMAIN');
+}
+if (!cookieDomain) {
+  cookieDomain = dev ? 'localhost' : '.async-await.com';
+}
+export const COOKIE_DOMAIN = cookieDomain;
 
-export const MONGO_URL: string = env.MONGO_URL
-  || IS_DEV ? env.MONGO_URL_TEST : env.MONGO_URL
-  || required('MONGO_URL') || '';
+let mongoURL: string = get('MONGO_URL');
+if (!mongoURL) {
+  mongoURL = dev ? get('MONGO_URL_TEST') : get('MONGO_URL');
+}
+export const MONGO_URL = mongoURL;
 
-export const SESSION_NAME: string = env.SESSION_NAME || 'saas.sid';
+export const SESSION_NAME: string = get('SESSION_NAME') || 'saas.sid';
+export const SESSION_SECRET: string = get('SESSION_SECRET');
 
-export const SESSION_SECRET: string = env.SESSION_SECRET || required('SESSION_SECRET') || '';
+export const GOOGLE_CLIENTID: string = get('GOOGLE_CLIENTID') || get('Google_clientID');
+export const GOOGLE_CLIENTSECRET: string = get('GOOGLE_CLIENTSECRET') || get('Google_clientSecret');
 
-export const GOOGLE_CLIENTID: string = env.GOOGLE_CLIENTID || env.Google_clientID || '';
-export const GOOGLE_CLIENTSECRET: string = env.GOOGLE_CLIENTSECRET || env.Google_clientSecret || '';
+export const AMAZON_ACCESSKEYID: string = get('AMAZON_ACCESSKEYID') || get('Amazon_accessKeyId');
+export const AMAZON_SECRETACCESSKEY: string = get('AMAZON_SECRETACCESSKEY') || get('Amazon_secretAccessKey');
 
-export const AMAZON_ACCESSKEYID: string = env.AMAZON_ACCESSKEYID || env.Amazon_accessKeyId || '';
-export const AMAZON_SECRETACCESSKEY: string = env.AMAZON_SECRETACCESSKEY || env.Amazon_secretAccessKey || '';
+export const EMAIL_SUPPORT_FROM_ADDRESS: string = get('EMAIL_SUPPORT_FROM_ADDRESS');
 
-export const EMAIL_SUPPORT_FROM_ADDRESS: string = env.EMAIL_SUPPORT_FROM_ADDRESS
-  || required('EMAIL_SUPPORT_FROM_ADDRESS') || '';
+export const MAILCHIMP_API_KEY: string = get('MAILCHIMP_API_KEY');
+export const MAILCHIMP_REGION: string = get('MAILCHIMP_REGION');
+export const MAILCHIMP_SAAS_ALL_LIST_ID: string = get('MAILCHIMP_SAAS_ALL_LIST_ID');
 
-export const MAILCHIMP_API_KEY: string = env.MAILCHIMP_API_KEY || '';
-export const MAILCHIMP_REGION: string = env.MAILCHIMP_REGION || '';
-export const MAILCHIMP_SAAS_ALL_LIST_ID: string = env.MAILCHIMP_SAAS_ALL_LIST_ID || '';
+const stripeTestSecretKey = get('STRIPE_TEST_SECRETKEY') || get('Stripe_Test_SecretKey');
+const stripeLiveSecretKey = get('STRIPE_LIVE_SECRETKEY') || get('Stripe_Live_SecretKey');
+export const STRIPE_SECRETKEY = dev ? stripeTestSecretKey : stripeLiveSecretKey;
+export const STRIPE_TEST_SECRETKEY = stripeTestSecretKey;
+export const STRIPE_LIVE_SECRETKEY = stripeLiveSecretKey;
 
-export const STRIPE_TEST_SECRETKEY: string = env.STRIPE_TEST_SECRETKEY || env.Stripe_Test_SecretKey || '';
-export const STRIPE_LIVE_SECRETKEY: string = env.STRIPE_LIVE_SECRETKEY || env.Stripe_Live_SecretKey || '';
-export const STRIPE_SECRETKEY: string = IS_DEV ? STRIPE_TEST_SECRETKEY : STRIPE_LIVE_SECRETKEY;
+const stripeTestPubKey = get('STRIPE_TEST_PUBLISHABLEKEY') || get('Stripe_Test_PublishableKey');
+const stripeLivePubKey = get('STRIPE_LIVE_PUBLISHABLEKEY') || get('Stripe_Live_PublishableKey');
+export const STRIPE_PUBLISHABLEKEY = dev ? stripeTestPubKey : stripeLivePubKey;
+export const STRIPE_TEST_PUBLISHABLEKEY = stripeTestPubKey;
+export const STRIPE_LIVE_PUBLISHABLEKEY = stripeLivePubKey;
 
-export const STRIPE_TEST_PUBLISHABLEKEY: string = env.STRIPE_TEST_PUBLISHABLEKEY
-  || env.Stripe_Test_PublishableKey || '';
-export const STRIPE_LIVE_PUBLISHABLEKEY: string = env.STRIPE_LIVE_PUBLISHABLEKEY
-  || env.Stripe_Live_PublishableKey || '';
-export const STRIPE_PUBLISHABLEKEY: string = IS_DEV ? STRIPE_TEST_PUBLISHABLEKEY : STRIPE_LIVE_PUBLISHABLEKEY;
+const stripeTestPlanId = get('STRIPE_TEST_PLANID') || get('Stripe_Test_PlanId');
+const stripeLivePlanId = get('STRIPE_LIVE_PLANID') || get('Stripe_Live_PlanId');
+export const STRIPE_PLANID = dev ? stripeTestPlanId : stripeLivePlanId;
+export const STRIPE_TEST_PLANID: string = stripeTestPlanId;
+export const STRIPE_LIVE_PLANID: string = stripeLivePlanId;
 
-export const STRIPE_TEST_PLANID: string = env.STRIPE_TEST_PLANID || env.Stripe_Test_PlanId || '';
-export const STRIPE_LIVE_PLANID: string = env.STRIPE_LIVE_PLANID || env.Stripe_Live_PlanId || '';
-export const STRIPE_PLANID: string = IS_DEV ? STRIPE_TEST_PLANID : STRIPE_LIVE_PLANID;
-
-export const STRIPE_LIVE_ENDPOINTSECRET: string = env.STRIPE_LIVE_ENDPOINTSECRET
-  || env.Stripe_Live_EndpointSecret || '';
+export const STRIPE_LIVE_ENDPOINTSECRET: string = get('STRIPE_LIVE_ENDPOINTSECRET')
+  || get('Stripe_Live_EndpointSecret');
