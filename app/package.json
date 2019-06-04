@@ -4,8 +4,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsnd --respawn --transpileOnly --project tsconfig.server.json --ignore-watch .next -- server/app.ts",
-    "build": "next build && tsc --project tsconfig.server.json",
-    "postinstall": "next build && rm -rf production-server/ & tsc --project tsconfig.server.json",
+    "build": "NODE_ENV=build next build && tsc --project tsconfig.server.json",
+    "postinstall": "NODE_ENV=build next build && rm -rf production-server/ & tsc --project tsconfig.server.json",
     "start": "NODE_ENV=production node production-server/server/app.js",
     "start:container": "NODE_ENV=development node production-server/server/app.js",
     "now": "now && now alias",
