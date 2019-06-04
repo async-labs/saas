@@ -16,11 +16,11 @@ services:
     env_file: ./api/.env
     environment:
       NODE_ENV: development
-      DEVELOPMENT_URL_APP: http://app.saas.localhost:3000
-      DEVELOPMENT_URL_API: http://api.saas.localhost:8000
+      URL_APP: http://app.saas.localhost:3000
+      URL_API: http://api.saas.localhost:8000
       # see https://stackoverflow.com/a/22070413
-      DEVELOPMENT_COOKIE_DOMAIN: .saas.localhost
-      MONGO_URL_TEST: mongodb://saas:secret@saas-mongo:27017/saas
+      COOKIE_DOMAIN: .saas.localhost
+      MONGO_URL: mongodb://saas:secret@saas-mongo:27017/saas
     ports:
       - "8000:8000"
     depends_on:
