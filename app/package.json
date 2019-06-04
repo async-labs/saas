@@ -29,6 +29,7 @@
     "@material-ui/core": "3.9.2",
     "@types/node": "11.11.6",
     "@zeit/next-typescript": "1.1.1",
+    "dotenv": "^8.0.0",
     "downshift": "3.2.7",
     "express": "4.16.4",
     "he": "1.2.0",
