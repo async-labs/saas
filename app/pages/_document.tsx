@@ -5,6 +5,16 @@ import flush from 'styled-jsx/server';
 
 import * as consts from '../lib/consts';
 
+// Privatize env vars that are sent to the browser,
+// if any module on the browser requests these properties an exception is expected.
+const privates = ['NODE_ENV', 'PORT', 'PORT_APP', 'PORT_API'];
+const privateConsts = {};
+Object.keys(consts).forEach(key => {
+  if (!privates.includes(key)) {
+    privateConsts[key] = consts[key];
+  }
+});
+
 class MyDocument extends Document {
   public static getInitialProps = ctx => {
     // Render app and page and get the context of the page with collected side effects.
@@ -135,20 +145,7 @@ class MyDocument extends Document {
               }
             `}
           </style>
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${consts.GA_TRACKING_ID}`} />
-          <script
-            /* eslint-disable-next-line react/no-danger */
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){
-                  dataLayer.push(arguments);
-                }
-                gtag('js', new Date());
-                gtag('config', '${consts.GA_TRACKING_ID}');
-              `,
-            }}
-          />
+          {this.gtag()}
         </Head>
         <body
           style={{
@@ -162,10 +159,33 @@ class MyDocument extends Document {
         >
           <Main />
           {/* eslint-disable-next-line react/no-danger */}
-          <script dangerouslySetInnerHTML={{ __html: `__ENV__ = ${htmlescape(consts)}` }} />
+          <script dangerouslySetInnerHTML={{ __html: `__ENV__ = ${htmlescape(privateConsts)}` }} />
           <NextScript />
         </body>
       </html>
+    );
+  }
+
+  private gtag() {
+    if (!consts.GA_TRACKING_ID) { return; }
+
+    return (
+      <div>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${consts.GA_TRACKING_ID}`} />
+        <script
+          /* eslint-disable-next-line react/no-danger */
+          dangerouslySetInnerHTML={{
+            __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){
+                  dataLayer.push(arguments);
+                }
+                gtag('js', new Date());
+                gtag('config', '${consts.GA_TRACKING_ID}');
+              `,
+          }}
+        />
+      </div>
     );
   }
 }
