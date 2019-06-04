@@ -1,29 +1,39 @@
 // Import this module on any other module like so:
 // import { IS_DEV } from './consts';
 
-function required(name: string): any {
-  throw new Error(`ENV variable ${name} is required.`);
-}
-
 // Make it isomorphic
 const env = (typeof window !== 'undefined' ? (window as any).__ENV__ : process.env);
 
-export const IS_DEV: boolean = env.NODE_ENV !== 'production';
+function get(name: string): string {
+  return env[name] || null;
+}
 
-export const PORT_APP: number = +env.PORT || 3000;
+const mode: string = get('NODE_ENV') || 'development';
+export const NODE_ENV = mode;
 
-export const PORT_API: number = +env.PORT_API || 8000;
+const dev: boolean = env !== 'production';
+export const IS_DEV = dev;
 
-export const URL_API: string = env.URL_API
-  || (IS_DEV ? (env.DEVELOPMENT_URL_API || `http://localhost:${PORT_API}`) : env.PRODUCTION_URL_API)
-  || required('URL_API') || '';
+const portAPP: number = +get('PORT') || 3000;
+export const PORT_APP = portAPP;
 
-export const URL_APP: string = env.URL_APP
-  || IS_DEV ? (env.DEVELOPMENT_URL_APP || `http://localhost:${PORT_APP}`) : env.PRODUCTION_URL_APP
-  || required('URL_APP') || '';
+const portAPI: number = +get('APP_PORT') || 8000;
+export const PORT_API = portAPI;
 
-export const GA_TRACKING_ID: string = env.GA_TRACKING_ID || '';
-export const STRIPEPUBLISHABLEKEY: string = env.STRIPEPUBLISHABLEKEY || env.StripePublishableKey || '';
-export const BUCKET_FOR_POSTS: string = env.BUCKET_FOR_POSTS || '';
-export const BUCKET_FOR_TEAM_AVATARS: string = env.BUCKET_FOR_TEAM_AVATARS || '';
-export const LAMBDA_API_ENDPOINT: string = env.LAMBDA_API_ENDPOINT || '';
+let urlAPI: string = get('URL_API');
+if (!urlAPI) {
+  urlAPI = dev ? get('DEVELOPMENT_URL_API') || `http://localhost:${portAPI}` : get('PRODUCTION_URL_API');
+}
+export const URL_API = urlAPI;
+
+let urlAPP: string = get('URL_APP');
+if (!urlAPP) {
+  urlAPP = dev ? get('DEVELOPMENT_URL_APP') || `http://localhost:${portAPP}` : get('PRODUCTION_URL_APP');
+}
+export const URL_APP = urlAPP;
+
+export const GA_TRACKING_ID: string = get('GA_TRACKING_ID');
+export const STRIPEPUBLISHABLEKEY: string = get('STRIPEPUBLISHABLEKEY') || get('StripePublishableKey');
+export const BUCKET_FOR_POSTS: string = get('BUCKET_FOR_POSTS');
+export const BUCKET_FOR_TEAM_AVATARS: string = get('BUCKET_FOR_TEAM_AVATARS');
+export const LAMBDA_API_ENDPOINT: string = get('LAMBDA_API_ENDPOINT');
