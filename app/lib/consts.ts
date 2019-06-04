@@ -4,31 +4,32 @@
 // Make it isomorphic
 const env = (typeof window !== 'undefined' ? (window as any).__ENV__ : process.env);
 
-function get(name: string): string {
-  return env[name] || null;
+function get(name: string, required: boolean = false, alternateName: string = null): string {
+  const val = env[name] || null;
+  if (!val && required) {
+    throw new Error(`${alternateName || name} environment variable is required.`);
+  }
+  return val;
 }
 
-const mode: string = get('NODE_ENV') || 'development';
-export const NODE_ENV = mode;
+// tslint:disable: max-line-length
+export const NODE_ENV = get('NODE_ENV') || 'development';
 
-const dev: boolean = mode !== 'production';
-export const IS_DEV = dev;
+export const IS_DEV = NODE_ENV !== 'production';
 
-const portAPP: number = +get('PORT') || 3000;
-export const PORT_APP = portAPP;
+export const PORT_APP = +get('PORT') || 3000;
 
-const portAPI: number = +get('APP_PORT') || 8000;
-export const PORT_API = portAPI;
+export const PORT_API = +get('API_PORT') || 8000;
 
 let urlAPI: string = get('URL_API');
 if (!urlAPI) {
-  urlAPI = dev ? get('DEVELOPMENT_URL_API') || `http://localhost:${portAPI}` : get('PRODUCTION_URL_API');
+  urlAPI = IS_DEV ? get('DEVELOPMENT_URL_API') || `http://localhost:${PORT_API}` : get('PRODUCTION_URL_API', true, 'URL_API');
 }
 export const URL_API = urlAPI;
 
 let urlAPP: string = get('URL_APP');
 if (!urlAPP) {
-  urlAPP = dev ? get('DEVELOPMENT_URL_APP') || `http://localhost:${portAPP}` : get('PRODUCTION_URL_APP');
+  urlAPP = IS_DEV ? get('DEVELOPMENT_URL_APP') || `http://localhost:${PORT_APP}` : get('PRODUCTION_URL_APP', true, 'URL_APP');
 }
 export const URL_APP = urlAPP;
 
