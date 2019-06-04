@@ -1,3 +1,5 @@
+import './env';
+
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as mobxReact from 'mobx-react';
