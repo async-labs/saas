@@ -3,6 +3,10 @@ import logger from './logs';
 
 import Team from './models/Team';
 
+import {
+  AMAZON_ACCESSKEYID, AMAZON_SECRETACCESSKEY,
+} from './consts';
+
 async function checkPrefix(prefix, user) {
   // Prefix must be either user slug or user's team slug
   if (prefix === user.slug) {
@@ -23,8 +27,8 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, 
 
   aws.config.update({
     region: 'us-west-1',
-    accessKeyId: process.env.Amazon_accessKeyId,
-    secretAccessKey: process.env.Amazon_secretAccessKey,
+    accessKeyId: AMAZON_ACCESSKEYID,
+    secretAccessKey: AMAZON_SECRETACCESSKEY,
   });
 
   const s3 = new aws.S3({ apiVersion: 'latest' });
@@ -72,8 +76,8 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, 
 function signRequestForLoad(path, bucket) {
   aws.config.update({
     region: 'us-west-1',
-    accessKeyId: process.env.Amazon_accessKeyId,
-    secretAccessKey: process.env.Amazon_secretAccessKey,
+    accessKeyId: AMAZON_ACCESSKEYID,
+    secretAccessKey: AMAZON_SECRETACCESSKEY,
   });
 
   const s3 = new aws.S3({ apiVersion: 'latest' });
@@ -103,8 +107,8 @@ function signRequestForLoad(path, bucket) {
 function deleteFiles(bucket: string, files: string[]) {
   aws.config.update({
     region: 'us-west-1',
-    accessKeyId: process.env.Amazon_accessKeyId,
-    secretAccessKey: process.env.Amazon_secretAccessKey,
+    accessKeyId: AMAZON_ACCESSKEYID,
+    secretAccessKey: AMAZON_SECRETACCESSKEY,
   });
 
   const s3 = new aws.S3({ apiVersion: 'latest' });

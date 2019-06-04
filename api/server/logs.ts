@@ -1,6 +1,6 @@
 import * as winston from 'winston';
 
-import { IS_DEV } from './config';
+import { IS_DEV } from './consts';
 
 const logger = winston.createLogger({
   format: winston.format.simple(),

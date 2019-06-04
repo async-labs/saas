@@ -6,10 +6,9 @@ import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
 import Team from './Team';
 import User, { IUserDocument } from './User';
 
-const dev = process.env.NODE_ENV !== 'production';
-const { PRODUCTION_URL_APP } = process.env;
-const DEVELOPMENT_URL_APP = process.env.DEVELOPMENT_URL_APP || 'http://localhost:3000';
-const ROOT_URL = dev ? DEVELOPMENT_URL_APP : PRODUCTION_URL_APP;
+import {
+  EMAIL_SUPPORT_FROM_ADDRESS, URL_APP as ROOT_URL,
+} from '../consts';
 
 mongoose.set('useFindAndModify', false);
 
@@ -140,7 +139,7 @@ class InvitationClass extends mongoose.Model {
     );
 
     await sendEmail({
-      from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+      from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
       to: [email],
       subject: template.subject,
       body: template.message,
