@@ -3,15 +3,14 @@ import TextField from '@material-ui/core/TextField';
 import React from 'react';
 
 import { makeQueryString } from '../../lib/api/makeQueryString';
-import env from '../../lib/env';
 
 import { sendLoginToken } from '../../lib/api/public';
 import notify from '../../lib/notifier';
 import { styleLoginButton } from '../../lib/sharedStyles';
 
-// TS errors: https://github.com/mui-org/material-ui/issues/8198
+import { URL_API } from '../../lib/consts';
 
-const { URL_API } = env;
+// TS errors: https://github.com/mui-org/material-ui/issues/8198
 
 class LoginButton extends React.PureComponent<
   { next?: string; invitationToken?: string },

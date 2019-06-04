@@ -5,15 +5,13 @@ import * as next from 'next';
 import * as path from 'path';
 
 import { getUser } from '../lib/api/public';
-import env from '../lib/env';
 import routesWithSlug from './routesWithSlug';
+
+import { IS_DEV, PORT_APP, URL_APP } from '../lib/consts';
 
 mobxReact.useStaticRendering(true);
 
-const { NODE_ENV, PORT, URL_APP } = env;
-const dev = NODE_ENV !== 'production';
-
-const app = next({ dev });
+const app = next({ dev: IS_DEV });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
@@ -31,7 +29,7 @@ app.prepare().then(() => {
   server.use(helmet());
   server.use(express.json());
 
-  if (!dev) {
+  if (!IS_DEV) {
     server.set('trust proxy', 1); // sets req.hostname, req.ip
   }
 
@@ -76,7 +74,7 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(PORT, err => {
+  server.listen(PORT_APP, err => {
     if (err) {
       throw err;
     }

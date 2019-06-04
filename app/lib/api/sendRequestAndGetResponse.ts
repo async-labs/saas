@@ -2,11 +2,9 @@ import 'isomorphic-unfetch';
 
 import { getStore } from '../store';
 
-import env from './../env';
-
 import { makeQueryString } from './makeQueryString';
 
-const { URL_API } = env;
+import { URL_API } from '../consts';
 
 export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   const { externalServer } = opts;

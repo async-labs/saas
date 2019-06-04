@@ -1,7 +1,6 @@
-import env from '../../lib/env';
 import { Team } from '../../lib/store';
 
-const { URL_API } = env;
+import { URL_API } from '../../lib/consts';
 
 const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
   {
