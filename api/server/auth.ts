@@ -90,6 +90,10 @@ function setupPasswordless({ server, ROOT_URL }) {
 
 function setupGoogle({ ROOT_URL, server }) {
 
+  if (!GOOGLE_CLIENTID) {
+    return;
+  }
+
   const verify = async (accessToken, refreshToken, profile, verified) => {
     let email;
     let avatarUrl;

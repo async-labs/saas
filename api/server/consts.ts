@@ -1,55 +1,63 @@
 // Import this module on any other module like so:
 // import { IS_DEV } from './consts';
+// // or
+// import * as CONSTS from './consts';
 
-// function required(name: string): any {
-//   throw new Error(`ENV variable ${name} is required.`);
-// }
-
-function get(name: string): string {
-  return process.env[name] || null;
+function get(name: string, required: boolean = false, alternateName: string = null): string {
+  const val = process.env[name] || null;
+  if (!val && required) {
+    throw new Error(`${alternateName || name} environment variable is required.`);
+  }
+  return val;
 }
 
-const env: string = get('NODE_ENV') || 'development';
-export const NODE_ENV = env;
+// tslint:disable: max-line-length
+export const NODE_ENV = get('NODE_ENV') || 'development';
 
-const dev: boolean = env !== 'production';
-export const IS_DEV = dev;
+export const IS_DEV = NODE_ENV !== 'production';
 
-const port: number = +get('PORT') || 8000;
-export const PORT_API = port;
+export const PORT_API = +get('PORT') || 8000;
 
-const portAPP: number = +get('APP_PORT') || 3000;
-export const PORT_APP = portAPP;
+export const PORT_APP = +get('APP_PORT') || 3000;
 
 let urlAPI: string = get('URL_API');
 if (!urlAPI) {
-  urlAPI = dev ? get('DEVELOPMENT_URL_API') || `http://localhost:${port}` : get('PRODUCTION_URL_API');
+  urlAPI = IS_DEV ? get('DEVELOPMENT_URL_API') || `http://localhost:${PORT_API}` : get('PRODUCTION_URL_API', true, 'URL_API');
 }
 export const URL_API = urlAPI;
 
 let urlAPP: string = get('URL_APP');
 if (!urlAPP) {
-  urlAPP = dev ? get('DEVELOPMENT_URL_APP') || `http://localhost:${portAPP}` : get('PRODUCTION_URL_APP');
+  urlAPP = IS_DEV ? get('DEVELOPMENT_URL_APP') || `http://localhost:${PORT_APP}` : get('PRODUCTION_URL_APP', true, 'URL_APP');
 }
 export const URL_APP = urlAPP;
 
 let cookieDomain: string = get('COOKIE_DOMAIN');
 if (!cookieDomain) {
-  cookieDomain = dev ? get('DEVELOPMENT_COOKIE_DOMAIN') : get('PRODUCTION_COOKIE_DOMAIN');
+  cookieDomain = IS_DEV ? get('DEVELOPMENT_COOKIE_DOMAIN') : get('PRODUCTION_COOKIE_DOMAIN');
 }
 if (!cookieDomain) {
-  cookieDomain = dev ? 'localhost' : '.async-await.com';
+  cookieDomain = IS_DEV ? 'localhost' : '.async-await.com';
 }
 export const COOKIE_DOMAIN = cookieDomain;
 
 let mongoURL: string = get('MONGO_URL');
 if (!mongoURL) {
-  mongoURL = dev ? get('MONGO_URL_TEST') : get('MONGO_URL');
+  mongoURL = IS_DEV ? get('MONGO_URL_TEST', true, 'MONGO_URL') : get('MONGO_URL', true);
 }
 export const MONGO_URL = mongoURL;
 
 export const SESSION_NAME: string = get('SESSION_NAME') || 'saas.sid';
-export const SESSION_SECRET: string = get('SESSION_SECRET');
+
+let sessionSecret: string = get('SESSION_SECRET');
+if (!sessionSecret) {
+  if (!IS_DEV) {
+    throw new Error('SESSION_SECRET environment variable is required.');
+  }
+  sessionSecret = Math.random().toString(36).substring(2);
+}
+
+export const SESSION_SECRET: string = sessionSecret;
 
 export const GOOGLE_CLIENTID: string = get('GOOGLE_CLIENTID') || get('Google_clientID');
 export const GOOGLE_CLIENTSECRET: string = get('GOOGLE_CLIENTSECRET') || get('Google_clientSecret');
@@ -63,23 +71,16 @@ export const MAILCHIMP_API_KEY: string = get('MAILCHIMP_API_KEY');
 export const MAILCHIMP_REGION: string = get('MAILCHIMP_REGION');
 export const MAILCHIMP_SAAS_ALL_LIST_ID: string = get('MAILCHIMP_SAAS_ALL_LIST_ID');
 
-const stripeTestSecretKey = get('STRIPE_TEST_SECRETKEY') || get('Stripe_Test_SecretKey');
-const stripeLiveSecretKey = get('STRIPE_LIVE_SECRETKEY') || get('Stripe_Live_SecretKey');
-export const STRIPE_SECRETKEY = dev ? stripeTestSecretKey : stripeLiveSecretKey;
-export const STRIPE_TEST_SECRETKEY = stripeTestSecretKey;
-export const STRIPE_LIVE_SECRETKEY = stripeLiveSecretKey;
+export const STRIPE_TEST_SECRETKEY = get('STRIPE_TEST_SECRETKEY') || get('Stripe_Test_SecretKey');
+export const STRIPE_LIVE_SECRETKEY = get('STRIPE_LIVE_SECRETKEY') || get('Stripe_Live_SecretKey');
+export const STRIPE_SECRETKEY = IS_DEV ? STRIPE_TEST_SECRETKEY : STRIPE_LIVE_SECRETKEY;
 
-const stripeTestPubKey = get('STRIPE_TEST_PUBLISHABLEKEY') || get('Stripe_Test_PublishableKey');
-const stripeLivePubKey = get('STRIPE_LIVE_PUBLISHABLEKEY') || get('Stripe_Live_PublishableKey');
-export const STRIPE_PUBLISHABLEKEY = dev ? stripeTestPubKey : stripeLivePubKey;
-export const STRIPE_TEST_PUBLISHABLEKEY = stripeTestPubKey;
-export const STRIPE_LIVE_PUBLISHABLEKEY = stripeLivePubKey;
+export const STRIPE_TEST_PUBLISHABLEKEY = get('STRIPE_TEST_PUBLISHABLEKEY') || get('Stripe_Test_PublishableKey');
+export const STRIPE_LIVE_PUBLISHABLEKEY = get('STRIPE_LIVE_PUBLISHABLEKEY') || get('Stripe_Live_PublishableKey');
+export const STRIPE_PUBLISHABLEKEY = IS_DEV ? STRIPE_TEST_PUBLISHABLEKEY : STRIPE_LIVE_PUBLISHABLEKEY;
 
-const stripeTestPlanId = get('STRIPE_TEST_PLANID') || get('Stripe_Test_PlanId');
-const stripeLivePlanId = get('STRIPE_LIVE_PLANID') || get('Stripe_Live_PlanId');
-export const STRIPE_PLANID = dev ? stripeTestPlanId : stripeLivePlanId;
-export const STRIPE_TEST_PLANID: string = stripeTestPlanId;
-export const STRIPE_LIVE_PLANID: string = stripeLivePlanId;
+export const STRIPE_TEST_PLANID: string = get('STRIPE_TEST_PLANID') || get('Stripe_Test_PlanId');
+export const STRIPE_LIVE_PLANID: string = get('STRIPE_LIVE_PLANID') || get('Stripe_Live_PlanId');
+export const STRIPE_PLANID = IS_DEV ? STRIPE_TEST_PLANID : STRIPE_LIVE_PLANID;
 
-export const STRIPE_LIVE_ENDPOINTSECRET: string = get('STRIPE_LIVE_ENDPOINTSECRET')
-  || get('Stripe_Live_EndpointSecret');
+export const STRIPE_LIVE_ENDPOINTSECRET: string = get('STRIPE_LIVE_ENDPOINTSECRET') || get('Stripe_Live_EndpointSecret');
