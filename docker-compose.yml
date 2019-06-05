@@ -53,8 +53,13 @@ services:
 
   saas-mongo:
     image: mongo
-    env_file: .env
     container_name: saas-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-supersecret}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-saas}
+      MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-saas}
+      MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-secret}
     ports:
       - "27017:27017"
     volumes:
@@ -65,9 +70,12 @@ services:
   saas-mongoexp:
     image: mongo-express
     container_name: saas-mongoexp
+    environment:
+      ME_CONFIG_MONGODB_SERVER: ${ME_CONFIG_MONGODB_SERVER:-saas-mongo}
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${ME_CONFIG_MONGODB_ADMINUSERNAME:-root}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${ME_CONFIG_MONGODB_ADMINPASSWORD:-supersecret}
     ports:
       - "8081:8081"
-    env_file: .env
     depends_on:
       - saas-mongo
 
