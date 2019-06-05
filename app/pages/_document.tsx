@@ -1,19 +1,8 @@
-import htmlescape from 'htmlescape';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
 import flush from 'styled-jsx/server';
 
-import * as consts from '../lib/consts';
-
-// Privatize env vars that are sent to the browser,
-// if any module on the browser requests these properties an exception is expected.
-const privates = ['NODE_ENV', 'PORT', 'PORT_APP', 'PORT_API'];
-const privateConsts = {};
-Object.keys(consts).forEach(key => {
-  if (!privates.includes(key)) {
-    privateConsts[key] = consts[key];
-  }
-});
+import { GA_TRACKING_ID } from '../lib/consts';
 
 class MyDocument extends Document {
   public static getInitialProps = ctx => {
@@ -158,8 +147,6 @@ class MyDocument extends Document {
           }}
         >
           <Main />
-          {/* eslint-disable-next-line react/no-danger */}
-          <script dangerouslySetInnerHTML={{ __html: `__ENV__ = ${htmlescape(privateConsts)}` }} />
           <NextScript />
         </body>
       </html>
@@ -167,11 +154,11 @@ class MyDocument extends Document {
   }
 
   private gtag() {
-    if (!consts.GA_TRACKING_ID) { return; }
+    if (!GA_TRACKING_ID) { return; }
 
     return (
       <div>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${consts.GA_TRACKING_ID}`} />
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
         <script
           /* eslint-disable-next-line react/no-danger */
           dangerouslySetInnerHTML={{
@@ -181,7 +168,7 @@ class MyDocument extends Document {
                   dataLayer.push(arguments);
                 }
                 gtag('js', new Date());
-                gtag('config', '${consts.GA_TRACKING_ID}');
+                gtag('config', '${GA_TRACKING_ID}');
               `,
           }}
         />
