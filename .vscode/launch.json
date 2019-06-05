@@ -10,7 +10,7 @@
       "name": "Debug the API",
       "program": "${workspaceFolder}/api/server/app.ts",
       "args": [],
-      "console": "integratedTerminal",
+      "console": "internalConsole",
       "cwd": "${workspaceFolder}/api",
       "preLaunchTask": "npm: build:api",
       "outFiles": ["${workspaceFolder}/api/production-server/**/*.js"]
@@ -21,7 +21,7 @@
       "name": "Debug the APP",
       "program": "${workspaceFolder}/app/server/app.ts",
       "args": [],
-      "console": "integratedTerminal",
+      "console": "internalConsole",
       "cwd": "${workspaceFolder}/app",
       "preLaunchTask": "npm: build:app",
       "outFiles": ["${workspaceFolder}/app/production-server/**/*.js"]
