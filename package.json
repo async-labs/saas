@@ -2,7 +2,7 @@
   "name": "saas-boilerplate",
   "version": "1.2.0",
   "license": "MIT",
-  "description": "Build your own SaaS business with SaaS boilerplate. Productive stack: React, Material-UI, Next, MobX, WebSockets, Express, Node, Mongoose, MongoDB. Written with TypeScript.",
+  "description": "Build your own SaaS business with SaaS boilerplate. Productive stack: React, Material-UI, Next, MobX, WebSockets, Express, Node, Mongoose, MongoDB and Docker CE. Written with TypeScript.",
   "scripts": {
     "dev": "yarn --cwd ./api dev & yarn --cwd ./app dev",
     "test": "yarn --cwd ./api test && yarn --cwd ./app test",
