@@ -18,6 +18,7 @@
     "stage:api": "docker-compose run --service-ports --use-aliases --rm saas-api",
     "stage:app": "docker-compose run --service-ports --use-aliases --rm saas-app",
     "stage:db": "docker-compose run --service-ports --use-aliases --rm saas-mongo",
+    "stage:db2": "docker-compose run --service-ports --use-aliases --rm saas-mongoexp",
     "clean:prune": "yarn stage:clean && docker rmi $(docker images -f reference=saas-*:* -q) --force && yarn clean:dangling && yarn clean:volumes",
     "clean:dangling": "docker rmi $(docker images -f dangling=true -q)",
     "clean:volumes": "docker volume ls -qf dangling=true | xargs -r docker volume rm",
