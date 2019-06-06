@@ -57,7 +57,7 @@ services:
           - api.saas.localhost
     environment: *apirunvars
     ports:
-      - "${API_PORT:-3000}:${API_PORT:-3000}"
+      - "${API_PORT:-8000}:${API_PORT:-8000}"
     depends_on:
       - saas-mongo
     command: yarn start
