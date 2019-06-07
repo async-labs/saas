@@ -1,3 +1,5 @@
+import '../../../server/env';
+
 import mockingoose from 'mockingoose';
 import User from '../../../server/models/User';
 import { generateSlug } from '../../../server/utils/slugify';
