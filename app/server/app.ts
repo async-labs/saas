@@ -1,3 +1,5 @@
+import './env';
+
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as mobxReact from 'mobx-react';
@@ -5,17 +7,13 @@ import * as next from 'next';
 import * as path from 'path';
 
 import { getUser } from '../lib/api/public';
-import env from '../lib/env';
 import routesWithSlug from './routesWithSlug';
+
+import { IS_DEV, PORT_APP, URL_APP } from '../lib/consts';
 
 mobxReact.useStaticRendering(true);
 
-const dev = process.env.NODE_ENV !== 'production';
-const port = process.env.PORT || 3000;
-const { PRODUCTION_URL_APP } = env;
-const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_APP;
-
-const app = next({ dev });
+const app = next({ dev: IS_DEV });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
@@ -33,7 +31,7 @@ app.prepare().then(() => {
   server.use(helmet());
   server.use(express.json());
 
-  if (!dev) {
+  if (!IS_DEV) {
     server.set('trust proxy', 1); // sets req.hostname, req.ip
   }
 
@@ -65,7 +63,7 @@ app.prepare().then(() => {
       }
     }
 
-    res.redirect(`${ROOT_URL}/${redirectUrl}`);
+    res.redirect(`${URL_APP}/${redirectUrl}`);
   });
 
   routesWithSlug({ server, app });
@@ -78,10 +76,10 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(port, err => {
+  server.listen(PORT_APP, err => {
     if (err) {
       throw err;
     }
-    console.log(`> Ready on ${ROOT_URL}`);
+    console.log(`> Ready on ${URL_APP}`);
   });
 });

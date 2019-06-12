@@ -1,19 +1,25 @@
 {
   "name": "saas-api",
-  "version": "0.0.1",
+  "version": "1.2.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon server/app.ts",
-    "build": "rm -rf production-server/ && tsc --project tsconfig.json",
-    "postinstall": "rm -rf production-server/ && tsc --project tsconfig.json",
-    "start": "NODE_ENV=production node production-server/app.js",
+    "dev": "tsnd --respawn --transpileOnly server/app.ts",
+    "build": "rm -rf production-server/ && tsc --project tsconfig.server.json",
+    "postinstall": "rm -rf production-server/ && tsc --project tsconfig.server.json",
+    "start": "node production-server/app.js",
     "now": "now && now alias",
     "now-rm": "now rm saas-api --safe --yes",
     "lint": "tslint -p tsconfig.json",
     "test": "jest --coverage",
     "processes-8000": "ss -lptn 'sport = :8000'",
     "processes-node": "ps -e|grep node",
-    "kill-processes-at-port": "lsof -i tcp:8000 | awk 'NR!=1 {print $2}' | xargs kill"
+    "kill-processes-at-port": "lsof -i tcp:8000 | awk 'NR!=1 {print $2}' | xargs kill",
+    "docker:build": "yarn lint && yarn test && docker image build . -t saas-api:latest",
+    "docker:run": "yarn docker:clean && yarn docker:runHelper",
+    "docker:runHelper": "docker run --name saas-api-latest --env-file .env -d -p 8000:8000 saas-api:latest",
+    "docker:clean": "docker rm -f saas-api-latest || true",
+    "docker:taillogs": "docker logs -f saas-api-latest",
+    "docker:debug": "yarn docker:build && yarn docker:run && yarn docker:taillogs"
   },
   "husky": {
     "hooks": {
@@ -21,7 +27,11 @@
     }
   },
   "jest": {
-    "coverageDirectory": "./.coverage"
+    "coverageDirectory": "./.coverage",
+    "preset": "ts-jest",
+    "testPathIgnorePatterns": [
+      "production-server"
+    ]
   },
   "dependencies": {
     "@types/dotenv": "^6.1.1",
@@ -32,7 +42,7 @@
     "compression": "1.7.4",
     "connect-mongo": "2.0.3",
     "cors": "^2.8.5",
-    "dotenv": "7.0.0",
+    "dotenv": "8.0.0",
     "express": "4.16.4",
     "express-session": "1.15.6",
     "front-matter": "3.0.1",
@@ -62,6 +72,7 @@
     "@types/express": "4.16.1",
     "@types/express-session": "^1.15.12",
     "@types/handlebars": "4.1.0",
+    "@types/jest": "^24.0.13",
     "@types/lodash": "4.14.123",
     "@types/passport": "1.0.0",
     "@types/request": "^2.48.1",
@@ -69,8 +80,10 @@
     "@types/stripe": "6.25.6",
     "husky": "1.3.1",
     "jest": "24.5.0",
-    "nodemon": "1.18.10",
+    "mockingoose": "^2.13.0",
+    "ts-jest": "^24.0.2",
     "ts-node": "8.0.3",
+    "ts-node-dev": "^1.0.0-pre.39",
     "tslint": "5.14.0"
   }
 }

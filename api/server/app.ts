@@ -1,7 +1,8 @@
+import './env';
+
 import * as compression from 'compression';
 import * as mongoSessionStore from 'connect-mongo';
 import * as cors from 'cors';
-import * as dotenv from 'dotenv';
 import * as express from 'express';
 import * as session from 'express-session';
 import * as helmet from 'helmet';
@@ -18,14 +19,11 @@ import { stripeWebHooks } from './stripe';
 import logger from './logs';
 import Team from './models/Team';
 
-dotenv.config();
-
-const dev = process.env.NODE_ENV !== 'production';
-const port = process.env.PORT || 8000;
-const { PRODUCTION_URL_APP, PRODUCTION_URL_API } = process.env;
-const ROOT_URL = dev ? `http://localhost:${port}` : PRODUCTION_URL_API;
-
-const MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
+import {
+  COOKIE_DOMAIN, IS_DEV, MONGO_URL,
+  PORT_API as PORT, SESSION_NAME, SESSION_SECRET,
+  URL_API as ROOT_URL, URL_APP,
+} from './consts';
 
 const options = {
   useNewUrlParser: true,
@@ -37,9 +35,7 @@ mongoose.connect(MONGO_URL, options);
 
 const server = express();
 
-const appPort = process.env.APP_PORT || 3000;
-const origin = dev ? `http://localhost:${appPort}` : PRODUCTION_URL_APP;
-server.use(cors({ origin, credentials: true }));
+server.use(cors({ origin: URL_APP, credentials: true }));
 
 server.use(helmet());
 server.use(compression());
@@ -50,8 +46,8 @@ server.use(express.json());
 
 const MongoStore = mongoSessionStore(session);
 const sessionOptions = {
-  name: process.env.SESSION_NAME,
-  secret: process.env.SESSION_SECRET,
+  name: SESSION_NAME,
+  secret: SESSION_SECRET,
   store: new MongoStore({
     mongooseConnection: mongoose.connection,
     ttl: 14 * 24 * 60 * 60, // save session 14 days
@@ -61,11 +57,11 @@ const sessionOptions = {
   cookie: {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
-    domain: dev ? 'localhost' : '.async-await.com',
+    domain: COOKIE_DOMAIN,
   } as any,
 };
 
-if (!dev) {
+if (!IS_DEV) {
   server.set('trust proxy', 1); // sets req.hostname, req.ip
   sessionOptions.cookie.secure = true; // sets cookie over HTTPS only
 }
@@ -79,11 +75,11 @@ setupPasswordless({ server, ROOT_URL });
 api(server);
 
 const http = new httpModule.Server(server);
-realtime({ http, origin: dev ? 'http://localhost:3000' : PRODUCTION_URL_APP, sessionMiddleware });
+realtime({ http, origin: URL_APP, sessionMiddleware });
 
 server.get('/uploaded-file', async (req, res) => {
   if (!req.user) {
-    res.redirect(dev ? 'http://localhost:3000/login' : `${PRODUCTION_URL_APP};/login`);
+    res.redirect(`${URL_APP}/login`);
     return;
   }
 
@@ -123,6 +119,6 @@ server.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
-http.listen(port, () => {
+http.listen(PORT, () => {
   logger.info(`> Ready on ${ROOT_URL}`);
 });

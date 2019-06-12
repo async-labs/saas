@@ -13,9 +13,9 @@ import notify from '../lib/notifier';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-import env from '../lib/env';
-
 import Layout from '../components/layout';
+
+import { BUCKET_FOR_TEAM_AVATARS } from '../lib/consts';
 
 const styleGrid = {
   height: '100%',
@@ -58,8 +58,6 @@ class CreateTeam extends React.Component<MyProps> {
         notify('You successfully created Team.<p />Redirecting...');
         return;
       }
-
-      const { BUCKET_FOR_TEAM_AVATARS } = env;
       const bucket = BUCKET_FOR_TEAM_AVATARS;
       const prefix = team.slug;
 

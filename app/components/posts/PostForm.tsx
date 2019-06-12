@@ -6,16 +6,12 @@ import { inject, observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 
-import env from '../../lib/env';
-
 import notify from '../../lib/notifier';
 import { Discussion, Post, Store, User } from '../../lib/store';
 
 import PostEditor from './PostEditor';
 
-const { NODE_ENV, PRODUCTION_URL_APP } = env;
-const dev = NODE_ENV !== 'production';
-const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
+import { URL_APP } from '../../lib/consts';
 
 const styles = {
   paper: {
@@ -201,7 +197,6 @@ class PostForm extends React.Component<MyProps, MyState> {
       }
       this.setState({ content: '' });
       notify('You successfully published new Post.');
-
     } catch (error) {
       console.log(error);
       notify(error);

@@ -7,9 +7,6 @@ import NProgress from 'nprogress';
 import React from 'react';
 import { Mention, MentionsInput } from 'react-mentions';
 
-import env from '../../lib/env';
-
-// import getApiUrl from '../../lib/api/getRootUrl';
 import {
   getSignedRequestForUpload,
   uploadFileUsingSignedPutRequest,
@@ -19,6 +16,8 @@ import { resizeImage } from '../../lib/resizeImage';
 import { Store, User } from '../../lib/store';
 
 import PostContent from './PostContent';
+
+import { BUCKET_FOR_POSTS } from '../../lib/consts';
 
 function getImageDimension(file): Promise<{ width: number; height: number }> {
   const reader = new FileReader();
@@ -130,76 +129,76 @@ class PostEditor extends React.Component<MyProps, MyState> {
           {htmlContent ? (
             <PostContent html={htmlContent} />
           ) : (
-            <MentionsInput
-              style={{
-                input: {
-                  border: 'none',
-                  outline: 'none',
-                  font: '16px Roboto',
-                  color: isThemeDark ? '#fff' : '#000',
-                  fontWeight: 300,
-                  height: '100vh', // TODO: check on Mobile
-                  lineHeight: '1.5em',
-                  backgroundColor: content ? textareaBackgroundColor : 'transparent',
-                },
-                suggestions: {
-                  list: {
-                    backgroundColor: '#222',
-                    color: '#fff',
+              <MentionsInput
+                style={{
+                  input: {
+                    border: 'none',
+                    outline: 'none',
+                    font: '16px Roboto',
+                    color: isThemeDark ? '#fff' : '#000',
+                    fontWeight: 300,
+                    height: '100vh', // TODO: check on Mobile
+                    lineHeight: '1.5em',
+                    backgroundColor: content ? textareaBackgroundColor : 'transparent',
                   },
+                  suggestions: {
+                    list: {
+                      backgroundColor: '#222',
+                      color: '#fff',
+                    },
 
-                  item: {
-                    padding: '5px 15px',
-                    borderBottom: '1px solid rgba(0,0,0,0.15)',
+                    item: {
+                      padding: '5px 15px',
+                      borderBottom: '1px solid rgba(0,0,0,0.15)',
 
-                    '&focused': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      '&focused': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      },
                     },
                   },
-                },
-              }}
-              autoFocus
-              value={content}
-              placeholder={this.props.placeholder ? this.props.placeholder : 'Compose new post'}
-              markup={'[`__type__#__display__`](__id__)'}
-              displayTransform={(id, display, type) => {
-                if (type === '@') {
-                  return `@${display}`;
-                }
+                }}
+                autoFocus
+                value={content}
+                placeholder={this.props.placeholder ? this.props.placeholder : 'Compose new post'}
+                markup={'[`__type__#__display__`](__id__)'}
+                displayTransform={(id, display, type) => {
+                  if (type === '@') {
+                    return `@${display}`;
+                  }
 
-                return `[${display} ](${id})`;
-              }}
-              onChange={event => {
-                this.props.onChanged(event.target.value);
-              }}
-            >
-              <Mention
-                trigger="@"
-                data={membersMinusCurrentUser.map(u => ({
-                  id: u.avatarUrl,
-                  display: u.displayName,
-                  you: u._id === currentUser._id ? true : false,
-                }))}
-                renderSuggestion={suggestion => (
-                  <React.Fragment>
-                    <Avatar
-                      role="presentation"
-                      src={suggestion.id}
-                      alt={suggestion.display}
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        marginRight: '10px',
-                        display: 'inline-flex',
-                        verticalAlign: 'middle',
-                      }}
-                    />
-                    <span style={{ marginRight: '5px' }}>{suggestion.display}</span>
-                  </React.Fragment>
-                )}
-              />
-            </MentionsInput>
-          )}
+                  return `[${display} ](${id})`;
+                }}
+                onChange={event => {
+                  this.props.onChanged(event.target.value);
+                }}
+              >
+                <Mention
+                  trigger="@"
+                  data={membersMinusCurrentUser.map(u => ({
+                    id: u.avatarUrl,
+                    display: u.displayName,
+                    you: u._id === currentUser._id ? true : false,
+                  }))}
+                  renderSuggestion={suggestion => (
+                    <React.Fragment>
+                      <Avatar
+                        role="presentation"
+                        src={suggestion.id}
+                        alt={suggestion.display}
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          marginRight: '10px',
+                          display: 'inline-flex',
+                          verticalAlign: 'middle',
+                        }}
+                      />
+                      <span style={{ marginRight: '5px' }}>{suggestion.display}</span>
+                    </React.Fragment>
+                  )}
+                />
+              </MentionsInput>
+            )}
         </div>
       </div>
     );
@@ -254,8 +253,6 @@ class PostEditor extends React.Component<MyProps, MyState> {
     const { currentTeam } = store;
 
     NProgress.start();
-
-    const { BUCKET_FOR_POSTS } = env;
 
     const bucket = BUCKET_FOR_POSTS;
     const prefix = `${currentTeam.slug}`;

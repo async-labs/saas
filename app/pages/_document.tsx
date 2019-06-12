@@ -1,29 +1,8 @@
-import htmlescape from 'htmlescape';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
 import flush from 'styled-jsx/server';
 
-const {
-  NODE_ENV,
-  GA_TRACKING_ID,
-  PRODUCTION_URL_APP,
-  PRODUCTION_URL_API,
-  StripePublishableKey,
-  BUCKET_FOR_POSTS,
-  BUCKET_FOR_TEAM_AVATARS,
-  LAMBDA_API_ENDPOINT,
-} = process.env;
-
-const env = {
-  NODE_ENV,
-  GA_TRACKING_ID,
-  PRODUCTION_URL_APP,
-  PRODUCTION_URL_API,
-  StripePublishableKey,
-  BUCKET_FOR_POSTS,
-  BUCKET_FOR_TEAM_AVATARS,
-  LAMBDA_API_ENDPOINT,
-};
+import { GA_TRACKING_ID } from '../lib/consts';
 
 class MyDocument extends Document {
   public static getInitialProps = ctx => {
@@ -155,20 +134,7 @@ class MyDocument extends Document {
               }
             `}
           </style>
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
-          <script
-            /* eslint-disable-next-line react/no-danger */
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){
-                  dataLayer.push(arguments);
-                }
-                gtag('js', new Date());
-                gtag('config', '${GA_TRACKING_ID}');
-              `,
-            }}
-          />
+          {this.gtag()}
         </Head>
         <body
           style={{
@@ -181,11 +147,32 @@ class MyDocument extends Document {
           }}
         >
           <Main />
-          {/* eslint-disable-next-line react/no-danger */}
-          <script dangerouslySetInnerHTML={{ __html: `__ENV__ = ${htmlescape(env)}` }} />
           <NextScript />
         </body>
       </html>
+    );
+  }
+
+  private gtag() {
+    if (!GA_TRACKING_ID) { return; }
+
+    return (
+      <div>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
+        <script
+          /* eslint-disable-next-line react/no-danger */
+          dangerouslySetInnerHTML={{
+            __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){
+                  dataLayer.push(arguments);
+                }
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}');
+              `,
+          }}
+        />
+      </div>
     );
   }
 }

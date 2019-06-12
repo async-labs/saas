@@ -17,6 +17,10 @@ import {
   updateCustomer,
 } from '../stripe';
 
+import {
+  EMAIL_SUPPORT_FROM_ADDRESS,
+} from '../consts';
+
 mongoose.set('useFindAndModify', false);
 
 const mongoSchema = new mongoose.Schema({
@@ -352,7 +356,7 @@ class UserClass extends mongoose.Model {
     if (!hasInvitation) {
       try {
         await sendEmail({
-          from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+          from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
           to: [email],
           subject: template.subject,
           body: template.message,
@@ -405,7 +409,7 @@ class UserClass extends mongoose.Model {
     if (!hasInvitation) {
       try {
         await sendEmail({
-          from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+          from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
           to: [email],
           subject: template.subject,
           body: template.message,

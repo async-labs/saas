@@ -15,9 +15,7 @@
     "baseUrl": ".",
     "experimentalDecorators": true,
     "typeRoots": ["./node_modules/@types"],
-    "lib": ["es2015", "es2016"],
-    "module": "commonjs",
-    "outDir": "production-server/"
+    "lib": ["es2015", "es2016"]
   },
-  "include": ["./server/**/*.ts"]
+  "exclude": ["production-server", "node_modules"]
 }

@@ -18,5 +18,5 @@
     "typeRoots": ["./node_modules/@types"],
     "lib": ["dom", "es2015", "es2016"]
   },
-  "include": ["./**/*.tsx", "./**/*.ts"]
+  "exclude": ["production-server", ".next", "next.config.js"]
 }

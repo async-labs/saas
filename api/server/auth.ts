@@ -9,9 +9,10 @@ import Invitation from './models/Invitation';
 import User, { IUserDocument } from './models/User';
 import PasswordlessMongoStore from './passwordless';
 
-const dev = process.env.NODE_ENV !== 'production';
-const { PRODUCTION_URL_APP } = process.env;
-const URL_APP = dev ? 'http://localhost:3000' : PRODUCTION_URL_APP;
+import {
+  EMAIL_SUPPORT_FROM_ADDRESS, GOOGLE_CLIENTID,
+  GOOGLE_CLIENTSECRET, URL_APP,
+} from './consts';
 
 function setupPasswordless({ server, ROOT_URL }) {
   const mongoStore = new PasswordlessMongoStore();
@@ -28,7 +29,7 @@ function setupPasswordless({ server, ROOT_URL }) {
       logger.debug(template.message);
 
       await sendEmail({
-        from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [recipient],
         subject: template.subject,
         body: template.message,
@@ -88,8 +89,10 @@ function setupPasswordless({ server, ROOT_URL }) {
 }
 
 function setupGoogle({ ROOT_URL, server }) {
-  const clientID = process.env.Google_clientID;
-  const clientSecret = process.env.Google_clientSecret;
+
+  if (!GOOGLE_CLIENTID) {
+    return;
+  }
 
   const verify = async (accessToken, refreshToken, profile, verified) => {
     let email;
@@ -122,8 +125,8 @@ function setupGoogle({ ROOT_URL, server }) {
   passport.use(
     new Strategy(
       {
-        clientID,
-        clientSecret,
+        clientID: GOOGLE_CLIENTID,
+        clientSecret: GOOGLE_CLIENTSECRET,
         callbackURL: `${ROOT_URL}/oauth2callback`,
       },
       verify,

@@ -3,28 +3,25 @@ import TextField from '@material-ui/core/TextField';
 import React from 'react';
 
 import { makeQueryString } from '../../lib/api/makeQueryString';
-import env from '../../lib/env';
 
 import { sendLoginToken } from '../../lib/api/public';
 import notify from '../../lib/notifier';
 import { styleLoginButton } from '../../lib/sharedStyles';
 
-// TS errors: https://github.com/mui-org/material-ui/issues/8198
+import { URL_API } from '../../lib/consts';
 
-const dev = process.env.NODE_ENV !== 'production';
-const { PRODUCTION_URL_API } = env;
-const LOGIN_URL = dev ? 'http://localhost:8000' : PRODUCTION_URL_API;
+// TS errors: https://github.com/mui-org/material-ui/issues/8198
 
 class LoginButton extends React.PureComponent<
   { next?: string; invitationToken?: string },
   { email: string }
-> {
+  > {
   public state = { email: '' };
 
   public render() {
     const { next, invitationToken } = this.props;
 
-    let url = `${LOGIN_URL}/auth/google`;
+    let url = `${URL_API}/auth/google`;
     const qs = makeQueryString({ next, invitationToken });
 
     if (qs) {

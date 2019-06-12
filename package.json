@@ -1,0 +1,43 @@
+{
+  "name": "saas-boilerplate",
+  "version": "1.2.0",
+  "license": "MIT",
+  "description": "Build your own SaaS business with SaaS boilerplate. Productive stack: React, Material-UI, Next, MobX, WebSockets, Express, Node, Mongoose, MongoDB and Docker CE. Written with TypeScript.",
+  "scripts": {
+    "dev": "yarn --cwd ./api dev & yarn --cwd ./app dev",
+    "test": "yarn --cwd ./api test && yarn --cwd ./app test",
+    "postinstall": "yarn --cwd ./api install && yarn --cwd ./app install",
+    "build": "yarn build:api && yarn build:app",
+    "build:api": "yarn --cwd ./api build",
+    "build:app": "yarn --cwd ./app build",
+    "stage": "docker-compose build --force-rm",
+    "stage:config": "docker-compose config",
+    "stage:start": "docker-compose up",
+    "stage:stop": "docker-compose down",
+    "stage:clean": "docker-compose rm",
+    "stage:api": "docker-compose run --service-ports --use-aliases --rm saas-api",
+    "stage:app": "docker-compose run --service-ports --use-aliases --rm saas-app",
+    "stage:db": "docker-compose run --service-ports --use-aliases --rm saas-mongo",
+    "stage:db2": "docker-compose run --service-ports --use-aliases --rm saas-mongoexp",
+    "clean:prune": "yarn stage:clean && docker rmi $(docker images -f reference=saas-*:* -q) --force && yarn clean:dangling && yarn clean:volumes",
+    "clean:dangling": "docker rmi $(docker images -f dangling=true -q)",
+    "clean:volumes": "docker volume ls -qf dangling=true | xargs -r docker volume rm",
+    "sh:api": "docker-compose exec saas-api sh",
+    "sh:app": "docker-compose exec saas-app sh",
+    "tree": "tree -a -L 4 -I 'node_modules|.git|.next|production-server' -v --dirsfirst"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "node",
+    "mongo",
+    "saas",
+    "material-ui",
+    "next",
+    "mobx",
+    "websockets",
+    "express",
+    "docker"
+  ],
+  "devDependencies": {}
+}

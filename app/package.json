@@ -1,19 +1,25 @@
 {
   "name": "saas-app",
-  "version": "0.0.1",
+  "version": "1.2.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon server/app.ts",
+    "dev": "tsnd --respawn --transpileOnly --project tsconfig.server.json --ignore-watch .next -- server/app.ts",
     "build": "next build && tsc --project tsconfig.server.json",
-    "postinstall": "next build && rm -rf production-server/ && tsc --project tsconfig.server.json",
-    "start": "NODE_ENV=production node production-server/server/app.js",
+    "postinstall": "next build && rm -rf production-server/ & tsc --project tsconfig.server.json",
+    "start": "node production-server/server/app.js",
     "now": "now && now alias",
     "now-rm": "now rm saas-app --safe --yes",
     "lint": "tslint -p tsconfig.json && tslint -p tsconfig.server.json",
-    "test": "jest --coverage",
+    "test": "jest --coverage --passWithNoTests",
     "processes-3000": "ss -lptn 'sport = :3000'",
     "processes-node": "ps -e|grep node",
-    "kill-processes-at-port": "lsof -i tcp:3000 | awk 'NR!=1 {print $2}' | xargs kill"
+    "kill-processes-at-port": "lsof -i tcp:3000 | awk 'NR!=1 {print $2}' | xargs kill",
+    "docker:build": "yarn lint && yarn test && docker image build . -t saas-app:latest",
+    "docker:run": "yarn docker:clean && yarn docker:runHelper",
+    "docker:runHelper": "docker run --name saas-app-latest --env-file .env -d -p 8000:8000 saas-app:latest",
+    "docker:clean": "docker rm -f saas-app-latest || true",
+    "docker:taillogs": "docker logs -f saas-app-latest",
+    "docker:debug": "yarn docker:build && yarn docker:run && yarn docker:taillogs"
   },
   "jest": {
     "coverageDirectory": "./.coverage"
@@ -22,6 +28,7 @@
     "@material-ui/core": "3.9.2",
     "@types/node": "11.11.6",
     "@zeit/next-typescript": "1.1.1",
+    "dotenv": "^8.0.0",
     "downshift": "3.2.7",
     "express": "4.16.4",
     "he": "1.2.0",
@@ -34,7 +41,7 @@
     "mobx": "5.9.0",
     "mobx-react": "5.4.3",
     "moment": "2.24.0",
-    "next": "8.0.3",
+    "next": "8.1.0",
     "nprogress": "0.2.0",
     "react": "16.8.5",
     "react-dom": "16.8.5",
@@ -60,8 +67,8 @@
     "@types/socket.io-client": "^1.4.32",
     "@types/styled-jsx": "2.2.8",
     "jest": "24.5.0",
-    "nodemon": "1.18.10",
     "ts-node": "8.0.3",
+    "ts-node-dev": "^1.0.0-pre.39",
     "tslint": "5.14.0"
   }
 }
