@@ -58,10 +58,6 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   - update card information,
   - verified Stripe webhook for failed payment for subscription.
 
-## Run locally
-
-To run locally, you will need to run two apps: `api` and `app`. To do so, run `yarn install` on the root of the project (or individually on each app) to install the necessary dependencies and build the first version.
-
 #### Running `api` locally:
 
 - Before running, create a `.env` file inside the `api` folder with the environmental variables listed below.<br/>
@@ -120,7 +116,7 @@ To run locally, you will need to run two apps: `api` and `app`. To do so, run `y
     Important: For Google OAuth app, callback URL is: http://localhost:8000/oauth2callback <br/>
     Important: You have to enable Google+ API in your Google Cloud Platform account.
 
-- Once `.env` is created, you can run the `api` app. Navigate to the `api` folder, run `yarn` to add all packages, then run the command below:
+- Once `.env` is created, you can run the `api` app. Navigate to the `api` folder, run `yarn install` to add all packages, then run the command below:
   ```
   yarn dev
   ```
@@ -167,11 +163,40 @@ To run locally, you will need to run two apps: `api` and `app`. To do so, run `y
 
 - Make sure to update allowed origin with your actual `URL_APP`. In our case, it's `https://saas-app.async-await.com` for production, `http://app.saas.localhost:3000` for staging locally and `http://localhost:3000` for development.
 
-#### Run both locally
+- Once `.env` is created, you can run the `app` app. Navigate to the `app` folder, run `yarn install` to add all packages, then run the command below:
+  ```
+  yarn dev
+  ```
 
-- Configure both app's as shown above, and then run `yarn dev` on the root of the project, it should initiate both `api` and `app` on the same shell.
+#### Run both app and api in the same shell
 
-## Stage locally
+- Install dependencies: either run `yarn install --no-lockfile` at project's root or go to `app` and `api` folders and run `yarn install` in each folder.
+- Add env variables as shown above, and then run `yarn dev` on the root of the project, it should initiate both `api` and `app` on the same shell. Alternatively, start each app in its own terminal shell by going to `app` and `api` folders and running `yarn dev` in each folder.
+
+## Stage database for development with Docker
+
+If you're not DB ready when starting the boilerplate, you can now spawn a mongo docker container with yarn stage:db on the root of the project that will configure a default database and users.
+
+The [compose file](https://github.com/async-labs/saas/blob/master/docker-compose.yml) is configured to stage the db with default values, but you can override them with a new root .env file (more details below) containing the expected variables to launch a [mongo docker image](https://hub.docker.com/_/mongo/), and `mongo-express`. My recommended stage settings are:
+
+```
+MONGO_INITDB_ROOT_USERNAME=root
+MONGO_INITDB_ROOT_PASSWORD=supersecret
+MONGO_INITDB_DATABASE=saas
+MONGO_NON_ROOT_USERNAME=saas
+MONGO_NON_ROOT_PASSWORD=secret
+
+# mongo-express config
+ME_CONFIG_MONGODB_SERVER=saas-mongo
+ME_CONFIG_MONGODB_ADMINUSERNAME=root
+ME_CONFIG_MONGODB_ADMINPASSWORD=supersecret
+```
+
+Once it starts you need to have `MONGO_URL=mongodb://saas:secret@localhost:27017/saas` connection string on your api/.env because the container exposes port 27017 to consume under localhost instead of being on the same network.
+
+Please note the [docker-compose.yml](https://github.com/async-labs/saas/blob/master/docker-compose.yml) configuration includes a volume for `saas-mongo` that persists data to your local path `/tmp/saas-db` across container restarts.
+
+## Stage apps locally with Docker
 
 Use `docker-compose` to build a new stack of the services whenever you change dependencies, refactor, or you can also use this workflow if you don't want to install all the dependencies to build the stack.
 
@@ -183,7 +208,7 @@ With the containers running you can also `sh` into them by running `yarn sh:api`
 
 **Please note** the first time you run the stage, there maybe a connection timeout whilst the mongo instance creates the first database/user, if that's the case just restart the stack.
 
-#### Example new root `.env`
+#### Example new root `.env` for staging with Docker
 
 This file is optional and only if you would like to use `docker-compose` to stage the project.
 
@@ -240,61 +265,13 @@ ME_CONFIG_MONGODB_ADMINUSERNAME=root
 ME_CONFIG_MONGODB_ADMINPASSWORD=supersecret
 ```
 
-## Deploy
+## Deploy with Heroku
 
-To deploy the two apps (`api` and `app`), follow the instructions below.
+To deploy the two apps (`api` and `app`), you can follow these instructions to deploy each app individually to Heroku:
 
-- Inside the `api` folder, create a `now.json` file with the following content:
+https://github.com/builderbook/builderbook/blob/master/README.md#deploy-to-heroku
 
-  ```
-  {
-    "env": {
-        "NODE_ENV": "production"
-    },
-    "dotenv": true,
-    "alias": "your-api-url.com",
-    "scale": {
-      "sfo1": {
-        "min": 1,
-        "max": 1
-      }
-    }
-  }
-  ```
-
-  Remember to edit `now.json` so it reflects your domain.
-
-- Inside the `app` folder, create a `now.json` file with the following content:
-
-  ```
-  {
-    "env": {
-        "NODE_ENV": "production",
-        "GA_TRACKING_ID": "UA-xxxxxxxxx-x",
-        "STRIPEPUBLISHABLEKEY": "pk_live_xxxxxx",
-        "URL_APP": "https://your-app-url.com",
-        "URL_API": "https://your-api-url.com",
-        "BUCKET_FOR_POSTS": "xxxxxx",
-        "BUCKET_FOR_TEAM_AVATARS": "xxxxxx",
-        "LAMBDA_API_ENDPOINT": "xxxxxx",
-    },
-    "alias": "your-app-url.com",
-    "scale": {
-      "sfo1": {
-        "min": 1,
-        "max": 1
-      }
-    }
-  }
-  ```
-
-  Remember to edit `now.json` so it reflects your `GA_TRACKING_ID` and domains.
-
-- Follow [these simple steps](https://github.com/builderbook/builderbook#deploy) to deploy each app to `Now` cloud by Zeit.
-
-Learn how to configure and scale your deployment: [Now docs](https://zeit.co/docs/features/configuration).
-
-You are welcome to deploy to any cloud provider. We plan to publish a tutorial for AWS Elastic Beanstalk.
+You are welcome to deploy to any cloud provider. Eventually, we will publish a tutorial for AWS Elastic Beanstalk.
 
 ## Built with
 
@@ -308,7 +285,7 @@ You are welcome to deploy to any cloud provider. We plan to publish a tutorial f
 - [Typescript](https://github.com/Microsoft/TypeScript)
 - [Docker CE](https://docs.docker.com/install/)
 
-For more detail, check `package.json` files in both `app` and `api` folders.
+For more detail, check `package.json` files in both `app` and `api` folders and project's root.
 
 To customize styles, check [this guide](https://github.com/builderbook/builderbook#add-your-own-styles).
 
@@ -343,14 +320,14 @@ Menu dropdown to switch between Teams:
 
 Check out projects built with the code in this open source app. Feel free to add your own project by creating a pull request.
 
-- [Async](https://async-await.com/): asynchronous communication and project management tool for small teams of software engineers.
+- [Async](https://async-await.com/): asynchronous communication for small teams of software engineers.
 - [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee) : Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
 - [Builder Book](https://github.com/builderbook/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
 - [Harbor](https://github.com/builderbook/harbor): Open source web app that allows anyone with a Gmail account to automatically charge for advice sent via email.
 
 ## Contributing
 
-If you'd like to contribute, check our [todo list](https://github.com/async-labs/saas/issues/1) for features you can discuss and add. To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
+If you'd like to contribute, check our [todo list](https://github.com/async-labs/saas/issues/14) for features you can discuss and add. To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
 
 Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book).
 
