@@ -23,7 +23,6 @@
   "jest": {
     "coverageDirectory": "./.coverage",
     "preset": "ts-jest",
-    "testEnvironment": "node",
     "testPathIgnorePatterns": [
       "production-server"
     ]
