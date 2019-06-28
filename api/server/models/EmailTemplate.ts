@@ -49,6 +49,10 @@ async function insertTemplates() {
           If you're learning how to build your own SaaS web application, check out our
           <a href="https://builderbook.org/book" target="blank"> book</a>.
         </p>
+        <p>
+        If you want to hire us to customize or build features on top of our SaaS boilerplate, please fill out our
+        <a href="https://forms.gle/vaLHem6Ccmp3hics6" target="blank">form</a>.
+        </p>
         Kelly & Timur, Team Async
       `,
     },
