@@ -339,6 +339,8 @@ Want to support this project? Sign up at [async](https://async-await.com) and/or
 
 You can contact us at team@async-await.com.
 
+If you want to hire us to customize or build features on top of our SaaS boilerplate, please fill out our [form](https://forms.gle/vaLHem6Ccmp3hics6).
+
 ## License
 
 All code in this repository is provided under the [MIT License](https://github.com/async-labs/saas/blob/master/LICENSE.md).
