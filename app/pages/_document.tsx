@@ -1,3 +1,4 @@
+import { ServerStyleSheets } from '@material-ui/styles';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
 import flush from 'styled-jsx/server';
@@ -5,31 +6,24 @@ import flush from 'styled-jsx/server';
 import { GA_TRACKING_ID } from '../lib/consts';
 
 class MyDocument extends Document {
-  public static getInitialProps = ctx => {
+  public static getInitialProps = async ctx => {
     // Render app and page and get the context of the page with collected side effects.
-    let pageContext;
-    const page = ctx.renderPage(Component => {
-      const WrappedComponent = props => {
-        pageContext = props.pageContext;
-        return <Component {...props} />;
-      };
+    const sheets = new ServerStyleSheets();
+    const originalRenderPage = ctx.renderPage;
 
-      return WrappedComponent;
-    });
+    ctx.renderPage = () =>
+      originalRenderPage({
+        enhanceApp: App => props => sheets.collect(<App {...props} />),
+      });
+
+    const initialProps = await Document.getInitialProps(ctx);
 
     return {
-      ...page,
-      pageContext,
+      ...initialProps,
       // Styles fragment is rendered after the app and page rendering finish.
       styles: (
         <React.Fragment>
-          <style
-            id="jss-server-side"
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{
-              __html: pageContext && pageContext.sheetsRegistry.toString(),
-            }}
-          />
+          {sheets.getStyleElement()}
           {flush() || null}
         </React.Fragment>
       ),
@@ -37,10 +31,12 @@ class MyDocument extends Document {
   };
 
   public render() {
-    const isThemeDark = (this.props as any).pageContext.theme.palette.type === 'dark';
+    const isThemeDark =
+      this.props.__NEXT_DATA__.props.initialState.user &&
+      this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
 
     return (
-      <html lang="en" style={{ overflow: 'overlay', overflowX: 'hidden' }}>
+      <html lang="en">
         <Head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -68,10 +64,6 @@ class MyDocument extends Document {
 
           <style>
             {`
-              #__next {
-                width: 100%;
-                height: 100%;
-              }
               a,
               a:focus {
                 font-weight: 400;
@@ -154,7 +146,9 @@ class MyDocument extends Document {
   }
 
   private gtag() {
-    if (!GA_TRACKING_ID) { return; }
+    if (!GA_TRACKING_ID) {
+      return;
+    }
 
     return (
       <div>
