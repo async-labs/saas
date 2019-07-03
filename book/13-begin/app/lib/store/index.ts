@@ -18,7 +18,6 @@ import { IS_DEV } from '../consts';
 // 13
 // import { IS_DEV, URL_API } from '../consts';
 
-
 class Store {
   public isServer: boolean;
 
