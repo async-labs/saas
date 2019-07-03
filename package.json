@@ -1,6 +1,6 @@
 {
   "name": "saas-boilerplate",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "license": "MIT",
   "description": "Build your own SaaS business with SaaS boilerplate. Productive stack: React, Material-UI, Next, MobX, WebSockets, Express, Node, Mongoose, MongoDB and Docker CE. Written with TypeScript.",
   "scripts": {
