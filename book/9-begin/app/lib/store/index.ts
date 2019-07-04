@@ -1,16 +1,22 @@
 import * as mobx from 'mobx';
-import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
+import { action, decorate, observable, runInAction } from 'mobx';
+
+// 10
+// import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
 
 // 13
 // import * as io from 'socket.io-client';
 
-import { addTeam } from '../api/team-leader';
-import { getTeamList } from '../api/team-member';
+// 10
+// import { addTeam } from '../api/team-leader';
+// import { getTeamList } from '../api/team-member';
 
 // 12
 // import { Discussion } from './discussion';
 // import { Post } from './post';
-import { Team } from './team';
+
+// 10
+// import { Team } from './team';
 import { User } from './user';
 
 mobx.configure({ enforceActions: 'observed' });
@@ -22,13 +28,12 @@ import { IS_DEV } from '../consts';
 class Store {
   public isServer: boolean;
 
-  public teams: IObservableArray<Team> = observable([]);
-
-  public isLoadingTeams = false;
-  public isInitialTeamsLoaded = false;
+  // public teams: IObservableArray<Team> = observable([]);
+  // public isLoadingTeams = false;
+  // public isInitialTeamsLoaded = false;
+  // public currentTeam?: Team;
 
   public currentUser?: User = null;
-  public currentTeam?: Team;
   public currentUrl: string = '';
   public isLoggingIn = true;
 
@@ -48,11 +53,12 @@ class Store {
   }) {
     this.isServer = !!isServer;
 
-    this.setCurrentUser(initialState.user, !initialState.teams, initialState.teamSlug);
+    this.setCurrentUser(initialState.user);
 
-    if (initialState.teams) {
-      this.setTeams(initialState.teams, initialState.teamSlug);
-    }
+    // 10
+    // if (initialState.teams) {
+    //   this.setTeams(initialState.teams, initialState.teamSlug);
+    // }
 
     this.currentUrl = initialState.currentUrl || '';
 
@@ -86,115 +92,120 @@ class Store {
     this.currentUrl = url;
   }
 
-  public changeUserState(user?, selectedTeamSlug?: string) {
-    this.teams.clear();
-
-    this.isInitialTeamsLoaded = false;
-    this.setCurrentUser(user, true, selectedTeamSlug);
+  public changeUserState(user?) {
+    this.setCurrentUser(user);
   }
 
-  public setTeams(teams: any[], selectedTeamSlug?: string) {
-    const teamObjs = teams.map(t => new Team({ store: this, ...t }));
+  // public changeUserState(user?, selectedTeamSlug?: string) {
+  //   this.teams.clear();
 
-    if (teams && teams.length > 0 && !selectedTeamSlug) {
-      selectedTeamSlug = teamObjs[0].slug;
-    }
+  //   this.isInitialTeamsLoaded = false;
+  //   this.setCurrentUser(user, true, selectedTeamSlug);
+  // }
 
-    this.teams.replace(teamObjs);
+  // 10
+  // public setTeams(teams: any[], selectedTeamSlug?: string) {
+  //   const teamObjs = teams.map(t => new Team({ store: this, ...t }));
 
-    if (selectedTeamSlug) {
-      this.setCurrentTeam(selectedTeamSlug);
-    }
+  //   if (teams && teams.length > 0 && !selectedTeamSlug) {
+  //     selectedTeamSlug = teamObjs[0].slug;
+  //   }
 
-    this.isInitialTeamsLoaded = true;
-  }
+  //   this.teams.replace(teamObjs);
 
-  public async addTeam({ name, avatarUrl }: { name: string; avatarUrl: string }): Promise<Team> {
-    const data = await addTeam({ name, avatarUrl });
-    const team = new Team({ store: this, ...data });
+  //   if (selectedTeamSlug) {
+  //     this.setCurrentTeam(selectedTeamSlug);
+  //   }
 
-    runInAction(() => {
-      this.teams.push(team);
-    });
+  //   this.isInitialTeamsLoaded = true;
+  // }
 
-    return team;
-  }
+  // public async addTeam({ name, avatarUrl }: { name: string; avatarUrl: string }): Promise<Team> {
+  //   const data = await addTeam({ name, avatarUrl });
+  //   const team = new Team({ store: this, ...data });
 
-  public async loadTeams(selectedTeamSlug?: string) {
-    if (this.isLoadingTeams || this.isInitialTeamsLoaded) {
-      return;
-    }
+  //   runInAction(() => {
+  //     this.teams.push(team);
+  //   });
 
-    this.isLoadingTeams = true;
+  //   return team;
+  // }
 
-    try {
-      const { teams = [] } = await getTeamList();
+  // public async loadTeams(selectedTeamSlug?: string) {
+  //   if (this.isLoadingTeams || this.isInitialTeamsLoaded) {
+  //     return;
+  //   }
 
-      runInAction(() => {
-        this.setTeams(teams, selectedTeamSlug);
-      });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      runInAction(() => {
-        this.isLoadingTeams = false;
-      });
-    }
-  }
+  //   this.isLoadingTeams = true;
 
-  public setCurrentTeam(slug: string) {
-    if (this.currentTeam) {
-      if (this.currentTeam.slug === slug) {
-        return;
-      }
-    }
+  //   try {
+  //     const { teams = [] } = await getTeamList();
 
-    let found = false;
+  //     runInAction(() => {
+  //       this.setTeams(teams, selectedTeamSlug);
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     runInAction(() => {
+  //       this.isLoadingTeams = false;
+  //     });
+  //   }
+  // }
 
-    for (const team of this.teams) {
-      if (team.slug === slug) {
-        found = true;
-        this.currentTeam = team;
-        // 13
-        // team.joinSocketRoom();
-        this.loadCurrentTeamData();
-        break;
-      }
-    }
+  // public setCurrentTeam(slug: string) {
+  //   if (this.currentTeam) {
+  //     if (this.currentTeam.slug === slug) {
+  //       return;
+  //     }
+  //   }
 
-    if (!found) {
-      this.currentTeam = null;
-    }
-  }
+  //   let found = false;
 
-  public addTeamToLocalCache(data): Team {
-    const teamObj = new Team({ user: this.currentUser, store: this, ...data });
-    this.teams.unshift(teamObj);
+  //   for (const team of this.teams) {
+  //     if (team.slug === slug) {
+  //       found = true;
+  //       this.currentTeam = team;
+  //       // 13
+  //       // team.joinSocketRoom();
+  //       this.loadCurrentTeamData();
+  //       break;
+  //     }
+  //   }
 
-    return teamObj;
-  }
+  //   if (!found) {
+  //     this.currentTeam = null;
+  //   }
+  // }
 
-  public editTeamFromLocalCache(data) {
-    const team = this.teams.find(item => item._id === data._id);
+  // public addTeamToLocalCache(data): Team {
+  //   const teamObj = new Team({ user: this.currentUser, store: this, ...data });
+  //   this.teams.unshift(teamObj);
 
-    if (team) {
-      if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
-        team.changeLocalCache(data);
-      } else {
-        this.removeTeamFromLocalCache(data._id);
-      }
-    } else if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
-      this.addTeamToLocalCache(data);
-    }
-  }
+  //   return teamObj;
+  // }
 
-  public removeTeamFromLocalCache(teamId: string) {
-    const team = this.teams.find(t => t._id === teamId);
+  // public editTeamFromLocalCache(data) {
+  //   const team = this.teams.find(item => item._id === data._id);
 
-    this.teams.remove(team);
-  }
+  //   if (team) {
+  //     if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
+  //       team.changeLocalCache(data);
+  //     } else {
+  //       this.removeTeamFromLocalCache(data._id);
+  //     }
+  //   } else if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
+  //     this.addTeamToLocalCache(data);
+  //   }
+  // }
 
-  private async setCurrentUser(user, isLoadTeam: boolean, selectedTeamSlug: string) {
+  // public removeTeamFromLocalCache(teamId: string) {
+  //   const team = this.teams.find(t => t._id === teamId);
+
+  //   this.teams.remove(team);
+  // }
+
+  private async setCurrentUser(user) {
     if (user) {
       this.currentUser = new User({ store: this, ...user });
 
@@ -213,11 +224,33 @@ class Store {
     runInAction(() => {
       this.isLoggingIn = false;
     });
-
-    if (user && isLoadTeam) {
-      this.loadTeams(selectedTeamSlug);
-    }
   }
+
+  // 10
+  // private async setCurrentUser(user, isLoadTeam: boolean, selectedTeamSlug: string) {
+  //   if (user) {
+  //     this.currentUser = new User({ store: this, ...user });
+
+  //     // 13
+  //     // if (this.socket && this.socket.disconnected) {
+  //     //   this.socket.connect();
+  //     // }
+  //   } else {
+  //     this.currentUser = null;
+  //     // 13
+  //     // if (this.socket && this.socket.connected) {
+  //     //   this.socket.disconnect();
+  //     // }
+  //   }
+
+  //   runInAction(() => {
+  //     this.isLoggingIn = false;
+  //   });
+
+  //   if (user && isLoadTeam) {
+  //     this.loadTeams(selectedTeamSlug);
+  //   }
+  // }
 
   // 13
   // private handleTeamRealtimeEvent = data => {
@@ -233,33 +266,36 @@ class Store {
   //   }
   // };
 
-  private loadCurrentTeamData() {
-    if (this.currentTeam) {
-      this.currentTeam
-        .loadInitialMembers()
-        .catch(err => console.error('Error while loading Users', err));
+  // 10
+  // private loadCurrentTeamData() {
+  //   if (this.currentTeam) {
+  //     this.currentTeam
+  //       .loadInitialMembers()
+  //       .catch(err => console.error('Error while loading Users', err));
 
-      // 12
-      // this.currentTeam
-      //   .loadDiscussions()
-      //   .catch(err => console.error('Error while loading Discussions', err));
-    }
-  }
+  //     // 12
+  //     // this.currentTeam
+  //     //   .loadDiscussions()
+  //     //   .catch(err => console.error('Error while loading Discussions', err));
+  //   }
+  // }
 }
 
 decorate(Store, {
-  teams: observable,
-  isLoadingTeams: observable,
-  isInitialTeamsLoaded: observable,
+  // 10
+  // teams: observable,
+  // isLoadingTeams: observable,
+  // isInitialTeamsLoaded: observable,
+  // currentTeam: observable,
   currentUser: observable,
-  currentTeam: observable,
   currentUrl: observable,
   isLoggingIn: observable,
 
   changeCurrentUrl: action,
-  addTeam: action,
-  loadTeams: action,
-  setCurrentTeam: action,
+  // 10
+  // addTeam: action,
+  // loadTeams: action,
+  // setCurrentTeam: action,
 });
 
 let store: Store = null;
@@ -313,7 +349,10 @@ function getStore() {
   return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
 }
 
-export { Team, User, Store, initStore, getStore };
+export { User, Store, initStore, getStore };
+
+// 10
+// export { Team, User, Store, initStore, getStore };
 
 // 12
 // export { Discussion, Post, Team, User, Store, initStore, getStore };

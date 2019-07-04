@@ -2,9 +2,13 @@ import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
 import sendEmail from '../aws-ses';
+
 import logger from '../logs';
+
 import { subscribe } from '../mailchimp';
+
 import { generateSlug } from '../utils/slugify';
+
 import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
 
 // 10
@@ -49,10 +53,11 @@ const mongoSchema = new mongoose.Schema({
     unique: true,
   },
 
-  defaultTeamSlug: {
-    type: String,
-    default: '',
-  },
+  // 10
+  // defaultTeamSlug: {
+  //   type: String,
+  //   default: '',
+  // },
 
   isAdmin: {
     type: Boolean,
@@ -119,7 +124,8 @@ export interface IUserDocument extends mongoose.Document {
   displayName: string;
   avatarUrl: string;
 
-  defaultTeamSlug: string;
+  // 10
+  // defaultTeamSlug: string;
 
   darkTheme: boolean;
 
@@ -181,36 +187,37 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
 
   signInOrSignUp({
     googleId,
-    email,
     googleToken,
+    email,
     displayName,
     avatarUrl,
   }: {
     googleId: string;
+    googleToken: { refreshToken?: string; accessToken?: string };
     email: string;
     displayName: string;
     avatarUrl: string;
-    googleToken: { refreshToken?: string; accessToken?: string };
   }): Promise<IUserDocument>;
 
   signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<IUserDocument>;
 
-  createCustomer({
-    userId,
-    stripeToken,
-  }: {
-    userId: string;
-    stripeToken: object;
-  }): Promise<IUserDocument>;
+  // 11
+  // createCustomer({
+  //   userId,
+  //   stripeToken,
+  // }: {
+  //   userId: string;
+  //   stripeToken: object;
+  // }): Promise<IUserDocument>;
 
-  createNewCardUpdateCustomer({
-    userId,
-    stripeToken,
-  }: {
-    userId: string;
-    stripeToken: object;
-  }): Promise<IUserDocument>;
-  getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<IUserDocument>;
+  // createNewCardUpdateCustomer({
+  //   userId,
+  //   stripeToken,
+  // }: {
+  //   userId: string;
+  //   stripeToken: object;
+  // }): Promise<IUserDocument>;
+  // getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<IUserDocument>;
   toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 }
 
@@ -340,12 +347,13 @@ class UserClass extends mongoose.Model {
     const newUser = await this.create({
       createdAt: new Date(),
       googleId,
-      email,
       googleToken,
+      email,
       displayName,
       avatarUrl,
       slug,
-      defaultTeamSlug: '',
+      // 10
+      // defaultTeamSlug: '',
     });
 
     // 10
@@ -411,7 +419,8 @@ class UserClass extends mongoose.Model {
       createdAt: new Date(),
       email,
       slug,
-      defaultTeamSlug: '',
+      // 10
+      // defaultTeamSlug: '',
     });
 
     // 10
@@ -470,11 +479,14 @@ class UserClass extends mongoose.Model {
       'avatarUrl',
       'slug',
       'isGithubConnected',
-      'defaultTeamSlug',
-      'hasCardInformation',
-      'stripeCustomer',
-      'stripeCard',
-      'stripeListOfInvoices',
+      // 10
+      // 'defaultTeamSlug',
+
+      // 11
+      // 'hasCardInformation',
+      // 'stripeCustomer',
+      // 'stripeCard',
+      // 'stripeListOfInvoices',
       'darkTheme',
     ];
   }

@@ -65,11 +65,11 @@ export const GOOGLE_CLIENTSECRET: string = get('GOOGLE_CLIENTSECRET') || get('Go
 export const AMAZON_ACCESSKEYID: string = get('AMAZON_ACCESSKEYID') || get('Amazon_accessKeyId');
 export const AMAZON_SECRETACCESSKEY: string = get('AMAZON_SECRETACCESSKEY') || get('Amazon_secretAccessKey');
 
-export const EMAIL_SUPPORT_FROM_ADDRESS: string = get('EMAIL_SUPPORT_FROM_ADDRESS');
-
 export const MAILCHIMP_API_KEY: string = get('MAILCHIMP_API_KEY');
 export const MAILCHIMP_REGION: string = get('MAILCHIMP_REGION');
 export const MAILCHIMP_SAAS_ALL_LIST_ID: string = get('MAILCHIMP_SAAS_ALL_LIST_ID');
+
+export const EMAIL_SUPPORT_FROM_ADDRESS: string = get('EMAIL_SUPPORT_FROM_ADDRESS');
 
 export const STRIPE_TEST_SECRETKEY = get('STRIPE_TEST_SECRETKEY') || get('Stripe_Test_SecretKey');
 export const STRIPE_LIVE_SECRETKEY = get('STRIPE_LIVE_SECRETKEY') || get('Stripe_Live_SecretKey');

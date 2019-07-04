@@ -1,0 +1,14 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended"],
+  "jsRules": {},
+  "rules": {
+    "quotemark": [true, "single", "avoid-escape", "avoid-template"],
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    "object-literal-sort-keys": false
+  },
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": ["bin", "build", "config", ".coverage", "node_modules", "production-server"]
+  }
+}

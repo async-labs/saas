@@ -26,13 +26,22 @@ export default function withStore(App) {
       }
 
       let initialData = {};
-      const { teamSlug, discussionSlug } = ctx.query;
+
+      // 10
+      // const { teamSlug } = ctx.query;
+
+      // 12
+      // const { teamSlug, discussionSlug } = ctx.query;
 
       if (user) {
         try {
           initialData = await getInitialData({
             request: ctx.req,
-            data: { teamSlug, discussionSlug },
+            // 10
+            // data: { teamSlug },
+
+            // 12
+            // data: { teamSlug, discussionSlug },
           });
         } catch (error) {
           console.error(error);
@@ -41,7 +50,11 @@ export default function withStore(App) {
 
       return {
         ...appProps,
-        initialState: { user, teamSlug, currentUrl: ctx.asPath, ...initialData },
+        initialState: { user, currentUrl: ctx.asPath, ...initialData },
+
+        // 10
+        // initialState: { user, teamSlug, currentUrl: ctx.asPath, ...initialData },
+
       };
     }
 

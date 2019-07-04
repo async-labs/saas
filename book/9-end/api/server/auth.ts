@@ -162,11 +162,12 @@ function setupGoogle({ ROOT_URL, server }) {
       req.session.next_url = null;
     }
 
-    if (req.query && req.query.invitationToken) {
-      req.session.invitationToken = req.query.invitationToken;
-    } else {
-      req.session.invitationToken = null;
-    }
+    // 10
+    // if (req.query && req.query.invitationToken) {
+    //   req.session.invitationToken = req.query.invitationToken;
+    // } else {
+    //   req.session.invitationToken = null;
+    // }
 
     passport.authenticate('google', options)(req, res, next);
   });
@@ -189,12 +190,13 @@ function setupGoogle({ ROOT_URL, server }) {
       if (req.user && req.session.next_url) {
         redirectUrlAfterLogin = req.session.next_url;
       } else {
-        if (!req.user.defaultTeamSlug) {
-          // 10
-          // redirectUrlAfterLogin = '/create-team';
+        redirectUrlAfterLogin = '/your-settings';
 
-          redirectUrlAfterLogin = '/your-settings';
-        }
+        // 10
+        // if (!req.user.defaultTeamSlug) {
+        //   redirectUrlAfterLogin = '/create-team';
+        // }
+
         // 12
         // if (!req.user.defaultTeamSlug) {
         //   redirectUrlAfterLogin = '/create-team';

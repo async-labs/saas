@@ -16,10 +16,11 @@ export const getInitialData = (options: any = {}) =>
     ),
   );
 
-export const getTeamList = () =>
-  sendRequestAndGetResponse(`${BASE_PATH}/teams`, {
-    method: 'GET',
-  });
+// 10
+// export const getTeamList = () =>
+//   sendRequestAndGetResponse(`${BASE_PATH}/teams`, {
+//     method: 'GET',
+//   });
 
 // 12
 // export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>

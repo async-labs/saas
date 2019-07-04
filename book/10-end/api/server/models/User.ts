@@ -2,10 +2,15 @@ import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
 import sendEmail from '../aws-ses';
+
 import logger from '../logs';
+
 import { subscribe } from '../mailchimp';
+
 import { generateSlug } from '../utils/slugify';
+
 import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
+
 import Invitation from './Invitation';
 import Team from './Team';
 
@@ -18,9 +23,7 @@ import Team from './Team';
 //   updateCustomer,
 // } from '../stripe';
 
-import {
-  EMAIL_SUPPORT_FROM_ADDRESS,
-} from '../consts';
+import { EMAIL_SUPPORT_FROM_ADDRESS } from '../consts';
 
 mongoose.set('useFindAndModify', false);
 
@@ -181,36 +184,37 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
 
   signInOrSignUp({
     googleId,
-    email,
     googleToken,
+    email,
     displayName,
     avatarUrl,
   }: {
     googleId: string;
+    googleToken: { refreshToken?: string; accessToken?: string };
     email: string;
     displayName: string;
     avatarUrl: string;
-    googleToken: { refreshToken?: string; accessToken?: string };
   }): Promise<IUserDocument>;
 
   signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<IUserDocument>;
 
-  createCustomer({
-    userId,
-    stripeToken,
-  }: {
-    userId: string;
-    stripeToken: object;
-  }): Promise<IUserDocument>;
+  // 11
+  // createCustomer({
+  //   userId,
+  //   stripeToken,
+  // }: {
+  //   userId: string;
+  //   stripeToken: object;
+  // }): Promise<IUserDocument>;
 
-  createNewCardUpdateCustomer({
-    userId,
-    stripeToken,
-  }: {
-    userId: string;
-    stripeToken: object;
-  }): Promise<IUserDocument>;
-  getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<IUserDocument>;
+  // createNewCardUpdateCustomer({
+  //   userId,
+  //   stripeToken,
+  // }: {
+  //   userId: string;
+  //   stripeToken: object;
+  // }): Promise<IUserDocument>;
+  // getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<IUserDocument>;
   toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 }
 
@@ -339,8 +343,8 @@ class UserClass extends mongoose.Model {
     const newUser = await this.create({
       createdAt: new Date(),
       googleId,
-      email,
       googleToken,
+      email,
       displayName,
       avatarUrl,
       slug,
@@ -358,6 +362,17 @@ class UserClass extends mongoose.Model {
     }
 
     const template = await getEmailTemplate('welcome', { userName: displayName }, emailTemplate);
+
+    try {
+      await sendEmail({
+        from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: template.subject,
+        body: template.message,
+      });
+    } catch (err) {
+      logger.error('Email sending error:', err);
+    }
 
     if (!hasInvitation) {
       try {
@@ -412,6 +427,17 @@ class UserClass extends mongoose.Model {
 
     const template = await getEmailTemplate('welcome', { userName: email }, emailTemplate);
 
+    try {
+      await sendEmail({
+        from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: template.subject,
+        body: template.message,
+      });
+    } catch (err) {
+      logger.error('Email sending error:', err);
+    }
+
     if (!hasInvitation) {
       try {
         await sendEmail({
@@ -444,10 +470,12 @@ class UserClass extends mongoose.Model {
       'slug',
       'isGithubConnected',
       'defaultTeamSlug',
-      'hasCardInformation',
-      'stripeCustomer',
-      'stripeCard',
-      'stripeListOfInvoices',
+
+      // 11
+      // 'hasCardInformation',
+      // 'stripeCustomer',
+      // 'stripeCard',
+      // 'stripeListOfInvoices',
       'darkTheme',
     ];
   }

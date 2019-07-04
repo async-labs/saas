@@ -5,7 +5,9 @@ import * as passwordless from 'passwordless';
 import sendEmail from './aws-ses';
 import logger from './logs';
 import getEmailTemplate from './models/EmailTemplate';
+
 import Invitation from './models/Invitation';
+
 import User, { IUserDocument } from './models/User';
 import PasswordlessMongoStore from './passwordless';
 

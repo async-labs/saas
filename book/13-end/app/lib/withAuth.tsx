@@ -30,7 +30,7 @@ export default function withAuth(
 
   class WithAuth extends React.Component<{ store: Store }> {
     public static async getInitialProps(ctx) {
-      const { query, req, pathname } = ctx;
+      const { req, pathname, query } = ctx;
 
       let baseComponentProps = {};
 
@@ -45,10 +45,7 @@ export default function withAuth(
         firstGridItem = false;
       }
 
-      const {
-        teamSlug,
-        discussionSlug,
-      } = query;
+      const { teamSlug, discussionSlug } = query;
 
       if (BaseComponent.getInitialProps) {
         baseComponentProps = await BaseComponent.getInitialProps(ctx);
@@ -57,9 +54,9 @@ export default function withAuth(
       return {
         ...baseComponentProps,
         teamSlug,
+        teamRequired,
         discussionSlug,
         isServer: !!req,
-        teamRequired,
         firstGridItem,
       };
     }
@@ -77,6 +74,9 @@ export default function withAuth(
       let redirectUrl = '/login';
       let asUrl = '/login';
       if (user) {
+        redirectUrl = '/your-settings';
+        asUrl = '/your-settings';
+
         if (!user.defaultTeamSlug) {
           redirectUrl = '/create-team';
           asUrl = '/create-team';

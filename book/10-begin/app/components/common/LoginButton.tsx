@@ -13,16 +13,24 @@ import { URL_API } from '../../lib/consts';
 // TS errors: https://github.com/mui-org/material-ui/issues/8198
 
 class LoginButton extends React.PureComponent<
-  { next?: string; invitationToken?: string },
+  { next?: string },
+  // 10
+  // { next?: string; invitationToken?: string },
   { email: string }
   > {
   public state = { email: '' };
 
   public render() {
-    const { next, invitationToken } = this.props;
+    const { next } = this.props;
+
+    // 10
+    // const { next, invitationToken } = this.props;
 
     let url = `${URL_API}/auth/google`;
-    const qs = makeQueryString({ next, invitationToken });
+    const qs = makeQueryString({ next });
+
+    // 10
+    // const qs = makeQueryString({ next, invitationToken });
 
     if (qs) {
       url += `?${qs}`;
