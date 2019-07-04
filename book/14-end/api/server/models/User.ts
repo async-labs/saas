@@ -60,6 +60,8 @@ const mongoSchema = new mongoose.Schema({
   displayName: String,
   avatarUrl: String,
 
+  darkTheme: Boolean,
+
   stripeCustomer: {
     id: String,
     object: String,
@@ -102,7 +104,6 @@ const mongoSchema = new mongoose.Schema({
       },
     ],
   },
-  darkTheme: Boolean,
 });
 
 export interface IUserDocument extends mongoose.Document {
@@ -117,6 +118,8 @@ export interface IUserDocument extends mongoose.Document {
   avatarUrl: string;
 
   defaultTeamSlug: string;
+
+  darkTheme: boolean;
 
   hasCardInformation: boolean;
   stripeCustomer: {
@@ -156,7 +159,6 @@ export interface IUserDocument extends mongoose.Document {
       }
     ];
   };
-  darkTheme: boolean;
 }
 
 interface IUserModel extends mongoose.Model<IUserDocument> {

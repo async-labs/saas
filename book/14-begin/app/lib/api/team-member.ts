@@ -16,18 +16,6 @@ export const getInitialData = (options: any = {}) =>
     ),
   );
 
-export const getTopicList = (teamId: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/topics/list`, {
-    method: 'GET',
-    qs: { teamId },
-  });
-
-export const getPrivateTopic = (teamId: string, topicSlug: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/topics/private-topic`, {
-    method: 'GET',
-    qs: { teamId, topicSlug },
-  });
-
 export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>
   sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
     method: 'GET',
