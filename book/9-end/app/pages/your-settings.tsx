@@ -237,4 +237,7 @@ class YourSettings extends React.Component<MyProps, MyState> {
   };
 }
 
-export default withAuth(YourSettings, { teamRequired: false });
+export default withAuth(YourSettings);
+
+// 10
+// export default withAuth(YourSettings, { teamRequired: false });
