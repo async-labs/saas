@@ -1,7 +1,6 @@
 import { ServerStyleSheets } from '@material-ui/styles';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
-import flush from 'styled-jsx/server';
 
 import { GA_TRACKING_ID } from '../lib/consts';
 
@@ -21,12 +20,7 @@ class MyDocument extends Document {
     return {
       ...initialProps,
       // Styles fragment is rendered after the app and page rendering finish.
-      styles: (
-        <React.Fragment>
-          {sheets.getStyleElement()}
-          {flush() || null}
-        </React.Fragment>
-      ),
+      styles: <React.Fragment>{sheets.getStyleElement()}</React.Fragment>,
     };
   };
 

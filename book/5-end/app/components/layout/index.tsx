@@ -10,10 +10,13 @@ import { observer } from 'mobx-react';
 import { SingletonRouter, withRouter } from 'next/router';
 import React from 'react';
 
-import { Store } from '../../lib/store';
+// 6
+// import { Store } from '../../lib/store';
 
 import Confirm from '../common/Confirm';
-import Loading from '../common/Loading';
+
+// 6
+// import Loading from '../common/Loading';
 import MenuWithLinks from '../common/MenuWithLinks';
 import Notifier from '../common/Notifier';
 
@@ -34,10 +37,6 @@ const styleGridIsMobile = {
   minHeight: '100vh',
   maxWidth: '100%',
   padding: '0px 0px 0px 10px',
-};
-
-const styleNoTeamDiv = {
-  padding: '20px',
 };
 
 function ThemeWrapper({ children, firstGridItem, isMobile }) {
@@ -76,7 +75,9 @@ type MyProps = {
   children: React.ReactNode;
   // 10
   // teamRequired?: boolean;
-  store?: Store;
+
+  // 6
+  // store?: Store;
   router?: SingletonRouter;
   isMobile?: boolean;
 };
@@ -98,34 +99,40 @@ class Layout extends React.Component<MyProps> {
   public render() {
     // Add teamRequired: false to some pages that don't require team
 
-    const { store, firstGridItem, children, isMobile } = this.props;
-    const { currentUser } = store;
+    const { firstGridItem, children, isMobile } = this.props;
+
+    // 6
+    // const { store, firstGridItem, children, isMobile } = this.props;
+    // const { currentUser } = store;
 
     // 10
     // const { store, firstGridItem, children, teamRequired, isMobile } = this.props;
     // const { currentTeam, currentUser } = store;
 
-    const isThemeDark = currentUser && currentUser.darkTheme === true;
+    const isThemeDark = true;
 
-    if (store.isLoggingIn) {
-      return (
-        <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
-          <Grid item sm={10} xs={12}>
-            <Loading text="loading User ..." />
-          </Grid>
-        </ThemeWrapper>
-      );
-    }
+    // 6
+    // const isThemeDark = currentUser && currentUser.darkTheme === true;
 
-    if (!currentUser) {
-      return (
-        <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
-          <Grid item sm={12} xs={12}>
-            {children}
-          </Grid>
-        </ThemeWrapper>
-      );
-    }
+    // if (store.isLoggingIn) {
+    //   return (
+    //     <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
+    //       <Grid item sm={10} xs={12}>
+    //         <Loading text="loading User ..." />
+    //       </Grid>
+    //     </ThemeWrapper>
+    //   );
+    // }
+
+    // if (!currentUser) {
+    //   return (
+    //     <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
+    //       <Grid item sm={12} xs={12}>
+    //         {children}
+    //       </Grid>
+    //     </ThemeWrapper>
+    //   );
+    // }
 
     // 10
     // if (store.isLoadingTeams || !store.isInitialTeamsLoaded) {
@@ -213,7 +220,8 @@ class Layout extends React.Component<MyProps> {
                 <MenuWithLinks options={menuOnTheRight()}>
                   <Avatar
                     src="https://storage.googleapis.com/async-await/default-user.png"
-                    alt={`Logo of ${currentUser.displayName}`}
+                    // 6
+                    // alt={`Logo of ${currentUser.displayName}`}
                     style={{
                       margin: '20px auto',
                       cursor: 'pointer',
@@ -259,7 +267,8 @@ class Layout extends React.Component<MyProps> {
             </Grid>
           ) : null}
           <Grid item sm={10} xs={12}>
-            <div>
+            {/* 6 */}
+            {/* <div>
               {isMobile || store.currentUrl.includes('create-team') ? null : (
                 <React.Fragment>
                   <i
@@ -281,7 +290,7 @@ class Layout extends React.Component<MyProps> {
                 </React.Fragment>
               )}
               <div style={{ clear: 'both' }} />
-            </div>
+            </div> */}
             {children}
           </Grid>
         </Grid>
