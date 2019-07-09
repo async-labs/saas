@@ -1,0 +1,12 @@
+// 2
+// {
+//   "presets": [
+//     [
+//       "next/babel",
+//       {      
+//         "class-properties": { "loose": true }
+//       }
+//     ],
+//     "@zeit/next-typescript/babel"
+//   ]
+// }

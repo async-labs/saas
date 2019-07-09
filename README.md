@@ -401,7 +401,6 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   ├── common
 │   │   │   ├── ActiveLink.tsx
 │   │   │   ├── AutoComplete.tsx
-│   │   │   ├── AvatarwithMenu.tsx
 │   │   │   ├── Confirm.tsx
 │   │   │   ├── Loading.tsx
 │   │   │   ├── LoginButton.tsx

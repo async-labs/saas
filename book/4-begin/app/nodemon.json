@@ -1,6 +1,7 @@
-{
-  "watch": ["server/**/*.ts"],
-  "execMap": {
-    "ts": "ts-node --project tsconfig.server.json"
-  }
-}
+// 4
+// {
+//   "watch": ["server/**/*.ts"],
+//   "execMap": {
+//     "ts": "ts-node --project tsconfig.server.json"
+//   }
+// }

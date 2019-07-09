@@ -1,0 +1,17 @@
+// 2
+// {
+//   "defaultSeverity": "error",
+//   "extends": ["tslint:recommended"],
+//   "jsRules": {},
+//   "rules": {
+//     "quotemark": [true, "single", "jsx-double", "avoid-escape", "avoid-template"],
+//     "arrow-parens": [true, "ban-single-arg-parens"],
+//     "object-literal-sort-keys": false,
+//     "no-console": false,
+//     "interface-over-type-literal": false,
+//     "semicolon": [true, "always", "strict-bound-class-methods"],
+//     "variable-name": [true, "ban-keywords"],
+//     "object-literal-key-quotes": [true, "as-needed"]
+//   },
+//   "rulesDirectory": []
+// }
