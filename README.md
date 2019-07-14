@@ -81,7 +81,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   AMAZON_SECRETACCESSKEY=xxxxxx
 
   # Used in api/server/models/Invitation.ts and api/server/models/User.ts
-  EMAIL_SUPPORT_FROM_ADDRESS=pedro@pmc.digital
+  EMAIL_SUPPORT_FROM_ADDRESS=xxxxxx
 
   # Used in api/server/mailchimp.ts
   MAILCHIMP_API_KEY=xxxxxx
