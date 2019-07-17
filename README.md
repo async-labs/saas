@@ -12,9 +12,9 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 ## Contents
 
 - [Features](#features)
-- [Run locally](#run-locally)
-- [Stage locally](#stage-locally)
-- [Deploy](#deploy)
+- [Run locally](#running-api-locally)
+- [Stage locally](#stage-apps-locally-with-docker)
+- [Deploy](#deploy-with-heroku)
 - [Built with](#built-with)
 - [Screenshots](#screenshots)
 - [Showcase](#showcase)
