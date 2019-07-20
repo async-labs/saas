@@ -279,17 +279,23 @@ class UserClass extends mongoose.Model {
 
     logger.debug('called static method on User');
 
+    logger.debug(user.stripeCustomer.id);
+
+    if (!user.stripeCustomer.id) {
+      throw new Error('You are not a customer and you have no payment history.');
+    }
+
     const newListOfInvoices = await getListOfInvoices({
       customerId: user.stripeCustomer.id,
     });
 
+    if (newListOfInvoices.data === undefined || newListOfInvoices.data.length === 0) {
+      throw new Error('You are a customer. But there is no payment history.');
+    }
+
     const modifier = {
       stripeListOfInvoices: newListOfInvoices,
     };
-
-    if (!newListOfInvoices) {
-      throw new Error('There is no payment history.');
-    }
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('stripeListOfInvoices')

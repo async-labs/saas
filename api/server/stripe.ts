@@ -94,7 +94,7 @@ function stripeWebHooks({ server }) {
 
 function getListOfInvoices({ customerId }) {
   logger.debug('getting list of invoices for customer', customerId);
-  return stripeInstance.invoices.list({ customer: customerId });
+  return stripeInstance.invoices.list({ customer: customerId, limit: 100 });
 }
 
 export {
