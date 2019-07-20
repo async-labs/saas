@@ -12,9 +12,9 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 ## Contents
 
 - [Features](#features)
-- [Run locally](#run-locally)
-- [Stage locally](#stage-locally)
-- [Deploy](#deploy)
+- [Run locally](#running-api-locally)
+- [Stage locally](#stage-apps-locally-with-docker)
+- [Deploy](#deploy-with-heroku)
 - [Built with](#built-with)
 - [Screenshots](#screenshots)
 - [Showcase](#showcase)
@@ -81,7 +81,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   AMAZON_SECRETACCESSKEY=xxxxxx
 
   # Used in api/server/models/Invitation.ts and api/server/models/User.ts
-  EMAIL_SUPPORT_FROM_ADDRESS=pedro@pmc.digital
+  EMAIL_SUPPORT_FROM_ADDRESS=xxxxxx
 
   # Used in api/server/mailchimp.ts
   MAILCHIMP_API_KEY=xxxxxx
@@ -291,30 +291,39 @@ To customize styles, check [this guide](https://github.com/builderbook/builderbo
 
 ## Screenshots
 
-Dashboard showing Discussion > Posts:
-![1_discussion](https://user-images.githubusercontent.com/26158226/46056102-e5d7fc00-c103-11e8-9690-29ed4d01253d.png)
+Google or passwordless login:
+![1_SaaS_login](https://user-images.githubusercontent.com/26158226/61417504-2760b000-a8ac-11e9-8ce6-14fc5947dad0.png)
 
-Adding a Post, Markdown vs. HTML view:
-![2_markdown](https://user-images.githubusercontent.com/26158226/46056242-93e3a600-c104-11e8-978d-3452dba56e2a.png)
-![3_html](https://user-images.githubusercontent.com/26158226/46056104-e5d7fc00-c103-11e8-8534-6d9204d0a959.png)
+Dropdown menu for settings:
+![2_SaaS_DropdownMenu](https://user-images.githubusercontent.com/26158226/61417505-27f94680-a8ac-11e9-9390-35e17e1626c3.png)
 
-Settings for Team Members:
-![4_teammember](https://user-images.githubusercontent.com/26158226/46056105-e5d7fc00-c103-11e8-969b-1ed3f8d2924d.png)
+Personal settings:
+![3_SaaS_PersonalSettings](https://user-images.githubusercontent.com/26158226/61417514-2891dd00-a8ac-11e9-97d4-53944fe8f897.png)
 
-Team Billing:
-![5_teambilling](https://user-images.githubusercontent.com/26158226/46056106-e5d7fc00-c103-11e8-9746-7356a4e76dc8.png)
+Team settings:
+![4_SaaS_TeamSettings](https://user-images.githubusercontent.com/26158226/61417515-2891dd00-a8ac-11e9-9c08-0d1adef43c5b.png)
 
-Settings for Team Profile:
-![6_teamprofile](https://user-images.githubusercontent.com/26158226/46056108-e8d2ec80-c103-11e8-8cb7-8d68bec4ed85.png)
+Creating a Discussion:
+![5_SaaS_Discussion_Creation](https://user-images.githubusercontent.com/26158226/61417509-27f94680-a8ac-11e9-889b-19f96b159d21.png)
 
-Settings for Personal Profile:
-![7_personalprofile](https://user-images.githubusercontent.com/26158226/46056109-e96b8300-c103-11e8-958f-3ea66eafb028.png)
+Writing a Post, Markdown vs. HTML view:
+![6_SaaS_Discussion_Markdown](https://user-images.githubusercontent.com/26158226/61417508-27f94680-a8ac-11e9-93fd-766014132e8d.png)
+![7_SaaS_Discussion_HTML](https://user-images.githubusercontent.com/26158226/61417507-27f94680-a8ac-11e9-8058-d3701ef1696d.png)
 
-Add/Update card with Stripe:
-![8_stripe](https://user-images.githubusercontent.com/26158226/46056110-e96b8300-c103-11e8-89d8-b4de80a258db.png)
+Discussion between team members:
+![8_SaaS_Discussion_Dark](https://user-images.githubusercontent.com/26158226/61417506-27f94680-a8ac-11e9-9cba-cc47ba3b51a8.png)
 
-Menu dropdown to switch between Teams:
-![9_switchteam](https://user-images.githubusercontent.com/26158226/46056111-ea9cb000-c103-11e8-8def-8a3c23988088.png)
+Billing settings:
+![9_SaaS_Billing](https://user-images.githubusercontent.com/26158226/61417513-2891dd00-a8ac-11e9-9e3d-bcbcdfe5b5af.png)
+
+Purchasing a subscription:
+![10_SaaS_BuySubscription](https://user-images.githubusercontent.com/26158226/61417512-2891dd00-a8ac-11e9-9a32-552e0468726e.png)
+
+Add/Update card information:
+![11_SaaS_AddEditCard](https://user-images.githubusercontent.com/26158226/61417511-2891dd00-a8ac-11e9-9f97-25a444639c08.png)
+
+Payment history:
+![12_SaaS_PaymentHistory](https://user-images.githubusercontent.com/26158226/61417510-27f94680-a8ac-11e9-88d1-1eef120dcc34.png)
 
 ## Showcase
 

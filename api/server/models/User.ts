@@ -17,9 +17,7 @@ import {
   updateCustomer,
 } from '../stripe';
 
-import {
-  EMAIL_SUPPORT_FROM_ADDRESS,
-} from '../consts';
+import { EMAIL_SUPPORT_FROM_ADDRESS } from '../consts';
 
 mongoose.set('useFindAndModify', false);
 
