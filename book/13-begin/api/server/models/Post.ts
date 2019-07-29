@@ -83,7 +83,7 @@ function markdownToHtml(content) {
     if (text.startsWith('<code>@#')) {
       return `${text.replace('<code>@#', '<code>@')} `;
     }
-    
+
     return `
       <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
         ${text}
