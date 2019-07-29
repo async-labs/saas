@@ -34,27 +34,27 @@ export const removeMember = data =>
   body: JSON.stringify(data),
 });
 
-// export const createSubscriptionApiMethod = ({ teamId }: { teamId: string }) =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/subscribe-team`, {
-//   body: JSON.stringify({ teamId }),
-// });
+export const createSubscriptionApiMethod = ({ teamId }: { teamId: string }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/subscribe-team`, {
+  body: JSON.stringify({ teamId }),
+});
 
-// export const cancelSubscriptionApiMethod = ({ teamId }: { teamId: string }) =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/cancel-subscription`, {
-//   body: JSON.stringify({ teamId }),
-// });
+export const cancelSubscriptionApiMethod = ({ teamId }: { teamId: string }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/cancel-subscription`, {
+  body: JSON.stringify({ teamId }),
+});
 
-// export const createCustomerApiMethod = ({ token }: { token: object }) =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/create-customer`, {
-//   body: JSON.stringify({ token }),
-// });
+export const createCustomerApiMethod = ({ token }: { token: object }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/create-customer`, {
+  body: JSON.stringify({ token }),
+});
 
-// export const createNewCardAndUpdateCustomerApiMethod = ({ token }: { token: object }) =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/create-new-card-update-customer`, {
-//   body: JSON.stringify({ token }),
-// });
+export const createNewCardAndUpdateCustomerApiMethod = ({ token }: { token: object }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/create-new-card-update-customer`, {
+  body: JSON.stringify({ token }),
+});
 
-// export const getListOfInvoices = () =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/get-list-of-invoices-for-customer`, {
-//   method: 'GET',
-// });
+export const getListOfInvoices = () =>
+  sendRequestAndGetResponse(`${BASE_PATH}/get-list-of-invoices-for-customer`, {
+  method: 'GET',
+});

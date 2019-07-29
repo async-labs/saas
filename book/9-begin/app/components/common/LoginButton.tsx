@@ -4,10 +4,8 @@ import React from 'react';
 
 import { makeQueryString } from '../../lib/api/makeQueryString';
 
-// 9
-// import { sendLoginToken } from '../../lib/api/public';
-// import notify from '../../lib/notifier';
-
+import { sendLoginToken } from '../../lib/api/public';
+import notify from '../../lib/notifier';
 import { styleLoginButton } from '../../lib/sharedStyles';
 
 import { URL_API } from '../../lib/consts';
@@ -49,8 +47,7 @@ class LoginButton extends React.PureComponent<
         </Button>
         <p />
         <br />
-        {/* 9 */}
-        {/* <hr style={{ width: '60px' }} /> <h4>OR</h4> <hr style={{ width: '60px' }} />
+        <hr style={{ width: '60px' }} /> <h4>OR</h4> <hr style={{ width: '60px' }} />
         <p />
         <br />
         <div>
@@ -72,28 +69,27 @@ class LoginButton extends React.PureComponent<
           </form>
           <br />
           <p />
-        </div> */}
+        </div>
       </React.Fragment>
     );
   }
 
-  // 9
-  // private onSubmit = async event => {
-  //   event.preventDefault();
-  //   const { email } = this.state;
+  private onSubmit = async event => {
+    event.preventDefault();
+    const { email } = this.state;
 
-  //   if (!email) {
-  //     notify('Email is required');
-  //   }
+    if (!email) {
+      notify('Email is required');
+    }
 
-  //   try {
-  //     await sendLoginToken(email);
-  //     this.setState({ email: '' });
-  //     notify('We emailed you a login link.');
-  //   } catch (error) {
-  //     notify(error);
-  //   }
-  // };
+    try {
+      await sendLoginToken(email);
+      this.setState({ email: '' });
+      notify('We emailed you a login link.');
+    } catch (error) {
+      notify(error);
+    }
+  };
 }
 
 export default LoginButton;

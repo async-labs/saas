@@ -6,8 +6,7 @@ import * as mongoose from 'mongoose';
 
 import logger from '../logs';
 
-// 7
-// import { subscribe } from '../mailchimp';
+import { subscribe } from '../mailchimp';
 
 import { generateSlug } from '../utils/slugify';
 
@@ -33,16 +32,15 @@ import { generateSlug } from '../utils/slugify';
 mongoose.set('useFindAndModify', false);
 
 const mongoSchema = new mongoose.Schema({
-  // 7
-  // googleId: {
-  //   type: String,
-  //   unique: true,
-  //   sparse: true,
-  // },
-  // googleToken: {
-  //   accessToken: String,
-  //   refreshToken: String,
-  // },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  googleToken: {
+    accessToken: String,
+    refreshToken: String,
+  },
   slug: {
     type: String,
     required: true,
@@ -119,9 +117,8 @@ const mongoSchema = new mongoose.Schema({
 });
 
 export interface IUserDocument extends mongoose.Document {
-  // 7
-  // googleId: string;
-  // googleToken: { accessToken: string; refreshToken: string };
+  googleId: string;
+  googleToken: { accessToken: string; refreshToken: string };
   slug: string;
   createdAt: Date;
 
@@ -192,16 +189,14 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
   getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<IUserDocument[]>;
 
   signInOrSignUp({
-    // 7
-    // googleId,
-    // googleToken,
+    googleId,
+    googleToken,
     email,
     displayName,
     avatarUrl,
   }: {
-    // 7
-    // googleId: string;
-    // googleToken: { refreshToken?: string; accessToken?: string };
+    googleId: string;
+    googleToken: { refreshToken?: string; accessToken?: string };
     email: string;
     displayName: string;
     avatarUrl: string;
@@ -326,40 +321,36 @@ class UserClass extends mongoose.Model {
   //     .setOptions({ lean: true });
   // }
 
-  public static async signInOrSignUp({ email, displayName, avatarUrl }) {
-  // 7
-  // public static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
+  public static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
+    const user = await this.findOne({ googleId })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
 
-    // const user = await this.findOne({ googleId })
-    //   .select(this.publicFields().join(' '))
-    //   .setOptions({ lean: true });
+    if (user) {
+      if (_.isEmpty(googleToken)) {
+        return user;
+      }
 
-    // if (user) {
-    //   if (_.isEmpty(googleToken)) {
-    //     return user;
-    //   }
+      const modifier = {};
+      if (googleToken.accessToken) {
+        modifier['googleToken.accessToken'] = googleToken.accessToken;
+      }
 
-    //   const modifier = {};
-    //   if (googleToken.accessToken) {
-    //     modifier['googleToken.accessToken'] = googleToken.accessToken;
-    //   }
+      if (googleToken.refreshToken) {
+        modifier['googleToken.refreshToken'] = googleToken.refreshToken;
+      }
 
-    //   if (googleToken.refreshToken) {
-    //     modifier['googleToken.refreshToken'] = googleToken.refreshToken;
-    //   }
+      await this.updateOne({ googleId }, { $set: modifier });
 
-    //   await this.updateOne({ googleId }, { $set: modifier });
-
-    //   return user;
-    // }
+      return user;
+    }
 
     const slug = await generateSlug(this, displayName);
 
     const newUser = await this.create({
       createdAt: new Date(),
-      // 7
-      // googleId,
-      // googleToken,
+      googleId,
+      googleToken,
       email,
       displayName,
       avatarUrl,
@@ -407,12 +398,11 @@ class UserClass extends mongoose.Model {
     //   }
     // }
 
-    // 7
-    // try {
-    //   await subscribe({ email, listName: 'signups' });
-    // } catch (error) {
-    //   logger.error('Mailchimp error:', error);
-    // }
+    try {
+      await subscribe({ email, listName: 'signups' });
+    } catch (error) {
+      logger.error('Mailchimp error:', error);
+    }
 
     return _.pick(newUser, this.publicFields());
   }
@@ -476,12 +466,11 @@ class UserClass extends mongoose.Model {
     //   }
     // }
 
-    // 7
-    // try {
-    //   await subscribe({ email, listName: 'signups' });
-    // } catch (error) {
-    //   logger.error('Mailchimp error:', error);
-    // }
+    try {
+      await subscribe({ email, listName: 'signups' });
+    } catch (error) {
+      logger.error('Mailchimp error:', error);
+    }
 
     return _.pick(newUser, this.publicFields());
   }

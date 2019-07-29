@@ -5,8 +5,8 @@
 // import { URL_API } from '../../lib/consts';
 
 const menuOnTheRight = () => [
-// 10
-// const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
+  // 10
+  // const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
   {
     text: 'Your Settings',
     href: '/your-settings',

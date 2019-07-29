@@ -40,15 +40,13 @@ router.use((req, res, next) => {
 //   const { discussionSlug } = body;
 
 //   if (!discussionSlug) {
-//     return {};
+//     return [];
 //   }
 
 //   const { discussions } = await Discussion.getList({
 //     userId,
 //     teamId: team._id,
 //   });
-
-//   const data: any = { initialDiscussions: discussions };
 
 //   for (const discussion of discussions) {
 //     if (discussion.slug === discussionSlug) {
@@ -63,7 +61,7 @@ router.use((req, res, next) => {
 //     }
 //   }
 
-//   return data;
+//   return discussions;
 // }
 
 async function loadTeamData(team, userId) {
@@ -100,9 +98,9 @@ async function loadTeamData(team, userId) {
 //     });
 //   }
 
-//   Object.assign(team, await loadDiscussionsData(team, userId, body));
+//   const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
-//   const data: any = { initialMembers, initialInvitations };
+//   const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
 //   return data;
 // }

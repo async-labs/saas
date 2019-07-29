@@ -24,8 +24,7 @@ export const URL_APP = urlAPP;
 
 export const GA_TRACKING_ID: string = process.env.GA_TRACKING_ID;
 
-// 10
-// export const BUCKET_FOR_TEAM_AVATARS: string = process.env.BUCKET_FOR_TEAM_AVATARS;
+export const BUCKET_FOR_TEAM_AVATARS: string = process.env.BUCKET_FOR_TEAM_AVATARS;
 
 // 11
 // export const STRIPEPUBLISHABLEKEY: string = process.env.STRIPEPUBLISHABLEKEY || process.env.StripePublishableKey;

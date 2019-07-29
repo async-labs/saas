@@ -1,7 +1,3 @@
-const withTypescript = require('@zeit/next-typescript');
-
-module.exports = withTypescript();
-
 // 4
 // const dotenv = require('dotenv');
 // const fs = require('fs');

@@ -37,54 +37,47 @@ class DiscussionComp extends React.Component<Props> {
       store.currentTeam.loadDiscussions().catch(err => notify(err));
     }
 
-    // 13
-    // this.props.store.socket.on('discussionEvent', this.handleDiscussionEvent);
-    // this.props.store.socket.on('postEvent', this.handlePostEvent);
-    // this.props.store.socket.on('reconnect', this.handleSocketReconnect);
+    this.props.store.socket.on('discussionEvent', this.handleDiscussionEvent);
+    this.props.store.socket.on('postEvent', this.handlePostEvent);
+    this.props.store.socket.on('reconnect', this.handleSocketReconnect);
 
     this.changeDiscussion();
 
-    // 13
-    // const discussion = this.getDiscussion(this.props.discussionSlug);
-    // if (discussion) {
-    //   discussion.joinSocketRoom();
-    // }
-  }
-
-  public componentDidUpdate(prevProps: Props) {
-    // 13
-    // const discussion = this.getDiscussion(this.props.discussionSlug);
-
-    if (prevProps.discussionSlug !== this.props.discussionSlug) {
-      // 13
-      // if (prevProps.discussionSlug) {
-      //   const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
-
-      //   if (prevDiscussion) {
-      //     prevDiscussion.leaveSocketRoom();
-      //   }
-      // }
-
-      this.changeDiscussion();
-
-      // 13
-      // if (discussion) {
-      //   discussion.joinSocketRoom();
-      // }
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.joinSocketRoom();
     }
   }
 
-  // 13
-  // public componentWillUnmount() {
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   if (discussion) {
-  //     discussion.leaveSocketRoom();
-  //   }
+  public componentDidUpdate(prevProps: Props) {
+    const discussion = this.getDiscussion(this.props.discussionSlug);
 
-  //   this.props.store.socket.off('discussionEvent', this.handleDiscussionEvent);
-  //   this.props.store.socket.off('postEvent', this.handlePostEvent);
-  //   this.props.store.socket.off('reconnect', this.handleSocketReconnect);
-  // }
+    if (prevProps.discussionSlug !== this.props.discussionSlug) {
+      if (prevProps.discussionSlug) {
+        const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
+        if (prevDiscussion) {
+          prevDiscussion.leaveSocketRoom();
+        }
+      }
+
+      this.changeDiscussion();
+
+      if (discussion) {
+        discussion.joinSocketRoom();
+      }
+    }
+  }
+
+  public componentWillUnmount() {
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.leaveSocketRoom();
+    }
+
+    this.props.store.socket.off('discussionEvent', this.handleDiscussionEvent);
+    this.props.store.socket.off('postEvent', this.handlePostEvent);
+    this.props.store.socket.off('reconnect', this.handleSocketReconnect);
+  }
 
   public getDiscussion(slug: string): Discussion {
     const { store, teamSlug } = this.props;
@@ -302,34 +295,33 @@ class DiscussionComp extends React.Component<Props> {
     this.setState({ selectedPost: post, showMarkdownClicked: true });
   };
 
-  // 13
-  // private handleDiscussionEvent = data => {
-  //   console.log('discussion realtime event', data);
+  private handleDiscussionEvent = data => {
+    console.log('discussion realtime event', data);
 
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   if (discussion) {
-  //     discussion.handleDiscussionRealtimeEvent(data);
-  //   }
-  // };
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.handleDiscussionRealtimeEvent(data);
+    }
+  };
 
-  // private handlePostEvent = data => {
-  //   console.log('post realtime event', data);
+  private handlePostEvent = data => {
+    console.log('post realtime event', data);
 
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   if (discussion) {
-  //     discussion.handlePostRealtimeEvent(data);
-  //   }
-  // };
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.handlePostRealtimeEvent(data);
+    }
+  };
 
-  // private handleSocketReconnect = () => {
-  //   console.log('pages/discussion.tsx: socket re-connected');
+  private handleSocketReconnect = () => {
+    console.log('pages/discussion.tsx: socket re-connected');
 
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   if (discussion) {
-  //     discussion.loadPosts().catch(err => notify(err));
-  //     discussion.joinSocketRoom();
-  //   }
-  // };
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.loadPosts().catch(err => notify(err));
+      discussion.joinSocketRoom();
+    }
+  };
 }
 
 export default withAuth(observer(DiscussionComp));

@@ -5,17 +5,13 @@ import * as passwordless from 'passwordless';
 import sendEmail from './aws-ses';
 import logger from './logs';
 import getEmailTemplate from './models/EmailTemplate';
-
 import Invitation from './models/Invitation';
-
 import User, { IUserDocument } from './models/User';
 import PasswordlessMongoStore from './passwordless';
 
 import {
-  EMAIL_SUPPORT_FROM_ADDRESS,
-  GOOGLE_CLIENTID,
-  GOOGLE_CLIENTSECRET,
-  URL_APP,
+  EMAIL_SUPPORT_FROM_ADDRESS, GOOGLE_CLIENTID,
+  GOOGLE_CLIENTSECRET, URL_APP,
 } from './consts';
 
 function setupPasswordless({ server, ROOT_URL }) {
@@ -93,6 +89,7 @@ function setupPasswordless({ server, ROOT_URL }) {
 }
 
 function setupGoogle({ ROOT_URL, server }) {
+
   if (!GOOGLE_CLIENTID) {
     return;
   }
@@ -189,14 +186,9 @@ function setupGoogle({ ROOT_URL, server }) {
       } else {
         if (!req.user.defaultTeamSlug) {
           redirectUrlAfterLogin = '/create-team';
+        } else {
+          redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
         }
-
-        // 12
-        // if (!req.user.defaultTeamSlug) {
-        //   redirectUrlAfterLogin = '/create-team';
-        // } else {
-        //   redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
-        // }
       }
 
       res.redirect(`${URL_APP}${redirectUrlAfterLogin}`);

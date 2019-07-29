@@ -14,14 +14,12 @@ const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
     as: `/team/${currentTeam.slug}/team-settings`,
     simple: true,
   },
-
-  // 11
-  // {
-  //   text: 'Billing',
-  //   href: `/billing?teamSlug=${currentTeam.slug}`,
-  //   as: `/team/${currentTeam.slug}/billing`,
-  //   simple: true,
-  // },
+  {
+    text: 'Billing',
+    href: `/billing?teamSlug=${currentTeam.slug}`,
+    as: `/team/${currentTeam.slug}/billing`,
+    simple: true,
+  },
   {
     separator: true,
   },

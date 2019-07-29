@@ -2,8 +2,7 @@ import { ServerStyleSheets } from '@material-ui/styles';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
 
-// 4
-// import { GA_TRACKING_ID } from '../lib/consts';
+import { GA_TRACKING_ID } from '../lib/consts';
 
 class MyDocument extends Document {
   public static getInitialProps = async ctx => {
@@ -124,8 +123,7 @@ class MyDocument extends Document {
               }
             `}
           </style>
-          {/* 4 */}
-          {/* {this.gtag()} */}
+          {this.gtag()}
         </Head>
         <body
           style={{
@@ -144,31 +142,30 @@ class MyDocument extends Document {
     );
   }
 
-  // 4
-  // private gtag() {
-  //   if (!GA_TRACKING_ID) {
-  //     return;
-  //   }
+  private gtag() {
+    if (!GA_TRACKING_ID) {
+      return;
+    }
 
-  //   return (
-  //     <div>
-  //       <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
-  //       <script
-  //         /* eslint-disable-next-line react/no-danger */
-  //         dangerouslySetInnerHTML={{
-  //           __html: `
-  //               window.dataLayer = window.dataLayer || [];
-  //               function gtag(){
-  //                 dataLayer.push(arguments);
-  //               }
-  //               gtag('js', new Date());
-  //               gtag('config', '${GA_TRACKING_ID}');
-  //             `,
-  //         }}
-  //       />
-  //     </div>
-  //   );
-  // }
+    return (
+      <div>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
+        <script
+          /* eslint-disable-next-line react/no-danger */
+          dangerouslySetInnerHTML={{
+            __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){
+                  dataLayer.push(arguments);
+                }
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}');
+              `,
+          }}
+        />
+      </div>
+    );
+  }
 }
 
 export default MyDocument;

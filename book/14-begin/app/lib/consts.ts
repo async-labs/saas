@@ -30,5 +30,4 @@ export const STRIPEPUBLISHABLEKEY: string = process.env.STRIPEPUBLISHABLEKEY || 
 
 export const BUCKET_FOR_POSTS: string = process.env.BUCKET_FOR_POSTS;
 
-// 14
-// export const LAMBDA_API_ENDPOINT: string = process.env.LAMBDA_API_ENDPOINT;
+export const LAMBDA_API_ENDPOINT: string = process.env.LAMBDA_API_ENDPOINT;

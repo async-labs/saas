@@ -1,10 +1,11 @@
 import * as aws from 'aws-sdk';
 import logger from './logs';
 
-// 10
-// import Team from './models/Team';
+import Team from './models/Team';
 
-import { AMAZON_ACCESSKEYID, AMAZON_SECRETACCESSKEY } from './consts';
+import {
+  AMAZON_ACCESSKEYID, AMAZON_SECRETACCESSKEY,
+} from './consts';
 
 async function checkPrefix(prefix, user) {
   // Prefix must be either user slug or user's team slug
@@ -12,14 +13,13 @@ async function checkPrefix(prefix, user) {
     return;
   }
 
-  // 10
-  // const teams = await Team.find({ memberIds: user.id })
-  //   .select('slug')
-  //   .setOptions({ lean: true });
+  const teams = await Team.find({ memberIds: user.id })
+    .select('slug')
+    .setOptions({ lean: true });
 
-  // if (!teams.find(t => t.slug === prefix)) {
-  //   throw new Error('Wrong prefix.');
-  // }
+  if (!teams.find(t => t.slug === prefix)) {
+    throw new Error('Wrong prefix.');
+  }
 }
 
 async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, acl = 'private' }) {

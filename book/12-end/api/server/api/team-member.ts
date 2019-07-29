@@ -8,15 +8,14 @@ import Post from '../models/Post';
 import Team from '../models/Team';
 import User from '../models/User';
 
-// 13
-// import {
-//   discussionAdded,
-//   discussionDeleted,
-//   discussionEdited,
-//   postAdded,
-//   postDeleted,
-//   postEdited,
-// } from '../realtime';
+import {
+  discussionAdded,
+  discussionDeleted,
+  discussionEdited,
+  postAdded,
+  postDeleted,
+  postEdited,
+} from '../realtime';
 
 const router = express.Router();
 
@@ -34,15 +33,13 @@ async function loadDiscussionsData(team, userId, body) {
   const { discussionSlug } = body;
 
   if (!discussionSlug) {
-    return {};
+    return [];
   }
 
   const { discussions } = await Discussion.getList({
     userId,
     teamId: team._id,
   });
-
-  const data: any = { initialDiscussions: discussions };
 
   for (const discussion of discussions) {
     if (discussion.slug === discussionSlug) {
@@ -57,7 +54,7 @@ async function loadDiscussionsData(team, userId, body) {
     }
   }
 
-  return data;
+  return discussions;
 }
 
 async function loadTeamData(team, userId, body) {
@@ -74,9 +71,9 @@ async function loadTeamData(team, userId, body) {
     });
   }
 
-  Object.assign(team, await loadDiscussionsData(team, userId, body));
+  const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
-  const data: any = { initialMembers, initialInvitations };
+  const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
   return data;
 }
@@ -115,9 +112,7 @@ router.get('/teams', async (req, res, next) => {
 
 router.post('/discussions/add', async (req, res, next) => {
   try {
-    const { name, teamId, memberIds = [], notificationType } = req.body;
-    // 13
-    // const { name, teamId, memberIds = [], notificationType, socketId } = req.body;
+    const { name, teamId, memberIds = [], notificationType, socketId } = req.body;
 
     const discussion = await Discussion.add({
       userId: req.user.id,
@@ -127,8 +122,7 @@ router.post('/discussions/add', async (req, res, next) => {
       notificationType,
     });
 
-    // 13
-    // discussionAdded({ socketId, discussion });
+    discussionAdded({ socketId, discussion });
 
     res.json({ discussion });
   } catch (err) {
@@ -138,28 +132,17 @@ router.post('/discussions/add', async (req, res, next) => {
 
 router.post('/discussions/edit', async (req, res, next) => {
   try {
-    const { name, id, memberIds = [], notificationType } = req.body;
-    // 13
-    // const { name, id, memberIds = [], notificationType, socketId } = req.body;
+    const { name, id, memberIds = [], notificationType, socketId } = req.body;
 
-    await Discussion.edit({
+    const updatedDiscussion = await Discussion.edit({
       userId: req.user.id,
       name,
       id,
       memberIds,
       notificationType,
     });
-    // 13
-    // const updatedDiscussion = await Discussion.edit({
-    //   userId: req.user.id,
-    //   name,
-    //   id,
-    //   memberIds,
-    //   notificationType,
-    // });
 
-    // 13
-    // discussionEdited({ socketId, discussion: updatedDiscussion });
+    discussionEdited({ socketId, discussion: updatedDiscussion });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -169,16 +152,11 @@ router.post('/discussions/edit', async (req, res, next) => {
 
 router.post('/discussions/delete', async (req, res, next) => {
   try {
-    const { id } = req.body;
-    // 13
-    // const { id, socketId } = req.body;
+    const { id, socketId } = req.body;
 
-    await Discussion.delete({ userId: req.user.id, id });
-    // 13
-    // const { teamId } = await Discussion.delete({ userId: req.user.id, id });
+    const { teamId } = await Discussion.delete({ userId: req.user.id, id });
 
-    // 13
-    // discussionDeleted({ socketId, teamId, id });
+    discussionDeleted({ socketId, teamId, id });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -205,14 +183,11 @@ router.get('/discussions/list', async (req, res, next) => {
 
 router.post('/posts/add', async (req, res, next) => {
   try {
-    const { content, discussionId } = req.body;
-    // 13
-    // const { content, discussionId, socketId } = req.body;
+    const { content, discussionId, socketId } = req.body;
 
     const post = await Post.add({ userId: req.user.id, content, discussionId });
 
-    // 13
-    // postAdded({ socketId, post });
+    postAdded({ socketId, post });
 
     res.json({ post });
   } catch (err) {
@@ -222,16 +197,11 @@ router.post('/posts/add', async (req, res, next) => {
 
 router.post('/posts/edit', async (req, res, next) => {
   try {
-    const { content, id } = req.body;
-    // 13
-    // const { content, id, socketId } = req.body;
+    const { content, id, socketId } = req.body;
 
-    await Post.edit({ userId: req.user.id, content, id });
-    // 13
-    // const updatedPost = await Post.edit({ userId: req.user.id, content, id });
+    const updatedPost = await Post.edit({ userId: req.user.id, content, id });
 
-    // 13
-    // postEdited({ socketId, post: updatedPost });
+    postEdited({ socketId, post: updatedPost });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -241,14 +211,11 @@ router.post('/posts/edit', async (req, res, next) => {
 
 router.post('/posts/delete', async (req, res, next) => {
   try {
-    const { id } = req.body;
-    // 13
-    // const { id, socketId, discussionId } = req.body;
+    const { id, socketId, discussionId } = req.body;
 
     await Post.delete({ userId: req.user.id, id });
 
-    // 13
-    // postDeleted({ socketId, id, discussionId });
+    postDeleted({ socketId, id, discussionId });
 
     res.json({ done: 1 });
   } catch (err) {

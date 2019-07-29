@@ -28,8 +28,7 @@ export const BUCKET_FOR_TEAM_AVATARS: string = process.env.BUCKET_FOR_TEAM_AVATA
 
 export const STRIPEPUBLISHABLEKEY: string = process.env.STRIPEPUBLISHABLEKEY || process.env.StripePublishableKey;
 
-// 12
-// export const BUCKET_FOR_POSTS: string = process.env.BUCKET_FOR_POSTS;
+export const BUCKET_FOR_POSTS: string = process.env.BUCKET_FOR_POSTS;
 
 // 14
 // export const LAMBDA_API_ENDPOINT: string = process.env.LAMBDA_API_ENDPOINT;

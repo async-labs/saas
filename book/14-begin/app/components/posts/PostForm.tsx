@@ -183,21 +183,18 @@ class PostForm extends React.Component<MyProps, MyState> {
     this.setState({ disabled: true });
 
     try {
-      await discussion.addPost(content);
+      const newPost = await discussion.addPost(content);
 
-      // 14
-      // const newPost = await discussion.addPost(content);
-
-      // if (discussion.notificationType === 'email') {
-      //   const userIdsForLambda = discussion.memberIds.filter(m => m !== discussion.createdUserId);
-      //   await discussion.sendDataToLambdaApiMethod({
-      //     discussionName: discussion.name,
-      //     discussionLink: `${URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
-      //     postContent: newPost.content,
-      //     authorName: newPost.user.displayName,
-      //     userIds: userIdsForLambda,
-      //   });
-      // }
+      if (discussion.notificationType === 'email') {
+        const userIdsForLambda = discussion.memberIds.filter(m => m !== discussion.createdUserId);
+        await discussion.sendDataToLambdaApiMethod({
+          discussionName: discussion.name,
+          discussionLink: `${URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
+          postContent: newPost.content,
+          authorName: newPost.user.displayName,
+          userIds: userIdsForLambda,
+        });
+      }
       this.setState({ content: '' });
       notify('You successfully published new Post.');
     } catch (error) {

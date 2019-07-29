@@ -7,9 +7,8 @@ import { action, decorate, IObservableArray, observable, runInAction } from 'mob
 import { addTeam } from '../api/team-leader';
 import { getTeamList } from '../api/team-member';
 
-// 12
-// import { Discussion } from './discussion';
-// import { Post } from './post';
+import { Discussion } from './discussion';
+import { Post } from './post';
 import { Team } from './team';
 import { User } from './user';
 
@@ -239,10 +238,9 @@ class Store {
         .loadInitialMembers()
         .catch(err => console.error('Error while loading Users', err));
 
-      // 12
-      // this.currentTeam
-      //   .loadDiscussions()
-      //   .catch(err => console.error('Error while loading Discussions', err));
+      this.currentTeam
+        .loadDiscussions()
+        .catch(err => console.error('Error while loading Discussions', err));
     }
   }
 }
@@ -313,7 +311,4 @@ function getStore() {
   return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
 }
 
-export { Team, User, Store, initStore, getStore };
-
-// 12
-// export { Discussion, Post, Team, User, Store, initStore, getStore };
+export { Discussion, Post, Team, User, Store, initStore, getStore };

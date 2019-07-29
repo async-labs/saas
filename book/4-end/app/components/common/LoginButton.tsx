@@ -1,100 +1,99 @@
-// 5
-// import Button from '@material-ui/core/Button';
-// import TextField from '@material-ui/core/TextField';
-// import React from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import React from 'react';
 
-// import { makeQueryString } from '../../lib/api/makeQueryString';
+import { makeQueryString } from '../../lib/api/makeQueryString';
 
-// // 9
-// // import { sendLoginToken } from '../../lib/api/public';
-// // import notify from '../../lib/notifier';
+// 9
+// import { sendLoginToken } from '../../lib/api/public';
+// import notify from '../../lib/notifier';
 
-// import { styleLoginButton } from '../../lib/sharedStyles';
+import { styleLoginButton } from '../../lib/sharedStyles';
 
-// import { URL_API } from '../../lib/consts';
+import { URL_API } from '../../lib/consts';
 
-// // TS errors: https://github.com/mui-org/material-ui/issues/8198
+// TS errors: https://github.com/mui-org/material-ui/issues/8198
 
-// class LoginButton extends React.PureComponent<
-//   { next?: string },
-//   // 10
-//   // { next?: string; invitationToken?: string },
-//   { email: string }
-//   > {
-//   public state = { email: '' };
+class LoginButton extends React.PureComponent<
+  { next?: string },
+  // 10
+  // { next?: string; invitationToken?: string },
+  { email: string }
+  > {
+  public state = { email: '' };
 
-//   public render() {
-//     const { next } = this.props;
+  public render() {
+    const { next } = this.props;
 
-//     // 10
-//     // const { next, invitationToken } = this.props;
+    // 10
+    // const { next, invitationToken } = this.props;
 
-//     let url = `${URL_API}/auth/google`;
-//     const qs = makeQueryString({ next });
+    let url = `${URL_API}/auth/google`;
+    const qs = makeQueryString({ next });
 
-//     // 10
-//     // const qs = makeQueryString({ next, invitationToken });
+    // 10
+    // const qs = makeQueryString({ next, invitationToken });
 
-//     if (qs) {
-//       url += `?${qs}`;
-//     }
+    if (qs) {
+      url += `?${qs}`;
+    }
 
-//     return (
-//       <React.Fragment>
-//         <Button variant="contained" style={styleLoginButton} href={url}>
-//           <img
-//             src="https://storage.googleapis.com/async-await-all/G.svg"
-//             alt="Log in with Google"
-//           />
-//           &nbsp;&nbsp;&nbsp; Log in with Google
-//         </Button>
-//         <p />
-//         <br />
-//         {/* 9 */}
-//         {/* <hr style={{ width: '60px' }} /> <h4>OR</h4> <hr style={{ width: '60px' }} />
-//         <p />
-//         <br />
-//         <div>
-//           <form autoComplete="off" onSubmit={this.onSubmit}>
-//             <TextField
-//               required
-//               type="email"
-//               label="Email address"
-//               value={this.state.email}
-//               onChange={event => {
-//                 this.setState({ email: event.target.value });
-//               }}
-//               style={{ width: '300px' }}
-//             />
-//             <p />
-//             <Button variant="contained" color="primary" type="submit">
-//               Log in with email
-//             </Button>
-//           </form>
-//           <br />
-//           <p />
-//         </div> */}
-//       </React.Fragment>
-//     );
-//   }
+    return (
+      <React.Fragment>
+        <Button variant="contained" style={styleLoginButton} href={url}>
+          <img
+            src="https://storage.googleapis.com/async-await-all/G.svg"
+            alt="Log in with Google"
+          />
+          &nbsp;&nbsp;&nbsp; Log in with Google
+        </Button>
+        <p />
+        <br />
+        {/* 9 */}
+        {/* <hr style={{ width: '60px' }} /> <h4>OR</h4> <hr style={{ width: '60px' }} />
+        <p />
+        <br />
+        <div>
+          <form autoComplete="off" onSubmit={this.onSubmit}>
+            <TextField
+              required
+              type="email"
+              label="Email address"
+              value={this.state.email}
+              onChange={event => {
+                this.setState({ email: event.target.value });
+              }}
+              style={{ width: '300px' }}
+            />
+            <p />
+            <Button variant="contained" color="primary" type="submit">
+              Log in with email
+            </Button>
+          </form>
+          <br />
+          <p />
+        </div> */}
+      </React.Fragment>
+    );
+  }
 
-//   // 9
-//   // private onSubmit = async event => {
-//   //   event.preventDefault();
-//   //   const { email } = this.state;
+  // 9
+  // private onSubmit = async event => {
+  //   event.preventDefault();
+  //   const { email } = this.state;
 
-//   //   if (!email) {
-//   //     notify('Email is required');
-//   //   }
+  //   if (!email) {
+  //     notify('Email is required');
+  //   }
 
-//   //   try {
-//   //     await sendLoginToken(email);
-//   //     this.setState({ email: '' });
-//   //     notify('We emailed you a login link.');
-//   //   } catch (error) {
-//   //     notify(error);
-//   //   }
-//   // };
-// }
+  //   try {
+  //     await sendLoginToken(email);
+  //     this.setState({ email: '' });
+  //     notify('We emailed you a login link.');
+  //   } catch (error) {
+  //     notify(error);
+  //   }
+  // };
+}
 
-// export default LoginButton;
+export default LoginButton;

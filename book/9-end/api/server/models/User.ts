@@ -11,9 +11,8 @@ import { generateSlug } from '../utils/slugify';
 
 import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
 
-// 10
-// import Invitation from './Invitation';
-// import Team from './Team';
+import Invitation from './Invitation';
+import Team from './Team';
 
 // 11
 // import {
@@ -53,11 +52,10 @@ const mongoSchema = new mongoose.Schema({
     unique: true,
   },
 
-  // 10
-  // defaultTeamSlug: {
-  //   type: String,
-  //   default: '',
-  // },
+  defaultTeamSlug: {
+    type: String,
+    default: '',
+  },
 
   isAdmin: {
     type: Boolean,
@@ -124,8 +122,7 @@ export interface IUserDocument extends mongoose.Document {
   displayName: string;
   avatarUrl: string;
 
-  // 10
-  // defaultTeamSlug: string;
+  defaultTeamSlug: string;
 
   darkTheme: boolean;
 
@@ -309,14 +306,13 @@ class UserClass extends mongoose.Model {
   //     .setOptions({ lean: true });
   // }
 
-  // 10
-  // public static async getTeamMembers({ userId, teamId }) {
-  //   const team = await this.checkPermissionAndGetTeam({ userId, teamId });
+  public static async getTeamMembers({ userId, teamId }) {
+    const team = await this.checkPermissionAndGetTeam({ userId, teamId });
 
-  //   return this.find({ _id: { $in: team.memberIds } })
-  //     .select(this.publicFields().join(' '))
-  //     .setOptions({ lean: true });
-  // }
+    return this.find({ _id: { $in: team.memberIds } })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
+  }
 
   public static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
     const user = await this.findOne({ googleId })
@@ -352,12 +348,10 @@ class UserClass extends mongoose.Model {
       displayName,
       avatarUrl,
       slug,
-      // 10
-      // defaultTeamSlug: '',
+      defaultTeamSlug: '',
     });
 
-    // 10
-    // const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
+    const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
 
     const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
       lean: true,
@@ -380,19 +374,18 @@ class UserClass extends mongoose.Model {
       logger.error('Email sending error:', err);
     }
 
-    // 10
-    // if (!hasInvitation) {
-    //   try {
-    //     await sendEmail({
-    //       from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
-    //       to: [email],
-    //       subject: template.subject,
-    //       body: template.message,
-    //     });
-    //   } catch (err) {
-    //     logger.error('Email sending error:', err);
-    //   }
-    // }
+    if (!hasInvitation) {
+      try {
+        await sendEmail({
+          from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
+          to: [email],
+          subject: template.subject,
+          body: template.message,
+        });
+      } catch (err) {
+        logger.error('Email sending error:', err);
+      }
+    }
 
     try {
       await subscribe({ email, listName: 'signups' });
@@ -419,12 +412,10 @@ class UserClass extends mongoose.Model {
       createdAt: new Date(),
       email,
       slug,
-      // 10
-      // defaultTeamSlug: '',
+      defaultTeamSlug: '',
     });
 
-    // 10
-    // const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
+    const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
 
     const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
       lean: true,
@@ -447,19 +438,18 @@ class UserClass extends mongoose.Model {
       logger.error('Email sending error:', err);
     }
 
-    // 10
-    // if (!hasInvitation) {
-    //   try {
-    //     await sendEmail({
-    //       from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
-    //       to: [email],
-    //       subject: template.subject,
-    //       body: template.message,
-    //     });
-    //   } catch (err) {
-    //     logger.error('Email sending error:', err);
-    //   }
-    // }
+    if (!hasInvitation) {
+      try {
+        await sendEmail({
+          from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
+          to: [email],
+          subject: template.subject,
+          body: template.message,
+        });
+      } catch (err) {
+        logger.error('Email sending error:', err);
+      }
+    }
 
     try {
       await subscribe({ email, listName: 'signups' });
@@ -479,8 +469,7 @@ class UserClass extends mongoose.Model {
       'avatarUrl',
       'slug',
       'isGithubConnected',
-      // 10
-      // 'defaultTeamSlug',
+      'defaultTeamSlug',
 
       // 11
       // 'hasCardInformation',
@@ -491,22 +480,21 @@ class UserClass extends mongoose.Model {
     ];
   }
 
-  // 10
-  // public static async checkPermissionAndGetTeam({ userId, teamId }) {
-  //   if (!userId || !teamId) {
-  //     throw new Error('Bad data');
-  //   }
+  public static async checkPermissionAndGetTeam({ userId, teamId }) {
+    if (!userId || !teamId) {
+      throw new Error('Bad data');
+    }
 
-  //   const team = await Team.findById(teamId)
-  //     .select('memberIds')
-  //     .setOptions({ lean: true });
+    const team = await Team.findById(teamId)
+      .select('memberIds')
+      .setOptions({ lean: true });
 
-  //   if (!team || team.memberIds.indexOf(userId) === -1) {
-  //     throw new Error('Team not found');
-  //   }
+    if (!team || team.memberIds.indexOf(userId) === -1) {
+      throw new Error('Team not found');
+    }
 
-  //   return team;
-  // }
+    return team;
+  }
 
   public static toggleTheme({ userId, darkTheme }) {
     return this.updateOne({ _id: userId }, { darkTheme: !!darkTheme });

@@ -71,17 +71,16 @@ export const MAILCHIMP_SAAS_ALL_LIST_ID: string = get('MAILCHIMP_SAAS_ALL_LIST_I
 
 export const EMAIL_SUPPORT_FROM_ADDRESS: string = get('EMAIL_SUPPORT_FROM_ADDRESS');
 
-// 11
-// export const STRIPE_TEST_SECRETKEY = get('STRIPE_TEST_SECRETKEY') || get('Stripe_Test_SecretKey');
-// export const STRIPE_LIVE_SECRETKEY = get('STRIPE_LIVE_SECRETKEY') || get('Stripe_Live_SecretKey');
-// export const STRIPE_SECRETKEY = IS_DEV ? STRIPE_TEST_SECRETKEY : STRIPE_LIVE_SECRETKEY;
+export const STRIPE_TEST_SECRETKEY = get('STRIPE_TEST_SECRETKEY') || get('Stripe_Test_SecretKey');
+export const STRIPE_LIVE_SECRETKEY = get('STRIPE_LIVE_SECRETKEY') || get('Stripe_Live_SecretKey');
+export const STRIPE_SECRETKEY = IS_DEV ? STRIPE_TEST_SECRETKEY : STRIPE_LIVE_SECRETKEY;
 
-// export const STRIPE_TEST_PUBLISHABLEKEY = get('STRIPE_TEST_PUBLISHABLEKEY') || get('Stripe_Test_PublishableKey');
-// export const STRIPE_LIVE_PUBLISHABLEKEY = get('STRIPE_LIVE_PUBLISHABLEKEY') || get('Stripe_Live_PublishableKey');
-// export const STRIPE_PUBLISHABLEKEY = IS_DEV ? STRIPE_TEST_PUBLISHABLEKEY : STRIPE_LIVE_PUBLISHABLEKEY;
+export const STRIPE_TEST_PUBLISHABLEKEY = get('STRIPE_TEST_PUBLISHABLEKEY') || get('Stripe_Test_PublishableKey');
+export const STRIPE_LIVE_PUBLISHABLEKEY = get('STRIPE_LIVE_PUBLISHABLEKEY') || get('Stripe_Live_PublishableKey');
+export const STRIPE_PUBLISHABLEKEY = IS_DEV ? STRIPE_TEST_PUBLISHABLEKEY : STRIPE_LIVE_PUBLISHABLEKEY;
 
-// export const STRIPE_TEST_PLANID: string = get('STRIPE_TEST_PLANID') || get('Stripe_Test_PlanId');
-// export const STRIPE_LIVE_PLANID: string = get('STRIPE_LIVE_PLANID') || get('Stripe_Live_PlanId');
-// export const STRIPE_PLANID = IS_DEV ? STRIPE_TEST_PLANID : STRIPE_LIVE_PLANID;
+export const STRIPE_TEST_PLANID: string = get('STRIPE_TEST_PLANID') || get('Stripe_Test_PlanId');
+export const STRIPE_LIVE_PLANID: string = get('STRIPE_LIVE_PLANID') || get('Stripe_Live_PlanId');
+export const STRIPE_PLANID = IS_DEV ? STRIPE_TEST_PLANID : STRIPE_LIVE_PLANID;
 
-// export const STRIPE_LIVE_ENDPOINTSECRET: string = get('STRIPE_LIVE_ENDPOINTSECRET') || get('Stripe_Live_EndpointSecret');
+export const STRIPE_LIVE_ENDPOINTSECRET: string = get('STRIPE_LIVE_ENDPOINTSECRET') || get('Stripe_Live_EndpointSecret');

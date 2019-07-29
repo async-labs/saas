@@ -5,9 +5,8 @@ import { action, decorate, IObservableArray, observable, runInAction } from 'mob
 // import Router from 'next/router';
 
 import {
-  // 11
-  // cancelSubscriptionApiMethod,
-  // createSubscriptionApiMethod,
+  cancelSubscriptionApiMethod,
+  createSubscriptionApiMethod,
   getTeamInvitedUsers,
   getTeamMembers,
   inviteMember,
@@ -34,22 +33,11 @@ class Team {
   public avatarUrl: string;
   public memberIds: IObservableArray<string> = observable([]);
 
+  public isSubscriptionActive: boolean;
+  public isPaymentFailed: boolean;
+
   public members: Map<string, User> = new Map();
   public invitedUsers: Map<string, Invitation> = new Map();
-
-  // 11
-  // public isSubscriptionActive: boolean;
-  // public isPaymentFailed: boolean;
-  // public stripeSubscription: {
-  //   id: string;
-  //   object: string;
-  //   application_fee_percent: number;
-  //   billing: string;
-  //   cancel_at_period_end: boolean;
-  //   billing_cycle_anchor: number;
-  //   canceled_at: number;
-  //   created: number;
-  // };
 
   // 12
   // public currentDiscussion?: Discussion;
@@ -57,6 +45,17 @@ class Team {
   // public discussions: IObservableArray<Discussion> = observable([]);
   // public isLoadingDiscussions = false;
   // public discussion: Discussion;
+
+  public stripeSubscription: {
+    id: string;
+    object: string;
+    application_fee_percent: number;
+    billing: string;
+    cancel_at_period_end: boolean;
+    billing_cycle_anchor: number;
+    canceled_at: number;
+    created: number;
+  };
 
   public isLoadingMembers = false;
   public isInitialMembersLoaded = false;
@@ -70,12 +69,11 @@ class Team {
     this.avatarUrl = params.avatarUrl;
     this.memberIds.replace(params.memberIds || []);
 
-    this.store = params.store;
+    this.isSubscriptionActive = params.isSubscriptionActive;
+    this.stripeSubscription = params.stripeSubscription;
+    this.isPaymentFailed = params.isPaymentFailed;
 
-    // 11
-    // this.isSubscriptionActive = params.isSubscriptionActive;
-    // this.stripeSubscription = params.stripeSubscription;
-    // this.isPaymentFailed = params.isPaymentFailed;
+    this.store = params.store;
 
     // 12
     // this.currentDiscussionSlug = params.currentDiscussionSlug || null;
@@ -333,49 +331,48 @@ class Team {
   //   return this.discussions.slice().sort();
   // }
 
-  // 11
-  // public async createSubscription({ teamId }: { teamId: string }) {
-  //   try {
-  //     const { isSubscriptionActive, stripeSubscription } = await createSubscriptionApiMethod({
-  //       teamId,
-  //     });
+  public async createSubscription({ teamId }: { teamId: string }) {
+    try {
+      const { isSubscriptionActive, stripeSubscription } = await createSubscriptionApiMethod({
+        teamId,
+      });
 
-  //     runInAction(() => {
-  //       this.isSubscriptionActive = isSubscriptionActive;
-  //       this.stripeSubscription = stripeSubscription;
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
+      runInAction(() => {
+        this.isSubscriptionActive = isSubscriptionActive;
+        this.stripeSubscription = stripeSubscription;
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
-  // public async cancelSubscription({ teamId }: { teamId: string }) {
-  //   try {
-  //     const { isSubscriptionActive } = await cancelSubscriptionApiMethod({ teamId });
+  public async cancelSubscription({ teamId }: { teamId: string }) {
+    try {
+      const { isSubscriptionActive } = await cancelSubscriptionApiMethod({ teamId });
 
-  //     runInAction(() => {
-  //       this.isSubscriptionActive = isSubscriptionActive;
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
+      runInAction(() => {
+        this.isSubscriptionActive = isSubscriptionActive;
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
-  // public async checkIfTeamLeaderMustBeCustomer() {
-  //   let ifTeamLeaderMustBeCustomerOnClient: boolean;
+  public async checkIfTeamLeaderMustBeCustomer() {
+    let ifTeamLeaderMustBeCustomerOnClient: boolean;
 
-  //   if (this && this.memberIds.length < 2) {
-  //     ifTeamLeaderMustBeCustomerOnClient = false;
-  //   } else if (this && this.memberIds.length >= 2 && this.isSubscriptionActive) {
-  //     ifTeamLeaderMustBeCustomerOnClient = false;
-  //   } else if (this && this.memberIds.length >= 2 && !this.isSubscriptionActive) {
-  //     ifTeamLeaderMustBeCustomerOnClient = true;
-  //   }
+    if (this && this.memberIds.length < 2) {
+      ifTeamLeaderMustBeCustomerOnClient = false;
+    } else if (this && this.memberIds.length >= 2 && this.isSubscriptionActive) {
+      ifTeamLeaderMustBeCustomerOnClient = false;
+    } else if (this && this.memberIds.length >= 2 && !this.isSubscriptionActive) {
+      ifTeamLeaderMustBeCustomerOnClient = true;
+    }
 
-  //   return ifTeamLeaderMustBeCustomerOnClient;
-  // }
+    return ifTeamLeaderMustBeCustomerOnClient;
+  }
 
   // 13
   // public leaveSocketRoom() {
@@ -416,11 +413,9 @@ decorate(Team, {
   invitedUsers: observable,
   isLoadingMembers: observable,
   isInitialMembersLoaded: observable,
-
-  // 11
-  // isSubscriptionActive: observable,
-  // stripeSubscription: observable,
-  // isPaymentFailed: observable,
+  isSubscriptionActive: observable,
+  stripeSubscription: observable,
+  isPaymentFailed: observable,
 
   // 12
   // currentDiscussion: observable,

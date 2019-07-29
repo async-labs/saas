@@ -6,16 +6,11 @@ import logger from '../logs';
 
 // 12
 // import Discussion from '../models/Discussion';
-
-// 10
-// import Invitation from '../models/Invitation';
+import Invitation from '../models/Invitation';
 
 // 12
 // import Post from '../models/Post';
-
-// 10
-// import Team from '../models/Team';
-
+import Team from '../models/Team';
 import User from '../models/User';
 
 // 13
@@ -45,15 +40,13 @@ router.use((req, res, next) => {
 //   const { discussionSlug } = body;
 
 //   if (!discussionSlug) {
-//     return {};
+//     return [];
 //   }
 
 //   const { discussions } = await Discussion.getList({
 //     userId,
 //     teamId: team._id,
 //   });
-
-//   const data: any = { initialDiscussions: discussions };
 
 //   for (const discussion of discussions) {
 //     if (discussion.slug === discussionSlug) {
@@ -68,28 +61,27 @@ router.use((req, res, next) => {
 //     }
 //   }
 
-//   return data;
+//   return discussions;
 // }
 
-// 10
-// async function loadTeamData(team, userId) {
-//   const initialMembers = await User.getTeamMembers({
-//     userId,
-//     teamId: team._id,
-//   });
+async function loadTeamData(team, userId) {
+  const initialMembers = await User.getTeamMembers({
+    userId,
+    teamId: team._id,
+  });
 
-//   let initialInvitations = [];
-//   if (userId === team.teamLeaderId) {
-//     initialInvitations = await Invitation.getTeamInvitedUsers({
-//       userId,
-//       teamId: team._id,
-//     });
-//   }
+  let initialInvitations = [];
+  if (userId === team.teamLeaderId) {
+    initialInvitations = await Invitation.getTeamInvitedUsers({
+      userId,
+      teamId: team._id,
+    });
+  }
 
-//   const data: any = { initialMembers, initialInvitations };
+  const data: any = { initialMembers, initialInvitations };
 
-//   return data;
-// }
+  return data;
+}
 
 // 12
 // async function loadTeamData(team, userId, body) {
@@ -106,47 +98,46 @@ router.use((req, res, next) => {
 //     });
 //   }
 
-//   Object.assign(team, await loadDiscussionsData(team, userId, body));
+//   const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
-//   const data: any = { initialMembers, initialInvitations };
+//   const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
 //   return data;
 // }
 
-// 10
-// router.post('/get-initial-data', async (req, res, next) => {
-//   try {
-//     const teams = await Team.getList(req.user.id);
+router.post('/get-initial-data', async (req, res, next) => {
+  try {
+    const teams = await Team.getList(req.user.id);
 
-//     let selectedTeamSlug = req.body.teamSlug;
-//     if (!selectedTeamSlug && teams && teams.length > 0) {
-//       selectedTeamSlug = teams[0].slug;
-//     }
+    let selectedTeamSlug = req.body.teamSlug;
+    if (!selectedTeamSlug && teams && teams.length > 0) {
+      selectedTeamSlug = teams[0].slug;
+    }
 
-//     for (const team of teams) {
-//       if (team.slug === selectedTeamSlug) {
-//         Object.assign(team, await loadTeamData(team, req.user.id));
-//         // 12
-//         // Object.assign(team, await loadTeamData(team, req.user.id, req.body));
-//         break;
-//       }
-//     }
+    for (const team of teams) {
+      if (team.slug === selectedTeamSlug) {
+        Object.assign(team, await loadTeamData(team, req.user.id));
+        // 12
+        // Object.assign(team, await loadTeamData(team, req.user.id, req.body));
+        break;
+      }
+    }
 
-//     res.json({ teams });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    res.json({ teams });
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.get('/teams', async (req, res, next) => {
-//   try {
-//     const teams = await Team.getList(req.user.id);
+router.get('/teams', async (req, res, next) => {
+  try {
+    const teams = await Team.getList(req.user.id);
 
-//     res.json({ teams });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    res.json({ teams });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // 12
 // router.post('/discussions/add', async (req, res, next) => {

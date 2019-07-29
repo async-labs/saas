@@ -81,6 +81,12 @@ app.prepare().then(() => {
   // 10
   // routesWithSlug({ server, app });
 
+  // temporary in 6
+  // server.get('/', async (req, res) => {
+  //   const user = { email: 'team@async-await.com' };
+  //   app.render(req, res, '/', user);
+  // });
+
   server.get('/robots.txt', (_, res) => {
     res.sendFile(path.join(__dirname, '../static', 'robots.txt'));
   });

@@ -1,8 +1,5 @@
-import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
-
-// 12
-// import { action, computed, decorate, IObservableArray, observable, runInAction } from 'mobx';
-// import Router from 'next/router';
+import { action, computed, decorate, IObservableArray, observable, runInAction } from 'mobx';
+import Router from 'next/router';
 
 import {
   cancelSubscriptionApiMethod,
@@ -14,10 +11,9 @@ import {
   updateTeam,
 } from '../api/team-leader';
 
-// 12
-// import { addDiscussion, deleteDiscussion, getDiscussionList } from '../api/team-member';
-// import { Discussion } from './discussion';
+import { addDiscussion, deleteDiscussion, getDiscussionList } from '../api/team-member';
 
+import { Discussion } from './discussion';
 import { Store } from './index';
 import { Invitation } from './invitation';
 import { User } from './user';
@@ -39,12 +35,11 @@ class Team {
   public members: Map<string, User> = new Map();
   public invitedUsers: Map<string, Invitation> = new Map();
 
-  // 12
-  // public currentDiscussion?: Discussion;
-  // public currentDiscussionSlug?: string;
-  // public discussions: IObservableArray<Discussion> = observable([]);
-  // public isLoadingDiscussions = false;
-  // public discussion: Discussion;
+  public currentDiscussion?: Discussion;
+  public currentDiscussionSlug?: string;
+  public discussions: IObservableArray<Discussion> = observable([]);
+  public isLoadingDiscussions = false;
+  public discussion: Discussion;
 
   public stripeSubscription: {
     id: string;
@@ -68,6 +63,7 @@ class Team {
     this.name = params.name;
     this.avatarUrl = params.avatarUrl;
     this.memberIds.replace(params.memberIds || []);
+    this.currentDiscussionSlug = params.currentDiscussionSlug || null;
 
     this.isSubscriptionActive = params.isSubscriptionActive;
     this.stripeSubscription = params.stripeSubscription;
@@ -75,19 +71,15 @@ class Team {
 
     this.store = params.store;
 
-    // 12
-    // this.currentDiscussionSlug = params.currentDiscussionSlug || null;
-
     if (params.initialMembers) {
       this.setInitialMembers(params.initialMembers, params.initialInvitations);
     }
 
-    // 12
-    // if (params.initialDiscussions) {
-    //   this.setInitialDiscussions(params.initialDiscussions);
-    // } else {
-    //   this.loadDiscussions();
-    // }
+    if (params.initialDiscussions) {
+      this.setInitialDiscussions(params.initialDiscussions);
+    } else {
+      this.loadDiscussions();
+    }
   }
 
   public async edit({ name, avatarUrl }: { name: string; avatarUrl: string }) {
@@ -109,143 +101,142 @@ class Team {
     }
   }
 
-  // 12
-  // public setCurrentDiscussion({ slug }: { slug: string }) {
-  //   this.currentDiscussionSlug = slug;
-  //   for (const discussion of this.discussions) {
-  //     if (discussion && discussion.slug === slug) {
-  //       this.currentDiscussion = discussion;
-  //       break;
-  //     }
-  //   }
-  // }
+  public setCurrentDiscussion({ slug }: { slug: string }) {
+    this.currentDiscussionSlug = slug;
+    for (const discussion of this.discussions) {
+      if (discussion && discussion.slug === slug) {
+        this.currentDiscussion = discussion;
+        break;
+      }
+    }
+  }
 
-  // public getDiscussionBySlug(slug): Discussion {
-  //   return this.discussions.find(d => d.slug === slug);
-  // }
+  public getDiscussionBySlug(slug): Discussion {
+    return this.discussions.find(d => d.slug === slug);
+  }
 
-  // public setInitialDiscussionSlug(slug: string) {
-  //   if (!this.initialDiscussionSlug) {
-  //     this.initialDiscussionSlug = slug;
-  //   }
-  // }
+  public setInitialDiscussionSlug(slug: string) {
+    if (!this.initialDiscussionSlug) {
+      this.initialDiscussionSlug = slug;
+    }
+  }
 
-  // public setInitialDiscussions(discussions) {
-  //   const discussionObjs = discussions.map(
-  //     t => new Discussion({ team: this, store: this.store, ...t }),
-  //   );
+  public setInitialDiscussions(discussions) {
+    const discussionObjs = discussions.map(
+      t => new Discussion({ team: this, store: this.store, ...t }),
+    );
 
-  //   this.discussions.replace(discussionObjs);
+    this.discussions.replace(discussionObjs);
 
-  //   if (!this.currentDiscussionSlug && this.discussions.length > 0) {
-  //     this.currentDiscussionSlug = this.orderedDiscussions[0].slug;
-  //   }
+    if (!this.currentDiscussionSlug && this.discussions.length > 0) {
+      this.currentDiscussionSlug = this.orderedDiscussions[0].slug;
+    }
 
-  //   if (this.currentDiscussionSlug) {
-  //     this.setCurrentDiscussion({ slug: this.currentDiscussionSlug });
-  //   }
-  // }
+    if (this.currentDiscussionSlug) {
+      this.setCurrentDiscussion({ slug: this.currentDiscussionSlug });
+    }
+  }
 
-  // public async loadDiscussions() {
-  //   if (this.store.isServer || this.isLoadingDiscussions) {
-  //     return;
-  //   }
+  public async loadDiscussions() {
+    if (this.store.isServer || this.isLoadingDiscussions) {
+      return;
+    }
 
-  //   this.isLoadingDiscussions = true;
+    this.isLoadingDiscussions = true;
 
-  //   try {
-  //     const { discussions = [] } = await getDiscussionList({
-  //       teamId: this._id,
-  //     });
-  //     const newList: Discussion[] = [];
+    try {
+      const { discussions = [] } = await getDiscussionList({
+        teamId: this._id,
+      });
+      const newList: Discussion[] = [];
 
-  //     runInAction(() => {
-  //       discussions.forEach(d => {
-  //         const disObj = this.discussions.find(obj => obj._id === d._id);
-  //         if (disObj) {
-  //           disObj.changeLocalCache(d);
-  //           newList.push(disObj);
-  //         } else {
-  //           newList.push(new Discussion({ team: this, store: this.store, ...d }));
-  //         }
-  //       });
+      runInAction(() => {
+        discussions.forEach(d => {
+          const disObj = this.discussions.find(obj => obj._id === d._id);
+          if (disObj) {
+            disObj.changeLocalCache(d);
+            newList.push(disObj);
+          } else {
+            newList.push(new Discussion({ team: this, store: this.store, ...d }));
+          }
+        });
 
-  //       this.discussions.replace(newList);
-  //     });
-  //   } finally {
-  //     runInAction(() => {
-  //       this.isLoadingDiscussions = false;
-  //     });
-  //   }
-  // }
+        this.discussions.replace(newList);
+      });
+    } finally {
+      runInAction(() => {
+        this.isLoadingDiscussions = false;
+      });
+    }
+  }
 
-  // public addDiscussionToLocalCache(data): Discussion {
-  //   const obj = new Discussion({ team: this, store: this.store, ...data });
+  public addDiscussionToLocalCache(data): Discussion {
+    const obj = new Discussion({ team: this, store: this.store, ...data });
 
-  //   if (obj.memberIds.includes(this.store.currentUser._id)) {
-  //     this.discussions.push(obj);
-  //   }
+    if (obj.memberIds.includes(this.store.currentUser._id)) {
+      this.discussions.push(obj);
+    }
 
-  //   return obj;
-  // }
+    return obj;
+  }
 
-  // public editDiscussionFromLocalCache(data) {
-  //   const discussion = this.discussions.find(item => item._id === data.id);
-  //   if (discussion) {
-  //     discussion.changeLocalCache(data);
-  //   }
-  // }
+  public editDiscussionFromLocalCache(data) {
+    const discussion = this.discussions.find(item => item._id === data.id);
+    if (discussion) {
+      discussion.changeLocalCache(data);
+    }
+  }
 
-  // public removeDiscussionFromLocalCache(discussionId: string) {
-  //   const discussion = this.discussions.find(item => item._id === discussionId);
-  //   this.discussions.remove(discussion);
-  // }
+  public removeDiscussionFromLocalCache(discussionId: string) {
+    const discussion = this.discussions.find(item => item._id === discussionId);
+    this.discussions.remove(discussion);
+  }
 
-  // public async addDiscussion(data): Promise<Discussion> {
-  //   const { discussion } = await addDiscussion({
-  //     teamId: this._id,
-  //     // 13
-  //     // socketId: (this.store.socket && this.store.socket.id) || null,
-  //     ...data,
-  //   });
+  public async addDiscussion(data): Promise<Discussion> {
+    const { discussion } = await addDiscussion({
+      teamId: this._id,
+      // 13
+      // socketId: (this.store.socket && this.store.socket.id) || null,
+      ...data,
+    });
 
-  //   return new Promise<Discussion>(resolve => {
-  //     runInAction(() => {
-  //       const obj = this.addDiscussionToLocalCache(discussion);
-  //       resolve(obj);
-  //     });
-  //   });
-  // }
+    return new Promise<Discussion>(resolve => {
+      runInAction(() => {
+        const obj = this.addDiscussionToLocalCache(discussion);
+        resolve(obj);
+      });
+    });
+  }
 
-  // public async deleteDiscussion(id: string) {
-  //   await deleteDiscussion({
-  //     id,
-  //     // 13
-  //     // socketId: (this.store.socket && this.store.socket.id) || null,
-  //   });
+  public async deleteDiscussion(id: string) {
+    await deleteDiscussion({
+      id,
+      // 13
+      // socketId: (this.store.socket && this.store.socket.id) || null,
+    });
 
-  //   runInAction(() => {
-  //     const discussion = this.discussions.find(d => d._id === id);
+    runInAction(() => {
+      const discussion = this.discussions.find(d => d._id === id);
 
-  //     this.removeDiscussionFromLocalCache(id);
+      this.removeDiscussionFromLocalCache(id);
 
-  //     if (this.currentDiscussion === discussion) {
-  //       this.currentDiscussion = null;
-  //       this.currentDiscussionSlug = null;
+      if (this.currentDiscussion === discussion) {
+        this.currentDiscussion = null;
+        this.currentDiscussionSlug = null;
 
-  //       if (this.discussions.length > 0) {
-  //         const d = this.discussions[0];
+        if (this.discussions.length > 0) {
+          const d = this.discussions[0];
 
-  //         Router.push(
-  //           `/discussion?teamSlug=${this.slug}&discussionSlug=${d.slug}`,
-  //           `/team/${this.slug}/discussions/${d.slug}`,
-  //         );
-  //       } else {
-  //         Router.push(`/discussion?teamSlug=${this.slug}`, `/team/${this.slug}/discussions`);
-  //       }
-  //     }
-  //   });
-  // }
+          Router.push(
+            `/discussion?teamSlug=${this.slug}&discussionSlug=${d.slug}`,
+            `/team/${this.slug}/discussions/${d.slug}`,
+          );
+        } else {
+          Router.push(`/discussion?teamSlug=${this.slug}`, `/team/${this.slug}/discussions`);
+        }
+      }
+    });
+  }
 
   public setInitialMembers(users, invitations) {
     this.members.clear();
@@ -326,10 +317,9 @@ class Team {
     });
   }
 
-  // 12
-  // get orderedDiscussions() {
-  //   return this.discussions.slice().sort();
-  // }
+  get orderedDiscussions() {
+    return this.discussions.slice().sort();
+  }
 
   public async createSubscription({ teamId }: { teamId: string }) {
     try {
@@ -416,31 +406,27 @@ decorate(Team, {
   isSubscriptionActive: observable,
   stripeSubscription: observable,
   isPaymentFailed: observable,
+  currentDiscussion: observable,
+  currentDiscussionSlug: observable,
+  isLoadingDiscussions: observable,
+  discussions: observable,
 
-  // 12
-  // currentDiscussion: observable,
-  // currentDiscussionSlug: observable,
-  // isLoadingDiscussions: observable,
-  // discussions: observable,
-
-  // orderedDiscussions: computed,
+  orderedDiscussions: computed,
 
   edit: action,
   setInitialMembers: action,
   loadInitialMembers: action,
   inviteMember: action,
   removeMember: action,
-
-  // 12
-  // setInitialDiscussions: action,
-  // setCurrentDiscussion: action,
-  // setInitialDiscussionSlug: action,
-  // loadDiscussions: action,
-  // addDiscussionToLocalCache: action,
-  // editDiscussionFromLocalCache: action,
-  // removeDiscussionFromLocalCache: action,
-  // addDiscussion: action,
-  // deleteDiscussion: action,
+  setInitialDiscussions: action,
+  setCurrentDiscussion: action,
+  setInitialDiscussionSlug: action,
+  loadDiscussions: action,
+  addDiscussionToLocalCache: action,
+  editDiscussionFromLocalCache: action,
+  removeDiscussionFromLocalCache: action,
+  addDiscussion: action,
+  deleteDiscussion: action,
 });
 
 export { Team };

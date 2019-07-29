@@ -35,15 +35,13 @@ export class Post {
   }
 
   public async edit(data) {
-    // 13
-    // console.log(this.store.socket.id);
+    console.log(this.store.socket.id);
 
     try {
       await editPost({
         id: this._id,
         content: data.content,
-        // 13
-        // socketId: (this.store.socket && this.store.socket.id) || null,
+        socketId: (this.store.socket && this.store.socket.id) || null,
       });
 
       runInAction(() => {

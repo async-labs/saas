@@ -25,12 +25,9 @@ class MyDocument extends Document {
   };
 
   public render() {
-    const isThemeDark = true;
-
-    // 6
-    // const isThemeDark =
-    //   this.props.__NEXT_DATA__.props.initialState.user &&
-    //   this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
+    const isThemeDark =
+      this.props.__NEXT_DATA__.props.initialState.user &&
+      this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
 
     return (
       <html lang="en">

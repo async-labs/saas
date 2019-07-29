@@ -6,8 +6,7 @@ import sendEmail from './aws-ses';
 import logger from './logs';
 import getEmailTemplate from './models/EmailTemplate';
 
-// 10
-// import Invitation from './models/Invitation';
+import Invitation from './models/Invitation';
 
 import User, { IUserDocument } from './models/User';
 import PasswordlessMongoStore from './passwordless';
@@ -162,12 +161,11 @@ function setupGoogle({ ROOT_URL, server }) {
       req.session.next_url = null;
     }
 
-    // 10
-    // if (req.query && req.query.invitationToken) {
-    //   req.session.invitationToken = req.query.invitationToken;
-    // } else {
-    //   req.session.invitationToken = null;
-    // }
+    if (req.query && req.query.invitationToken) {
+      req.session.invitationToken = req.query.invitationToken;
+    } else {
+      req.session.invitationToken = null;
+    }
 
     passport.authenticate('google', options)(req, res, next);
   });
@@ -178,24 +176,20 @@ function setupGoogle({ ROOT_URL, server }) {
       failureRedirect: '/login',
     }),
     (req, res) => {
-      // 10
-      // if (req.user && req.session.invitationToken) {
-      //   Invitation.addUserToTeam({ token: req.session.invitationToken, user: req.user }).catch(
-      //     err => logger.error(err),
-      //   );
-      // }
+      if (req.user && req.session.invitationToken) {
+        Invitation.addUserToTeam({ token: req.session.invitationToken, user: req.user }).catch(
+          err => logger.error(err),
+        );
+      }
 
       let redirectUrlAfterLogin;
 
       if (req.user && req.session.next_url) {
         redirectUrlAfterLogin = req.session.next_url;
       } else {
-        redirectUrlAfterLogin = '/your-settings';
-
-        // 10
-        // if (!req.user.defaultTeamSlug) {
-        //   redirectUrlAfterLogin = '/create-team';
-        // }
+        if (!req.user.defaultTeamSlug) {
+          redirectUrlAfterLogin = '/create-team';
+        }
 
         // 12
         // if (!req.user.defaultTeamSlug) {

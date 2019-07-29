@@ -58,14 +58,9 @@ app.prepare().then(() => {
     if (req.user) {
       if (!req.user.isAdmin && !req.user.defaultTeamSlug) {
         redirectUrl = 'create-team';
+      } else {
+        redirectUrl = `team/${req.user.defaultTeamSlug}/discussions`;
       }
-
-      // 12
-      // if (!req.user.isAdmin && !req.user.defaultTeamSlug) {
-      //   redirectUrl = 'create-team';
-      // } else {
-      //   redirectUrl = `team/${req.user.defaultTeamSlug}/discussions`;
-      // }
     }
 
     res.redirect(`${URL_APP}/${redirectUrl}`);

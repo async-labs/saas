@@ -33,15 +33,13 @@ async function loadDiscussionsData(team, userId, body) {
   const { discussionSlug } = body;
 
   if (!discussionSlug) {
-    return {};
+    return [];
   }
 
   const { discussions } = await Discussion.getList({
     userId,
     teamId: team._id,
   });
-
-  const data: any = { initialDiscussions: discussions };
 
   for (const discussion of discussions) {
     if (discussion.slug === discussionSlug) {
@@ -56,7 +54,7 @@ async function loadDiscussionsData(team, userId, body) {
     }
   }
 
-  return data;
+  return discussions;
 }
 
 async function loadTeamData(team, userId, body) {
@@ -73,9 +71,9 @@ async function loadTeamData(team, userId, body) {
     });
   }
 
-  Object.assign(team, await loadDiscussionsData(team, userId, body));
+  const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
-  const data: any = { initialMembers, initialInvitations };
+  const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
   return data;
 }

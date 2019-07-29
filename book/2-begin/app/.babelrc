@@ -1,12 +1,11 @@
-// 2
-// {
-//   "presets": [
-//     [
-//       "next/babel",
-//       {      
-//         "class-properties": { "loose": true }
-//       }
-//     ],
-//     "@zeit/next-typescript/babel"
-//   ]
-// }
+{
+  "presets": [
+    [
+      "next/babel",
+      {      
+        "class-properties": { "loose": true }
+      }
+    ],
+    "@zeit/next-typescript/babel"
+  ]
+}

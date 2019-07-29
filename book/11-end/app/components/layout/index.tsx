@@ -12,9 +12,7 @@ import Confirm from '../common/Confirm';
 import Loading from '../common/Loading';
 import MenuWithLinks from '../common/MenuWithLinks';
 import Notifier from '../common/Notifier';
-
-// 12
-// import DiscussionList from '../discussions/DiscussionList';
+import DiscussionList from '../discussions/DiscussionList';
 
 import { menuOnTheRight } from './menus';
 
@@ -223,13 +221,11 @@ class Layout extends React.Component<MyProps> {
               <hr />
               <p />
               <p />
-
-              {/* 12 */}
-              {/* <DiscussionList store={store} team={currentTeam} isMobile={isMobile} /> */}
+              <DiscussionList store={store} team={currentTeam} isMobile={isMobile} />
             </Grid>
           ) : null}
           <Grid item sm={10} xs={12}>
-            <div>
+          <div>
               {isMobile || store.currentUrl.includes('create-team') ? null : (
                 <React.Fragment>
                   <i

@@ -1,4 +1,4 @@
-// import { ServerStyleSheets } from '@material-ui/styles';
+import { ServerStyleSheets } from '@material-ui/styles';
 import Document, { Head, Main, NextScript } from 'next/document';
 import React from 'react';
 
@@ -8,37 +8,25 @@ import React from 'react';
 class MyDocument extends Document {
   public static getInitialProps = async ctx => {
     // Render app and page and get the context of the page with collected side effects.
-
-    // 3
-    // const sheets = new ServerStyleSheets();
+    const sheets = new ServerStyleSheets();
     const originalRenderPage = ctx.renderPage;
 
     ctx.renderPage = () =>
       originalRenderPage({
-        enhanceApp: App => props => <App {...props} />,
-        // 3
-        // enhanceApp: App => props => sheets.collect(<App {...props} />),
-
+        enhanceApp: App => props => sheets.collect(<App {...props} />),
       });
 
     const initialProps = await Document.getInitialProps(ctx);
 
     return {
       ...initialProps,
-      // 3
-      // // Styles fragment is rendered after the app and page rendering finish.
-      // styles: (
-      //   <React.Fragment>
-      //     {sheets.getStyleElement()}
-      //   </React.Fragment>
-      // ),
+      // Styles fragment is rendered after the app and page rendering finish.
+      styles: <React.Fragment>{sheets.getStyleElement()}</React.Fragment>,
     };
   };
 
   public render() {
-
-    // 3
-    // const isThemeDark = true;
+    const isThemeDark = true;
 
     // 6
     // const isThemeDark =
@@ -53,8 +41,7 @@ class MyDocument extends Document {
           <meta name="google" content="notranslate" />
           <meta name="theme-color" content="#303030" />
 
-          {/* 3 */}
-          {/* <link
+          <link
             rel="shortcut icon"
             href="https://storage.googleapis.com/async-await/async-favicon32.png"
           />
@@ -62,22 +49,18 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400:latin"
           />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" /> */}
-          {/* 3 */}
-          {/* <link
+          <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+          <link
             rel="stylesheet"
             href={
               isThemeDark
                 ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
                 : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
             }
-          /> */}
+          />
+          <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
 
-          {/* 3 */}
-          {/* <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" /> */}
-
-          {/* 3 */}
-          {/* <style>
+          <style>
             {`
               a,
               a:focus {
@@ -140,20 +123,19 @@ class MyDocument extends Document {
                 padding: 10px;
               }
             `}
-          </style> */}
+          </style>
           {/* 4 */}
           {/* {this.gtag()} */}
         </Head>
         <body
-          // 3
-          // style={{
-          //   font: '15px Roboto',
-          //   color: isThemeDark ? '#fff' : '#000',
-          //   fontWeight: 300,
-          //   lineHeight: '1.5em',
-          //   padding: '0px 0px 0px 0px !important',
-          //   letterSpacing: '0.01em',
-          // }}
+          style={{
+            font: '15px Roboto',
+            color: isThemeDark ? '#fff' : '#000',
+            fontWeight: 300,
+            lineHeight: '1.5em',
+            padding: '0px 0px 0px 0px !important',
+            letterSpacing: '0.01em',
+          }}
         >
           <Main />
           <NextScript />

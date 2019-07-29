@@ -1,12 +1,8 @@
 import Avatar from '@material-ui/core/Avatar';
-
-// 10
-// import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import { observer } from 'mobx-react';
-
-// 10
-// import Link from 'next/link';
+import Link from 'next/link';
 import { SingletonRouter, withRouter } from 'next/router';
 import React from 'react';
 
@@ -70,40 +66,33 @@ function ThemeWrapper({ children, firstGridItem, isMobile }) {
 }
 
 type MyProps = {
-  // 10
-  // teamSlug?: string;
+  teamSlug?: string;
   firstGridItem?: boolean;
   children: React.ReactNode;
-  // 10
-  // teamRequired?: boolean;
+  teamRequired?: boolean;
   store?: Store;
   router?: SingletonRouter;
   isMobile?: boolean;
 };
 
 class Layout extends React.Component<MyProps> {
-  // 10
-  // public componentDidMount() {
-  //   if (this.props.teamRequired) {
-  //     this.checkTeam();
-  //   }
-  // }
+  public componentDidMount() {
+    if (this.props.teamRequired) {
+      this.checkTeam();
+    }
+  }
 
-  // public componentDidUpdate() {
-  //   if (this.props.teamRequired) {
-  //     this.checkTeam();
-  //   }
-  // }
+  public componentDidUpdate() {
+    if (this.props.teamRequired) {
+      this.checkTeam();
+    }
+  }
 
   public render() {
     // Add teamRequired: false to some pages that don't require team
 
-    const { store, firstGridItem, children, isMobile } = this.props;
-    const { currentUser } = store;
-
-    // 10
-    // const { store, firstGridItem, children, teamRequired, isMobile } = this.props;
-    // const { currentTeam, currentUser } = store;
+    const { store, firstGridItem, children, teamRequired, isMobile } = this.props;
+    const { currentTeam, currentUser } = store;
 
     const isThemeDark = currentUser && currentUser.darkTheme === true;
 
@@ -127,44 +116,43 @@ class Layout extends React.Component<MyProps> {
       );
     }
 
-    // 10
-    // if (store.isLoadingTeams || !store.isInitialTeamsLoaded) {
-    //   return (
-    //     <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
-    //       <Grid item sm={10} xs={12}>
-    //         <Loading text="loading Teams ..." />
-    //       </Grid>
-    //     </ThemeWrapper>
-    //   );
-    // }
+    if (store.isLoadingTeams || !store.isInitialTeamsLoaded) {
+      return (
+        <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
+          <Grid item sm={10} xs={12}>
+            <Loading text="loading Teams ..." />
+          </Grid>
+        </ThemeWrapper>
+      );
+    }
 
-    // if (!currentTeam) {
-    //   if (teamRequired) {
-    //     return (
-    //       <ThemeWrapper firstGridItem={false} isMobile={isMobile}>
-    //         <Grid item sm={10} xs={12}>
-    //           <div style={styleNoTeamDiv}>
-    //             Select existing team or create a new team.
-    //             <p />
-    //             <Link prefetch href="/create-team">
-    //               <Button variant="outlined" color="primary">
-    //                 Create new team
-    //               </Button>
-    //             </Link>
-    //           </div>
-    //         </Grid>
-    //       </ThemeWrapper>
-    //     );
-    //   } else {
-    //     return (
-    //       <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
-    //         <Grid item sm={10} xs={12}>
-    //           {children}
-    //         </Grid>
-    //       </ThemeWrapper>
-    //     );
-    //   }
-    // }
+    if (!currentTeam) {
+      if (teamRequired) {
+        return (
+          <ThemeWrapper firstGridItem={false} isMobile={isMobile}>
+            <Grid item sm={10} xs={12}>
+              <div style={styleNoTeamDiv}>
+                Select existing team or create a new team.
+                <p />
+                <Link prefetch href="/create-team">
+                  <Button variant="outlined" color="primary">
+                    Create new team
+                  </Button>
+                </Link>
+              </div>
+            </Grid>
+          </ThemeWrapper>
+        );
+      } else {
+        return (
+          <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
+            <Grid item sm={10} xs={12}>
+              {children}
+            </Grid>
+          </ThemeWrapper>
+        );
+      }
+    }
 
     return (
       <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
@@ -210,25 +198,7 @@ class Layout extends React.Component<MyProps> {
                     />
                   </g>
                 </svg>
-                <MenuWithLinks options={menuOnTheRight()}>
-                  <Avatar
-                    src="https://storage.googleapis.com/async-await/default-user.png"
-                    alt={`Logo of ${currentUser.displayName}`}
-                    style={{
-                      margin: '20px auto',
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                      width: '40px',
-                      height: '40px',
-                    }}
-                  />
-
-                  <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
-                    arrow_drop_down
-                  </i>
-                </MenuWithLinks>
-                {/* 10 */}
-                {/* <MenuWithLinks options={menuOnTheRight({ currentTeam })}>
+                <MenuWithLinks options={menuOnTheRight({ currentTeam })}>
                   <Avatar
                     src={
                       !currentTeam
@@ -248,7 +218,7 @@ class Layout extends React.Component<MyProps> {
                   <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
                     arrow_drop_down
                   </i>
-                </MenuWithLinks> */}
+                </MenuWithLinks>
               </div>
               <hr />
               <p />
@@ -289,15 +259,14 @@ class Layout extends React.Component<MyProps> {
     );
   }
 
-  // 10
-  // private checkTeam() {
-  //   const { teamSlug, store } = this.props;
-  //   const { currentTeam } = store;
+  private checkTeam() {
+    const { teamSlug, store } = this.props;
+    const { currentTeam } = store;
 
-  //   if (!currentTeam || currentTeam.slug !== teamSlug) {
-  //     store.setCurrentTeam(teamSlug);
-  //   }
-  // }
+    if (!currentTeam || currentTeam.slug !== teamSlug) {
+      store.setCurrentTeam(teamSlug);
+    }
+  }
 }
 
 export default withRouter(observer(Layout));

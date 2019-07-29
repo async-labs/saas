@@ -32,39 +32,35 @@ if (!urlAPP) {
 }
 export const URL_APP = urlAPP;
 
-// 6
-// let cookieDomain: string = get('COOKIE_DOMAIN');
-// if (!cookieDomain) {
-//   cookieDomain = IS_DEV ? get('DEVELOPMENT_COOKIE_DOMAIN') : get('PRODUCTION_COOKIE_DOMAIN');
-// }
-// if (!cookieDomain) {
-//   cookieDomain = IS_DEV ? 'localhost' : '.async-await.com';
-// }
-// export const COOKIE_DOMAIN = cookieDomain;
+let cookieDomain: string = get('COOKIE_DOMAIN');
+if (!cookieDomain) {
+  cookieDomain = IS_DEV ? get('DEVELOPMENT_COOKIE_DOMAIN') : get('PRODUCTION_COOKIE_DOMAIN');
+}
+if (!cookieDomain) {
+  cookieDomain = IS_DEV ? 'localhost' : '.async-await.com';
+}
+export const COOKIE_DOMAIN = cookieDomain;
 
-// 6
-// let mongoURL: string = get('MONGO_URL');
-// if (!mongoURL) {
-//   mongoURL = IS_DEV ? get('MONGO_URL_TEST', true, 'MONGO_URL') : get('MONGO_URL', true);
-// }
+let mongoURL: string = get('MONGO_URL');
+if (!mongoURL) {
+  mongoURL = IS_DEV ? get('MONGO_URL_TEST', true, 'MONGO_URL') : get('MONGO_URL', true);
+}
+export const MONGO_URL = mongoURL;
 
-// export const MONGO_URL = mongoURL;
+export const SESSION_NAME: string = get('SESSION_NAME') || 'saas.sid';
 
-// export const SESSION_NAME: string = get('SESSION_NAME') || 'saas.sid';
+let sessionSecret: string = get('SESSION_SECRET');
+if (!sessionSecret) {
+  if (!IS_DEV) {
+    throw new Error('SESSION_SECRET environment variable is required.');
+  }
+  sessionSecret = Math.random().toString(36).substring(2);
+}
 
-// let sessionSecret: string = get('SESSION_SECRET');
-// if (!sessionSecret) {
-//   if (!IS_DEV) {
-//     throw new Error('SESSION_SECRET environment variable is required.');
-//   }
-//   sessionSecret = Math.random().toString(36).substring(2);
-// }
+export const SESSION_SECRET: string = sessionSecret;
 
-// export const SESSION_SECRET: string = sessionSecret;
-
-// 6
-// export const AMAZON_ACCESSKEYID: string = get('AMAZON_ACCESSKEYID') || get('Amazon_accessKeyId');
-// export const AMAZON_SECRETACCESSKEY: string = get('AMAZON_SECRETACCESSKEY') || get('Amazon_secretAccessKey');
+export const AMAZON_ACCESSKEYID: string = get('AMAZON_ACCESSKEYID') || get('Amazon_accessKeyId');
+export const AMAZON_SECRETACCESSKEY: string = get('AMAZON_SECRETACCESSKEY') || get('Amazon_secretAccessKey');
 
 // 7
 // export const GOOGLE_CLIENTID: string = get('GOOGLE_CLIENTID') || get('Google_clientID');

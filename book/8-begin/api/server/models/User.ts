@@ -1,8 +1,7 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
-// 8
-// import sendEmail from '../aws-ses';
+import sendEmail from '../aws-ses';
 
 import logger from '../logs';
 
@@ -10,8 +9,7 @@ import { subscribe } from '../mailchimp';
 
 import { generateSlug } from '../utils/slugify';
 
-// 8
-// import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
+import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
 
 // 10
 // import Invitation from './Invitation';
@@ -26,8 +24,7 @@ import { generateSlug } from '../utils/slugify';
 //   updateCustomer,
 // } from '../stripe';
 
-// 8
-// import { EMAIL_SUPPORT_FROM_ADDRESS } from '../consts';
+import { EMAIL_SUPPORT_FROM_ADDRESS } from '../consts';
 
 mongoose.set('useFindAndModify', false);
 
@@ -362,27 +359,26 @@ class UserClass extends mongoose.Model {
     // 10
     // const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
 
-    // 8
-    // const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
-    //   lean: true,
-    // });
+    const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
+      lean: true,
+    });
 
-    // if (!emailTemplate) {
-    //   throw new Error('welcome Email template not found');
-    // }
+    if (!emailTemplate) {
+      throw new Error('welcome Email template not found');
+    }
 
-    // const template = await getEmailTemplate('welcome', { userName: displayName }, emailTemplate);
+    const template = await getEmailTemplate('welcome', { userName: displayName }, emailTemplate);
 
-    // try {
-    //   await sendEmail({
-    //     from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
-    //     to: [email],
-    //     subject: template.subject,
-    //     body: template.message,
-    //   });
-    // } catch (err) {
-    //   logger.error('Email sending error:', err);
-    // }
+    try {
+      await sendEmail({
+        from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: template.subject,
+        body: template.message,
+      });
+    } catch (err) {
+      logger.error('Email sending error:', err);
+    }
 
     // 10
     // if (!hasInvitation) {
@@ -430,27 +426,26 @@ class UserClass extends mongoose.Model {
     // 10
     // const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
 
-    // 8
-    // const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
-    //   lean: true,
-    // });
+    const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
+      lean: true,
+    });
 
-    // if (!emailTemplate) {
-    //   throw new Error('welcome Email template not found');
-    // }
+    if (!emailTemplate) {
+      throw new Error('welcome Email template not found');
+    }
 
-    // const template = await getEmailTemplate('welcome', { userName: email }, emailTemplate);
+    const template = await getEmailTemplate('welcome', { userName: email }, emailTemplate);
 
-    // try {
-    //   await sendEmail({
-    //     from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
-    //     to: [email],
-    //     subject: template.subject,
-    //     body: template.message,
-    //   });
-    // } catch (err) {
-    //   logger.error('Email sending error:', err);
-    // }
+    try {
+      await sendEmail({
+        from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: template.subject,
+        body: template.message,
+      });
+    } catch (err) {
+      logger.error('Email sending error:', err);
+    }
 
     // 10
     // if (!hasInvitation) {

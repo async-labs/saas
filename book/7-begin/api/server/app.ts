@@ -13,8 +13,7 @@ import * as path from 'path';
 
 import api from './api';
 
-// 7
-// import { setupGoogle } from './auth';
+import { setupGoogle } from './auth';
 
 // 9
 // import { setupGoogle, setupPasswordless } from './auth';
@@ -82,8 +81,7 @@ if (!IS_DEV) {
 const sessionMiddleware = session(sessionOptions);
 server.use(sessionMiddleware);
 
-// 7
-// setupGoogle({ server, ROOT_URL });
+setupGoogle({ server, ROOT_URL });
 
 // 9
 // setupPasswordless({ server, ROOT_URL });

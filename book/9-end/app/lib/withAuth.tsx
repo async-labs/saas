@@ -24,18 +24,14 @@ Router.onRouteChangeError = () => NProgress.done();
 
 export default function withAuth(
   BaseComponent,
-  { loginRequired = true, logoutRequired = false } = {},
-  // 10
-  // { loginRequired = true, logoutRequired = false, teamRequired = true } = {},
+  { loginRequired = true, logoutRequired = false, teamRequired = true } = {},
 ) {
   BaseComponent = inject('store')(BaseComponent);
 
   class WithAuth extends React.Component<{ store: Store }> {
     public static async getInitialProps(ctx) {
-      const { req, pathname } = ctx;
 
-      // 10
-      // const { req, pathname, query } = ctx;
+      const { req, pathname, query } = ctx;
 
       let baseComponentProps = {};
 
@@ -43,16 +39,14 @@ export default function withAuth(
 
       if (
         pathname.includes('/login') ||
-        pathname.includes('/signup')
-        // 10
-        // pathname.includes('/invitation') ||
-        // pathname.includes('/create-team')
+        pathname.includes('/signup') ||
+        pathname.includes('/invitation') ||
+        pathname.includes('/create-team')
       ) {
         firstGridItem = false;
       }
 
-      // 10
-      // const { teamSlug } = query;
+      const { teamSlug } = query;
 
       // 12
       // const { teamSlug, discussionSlug } = query;
@@ -63,9 +57,8 @@ export default function withAuth(
 
       return {
         ...baseComponentProps,
-        // 10
-        // teamSlug,
-        // teamRequired,
+        teamSlug,
+        teamRequired,
 
         // 12
         // discussionSlug,
@@ -90,11 +83,10 @@ export default function withAuth(
         redirectUrl = '/your-settings';
         asUrl = '/your-settings';
 
-        // 10
-        // if (!user.defaultTeamSlug) {
-        //   redirectUrl = '/create-team';
-        //   asUrl = '/create-team';
-        // }
+        if (!user.defaultTeamSlug) {
+          redirectUrl = '/create-team';
+          asUrl = '/create-team';
+        }
 
         // 12
         // if (!user.defaultTeamSlug) {

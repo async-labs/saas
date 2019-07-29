@@ -1,8 +1,5 @@
 import * as mobx from 'mobx';
-import { action, decorate, observable } from 'mobx';
-
-// 6
-// import { action, decorate, observable, runInAction } from 'mobx';
+import { action, decorate, observable, runInAction } from 'mobx';
 
 // 10
 // import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
@@ -20,9 +17,7 @@ import { action, decorate, observable } from 'mobx';
 
 // 10
 // import { Team } from './team';
-
-// 6
-// import { User } from './user';
+import { User } from './user';
 
 mobx.configure({ enforceActions: 'observed' });
 
@@ -38,16 +33,9 @@ class Store {
   // public isInitialTeamsLoaded = false;
   // public currentTeam?: Team;
 
-  public currentUser?: null;
-
-  // public currentUser?: User = null;
-
+  public currentUser?: User = null;
   public currentUrl: string = '';
-
-  public isLoggingIn = false;
-
-  // 6
-  // public isLoggingIn = true;
+  public isLoggingIn = true;
 
   // 13
   // public socket: SocketIOClient.Socket;
@@ -65,8 +53,7 @@ class Store {
   }) {
     this.isServer = !!isServer;
 
-    // 6
-    // this.setCurrentUser(initialState.user);
+    this.setCurrentUser(initialState.user);
 
     // 10
     // if (initialState.teams) {
@@ -105,10 +92,9 @@ class Store {
     this.currentUrl = url;
   }
 
-  // 6
-  // public changeUserState(user?) {
-  //   this.setCurrentUser(user);
-  // }
+  public changeUserState(user?) {
+    this.setCurrentUser(user);
+  }
 
   // public changeUserState(user?, selectedTeamSlug?: string) {
   //   this.teams.clear();
@@ -219,27 +205,26 @@ class Store {
   //   this.teams.remove(team);
   // }
 
-  // 6
-  // private async setCurrentUser(user) {
-  //   if (user) {
-  //     this.currentUser = new User({ store: this, ...user });
+  private async setCurrentUser(user) {
+    if (user) {
+      this.currentUser = new User({ store: this, ...user });
 
-  //     // 13
-  //     // if (this.socket && this.socket.disconnected) {
-  //     //   this.socket.connect();
-  //     // }
-  //   } else {
-  //     this.currentUser = null;
-  //     // 13
-  //     // if (this.socket && this.socket.connected) {
-  //     //   this.socket.disconnect();
-  //     // }
-  //   }
+      // 13
+      // if (this.socket && this.socket.disconnected) {
+      //   this.socket.connect();
+      // }
+    } else {
+      this.currentUser = null;
+      // 13
+      // if (this.socket && this.socket.connected) {
+      //   this.socket.disconnect();
+      // }
+    }
 
-  //   runInAction(() => {
-  //     this.isLoggingIn = false;
-  //   });
-  // }
+    runInAction(() => {
+      this.isLoggingIn = false;
+    });
+  }
 
   // 10
   // private async setCurrentUser(user, isLoadTeam: boolean, selectedTeamSlug: string) {
@@ -302,9 +287,7 @@ decorate(Store, {
   // isLoadingTeams: observable,
   // isInitialTeamsLoaded: observable,
   // currentTeam: observable,
-
   currentUser: observable,
-
   currentUrl: observable,
   isLoggingIn: observable,
 
@@ -366,10 +349,7 @@ function getStore() {
   return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
 }
 
-export { Store, initStore, getStore };
-
-// 6
-// export { User, Store, initStore, getStore };
+export { User, Store, initStore, getStore };
 
 // 10
 // export { Team, User, Store, initStore, getStore };

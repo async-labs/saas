@@ -2,7 +2,7 @@ Arguments:
   /home/tima/.nvm/versions/node/v12.4.0/bin/node /usr/share/yarn/bin/yarn.js install
 
 PATH: 
-  /tmp/yarn--1562702542046-0.4772538757935312:/home/tima/apps/saas/book/node_modules/.bin:/home/tima/.config/yarn/link/node_modules/.bin:/home/tima/.nvm/versions/node/v12.4.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/home/tima/.nvm/versions/node/v12.4.0/lib/node_modules/npm/bin/node-gyp-bin:/home/tima/.nvm/versions/node/v12.4.0/bin/node_modules/npm/bin/node-gyp-bin:/tmp/yarn--1562702541875-0.9147491915261838:/home/tima/apps/saas/book/node_modules/.bin:/home/tima/.config/yarn/link/node_modules/.bin:/home/tima/.yarn/bin:/home/tima/.nvm/versions/node/v12.4.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/home/tima/.nvm/versions/node/v12.4.0/lib/node_modules/npm/bin/node-gyp-bin:/home/tima/.nvm/versions/node/v12.4.0/bin/node_modules/npm/bin/node-gyp-bin:/home/tima/.local/bin:/home/tima/.nvm/versions/node/v12.4.0/bin:/home/tima/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+  /tmp/yarn--1562702852930-0.4926586283033312:/home/tima/apps/saas/book/node_modules/.bin:/home/tima/.config/yarn/link/node_modules/.bin:/home/tima/.nvm/versions/node/v12.4.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/home/tima/.nvm/versions/node/v12.4.0/lib/node_modules/npm/bin/node-gyp-bin:/home/tima/.nvm/versions/node/v12.4.0/bin/node_modules/npm/bin/node-gyp-bin:/tmp/yarn--1562702852771-0.3440045381403496:/home/tima/apps/saas/book/node_modules/.bin:/home/tima/.config/yarn/link/node_modules/.bin:/home/tima/.yarn/bin:/home/tima/.nvm/versions/node/v12.4.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/home/tima/.nvm/versions/node/v12.4.0/lib/node_modules/npm/bin/node-gyp-bin:/home/tima/.nvm/versions/node/v12.4.0/bin/node_modules/npm/bin/node-gyp-bin:/home/tima/.local/bin:/home/tima/.nvm/versions/node/v12.4.0/bin:/home/tima/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 
 Yarn version: 
   1.16.0
@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  SyntaxError: /home/tima/apps/saas/book/3-begin/api/package.json: Unexpected token / in JSON at position 0
+  SyntaxError: /home/tima/apps/saas/book/4-begin/api/package.json: Unexpected token / in JSON at position 0
       at JSON.parse (<anonymous>)
       at /usr/share/yarn/lib/cli.js:1625:59
       at Generator.next (<anonymous>)
@@ -24,7 +24,7 @@ Trace:
 npm manifest: 
   // 4
   // {
-  //   "name": "3-begin-api",
+  //   "name": "4-begin-api",
   //   "version": "1",
   //   "license": "MIT",
   //   "scripts": {
@@ -88,7 +88,6 @@ npm manifest:
   //     "@types/cors": "^2.8.5",
   //     "@types/express": "4.17.0",
   //     "@types/express-session": "^1.15.13",
-  //     "@types/handlebars": "4.1.0",
   //     "@types/jest": "^24.0.15",
   //     "@types/lodash": "4.14.135",
   //     "@types/passport": "1.0.0",

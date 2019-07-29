@@ -16,8 +16,7 @@ import logger from '../logs';
 // 10
 // import Team from '../models/Team';
 
-// 6
-// import User from '../models/User';
+import User from '../models/User';
 
 // 13
 // import {
@@ -46,15 +45,13 @@ router.use((req, res, next) => {
 //   const { discussionSlug } = body;
 
 //   if (!discussionSlug) {
-//     return {};
+//     return [];
 //   }
 
 //   const { discussions } = await Discussion.getList({
 //     userId,
 //     teamId: team._id,
 //   });
-
-//   const data: any = { initialDiscussions: discussions };
 
 //   for (const discussion of discussions) {
 //     if (discussion.slug === discussionSlug) {
@@ -69,7 +66,7 @@ router.use((req, res, next) => {
 //     }
 //   }
 
-//   return data;
+//   return discussions;
 // }
 
 // 10
@@ -107,9 +104,9 @@ router.use((req, res, next) => {
 //     });
 //   }
 
-//   Object.assign(team, await loadDiscussionsData(team, userId, body));
+//   const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
-//   const data: any = { initialMembers, initialInvitations };
+//   const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
 //   return data;
 // }
@@ -326,33 +323,32 @@ router.use((req, res, next) => {
 //   }
 // });
 
-// 6
-// router.post('/user/update-profile', async (req, res, next) => {
-//   try {
-//     const { name, avatarUrl } = req.body;
+router.post('/user/update-profile', async (req, res, next) => {
+  try {
+    const { name, avatarUrl } = req.body;
 
-//     const updatedUser = await User.updateProfile({
-//       userId: req.user.id,
-//       name,
-//       avatarUrl,
-//     });
+    const updatedUser = await User.updateProfile({
+      userId: req.user.id,
+      name,
+      avatarUrl,
+    });
 
-//     res.json({ updatedUser });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    res.json({ updatedUser });
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.post('/user/toggle-theme', async (req, res, next) => {
-//   try {
-//     const { darkTheme } = req.body;
+router.post('/user/toggle-theme', async (req, res, next) => {
+  try {
+    const { darkTheme } = req.body;
 
-//     await User.toggleTheme({ userId: req.user.id, darkTheme });
+    await User.toggleTheme({ userId: req.user.id, darkTheme });
 
-//     res.json({ done: 1 });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    res.json({ done: 1 });
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;

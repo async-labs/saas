@@ -1,24 +1,19 @@
-// 10
-// import { Team } from '../../lib/store';
+import { Team } from '../../lib/store';
 
 import { URL_API } from '../../lib/consts';
 
-const menuOnTheRight = () => [
-// 10
-// const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
+const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
   {
     text: 'Your Settings',
     href: '/your-settings',
     simple: true,
   },
-
-  // 10
-  // {
-  //   text: 'Team Settings',
-  //   href: `/team-settings?teamSlug=${currentTeam.slug}`,
-  //   as: `/team/${currentTeam.slug}/team-settings`,
-  //   simple: true,
-  // },
+  {
+    text: 'Team Settings',
+    href: `/team-settings?teamSlug=${currentTeam.slug}`,
+    as: `/team/${currentTeam.slug}/team-settings`,
+    simple: true,
+  },
 
   // 11
   // {

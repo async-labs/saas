@@ -27,19 +27,13 @@ export default function withStore(App) {
 
       let initialData = {};
 
-      const { teamSlug } = ctx.query;
-
-      // 12
-      // const { teamSlug, discussionSlug } = ctx.query;
+      const { teamSlug, discussionSlug } = ctx.query;
 
       if (user) {
         try {
           initialData = await getInitialData({
             request: ctx.req,
-            data: { teamSlug },
-
-            // 12
-            // data: { teamSlug, discussionSlug },
+            data: { teamSlug, discussionSlug },
           });
         } catch (error) {
           console.error(error);

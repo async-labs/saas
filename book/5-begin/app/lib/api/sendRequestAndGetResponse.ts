@@ -1,7 +1,6 @@
 import 'isomorphic-unfetch';
 
-// 5
-// import { getStore } from '../store';
+import { getStore } from '../store';
 
 import { makeQueryString } from './makeQueryString';
 
@@ -40,23 +39,21 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
 
   try {
     const data = JSON.parse(text);
+    const store = getStore();
 
-    // 5
-    // const store = getStore();
+    if (data.error) {
+      if (response.status === 201 && data.error === 'You need to log in.' && !externalServer) {
+        if (store && store.currentUser && store.currentUser.isLoggedIn && !store.isServer) {
+          store.currentUser.logout();
+        }
+      }
 
-    // if (data.error) {
-    //   if (response.status === 201 && data.error === 'You need to log in.' && !externalServer) {
-    //     if (store && store.currentUser && store.currentUser.isLoggedIn && !store.isServer) {
-    //       store.currentUser.logout();
-    //     }
-    //   }
+      throw new Error(data.error);
+    }
 
-    //   throw new Error(data.error);
-    // }
-
-    // if (store && store.currentUser && !store.currentUser.isLoggedIn && !store.isServer) {
-    //   store.currentUser.login();
-    // }
+    if (store && store.currentUser && !store.currentUser.isLoggedIn && !store.isServer) {
+      store.currentUser.login();
+    }
 
     return data;
   } catch (err) {

@@ -1,7 +1,6 @@
 import sendRequestAndGetResponse from './sendRequestAndGetResponse';
 
-// 14
-// import { LAMBDA_API_ENDPOINT } from '../consts';
+import { LAMBDA_API_ENDPOINT } from '../consts';
 
 const BASE_PATH = '/api/v1/team-member';
 
@@ -89,9 +88,8 @@ export const toggleTheme = data =>
     body: JSON.stringify(data),
   });
 
-// 14
-// export const sendDataToLambda = data =>
-//   sendRequestAndGetResponse(`${LAMBDA_API_ENDPOINT}/`, {
-//     externalServer: true,
-//     body: JSON.stringify(data),
-//   });
+export const sendDataToLambda = data =>
+  sendRequestAndGetResponse(`${LAMBDA_API_ENDPOINT}/`, {
+    externalServer: true,
+    body: JSON.stringify(data),
+  });

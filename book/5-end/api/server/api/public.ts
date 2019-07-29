@@ -9,11 +9,6 @@ router.get('/get-user', (req, res) => {
   res.json({ user: req.user || null });
 });
 
-// temporary in 6
-// router.get('/get-user', (_, res) => {
-//   res.json({ user: { email: 'team@async-await.com' } || null });
-// });
-
 // 10
 // router.get('/invitations/get-team-by-token', async (req, res, next) => {
 //   try {

@@ -1,6 +1,5 @@
-// 3
-// import CssBaseline from '@material-ui/core/CssBaseline';
-// import { ThemeProvider } from '@material-ui/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/styles';
 
 // 5
 // import { Provider } from 'mobx-react';
@@ -13,15 +12,14 @@ import { isMobile } from '../lib/isMobile';
 // 5
 // import { Store } from '../lib/store';
 
-// 3
-// import { themeDark, themeLight } from '../lib/theme';
+import { themeDark, themeLight } from '../lib/theme';
 
 // 5
 // import withStore from '../lib/withStore';
 
 class MyApp extends App<{ isMobile: boolean }> {
-  // 5
-  // class MyApp extends App<{ mobxStore: Store, isMobile: boolean }> {
+// 5
+// class MyApp extends App<{ mobxStore: Store, isMobile: boolean }> {
   public static async getInitialProps({ Component, ctx }) {
     const pageProps = { isMobile: isMobile({ req: ctx.req }) };
 
@@ -52,24 +50,21 @@ class MyApp extends App<{ isMobile: boolean }> {
 
     return (
       <Container>
-        <Component {...pageProps} />
+        {/* ThemeProvider makes the theme available down the React
+              tree thanks to React context. */}
+        <ThemeProvider
+          theme={themeDark || themeLight}
+          // theme={mobxStore.currentUser && mobxStore.currentUser.darkTheme ? themeDark : themeLight}
+        >
+          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+          <CssBaseline />
+            <Component {...pageProps} />
+          {/* 5 */}
+          {/* <Provider store={mobxStore}>
+            <Component {...pageProps} />
+          </Provider> */}
+        </ThemeProvider>
       </Container>
-      // <Container>
-      //   {/* ThemeProvider makes the theme available down the React
-      //         tree thanks to React context. */}
-      //   <ThemeProvider
-      //     theme={themeDark || themeLight}
-      //     // theme={mobxStore.currentUser && mobxStore.currentUser.darkTheme ? themeDark : themeLight}
-      //   >
-      //     {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-      //     <CssBaseline />
-      //       <Component {...pageProps} />
-      //     {/* 5 */}
-      //     {/* <Provider store={mobxStore}>
-      //       <Component {...pageProps} />
-      //     </Provider> */}
-      //   </ThemeProvider>
-      // </Container>
     );
   }
 }

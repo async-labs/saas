@@ -16,9 +16,7 @@ import { setupGoogle, setupPasswordless } from './auth';
 import { signRequestForLoad } from './aws-s3';
 // 13
 // import { setup as realtime } from './realtime';
-
-// 11
-// import { stripeWebHooks } from './stripe';
+import { stripeWebHooks } from './stripe';
 
 import logger from './logs';
 import Team from './models/Team';
@@ -44,8 +42,7 @@ server.use(cors({ origin: URL_APP, credentials: true }));
 server.use(helmet());
 server.use(compression());
 
-// 11
-// stripeWebHooks({ server });
+stripeWebHooks({ server });
 
 server.use(express.json());
 

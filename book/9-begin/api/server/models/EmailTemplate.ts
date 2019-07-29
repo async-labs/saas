@@ -56,14 +56,12 @@ async function insertTemplates() {
         Kelly & Timur, Team Async
       `,
     },
-
-    // 9
-    // {
-    //   name: 'login',
-    //   subject: 'Login link for saas-app.async-await.com',
-    //   message: `
-    //     <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
-    // },
+    {
+      name: 'login',
+      subject: 'Login link for saas-app.async-await.com',
+      message: `
+        <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
+    },
 
     // 10
     // {

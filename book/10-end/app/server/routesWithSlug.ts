@@ -9,11 +9,10 @@ export default function routesWithSlug({ server, app }) {
     app.render(req, res, '/invitation', { teamSlug });
   });
 
-  // 11
-  // server.get('/team/:teamSlug/billing', (req, res) => {
-  //   const { teamSlug } = req.params;
-  //   app.render(req, res, '/billing', { teamSlug });
-  // });
+  server.get('/team/:teamSlug/billing', (req, res) => {
+    const { teamSlug } = req.params;
+    app.render(req, res, '/billing', { teamSlug });
+  });
 
   // 12
   // server.get('/team/:teamSlug/discussions/:discussionSlug', (req, res) => {

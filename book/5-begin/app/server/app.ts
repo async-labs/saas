@@ -55,10 +55,7 @@ app.prepare().then(() => {
   });
 
   server.get('/', async (req: any, res) => {
-    let redirectUrl = 'first-page';
-
-    // 5
-    // let redirectUrl = 'login';
+    let redirectUrl = 'login';
 
     if (req.user) {
       if (!req.user.isAdmin) {

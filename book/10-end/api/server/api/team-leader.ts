@@ -98,80 +98,79 @@ router.post('/teams/remove-member', async (req, res, next) => {
   }
 });
 
-// 11
-// router.post('/create-customer', async (req, res, next) => {
-//   const { token } = req.body;
+router.post('/create-customer', async (req, res, next) => {
+  const { token } = req.body;
 
-//   try {
-//     const { hasCardInformation, stripeCard } = await User.createCustomer({
-//       userId: req.user.id,
-//       stripeToken: token,
-//     });
+  try {
+    const { hasCardInformation, stripeCard } = await User.createCustomer({
+      userId: req.user.id,
+      stripeToken: token,
+    });
 
-//     res.json({ hasCardInformation, stripeCard });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    res.json({ hasCardInformation, stripeCard });
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.post('/create-new-card-update-customer', async (req, res, next) => {
-//   const { token } = req.body;
+router.post('/create-new-card-update-customer', async (req, res, next) => {
+  const { token } = req.body;
 
-//   logger.debug('called express route');
+  logger.debug('called express route');
 
-//   try {
-//     const { stripeCard } = await User.createNewCardUpdateCustomer({
-//       userId: req.user.id,
-//       stripeToken: token,
-//     });
+  try {
+    const { stripeCard } = await User.createNewCardUpdateCustomer({
+      userId: req.user.id,
+      stripeToken: token,
+    });
 
-//     res.json({ stripeCard });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    res.json({ stripeCard });
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.post('/subscribe-team', async (req, res, next) => {
-//   const { teamId } = req.body;
+router.post('/subscribe-team', async (req, res, next) => {
+  const { teamId } = req.body;
 
-//   try {
-//     const { isSubscriptionActive, stripeSubscription } = await Team.subscribeTeam({
-//       teamLeaderId: req.user.id,
-//       teamId,
-//     });
+  try {
+    const { isSubscriptionActive, stripeSubscription } = await Team.subscribeTeam({
+      teamLeaderId: req.user.id,
+      teamId,
+    });
 
-//     await User.getListOfInvoicesForCustomer({ userId: req.user.id });
+    await User.getListOfInvoicesForCustomer({ userId: req.user.id });
 
-//     res.json({ isSubscriptionActive, stripeSubscription });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    res.json({ isSubscriptionActive, stripeSubscription });
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.post('/cancel-subscription', async (req, res, next) => {
-//   const { teamId } = req.body;
+router.post('/cancel-subscription', async (req, res, next) => {
+  const { teamId } = req.body;
 
-//   try {
-//     const { isSubscriptionActive } = await Team.cancelSubscription({
-//       teamLeaderId: req.user.id,
-//       teamId,
-//     });
+  try {
+    const { isSubscriptionActive } = await Team.cancelSubscription({
+      teamLeaderId: req.user.id,
+      teamId,
+    });
 
-//     res.json({ isSubscriptionActive });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    res.json({ isSubscriptionActive });
+  } catch (err) {
+    next(err);
+  }
+});
 
-// router.get('/get-list-of-invoices-for-customer', async (req, res, next) => {
-//   try {
-//     const { stripeListOfInvoices } = await User.getListOfInvoicesForCustomer({
-//       userId: req.user.id,
-//     });
-//     res.json({ stripeListOfInvoices });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+router.get('/get-list-of-invoices-for-customer', async (req, res, next) => {
+  try {
+    const { stripeListOfInvoices } = await User.getListOfInvoicesForCustomer({
+      userId: req.user.id,
+    });
+    res.json({ stripeListOfInvoices });
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;

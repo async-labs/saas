@@ -65,31 +65,31 @@ export const getInitialData = (options: any = {}) =>
 //     body: JSON.stringify(data),
 //   });
 
-// 6
-// export const getSignedRequestForUpload = ({ file, prefix, bucket, acl = 'private' }) =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/aws/get-signed-request-for-upload-to-s3`, {
-//     method: 'GET',
-//     qs: { fileName: file.name, fileType: file.type, prefix, bucket, acl },
-//   });
+// Uploading file to S3
 
-// export const uploadFileUsingSignedPutRequest = (file, signedRequest, headers = {}) =>
-//   sendRequestAndGetResponse(signedRequest, {
-//     externalServer: true,
-//     method: 'PUT',
-//     body: file,
-//     headers,
-//   });
+export const getSignedRequestForUpload = ({ file, prefix, bucket, acl = 'private' }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/aws/get-signed-request-for-upload-to-s3`, {
+    method: 'GET',
+    qs: { fileName: file.name, fileType: file.type, prefix, bucket, acl },
+  });
 
-// 6
-// export const updateProfile = data =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/user/update-profile`, {
-//     body: JSON.stringify(data),
-//   });
+export const uploadFileUsingSignedPutRequest = (file, signedRequest, headers = {}) =>
+  sendRequestAndGetResponse(signedRequest, {
+    externalServer: true,
+    method: 'PUT',
+    body: file,
+    headers,
+  });
 
-// export const toggleTheme = data =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/user/toggle-theme`, {
-//     body: JSON.stringify(data),
-//   });
+export const updateProfile = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/user/update-profile`, {
+    body: JSON.stringify(data),
+  });
+
+export const toggleTheme = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/user/toggle-theme`, {
+    body: JSON.stringify(data),
+  });
 
 // 14
 // export const sendDataToLambda = data =>

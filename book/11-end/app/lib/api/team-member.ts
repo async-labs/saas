@@ -16,53 +16,52 @@ export const getInitialData = (options: any = {}) =>
     ),
   );
 
+export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>
+  sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
+    method: 'GET',
+    qs: params,
+  });
+
 export const getTeamList = () =>
   sendRequestAndGetResponse(`${BASE_PATH}/teams`, {
     method: 'GET',
   });
 
-// 12
-// export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
-//     method: 'GET',
-//     qs: params,
-//   });
+export const addDiscussion = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/discussions/add`, {
+    body: JSON.stringify(data),
+  });
 
-// export const addDiscussion = data =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/discussions/add`, {
-//     body: JSON.stringify(data),
-//   });
+export const editDiscussion = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/discussions/edit`, {
+    body: JSON.stringify(data),
+  });
 
-// export const editDiscussion = data =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/discussions/edit`, {
-//     body: JSON.stringify(data),
-//   });
+export const deleteDiscussion = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/discussions/delete`, {
+    body: JSON.stringify(data),
+  });
 
-// export const deleteDiscussion = data =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/discussions/delete`, {
-//     body: JSON.stringify(data),
-//   });
+export const getPostList = (discussionId: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/list`, {
+    method: 'GET',
+    qs: { discussionId },
+  });
 
-// export const getPostList = (discussionId: string) =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/posts/list`, {
-//     method: 'GET',
-//     qs: { discussionId },
-//   });
+export const addPost = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/add`, {
+    body: JSON.stringify(data),
+  });
 
-// export const addPost = data =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/posts/add`, {
-//     body: JSON.stringify(data),
-//   });
+export const editPost = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/edit`, {
+    body: JSON.stringify(data),
+  });
 
-// export const editPost = data =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/posts/edit`, {
-//     body: JSON.stringify(data),
-//   });
-
-// export const deletePost = data =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/posts/delete`, {
-//     body: JSON.stringify(data),
-//   });
+export const deletePost = data =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/delete`, {
+    body: JSON.stringify(data),
+  });
 
 // Uploading file to S3
 

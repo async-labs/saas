@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  SyntaxError: /home/tima/apps/saas/book/2-end/api/package.json: Unexpected token / in JSON at position 0
+  SyntaxError: /home/tima/apps/saas/book/3-end/api/package.json: Unexpected token / in JSON at position 0
       at JSON.parse (<anonymous>)
       at /usr/share/yarn/lib/cli.js:1625:59
       at Generator.next (<anonymous>)
@@ -24,7 +24,7 @@ Trace:
 npm manifest: 
   // 4
   // {
-  //   "name": "2-end-api",
+  //   "name": "4-begin-api",
   //   "version": "1",
   //   "license": "MIT",
   //   "scripts": {

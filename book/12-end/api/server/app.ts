@@ -6,16 +6,14 @@ import * as cors from 'cors';
 import * as express from 'express';
 import * as session from 'express-session';
 import * as helmet from 'helmet';
-// 13
-// import * as httpModule from 'http';
+import * as httpModule from 'http';
 import * as mongoose from 'mongoose';
 import * as path from 'path';
 
 import api from './api';
 import { setupGoogle, setupPasswordless } from './auth';
 import { signRequestForLoad } from './aws-s3';
-// 13
-// import { setup as realtime } from './realtime';
+import { setup as realtime } from './realtime';
 import { stripeWebHooks } from './stripe';
 
 import logger from './logs';
@@ -76,9 +74,8 @@ setupPasswordless({ server, ROOT_URL });
 
 api(server);
 
-// 13
-// const http = new httpModule.Server(server);
-// realtime({ http, origin: URL_APP, sessionMiddleware });
+const http = new httpModule.Server(server);
+realtime({ http, origin: URL_APP, sessionMiddleware });
 
 server.get('/uploaded-file', async (req, res) => {
   if (!req.user) {
@@ -122,12 +119,6 @@ server.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
-// 13
-// http.listen(PORT, () => {
-//   logger.info(`> Ready on ${ROOT_URL}`);
-// });
-
-server.listen(PORT, err => {
-  if (err) { throw err; }
+http.listen(PORT, () => {
   logger.info(`> Ready on ${ROOT_URL}`);
 });

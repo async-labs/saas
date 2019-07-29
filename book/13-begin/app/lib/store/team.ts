@@ -195,8 +195,7 @@ class Team {
   public async addDiscussion(data): Promise<Discussion> {
     const { discussion } = await addDiscussion({
       teamId: this._id,
-      // 13
-      // socketId: (this.store.socket && this.store.socket.id) || null,
+      socketId: (this.store.socket && this.store.socket.id) || null,
       ...data,
     });
 
@@ -211,8 +210,7 @@ class Team {
   public async deleteDiscussion(id: string) {
     await deleteDiscussion({
       id,
-      // 13
-      // socketId: (this.store.socket && this.store.socket.id) || null,
+      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
@@ -364,29 +362,27 @@ class Team {
     return ifTeamLeaderMustBeCustomerOnClient;
   }
 
-  // 13
-  // public leaveSocketRoom() {
-  //   if (this.store.socket) {
-  //     console.log('leaving socket team room', this.name);
-  //     this.store.socket.emit('leaveTeam', this._id);
+  public leaveSocketRoom() {
+    if (this.store.socket) {
+      console.log('leaving socket team room', this.name);
+      this.store.socket.emit('leaveTeam', this._id);
 
-  //     if (this.discussion) {
-  //       this.discussion.leaveSocketRoom();
-  //     }
-  //   }
-  // }
+      if (this.discussion) {
+        this.discussion.leaveSocketRoom();
+      }
+    }
+  }
 
-  // 13
-  // public joinSocketRoom() {
-  //   if (this.store.socket) {
-  //     console.log('joining socket team room', this.name);
-  //     this.store.socket.emit('joinTeam', this._id);
+  public joinSocketRoom() {
+    if (this.store.socket) {
+      console.log('joining socket team room', this.name);
+      this.store.socket.emit('joinTeam', this._id);
 
-  //     if (this.discussion) {
-  //       this.discussion.joinSocketRoom();
-  //     }
-  //   }
-  // }
+      if (this.discussion) {
+        this.discussion.joinSocketRoom();
+      }
+    }
+  }
 
   public changeLocalCache(data) {
     this.name = data.name;
@@ -409,6 +405,7 @@ decorate(Team, {
   currentDiscussion: observable,
   currentDiscussionSlug: observable,
   isLoadingDiscussions: observable,
+  discussion: observable,
   discussions: observable,
 
   orderedDiscussions: computed,

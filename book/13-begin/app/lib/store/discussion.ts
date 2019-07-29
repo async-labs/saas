@@ -89,8 +89,7 @@ class Discussion {
     try {
       await editDiscussion({
         id: this._id,
-        // 13
-        // socketId: (this.store.socket && this.store.socket.id) || null,
+        socketId: (this.store.socket && this.store.socket.id) || null,
         ...data,
       });
 
@@ -129,15 +128,13 @@ class Discussion {
   }
 
   public async addPost(content: string): Promise<Post> {
-    // 13
-    // console.log(this.store.socket);
-    // console.log(this.store.socket.id);
+    console.log(this.store.socket);
+    console.log(this.store.socket.id);
 
     const { post } = await addPost({
       discussionId: this._id,
       content,
-      // 13
-      // socketId: (this.store.socket && this.store.socket.id) || null,
+      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     return new Promise<Post>(resolve => {
@@ -152,8 +149,7 @@ class Discussion {
     await deletePost({
       id: post._id,
       discussionId: this._id,
-      // 13
-      // socketId: (this.store.socket && this.store.socket.id) || null,
+      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
@@ -212,47 +208,46 @@ class Discussion {
     this.team.discussions.remove(discussion);
   }
 
-  // 13
-  // public handleDiscussionRealtimeEvent = data => {
-  //   console.log('discussion realtime event', data);
-  //   const { action: actionName } = data;
+  public handleDiscussionRealtimeEvent = data => {
+    console.log('discussion realtime event', data);
+    const { action: actionName } = data;
 
-  //   if (actionName === 'added') {
-  //     this.addDiscussionToLocalCache(data.discussion);
-  //   } else if (actionName === 'edited') {
-  //     this.editDiscussionFromLocalCache(data.discussion);
-  //   } else if (actionName === 'deleted') {
-  //     this.removeDiscussionFromLocalCache(data.id);
-  //   }
-  // };
+    if (actionName === 'added') {
+      this.addDiscussionToLocalCache(data.discussion);
+    } else if (actionName === 'edited') {
+      this.editDiscussionFromLocalCache(data.discussion);
+    } else if (actionName === 'deleted') {
+      this.removeDiscussionFromLocalCache(data.id);
+    }
+  };
 
-  // public handlePostRealtimeEvent(data) {
-  //   const { action: actionName } = data;
+  public handlePostRealtimeEvent(data) {
+    const { action: actionName } = data;
 
-  //   if (actionName === 'added') {
-  //     this.addPostToLocalCache(data.post);
-  //   } else if (actionName === 'edited') {
-  //     this.editPostFromLocalCache(data.post);
-  //   } else if (actionName === 'deleted') {
-  //     this.removePostFromLocalCache(data.id);
-  //   }
-  // }
+    if (actionName === 'added') {
+      this.addPostToLocalCache(data.post);
+    } else if (actionName === 'edited') {
+      this.editPostFromLocalCache(data.post);
+    } else if (actionName === 'deleted') {
+      this.removePostFromLocalCache(data.id);
+    }
+  }
 
-  // public leaveSocketRoom() {
-  //   if (this.store.socket) {
-  //     console.log('leaving socket discussion room', this.name);
-  //     this.store.socket.emit('leaveDiscussion', this._id);
-  //     this.store.socket.emit('leaveTeam', this.team._id);
-  //   }
-  // }
+  public leaveSocketRoom() {
+    if (this.store.socket) {
+      console.log('leaving socket discussion room', this.name);
+      this.store.socket.emit('leaveDiscussion', this._id);
+      this.store.socket.emit('leaveTeam', this.team._id);
+    }
+  }
 
-  // public joinSocketRoom() {
-  //   if (this.store.socket) {
-  //     console.log('joining socket discussion room', this.name);
-  //     this.store.socket.emit('joinDiscussion', this._id);
-  //     this.store.socket.emit('joinTeam', this.team._id);
-  //   }
-  // }
+  public joinSocketRoom() {
+    if (this.store.socket) {
+      console.log('joining socket discussion room', this.name);
+      this.store.socket.emit('joinDiscussion', this._id);
+      this.store.socket.emit('joinTeam', this.team._id);
+    }
+  }
 
   private setInitialDiscussions(discussions) {
     const discussionObjs = discussions.map(

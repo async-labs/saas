@@ -1,22 +1,21 @@
-// 4
-// {
-//   "compileOnSave": false,
-//   "compilerOptions": {
-//     "jsx": "preserve",
-//     "allowJs": true,
-//     "alwaysStrict": true,
-//     "moduleResolution": "node",
-//     "allowSyntheticDefaultImports": true,
-//     "removeComments": false,
-//     "preserveConstEnums": true,
-//     "noUnusedLocals": true,
-//     "noUnusedParameters": true,
-//     "sourceMap": true,
-//     "skipLibCheck": true,
-//     "baseUrl": ".",
-//     "experimentalDecorators": true,
-//     "typeRoots": ["./node_modules/@types"],
-//     "lib": ["es2015", "es2016"]
-//   },
-//   "exclude": ["production-server", "node_modules"]
-// }
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "jsx": "preserve",
+    "allowJs": true,
+    "alwaysStrict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "typeRoots": ["./node_modules/@types"],
+    "lib": ["es2015", "es2016"]
+  },
+  "exclude": ["production-server", "node_modules"]
+}

@@ -47,15 +47,13 @@
 // //   const { discussionSlug } = body;
 
 // //   if (!discussionSlug) {
-// //     return {};
+// //     return [];
 // //   }
 
 // //   const { discussions } = await Discussion.getList({
 // //     userId,
 // //     teamId: team._id,
 // //   });
-
-// //   const data: any = { initialDiscussions: discussions };
 
 // //   for (const discussion of discussions) {
 // //     if (discussion.slug === discussionSlug) {
@@ -70,7 +68,7 @@
 // //     }
 // //   }
 
-// //   return data;
+// //   return discussions;
 // // }
 
 // // 10
@@ -108,9 +106,9 @@
 // //     });
 // //   }
 
-// //   Object.assign(team, await loadDiscussionsData(team, userId, body));
+// //   const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
-// //   const data: any = { initialMembers, initialInvitations };
+// //   const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
 // //   return data;
 // // }

@@ -69,8 +69,7 @@ export const MAILCHIMP_API_KEY: string = get('MAILCHIMP_API_KEY');
 export const MAILCHIMP_REGION: string = get('MAILCHIMP_REGION');
 export const MAILCHIMP_SAAS_ALL_LIST_ID: string = get('MAILCHIMP_SAAS_ALL_LIST_ID');
 
-// 8
-// export const EMAIL_SUPPORT_FROM_ADDRESS: string = get('EMAIL_SUPPORT_FROM_ADDRESS');
+export const EMAIL_SUPPORT_FROM_ADDRESS: string = get('EMAIL_SUPPORT_FROM_ADDRESS');
 
 // 11
 // export const STRIPE_TEST_SECRETKEY = get('STRIPE_TEST_SECRETKEY') || get('Stripe_Test_SecretKey');

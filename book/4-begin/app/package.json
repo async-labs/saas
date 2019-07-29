@@ -1,10 +1,9 @@
 {
-  "name": "4-begin-app",
+  "name": "5-begin-app",
   "version": "1",
   "license": "MIT",
   "scripts": {
-    "dev": "next",
-    "dev-express": "nodemon server/app.ts",
+    "dev": "nodemon server/app.ts",
     "build": "next build && tsc --project tsconfig.server.json",
     "postinstall": "next build && rm -rf production-server/ & tsc --project tsconfig.server.json",
     "start": "node production-server/server/app.js",

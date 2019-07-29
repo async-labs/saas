@@ -7,9 +7,7 @@ import * as next from 'next';
 import * as path from 'path';
 
 import { getUser } from '../lib/api/public';
-
-// 10
-// import routesWithSlug from './routesWithSlug';
+import routesWithSlug from './routesWithSlug';
 
 import { IS_DEV, PORT_APP, URL_APP } from '../lib/consts';
 
@@ -58,14 +56,9 @@ app.prepare().then(() => {
     let redirectUrl = 'login';
 
     if (req.user) {
-      if (!req.user.isAdmin) {
-        redirectUrl = 'your-settings';
+      if (!req.user.isAdmin && !req.user.defaultTeamSlug) {
+        redirectUrl = 'create-team';
       }
-
-      // 10
-      // if (!req.user.isAdmin && !req.user.defaultTeamSlug) {
-      //   redirectUrl = 'create-team';
-      // }
 
       // 12
       // if (!req.user.isAdmin && !req.user.defaultTeamSlug) {
@@ -78,8 +71,7 @@ app.prepare().then(() => {
     res.redirect(`${URL_APP}/${redirectUrl}`);
   });
 
-  // 10
-  // routesWithSlug({ server, app });
+  routesWithSlug({ server, app });
 
   server.get('/robots.txt', (_, res) => {
     res.sendFile(path.join(__dirname, '../static', 'robots.txt'));

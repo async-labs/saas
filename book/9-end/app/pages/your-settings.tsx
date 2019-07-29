@@ -18,8 +18,7 @@ import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-// 10
-// import { BUCKET_FOR_TEAM_AVATARS } from '../lib/consts';
+import { BUCKET_FOR_TEAM_AVATARS } from '../lib/consts';
 
 const styleGrid = {
   height: '100%',
@@ -191,10 +190,7 @@ class YourSettings extends React.Component<MyProps, MyState> {
 
     fileElm.value = '';
 
-    const bucket = 'saas-users-avatars';
-
-    // 10
-    // const bucket = BUCKET_FOR_TEAM_AVATARS;
+    const bucket = BUCKET_FOR_TEAM_AVATARS;
 
     const prefix = `${currentUser.slug}`;
 
@@ -237,7 +233,4 @@ class YourSettings extends React.Component<MyProps, MyState> {
   };
 }
 
-export default withAuth(YourSettings);
-
-// 10
-// export default withAuth(YourSettings, { teamRequired: false });
+export default withAuth(YourSettings, { teamRequired: false });

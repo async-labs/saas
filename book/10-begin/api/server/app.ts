@@ -21,9 +21,7 @@ import { signRequestForLoad } from './aws-s3';
 // import { stripeWebHooks } from './stripe';
 
 import logger from './logs';
-
-// 10
-// import Team from './models/Team';
+import Team from './models/Team';
 
 import {
   COOKIE_DOMAIN, IS_DEV, MONGO_URL,
@@ -91,10 +89,7 @@ server.get('/uploaded-file', async (req, res) => {
     return;
   }
 
-  const { path: filePath, bucket } = req.query;
-
-  // 10
-  // const { path: filePath, bucket, teamSlug } = req.query;
+  const { path: filePath, bucket, teamSlug } = req.query;
 
   if (!filePath) {
     res.status(401).end('Missing required data');
@@ -106,17 +101,16 @@ server.get('/uploaded-file', async (req, res) => {
     return;
   }
 
-  // 10
-  // if (teamSlug) {
-  //   const team = await Team.findOne({ slug: teamSlug })
-  //     .select('memberIds')
-  //     .setOptions({ lean: true });
+  if (teamSlug) {
+    const team = await Team.findOne({ slug: teamSlug })
+      .select('memberIds')
+      .setOptions({ lean: true });
 
-  //   if (!team || !team.memberIds.includes(req.user.id)) {
-  //     res.status(401).end('You do not have permission.');
-  //     return;
-  //   }
-  // }
+    if (!team || !team.memberIds.includes(req.user.id)) {
+      res.status(401).end('You do not have permission.');
+      return;
+    }
+  }
 
   const data: any = await signRequestForLoad(filePath, bucket);
 

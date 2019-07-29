@@ -27,8 +27,7 @@ export default function withStore(App) {
 
       let initialData = {};
 
-      // 10
-      // const { teamSlug } = ctx.query;
+      const { teamSlug } = ctx.query;
 
       // 12
       // const { teamSlug, discussionSlug } = ctx.query;
@@ -37,8 +36,7 @@ export default function withStore(App) {
         try {
           initialData = await getInitialData({
             request: ctx.req,
-            // 10
-            // data: { teamSlug },
+            data: { teamSlug },
 
             // 12
             // data: { teamSlug, discussionSlug },
@@ -50,11 +48,7 @@ export default function withStore(App) {
 
       return {
         ...appProps,
-        initialState: { user, currentUrl: ctx.asPath, ...initialData },
-
-        // 10
-        // initialState: { user, teamSlug, currentUrl: ctx.asPath, ...initialData },
-
+        initialState: { user, teamSlug, currentUrl: ctx.asPath, ...initialData },
       };
     }
 

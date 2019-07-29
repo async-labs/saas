@@ -1,12 +1,11 @@
 // 10
 // import { Team } from '../../lib/store';
 
-// 7
-// import { URL_API } from '../../lib/consts';
+import { URL_API } from '../../lib/consts';
 
 const menuOnTheRight = () => [
-  // 10
-  // const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
+// 10
+// const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
   {
     text: 'Your Settings',
     href: '/your-settings',
@@ -31,13 +30,12 @@ const menuOnTheRight = () => [
   {
     separator: true,
   },
-  // 7
-  // {
-  //   text: 'Log out',
-  //   href: `${URL_API}/logout`,
-  //   as: `${URL_API}/logout`,
-  //   simple: true,
-  // },
+  {
+    text: 'Log out',
+    href: `${URL_API}/logout`,
+    as: `${URL_API}/logout`,
+    simple: true,
+  },
 ];
 
 export { menuOnTheRight };

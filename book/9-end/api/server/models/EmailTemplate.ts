@@ -62,15 +62,13 @@ async function insertTemplates() {
       message: `
         <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
     },
-
-    // 10
-    // {
-    //   name: 'invitation',
-    //   subject: 'You are invited to join a Team at async-await.com',
-    //   message: `You've been invited to join <b><%= teamName%></b>.
-    //     <br/>Click here to accept the invitation: <%= invitationURL%>
-    //   `,
-    // },
+    {
+      name: 'invitation',
+      subject: 'You are invited to join a Team at async-await.com',
+      message: `You've been invited to join <b><%= teamName%></b>.
+        <br/>Click here to accept the invitation: <%= invitationURL%>
+      `,
+    },
 
     // 14
     // {

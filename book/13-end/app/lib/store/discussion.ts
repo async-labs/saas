@@ -6,8 +6,7 @@ import {
   deletePost,
   editDiscussion,
   getPostList,
-  // 14
-  // sendDataToLambda,
+  sendDataToLambda,
 } from '../api/team-member';
 import { Post, Store, Team } from './index';
 
@@ -157,28 +156,27 @@ class Discussion {
     });
   }
 
-  // 14
-  // public async sendDataToLambdaApiMethod({
-  //   discussionName,
-  //   discussionLink,
-  //   postContent,
-  //   authorName,
-  //   userIds,
-  // }) {
-  //   // console.log(discussionName, discussionLink, authorName, postContent, userIds);
-  //   try {
-  //     await sendDataToLambda({
-  //       discussionName,
-  //       discussionLink,
-  //       postContent,
-  //       authorName,
-  //       userIds,
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
+  public async sendDataToLambdaApiMethod({
+    discussionName,
+    discussionLink,
+    postContent,
+    authorName,
+    userIds,
+  }) {
+    console.log(discussionName, discussionLink, authorName, postContent, userIds);
+    try {
+      await sendDataToLambda({
+        discussionName,
+        discussionLink,
+        postContent,
+        authorName,
+        userIds,
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
   public addDiscussionToLocalCache(data): Discussion {
     const obj = new Discussion({ team: this.team, store: this.store, ...data });

@@ -189,14 +189,9 @@ function setupGoogle({ ROOT_URL, server }) {
       } else {
         if (!req.user.defaultTeamSlug) {
           redirectUrlAfterLogin = '/create-team';
+        } else {
+          redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
         }
-
-        // 12
-        // if (!req.user.defaultTeamSlug) {
-        //   redirectUrlAfterLogin = '/create-team';
-        // } else {
-        //   redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
-        // }
       }
 
       res.redirect(`${URL_APP}${redirectUrlAfterLogin}`);

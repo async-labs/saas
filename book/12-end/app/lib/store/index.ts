@@ -1,8 +1,6 @@
 import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
-
-// 13
-// import * as io from 'socket.io-client';
+import * as io from 'socket.io-client';
 
 import { addTeam } from '../api/team-leader';
 import { getTeamList } from '../api/team-member';
@@ -14,9 +12,7 @@ import { User } from './user';
 
 mobx.configure({ enforceActions: 'observed' });
 
-import { IS_DEV } from '../consts';
-// 13
-// import { IS_DEV, URL_API } from '../consts';
+import { IS_DEV, URL_API } from '../consts';
 
 class Store {
   public isServer: boolean;
@@ -31,19 +27,16 @@ class Store {
   public currentUrl: string = '';
   public isLoggingIn = true;
 
-  // 13
-  // public socket: SocketIOClient.Socket;
+  public socket: SocketIOClient.Socket;
 
   constructor({
     initialState = {},
     isServer,
-    // 13
-    // socket = null,
+    socket = null,
   }: {
     initialState?: any;
     isServer: boolean;
-    // 13
-    // socket?: SocketIOClient.Socket;
+    socket?: SocketIOClient.Socket;
   }) {
     this.isServer = !!isServer;
 
@@ -55,30 +48,29 @@ class Store {
 
     this.currentUrl = initialState.currentUrl || '';
 
-    // 13
-    // this.socket = socket;
+    this.socket = socket;
 
-    // if (socket) {
-    //   socket.on('teamEvent', this.handleTeamRealtimeEvent);
+    if (socket) {
+      socket.on('teamEvent', this.handleTeamRealtimeEvent);
 
-    //   socket.on('disconnect', () => {
-    //     console.log('socket: ## disconnected');
-    //   });
+      socket.on('disconnect', () => {
+        console.log('socket: ## disconnected');
+      });
 
-    //   socket.on('reconnect', attemptNumber => {
-    //     console.log('socket: $$ reconnected', attemptNumber);
+      socket.on('reconnect', attemptNumber => {
+        console.log('socket: $$ reconnected', attemptNumber);
 
-    //     if (this.currentTeam) {
-    //       this.currentTeam.leaveSocketRoom();
+        if (this.currentTeam) {
+          this.currentTeam.leaveSocketRoom();
 
-    //       this.loadCurrentTeamData();
+          this.loadCurrentTeamData();
 
-    //       setTimeout(() => {
-    //         this.currentTeam.joinSocketRoom();
-    //       }, 500);
-    //     }
-    //   });
-    // }
+          setTimeout(() => {
+            this.currentTeam.joinSocketRoom();
+          }, 500);
+        }
+      });
+    }
   }
 
   public changeCurrentUrl(url: string) {
@@ -154,8 +146,7 @@ class Store {
       if (team.slug === slug) {
         found = true;
         this.currentTeam = team;
-        // 13
-        // team.joinSocketRoom();
+        team.joinSocketRoom();
         this.loadCurrentTeamData();
         break;
       }
@@ -197,16 +188,14 @@ class Store {
     if (user) {
       this.currentUser = new User({ store: this, ...user });
 
-      // 13
-      // if (this.socket && this.socket.disconnected) {
-      //   this.socket.connect();
-      // }
+      if (this.socket && this.socket.disconnected) {
+        this.socket.connect();
+      }
     } else {
       this.currentUser = null;
-      // 13
-      // if (this.socket && this.socket.connected) {
-      //   this.socket.disconnect();
-      // }
+      if (this.socket && this.socket.connected) {
+        this.socket.disconnect();
+      }
     }
 
     runInAction(() => {
@@ -218,19 +207,18 @@ class Store {
     }
   }
 
-  // 13
-  // private handleTeamRealtimeEvent = data => {
-  //   console.log('team realtime event', data);
-  //   const { action: actionName } = data;
+  private handleTeamRealtimeEvent = data => {
+    console.log('team realtime event', data);
+    const { action: actionName } = data;
 
-  //   if (actionName === 'added') {
-  //     this.addTeamToLocalCache(data.team);
-  //   } else if (actionName === 'edited') {
-  //     this.editTeamFromLocalCache(data.team);
-  //   } else if (actionName === 'deleted') {
-  //     this.removeTeamFromLocalCache(data.id);
-  //   }
-  // };
+    if (actionName === 'added') {
+      this.addTeamToLocalCache(data.team);
+    } else if (actionName === 'edited') {
+      this.editTeamFromLocalCache(data.team);
+    } else if (actionName === 'deleted') {
+      this.removeTeamFromLocalCache(data.id);
+    }
+  };
 
   private loadCurrentTeamData() {
     if (this.currentTeam) {
@@ -271,8 +259,7 @@ function initStore(initialState = {}) {
     const win: any = window;
 
     if (!store) {
-      // 13
-      // const globalStore: Store = win.__STORE__;
+      const globalStore: Store = win.__STORE__;
 
       if (IS_DEV) {
         // save initialState globally and use saved state when initialState is empty
@@ -284,19 +271,15 @@ function initStore(initialState = {}) {
           initialState = win.__INITIAL_STATE__;
         }
 
-        // 13
-        // if (globalStore && globalStore.socket) {
-        //   globalStore.socket.removeAllListeners();
-        //   globalStore.socket.disconnect();
-        // }
+        if (globalStore && globalStore.socket) {
+          globalStore.socket.removeAllListeners();
+          globalStore.socket.disconnect();
+        }
       }
 
-      // 13
-      // const socket = io(URL_API);
+      const socket = io(URL_API);
 
-      store = new Store({ initialState, isServer: false });
-      // 13
-      // store = new Store({ initialState, isServer: false, socket });
+      store = new Store({ initialState, socket, isServer: false });
 
       if (IS_DEV) {
         win.__STORE__ = store;

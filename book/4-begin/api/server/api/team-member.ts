@@ -1,359 +1,356 @@
-// 4
-// import * as express from 'express';
+import * as express from 'express';
 
-// // 12
-// // import { signRequestForUpload } from '../aws-s3';
-// import logger from '../logs';
+// 12
+// import { signRequestForUpload } from '../aws-s3';
+import logger from '../logs';
 
-// // 12
-// // import Discussion from '../models/Discussion';
+// 12
+// import Discussion from '../models/Discussion';
 
-// // 10
-// // import Invitation from '../models/Invitation';
+// 10
+// import Invitation from '../models/Invitation';
 
-// // 12
-// // import Post from '../models/Post';
+// 12
+// import Post from '../models/Post';
 
-// // 10
-// // import Team from '../models/Team';
+// 10
+// import Team from '../models/Team';
 
-// // 6
-// // import User from '../models/User';
+// 6
+// import User from '../models/User';
 
-// // 13
-// // import {
-// //   discussionAdded,
-// //   discussionDeleted,
-// //   discussionEdited,
-// //   postAdded,
-// //   postDeleted,
-// //   postEdited,
-// // } from '../realtime';
+// 13
+// import {
+//   discussionAdded,
+//   discussionDeleted,
+//   discussionEdited,
+//   postAdded,
+//   postDeleted,
+//   postEdited,
+// } from '../realtime';
 
-// const router = express.Router();
+const router = express.Router();
 
-// router.use((req, res, next) => {
-//   logger.debug('team member API', req.path);
-//   if (!req.user) {
-//     res.status(401).json({ error: 'Unauthorized' });
-//     return;
+router.use((req, res, next) => {
+  logger.debug('team member API', req.path);
+  if (!req.user) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
+
+  next();
+});
+
+// 12
+// async function loadDiscussionsData(team, userId, body) {
+//   const { discussionSlug } = body;
+
+//   if (!discussionSlug) {
+//     return [];
 //   }
 
-//   next();
+//   const { discussions } = await Discussion.getList({
+//     userId,
+//     teamId: team._id,
+//   });
+
+//   for (const discussion of discussions) {
+//     if (discussion.slug === discussionSlug) {
+//       Object.assign(discussion, {
+//         initialPosts: await Post.getList({
+//           userId,
+//           discussionId: discussion._id,
+//         }),
+//       });
+
+//       break;
+//     }
+//   }
+
+//   return discussions;
+// }
+
+// 10
+// async function loadTeamData(team, userId) {
+//   const initialMembers = await User.getTeamMembers({
+//     userId,
+//     teamId: team._id,
+//   });
+
+//   let initialInvitations = [];
+//   if (userId === team.teamLeaderId) {
+//     initialInvitations = await Invitation.getTeamInvitedUsers({
+//       userId,
+//       teamId: team._id,
+//     });
+//   }
+
+//   const data: any = { initialMembers, initialInvitations };
+
+//   return data;
+// }
+
+// 12
+// async function loadTeamData(team, userId, body) {
+//   const initialMembers = await User.getTeamMembers({
+//     userId,
+//     teamId: team._id,
+//   });
+
+//   let initialInvitations = [];
+//   if (userId === team.teamLeaderId) {
+//     initialInvitations = await Invitation.getTeamInvitedUsers({
+//       userId,
+//       teamId: team._id,
+//     });
+//   }
+
+//   const initialDiscussions = await loadDiscussionsData(team, userId, body);
+
+//   const data: any = { initialMembers, initialInvitations, initialDiscussions };
+
+//   return data;
+// }
+
+// 10
+// router.post('/get-initial-data', async (req, res, next) => {
+//   try {
+//     const teams = await Team.getList(req.user.id);
+
+//     let selectedTeamSlug = req.body.teamSlug;
+//     if (!selectedTeamSlug && teams && teams.length > 0) {
+//       selectedTeamSlug = teams[0].slug;
+//     }
+
+//     for (const team of teams) {
+//       if (team.slug === selectedTeamSlug) {
+//         Object.assign(team, await loadTeamData(team, req.user.id));
+//         // 12
+//         // Object.assign(team, await loadTeamData(team, req.user.id, req.body));
+//         break;
+//       }
+//     }
+
+//     res.json({ teams });
+//   } catch (err) {
+//     next(err);
+//   }
 // });
 
-// // 12
-// // async function loadDiscussionsData(team, userId, body) {
-// //   const { discussionSlug } = body;
+// router.get('/teams', async (req, res, next) => {
+//   try {
+//     const teams = await Team.getList(req.user.id);
 
-// //   if (!discussionSlug) {
-// //     return {};
-// //   }
+//     res.json({ teams });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// //   const { discussions } = await Discussion.getList({
-// //     userId,
-// //     teamId: team._id,
-// //   });
+// 12
+// router.post('/discussions/add', async (req, res, next) => {
+//   try {
+//     const { name, teamId, memberIds = [], notificationType } = req.body;
+//     // 13
+//     // const { name, teamId, memberIds = [], notificationType, socketId } = req.body;
 
-// //   const data: any = { initialDiscussions: discussions };
+//     const discussion = await Discussion.add({
+//       userId: req.user.id,
+//       name,
+//       teamId,
+//       memberIds,
+//       notificationType,
+//     });
 
-// //   for (const discussion of discussions) {
-// //     if (discussion.slug === discussionSlug) {
-// //       Object.assign(discussion, {
-// //         initialPosts: await Post.getList({
-// //           userId,
-// //           discussionId: discussion._id,
-// //         }),
-// //       });
+//     // 13
+//     // discussionAdded({ socketId, discussion });
 
-// //       break;
-// //     }
-// //   }
+//     res.json({ discussion });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// //   return data;
-// // }
+// router.post('/discussions/edit', async (req, res, next) => {
+//   try {
+//     const { name, id, memberIds = [], notificationType } = req.body;
+//     // 13
+//     // const { name, id, memberIds = [], notificationType, socketId } = req.body;
 
-// // 10
-// // async function loadTeamData(team, userId) {
-// //   const initialMembers = await User.getTeamMembers({
-// //     userId,
-// //     teamId: team._id,
-// //   });
+//     await Discussion.edit({
+//       userId: req.user.id,
+//       name,
+//       id,
+//       memberIds,
+//       notificationType,
+//     });
+//     // 13
+//     // const updatedDiscussion = await Discussion.edit({
+//     //   userId: req.user.id,
+//     //   name,
+//     //   id,
+//     //   memberIds,
+//     //   notificationType,
+//     // });
 
-// //   let initialInvitations = [];
-// //   if (userId === team.teamLeaderId) {
-// //     initialInvitations = await Invitation.getTeamInvitedUsers({
-// //       userId,
-// //       teamId: team._id,
-// //     });
-// //   }
+//     // 13
+//     // discussionEdited({ socketId, discussion: updatedDiscussion });
 
-// //   const data: any = { initialMembers, initialInvitations };
+//     res.json({ done: 1 });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// //   return data;
-// // }
+// router.post('/discussions/delete', async (req, res, next) => {
+//   try {
+//     const { id } = req.body;
+//     // 13
+//     // const { id, socketId } = req.body;
 
-// // 12
-// // async function loadTeamData(team, userId, body) {
-// //   const initialMembers = await User.getTeamMembers({
-// //     userId,
-// //     teamId: team._id,
-// //   });
+//     await Discussion.delete({ userId: req.user.id, id });
+//     // 13
+//     // const { teamId } = await Discussion.delete({ userId: req.user.id, id });
 
-// //   let initialInvitations = [];
-// //   if (userId === team.teamLeaderId) {
-// //     initialInvitations = await Invitation.getTeamInvitedUsers({
-// //       userId,
-// //       teamId: team._id,
-// //     });
-// //   }
+//     // 13
+//     // discussionDeleted({ socketId, teamId, id });
 
-// //   Object.assign(team, await loadDiscussionsData(team, userId, body));
+//     res.json({ done: 1 });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// //   const data: any = { initialMembers, initialInvitations };
+// router.get('/discussions/list', async (req, res, next) => {
+//   try {
+//     const { teamId } = req.query;
 
-// //   return data;
-// // }
+//     const { discussions } = await Discussion.getList({
+//       userId: req.user.id,
+//       teamId,
+//     });
 
-// // 10
-// // router.post('/get-initial-data', async (req, res, next) => {
-// //   try {
-// //     const teams = await Team.getList(req.user.id);
+//     logger.debug(`Express route: ${discussions.length}`);
 
-// //     let selectedTeamSlug = req.body.teamSlug;
-// //     if (!selectedTeamSlug && teams && teams.length > 0) {
-// //       selectedTeamSlug = teams[0].slug;
-// //     }
+//     res.json({ discussions });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// //     for (const team of teams) {
-// //       if (team.slug === selectedTeamSlug) {
-// //         Object.assign(team, await loadTeamData(team, req.user.id));
-// //         // 12
-// //         // Object.assign(team, await loadTeamData(team, req.user.id, req.body));
-// //         break;
-// //       }
-// //     }
+// router.post('/posts/add', async (req, res, next) => {
+//   try {
+//     const { content, discussionId } = req.body;
+//     // 13
+//     // const { content, discussionId, socketId } = req.body;
 
-// //     res.json({ teams });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
+//     const post = await Post.add({ userId: req.user.id, content, discussionId });
 
-// // router.get('/teams', async (req, res, next) => {
-// //   try {
-// //     const teams = await Team.getList(req.user.id);
+//     // 13
+//     // postAdded({ socketId, post });
 
-// //     res.json({ teams });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
+//     res.json({ post });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// // 12
-// // router.post('/discussions/add', async (req, res, next) => {
-// //   try {
-// //     const { name, teamId, memberIds = [], notificationType } = req.body;
-// //     // 13
-// //     // const { name, teamId, memberIds = [], notificationType, socketId } = req.body;
+// router.post('/posts/edit', async (req, res, next) => {
+//   try {
+//     const { content, id } = req.body;
+//     // 13
+//     // const { content, id, socketId } = req.body;
 
-// //     const discussion = await Discussion.add({
-// //       userId: req.user.id,
-// //       name,
-// //       teamId,
-// //       memberIds,
-// //       notificationType,
-// //     });
+//     await Post.edit({ userId: req.user.id, content, id });
+//     // 13
+//     // const updatedPost = await Post.edit({ userId: req.user.id, content, id });
 
-// //     // 13
-// //     // discussionAdded({ socketId, discussion });
+//     // 13
+//     // postEdited({ socketId, post: updatedPost });
 
-// //     res.json({ discussion });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
+//     res.json({ done: 1 });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// // router.post('/discussions/edit', async (req, res, next) => {
-// //   try {
-// //     const { name, id, memberIds = [], notificationType } = req.body;
-// //     // 13
-// //     // const { name, id, memberIds = [], notificationType, socketId } = req.body;
+// router.post('/posts/delete', async (req, res, next) => {
+//   try {
+//     const { id } = req.body;
+//     // 13
+//     // const { id, socketId, discussionId } = req.body;
 
-// //     await Discussion.edit({
-// //       userId: req.user.id,
-// //       name,
-// //       id,
-// //       memberIds,
-// //       notificationType,
-// //     });
-// //     // 13
-// //     // const updatedDiscussion = await Discussion.edit({
-// //     //   userId: req.user.id,
-// //     //   name,
-// //     //   id,
-// //     //   memberIds,
-// //     //   notificationType,
-// //     // });
+//     await Post.delete({ userId: req.user.id, id });
 
-// //     // 13
-// //     // discussionEdited({ socketId, discussion: updatedDiscussion });
+//     // 13
+//     // postDeleted({ socketId, id, discussionId });
 
-// //     res.json({ done: 1 });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
+//     res.json({ done: 1 });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// // router.post('/discussions/delete', async (req, res, next) => {
-// //   try {
-// //     const { id } = req.body;
-// //     // 13
-// //     // const { id, socketId } = req.body;
+// router.get('/posts/list', async (req, res, next) => {
+//   try {
+//     const posts = await Post.getList({
+//       userId: req.user.id,
+//       discussionId: req.query.discussionId,
+//     });
 
-// //     await Discussion.delete({ userId: req.user.id, id });
-// //     // 13
-// //     // const { teamId } = await Discussion.delete({ userId: req.user.id, id });
+//     res.json({ posts });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// //     // 13
-// //     // discussionDeleted({ socketId, teamId, id });
+// // Upload file to S3
+// router.get('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) => {
+//   try {
+//     const { fileName, fileType, prefix, bucket, acl = 'private' } = req.query;
 
-// //     res.json({ done: 1 });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
+//     const returnData = await signRequestForUpload({
+//       fileName,
+//       fileType,
+//       prefix,
+//       bucket,
+//       user: req.user,
+//       acl,
+//     });
 
-// // router.get('/discussions/list', async (req, res, next) => {
-// //   try {
-// //     const { teamId } = req.query;
+//     res.json(returnData);
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// //     const { discussions } = await Discussion.getList({
-// //       userId: req.user.id,
-// //       teamId,
-// //     });
+// 6
+// router.post('/user/update-profile', async (req, res, next) => {
+//   try {
+//     const { name, avatarUrl } = req.body;
 
-// //     logger.debug(`Express route: ${discussions.length}`);
+//     const updatedUser = await User.updateProfile({
+//       userId: req.user.id,
+//       name,
+//       avatarUrl,
+//     });
 
-// //     res.json({ discussions });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
+//     res.json({ updatedUser });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// // router.post('/posts/add', async (req, res, next) => {
-// //   try {
-// //     const { content, discussionId } = req.body;
-// //     // 13
-// //     // const { content, discussionId, socketId } = req.body;
+// router.post('/user/toggle-theme', async (req, res, next) => {
+//   try {
+//     const { darkTheme } = req.body;
 
-// //     const post = await Post.add({ userId: req.user.id, content, discussionId });
+//     await User.toggleTheme({ userId: req.user.id, darkTheme });
 
-// //     // 13
-// //     // postAdded({ socketId, post });
+//     res.json({ done: 1 });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// //     res.json({ post });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
-
-// // router.post('/posts/edit', async (req, res, next) => {
-// //   try {
-// //     const { content, id } = req.body;
-// //     // 13
-// //     // const { content, id, socketId } = req.body;
-
-// //     await Post.edit({ userId: req.user.id, content, id });
-// //     // 13
-// //     // const updatedPost = await Post.edit({ userId: req.user.id, content, id });
-
-// //     // 13
-// //     // postEdited({ socketId, post: updatedPost });
-
-// //     res.json({ done: 1 });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
-
-// // router.post('/posts/delete', async (req, res, next) => {
-// //   try {
-// //     const { id } = req.body;
-// //     // 13
-// //     // const { id, socketId, discussionId } = req.body;
-
-// //     await Post.delete({ userId: req.user.id, id });
-
-// //     // 13
-// //     // postDeleted({ socketId, id, discussionId });
-
-// //     res.json({ done: 1 });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
-
-// // router.get('/posts/list', async (req, res, next) => {
-// //   try {
-// //     const posts = await Post.getList({
-// //       userId: req.user.id,
-// //       discussionId: req.query.discussionId,
-// //     });
-
-// //     res.json({ posts });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
-
-// // // Upload file to S3
-// // router.get('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) => {
-// //   try {
-// //     const { fileName, fileType, prefix, bucket, acl = 'private' } = req.query;
-
-// //     const returnData = await signRequestForUpload({
-// //       fileName,
-// //       fileType,
-// //       prefix,
-// //       bucket,
-// //       user: req.user,
-// //       acl,
-// //     });
-
-// //     res.json(returnData);
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
-
-// // 6
-// // router.post('/user/update-profile', async (req, res, next) => {
-// //   try {
-// //     const { name, avatarUrl } = req.body;
-
-// //     const updatedUser = await User.updateProfile({
-// //       userId: req.user.id,
-// //       name,
-// //       avatarUrl,
-// //     });
-
-// //     res.json({ updatedUser });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
-
-// // router.post('/user/toggle-theme', async (req, res, next) => {
-// //   try {
-// //     const { darkTheme } = req.body;
-
-// //     await User.toggleTheme({ userId: req.user.id, darkTheme });
-
-// //     res.json({ done: 1 });
-// //   } catch (err) {
-// //     next(err);
-// //   }
-// // });
-
-// export default router;
+export default router;

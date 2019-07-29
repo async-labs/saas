@@ -57,12 +57,6 @@ async function insertTemplates() {
       `,
     },
     {
-      name: 'login',
-      subject: 'Login link for saas-app.async-await.com',
-      message: `
-        <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
-    },
-    {
       name: 'invitation',
       subject: 'You are invited to join a Team at async-await.com',
       message: `You've been invited to join <b><%= teamName%></b>.
@@ -77,6 +71,12 @@ async function insertTemplates() {
         <p>---</p>
         <p>View it at <a href="<%= discussionLink %>"><%= discussionLink %></a>.</p>
       `,
+    },
+    {
+      name: 'login',
+      subject: 'Login link for saas-app.async-await.com',
+      message: `
+        <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
     },
   ];
 

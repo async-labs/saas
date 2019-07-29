@@ -14,14 +14,13 @@ export default function routesWithSlug({ server, app }) {
     app.render(req, res, '/billing', { teamSlug });
   });
 
-  // 12
-  // server.get('/team/:teamSlug/discussions/:discussionSlug', (req, res) => {
-  //   const { teamSlug, discussionSlug } = req.params;
-  //   app.render(req, res, '/discussion', { teamSlug, discussionSlug });
-  // });
+  server.get('/team/:teamSlug/discussions/:discussionSlug', (req, res) => {
+    const { teamSlug, discussionSlug } = req.params;
+    app.render(req, res, '/discussion', { teamSlug, discussionSlug });
+  });
 
-  // server.get('/team/:teamSlug/discussions', (req, res) => {
-  //   const { teamSlug } = req.params;
-  //   app.render(req, res, '/discussion', { teamSlug });
-  // });
+  server.get('/team/:teamSlug/discussions', (req, res) => {
+    const { teamSlug } = req.params;
+    app.render(req, res, '/discussion', { teamSlug });
+  });
 }

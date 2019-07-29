@@ -1,25 +1,15 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/styles';
-
-// 5
-// import { Provider } from 'mobx-react';
-
+import { Provider } from 'mobx-react';
 import App, { Container } from 'next/app';
 import React from 'react';
 
 import { isMobile } from '../lib/isMobile';
-
-// 5
-// import { Store } from '../lib/store';
-
+import { Store } from '../lib/store';
 import { themeDark, themeLight } from '../lib/theme';
+import withStore from '../lib/withStore';
 
-// 5
-// import withStore from '../lib/withStore';
-
-class MyApp extends App<{ isMobile: boolean }> {
-// 5
-// class MyApp extends App<{ mobxStore: Store, isMobile: boolean }> {
+class MyApp extends App<{ mobxStore: Store, isMobile: boolean }> {
   public static async getInitialProps({ Component, ctx }) {
     const pageProps = { isMobile: isMobile({ req: ctx.req }) };
 
@@ -43,33 +33,24 @@ class MyApp extends App<{ isMobile: boolean }> {
   }
 
   public render() {
-    const { Component, pageProps } = this.props;
-
-    // 5
-    // const { Component, pageProps, mobxStore } = this.props;
+    const { Component, pageProps, mobxStore } = this.props;
 
     return (
       <Container>
         {/* ThemeProvider makes the theme available down the React
               tree thanks to React context. */}
         <ThemeProvider
-          theme={themeDark || themeLight}
-          // theme={mobxStore.currentUser && mobxStore.currentUser.darkTheme ? themeDark : themeLight}
+          theme={mobxStore.currentUser && mobxStore.currentUser.darkTheme ? themeDark : themeLight}
         >
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
+          <Provider store={mobxStore}>
             <Component {...pageProps} />
-          {/* 5 */}
-          {/* <Provider store={mobxStore}>
-            <Component {...pageProps} />
-          </Provider> */}
+          </Provider>
         </ThemeProvider>
       </Container>
     );
   }
 }
 
-export default MyApp;
-
-// 5
-// export default withStore(MyApp);
+export default withStore(MyApp);
