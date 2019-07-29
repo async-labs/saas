@@ -213,6 +213,11 @@ class PostEditor extends React.Component<MyProps, MyState> {
       renderer.link = (href, title, text) => {
         const t = title ? ` title="${title}"` : '';
 
+    if (text.startsWith('<code>@#')) {
+      return `${text.replace('<code>@#', '<code>@')} `;
+    }
+    
+
         if (text.startsWith('<code>@#')) {
           return `${text.replace('<code>@#', '<code>@')} `;
         }

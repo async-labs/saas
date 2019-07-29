@@ -217,6 +217,11 @@
 
 //       renderer.link = (href, title, text) => {
 //         const t = title ? ` title="${title}"` : '';
+
+    if (text.startsWith('<code>@#')) {
+      return `${text.replace('<code>@#', '<code>@')} `;
+    }
+    
 //         return `
 //           <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
 //             ${text}
