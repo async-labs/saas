@@ -338,7 +338,7 @@ Check out projects built with the code in this open source app. Feel free to add
 
 If you'd like to contribute, check our [todo list](https://github.com/async-labs/saas/issues/14) for features you can discuss and add. To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
 
-Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book).
+Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book), which teaches you how to build this project from scratch (currently available for [pre-order](https://builderbook.org/books/saas-boilerplate/introduction-project-structure) at 50% off).
 
 ## Team
 
