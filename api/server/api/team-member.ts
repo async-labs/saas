@@ -237,9 +237,9 @@ router.get('/posts/list', async (req, res, next) => {
 });
 
 // Upload file to S3
-router.get('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) => {
+router.post('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) => {
   try {
-    const { fileName, fileType, prefix, bucket, acl = 'private' } = req.query;
+    const { fileName, fileType, prefix, bucket, acl } = req.body;
 
     const returnData = await signRequestForUpload({
       fileName,
