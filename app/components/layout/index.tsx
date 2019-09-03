@@ -225,7 +225,7 @@ class Layout extends React.Component<MyProps> {
             </Grid>
           ) : null}
           <Grid item sm={10} xs={12}>
-          <div>
+            <div>
               {isMobile || store.currentUrl.includes('create-team') ? null : (
                 <React.Fragment>
                   <i
@@ -246,12 +246,36 @@ class Layout extends React.Component<MyProps> {
                   </i>
                 </React.Fragment>
               )}
+              {this.renderBookMention()}
               <div style={{ clear: 'both' }} />
             </div>
             {children}
           </Grid>
         </Grid>
       </ThemeWrapper>
+    );
+  }
+
+  private renderBookMention() {
+    const { isMobile } = this.props;
+
+    const style: any = {
+      padding: '10px',
+      textAlign: 'right',
+      fontSize: '12px',
+      position: 'absolute',
+      right: '20px',
+      display: isMobile ? 'none' : 'block',
+    };
+
+    return (
+      <div style={style}>
+        If you are building a SaaS business using this boilerplate, check up our{' '}
+        <a href="https://builderbook.org/book" target="_blank" rel="noopener noreferrer">
+          upcoming book
+        </a>
+        .
+      </div>
     );
   }
 
