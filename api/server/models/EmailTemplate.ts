@@ -34,24 +34,17 @@ async function insertTemplates() {
       message: `<%= userName %>,
         <p>
           Thanks for signing up on our <a href="https://github.com/async-labs/saas" target="blank">SaaS boilerplate</a>!
-         <br/>
-          Note that any data you save on the demo app will be deleted after 30 days.
         </p>
         <p>
-          We used our SaaS boilerplate to build
-          <a href="https://async-await.com" target="blank"> Async</a>,
-           a communication and project management tool for small teams of software engineers.
-        <br/>
-          <a href="https://app.async-await.com/signup" target="blank">Sign up</a>
-          at Async to check it out.
+          If you're learning how to build a SaaS web app, check out our 2 books:
+           <a href="https://builderbook.org" target="blank">Builder Book</a>
+           and
+           <a href="https://builderbook.org/book" target="blank">SaaS Boilerplate</a>.
         </p>
         <p>
-          If you're learning how to build your own SaaS web application, check out our
-          <a href="https://builderbook.org/book" target="blank"> book</a>.
-        </p>
-        <p>
-        If you want to hire us to customize or build features on top of our SaaS boilerplate, please fill out our
-        <a href="https://forms.gle/vaLHem6Ccmp3hics6" target="blank">form</a>.
+          Also check out
+          <a href="https://async-await.com" target="blank"> Async</a>
+          , our communication tool for small teams of software developers.
         </p>
         Kelly & Timur, Team Async
       `,

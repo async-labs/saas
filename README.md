@@ -2,8 +2,10 @@
 
 Open source web app that saves you weeks of work when building your own SaaS product.
 
-- The boilerplate app comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you are able to focus on features that differentiate your product.
-- We built this boilerplate for ourselves to focus more on what matters. We've used it to quickly launch [async](https://async-await.com), [builderbook](https://builderbook.org), and other real-world SaaS web apps.
+- The boilerplate comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you can focus on features that differentiate your product.
+- We've used this boilerplate to launch our own SaaS businesses:
+  - [Async](https://async-await.com) - communication tool for small teams of software developers
+  - [Builder Book](https://builderbook.org) - learn how to build full-stack web apps from scratch
 
 ## Live demo:
 
