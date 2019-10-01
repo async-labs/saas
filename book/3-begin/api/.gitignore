@@ -1,22 +1,21 @@
-# 4
-# *~
-# *.swp
-# tmp/
-# npm-debug.log
-# .DS_Store
+*~
+*.swp
+tmp/
+npm-debug.log
+.DS_Store
 
 
 
-# .build/*
-# .next
-# .vscode/
-# node_modules/
-# .coverage
-# .env
-# now.json
-# .note
+.build/*
+.next
+.vscode/
+node_modules/
+.coverage
+.env
+now.json
+.note
 
-# compiled/
-# production-server/
+compiled/
+production-server/
 
-# yarn-error.log
+yarn-error.log

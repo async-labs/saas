@@ -1,4 +1,0 @@
-dedicated-dev-M10-us-west-1-dbuser
-qnG8qXP1oA9noJFPJdajiDygqpvBUkUE1JvqbozK2i0etPDjv9
-
-mongodb://dedicated-dev-M10-us-west-1-dbuser:qnG8qXP1oA9noJFPJdajiDygqpvBUkUE1JvqbozK2i0etPDjv9@dedicated-dev-m10-us-west-1-shard-00-00-eoobe.mongodb.net:27017,dedicated-dev-m10-us-west-1-shard-00-01-eoobe.mongodb.net:27017,dedicated-dev-m10-us-west-1-shard-00-02-eoobe.mongodb.net:27017/saas-demo?ssl=true&replicaSet=dedicated-dev-M10-us-west-1-shard-0&authSource=admin&retryWrites=true
