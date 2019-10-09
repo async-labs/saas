@@ -14,14 +14,12 @@
     "typescript": "3.6.3"
   },
   "devDependencies": {
-    "@types/next": "8.0.6",
     "@types/node": "12.7.9",
     "@types/react": "16.9.4",
     "@types/react-dom": "16.9.1",
     "prettier": "^1.7.4",
     "prettier-tslint": "^0.4.2",
     "ts-node": "8.4.1",
-    "ts-node-dev": "^1.0.0-pre.40",
     "tslint": "5.20.0"
   }
 }
