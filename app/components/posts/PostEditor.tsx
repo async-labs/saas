@@ -29,7 +29,7 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
         resolve({ width: img.width, height: img.height });
       };
 
-      img.src = e.target.result;
+      img.src = e.target.result.toString();
     };
 
     reader.readAsDataURL(file);
@@ -51,16 +51,12 @@ type MyState = {
 };
 
 class PostEditor extends React.Component<MyProps, MyState> {
-  private textAreaRef;
-
   constructor(props) {
     super(props);
 
     this.state = {
       htmlContent: '',
     };
-
-    this.textAreaRef = React.createRef();
   }
 
   public render() {

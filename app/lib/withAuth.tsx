@@ -6,11 +6,11 @@ import * as NProgress from 'nprogress';
 import * as gtag from './gtag';
 import { getStore, Store } from './store';
 
-Router.onRouteChangeStart = () => {
+Router.events.on('routeChangeStart', () => {
   NProgress.start();
-};
+});
 
-Router.onRouteChangeComplete = url => {
+Router.events.on('routeChangeComplete', url => {
   NProgress.done();
   gtag.pageview(url);
 
@@ -18,9 +18,9 @@ Router.onRouteChangeComplete = url => {
   if (store) {
     store.changeCurrentUrl(url);
   }
-};
+});
 
-Router.onRouteChangeError = () => NProgress.done();
+Router.events.on('routeChangeError', () => NProgress.done());
 
 export default function withAuth(
   BaseComponent,
@@ -45,10 +45,7 @@ export default function withAuth(
         firstGridItem = false;
       }
 
-      const {
-        teamSlug,
-        discussionSlug,
-      } = query;
+      const { teamSlug, discussionSlug } = query;
 
       if (BaseComponent.getInitialProps) {
         baseComponentProps = await BaseComponent.getInitialProps(ctx);
