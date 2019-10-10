@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 // 10
 // import Link from 'next/link';
-import { SingletonRouter, withRouter } from 'next/router';
+import { NextRouter, withRouter } from 'next/router';
 import React from 'react';
 
 import { Store } from '../../lib/store';
@@ -77,7 +77,7 @@ type MyProps = {
   // 10
   // teamRequired?: boolean;
   store?: Store;
-  router?: SingletonRouter;
+  router: NextRouter;
   isMobile?: boolean;
 };
 
@@ -300,4 +300,4 @@ class Layout extends React.Component<MyProps> {
   // }
 }
 
-export default withRouter(observer(Layout));
+export default withRouter<MyProps>(observer(Layout));

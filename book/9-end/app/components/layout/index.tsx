@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import { observer } from 'mobx-react';
 import Link from 'next/link';
-import { SingletonRouter, withRouter } from 'next/router';
+import { NextRouter, withRouter } from 'next/router';
 import React from 'react';
 
 import { Store } from '../../lib/store';
@@ -71,7 +71,7 @@ type MyProps = {
   children: React.ReactNode;
   teamRequired?: boolean;
   store?: Store;
-  router?: SingletonRouter;
+  router: NextRouter;
   isMobile?: boolean;
 };
 
@@ -134,7 +134,7 @@ class Layout extends React.Component<MyProps> {
               <div style={styleNoTeamDiv}>
                 Select existing team or create a new team.
                 <p />
-                <Link prefetch href="/create-team">
+                <Link href="/create-team">
                   <Button variant="outlined" color="primary">
                     Create new team
                   </Button>
@@ -269,4 +269,4 @@ class Layout extends React.Component<MyProps> {
   }
 }
 
-export default withRouter(observer(Layout));
+export default withRouter<MyProps>(observer(Layout));
