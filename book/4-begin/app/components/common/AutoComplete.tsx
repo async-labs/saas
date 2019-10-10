@@ -73,8 +73,8 @@
 // class DownshiftMultiple extends React.Component<{
 //   classes: any;
 //   onChange: (selectedItems) => void;
-//   suggestions: [{ label: string; value: string }];
-//   selectedItems: [{ label: string; value: string }];
+//   suggestions: Array<{ label: string; value: string }>;
+//   selectedItems: Array<{ label: string; value: string }>;
 //   helperText: string;
 //   label: string;
 // }> {
@@ -209,20 +209,20 @@
 //   },
 //   container: {
 //     flexGrow: 1,
-//     position: 'relative',
+//     position: 'relative' as 'relative',
 //   },
 //   paper: {
-//     position: 'absolute',
+//     position: 'absolute' as 'absolute',
 //     zIndex: 1,
 //     marginTop: theme.spacing.unit,
 //     left: 0,
 //     right: 0,
 //   },
 //   chip: {
-//     margin: `${theme.spacing.unit / 2}px ${theme.spacing.unit / 4}px`,
+//     margin: `${theme.spacing(0.5)}px ${theme.spacing(0.25)}px`,
 //   },
 //   inputRoot: {
-//     flexWrap: 'wrap',
+//     flexWrap: 'wrap' as 'wrap',
 //   },
 // });
 

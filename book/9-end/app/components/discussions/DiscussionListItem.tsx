@@ -40,7 +40,6 @@
 //       >
 //         <li key={discussion._id} style={{ whiteSpace: 'nowrap', paddingRight: '10px' }}>
 //           <Link
-//             prefetch
 //             scroll={false}
 //             href={`/discussion?teamSlug=${team.slug}&discussionSlug=${discussion.slug}`}
 //             as={`/team/${team.slug}/discussions/${discussion.slug}`}

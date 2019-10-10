@@ -103,7 +103,7 @@
 //                 <InputLabel>Notification type</InputLabel>
 //                 <Select
 //                   value={this.state.notificationType}
-//                   onChange={event => {
+//                   onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
 //                     this.setState({ notificationType: event.target.value });
 //                   }}
 //                   required
@@ -219,22 +219,19 @@
 //         notificationType,
 //       });
 
-//       await discussion.addPost(content);
+//       const post = await discussion.addPost(content);
 
-//       // 14
-//       // const post = await discussion.addPost(content);
-
-//       // if (discussion.notificationType === 'email') {
-//       //   const userIdsForLambda = discussion.memberIds.filter(m => m !== discussion.createdUserId);
-//       //   console.log(discussion.notificationType, userIdsForLambda);
-//       //   await discussion.sendDataToLambdaApiMethod({
-//       //     discussionName: discussion.name,
-//       //     discussionLink: `${URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
-//       //     postContent: post.content,
-//       //     authorName: post.user.displayName,
-//       //     userIds: userIdsForLambda,
-//       //   });
-//       // }
+//       if (discussion.notificationType === 'email') {
+//         const userIdsForLambda = discussion.memberIds.filter(m => m !== discussion.createdUserId);
+//         console.log(discussion.notificationType, userIdsForLambda);
+//         await discussion.sendDataToLambdaApiMethod({
+//           discussionName: discussion.name,
+//           discussionLink: `${URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
+//           postContent: post.content,
+//           authorName: post.user.displayName,
+//           userIds: userIdsForLambda,
+//         });
+//       }
 
 //       this.setState({ name: '', memberIds: [], content: '' });
 //       notify('You successfully added new Discussion.');

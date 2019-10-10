@@ -86,7 +86,7 @@
 //               <InputLabel>Notification type</InputLabel>
 //               <Select
 //                 value={this.state.notificationType}
-//                 onChange={event => {
+//                 onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
 //                   this.setState({ notificationType: event.target.value });
 //                 }}
 //                 required

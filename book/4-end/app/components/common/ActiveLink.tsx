@@ -1,9 +1,24 @@
 // 12
 // import { inject, observer } from 'mobx-react';
 // import Link from 'next/link';
-// import { withRouter } from 'next/router';
 
-// const ActiveLink = ({ linkText, href, as, hasIcon, highlighterSlug, store }) => {
+// import { Store } from '../../lib/store';
+
+// const ActiveLink = ({
+//   linkText,
+//   href,
+//   as,
+//   hasIcon,
+//   highlighterSlug,
+//   store,
+// }: {
+//   store?: Store;
+//   linkText: string;
+//   href: string;
+//   as: string;
+//   hasIcon: boolean;
+//   highlighterSlug: string;
+// }) => {
 //   const selectedElement = store.currentUrl.includes(highlighterSlug);
 
 //   const styleAnchor = {
@@ -20,9 +35,8 @@
 
 //   const trimmingLength = 20;
 
-//   // TODO: solve TS warning
 //   return (
-//     <Link prefetch href={href} as={as}>
+//     <Link href={href} as={as}>
 //       <a
 //         // onClick={handleClick}
 //         style={hasIcon && selectedElement ? styleAnchorSelectedWithIcon : styleAnchor}
@@ -47,11 +61,4 @@
 //   );
 // };
 
-// export default withRouter<{
-//   linkText?: string;
-//   href?: string;
-//   as?: string;
-//   teamLogo?: string;
-//   hasIcon?: boolean;
-//   highlighterSlug?: string;
-// }>(inject('store')(observer(ActiveLink)));
+// export default inject('store')(observer(ActiveLink));
