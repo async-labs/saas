@@ -1,8 +1,6 @@
 const dotenv = require('dotenv');
 const fs = require('fs');
-const withTypescript = require('@zeit/next-typescript');
 const webpack = require('webpack');
-
 
 var current = { ...process.env };
 const result = dotenv.config();
@@ -18,21 +16,22 @@ try {
 }
 const rules = Object.keys(blueprint).reduce((obj, key) => {
   obj[`process.env.${key}`] = JSON.stringify(current[key]);
-  return obj
+  return obj;
 }, {});
 
 const config = {
   webpack: config => {
-    config.plugins = config.plugins || []
+    config.plugins = config.plugins || [];
 
     config.plugins = [
       ...config.plugins,
 
       // Read the .env file
-      new webpack.DefinePlugin(rules)
-    ]
+      new webpack.DefinePlugin(rules),
+    ];
 
-    return config
-  }
+    return config;
+  },
 };
-module.exports = withTypescript(config);
+
+module.exports = config;

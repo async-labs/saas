@@ -34,7 +34,6 @@ const ActiveLink = ({
 
   const trimmingLength = 20;
 
-  // TODO: solve TS warning
   return (
     <Link href={href} as={as}>
       <a

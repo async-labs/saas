@@ -1,6 +1,6 @@
-const dotenv = require("dotenv");
-const fs = require("fs");
-const webpack = require("webpack");
+const dotenv = require('dotenv');
+const fs = require('fs');
+const webpack = require('webpack');
 
 var current = { ...process.env };
 const result = dotenv.config();
@@ -10,7 +10,7 @@ if (!result.error) {
 
 var blueprint = { NODE_ENV: process.env.NODE_ENV };
 try {
-  blueprint = { ...blueprint, ...dotenv.parse(fs.readFileSync("./.env.blueprint", "utf8")) };
+  blueprint = { ...blueprint, ...dotenv.parse(fs.readFileSync('./.env.blueprint', 'utf8')) };
 } catch (err) {
   console.log(err);
 }
@@ -27,11 +27,11 @@ const config = {
       ...config.plugins,
 
       // Read the .env file
-      new webpack.DefinePlugin(rules)
+      new webpack.DefinePlugin(rules),
     ];
 
     return config;
-  }
+  },
 };
 
 module.exports = config;

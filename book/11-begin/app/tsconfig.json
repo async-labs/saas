@@ -16,7 +16,25 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types"],
-    "lib": ["dom", "es2015", "es2016"]
+    "lib": ["dom", "es2017"],
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
-  "exclude": ["production-server", ".next", "next.config.js"]
+  "include": [
+    "next-env.d.ts",
+    "./**/*.tsx",
+    "./**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "production-server",
+    ".next",
+    "out",
+    "next.config.js",
+    "node_modules"
+  ]
 }
