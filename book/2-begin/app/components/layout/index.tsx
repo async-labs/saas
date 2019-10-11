@@ -8,7 +8,7 @@
 
 // // 10
 // // import Link from 'next/link';
-// import { SingletonRouter, withRouter } from 'next/router';
+// import { NextRouter, withRouter } from 'next/router';
 // import React from 'react';
 
 // // 6
@@ -79,7 +79,7 @@
 
 //   // 6
 //   // store?: Store;
-//   router?: SingletonRouter;
+//   router: NextRouter;
 //   isMobile?: boolean;
 // };
 
@@ -154,7 +154,7 @@
 //     //           <div style={styleNoTeamDiv}>
 //     //             Select existing team or create a new team.
 //     //             <p />
-//     //             <Link prefetch href="/create-team">
+//     //             <Link href="/create-team">
 //     //               <Button variant="outlined" color="primary">
 //     //                 Create new team
 //     //               </Button>
@@ -220,7 +220,7 @@
 //                 </svg>
 //                 <MenuWithLinks options={menuOnTheRight()}>
 //                   <Avatar
-//                     src="https://storage.googleapis.com/async-await/default-user.png"
+//                     src={'https://storage.googleapis.com/async-await/default-user.png'}
 //                     // 6
 //                     // alt={`Logo of ${currentUser.displayName}`}
 //                     style={{
@@ -310,4 +310,4 @@
 //   // }
 // }
 
-// export default withRouter(observer(Layout));
+// export default withRouter<MyProps>(observer(Layout));
