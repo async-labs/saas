@@ -39,7 +39,7 @@
 //   return new Promise(resolve => {
 //     const reader = new FileReader();
 //     reader.onload = e => {
-//       img.src = e.target.result;
+//       img.src = e.target.result.toString();
 
 //       img.onload = resize(resolve);
 //     };
