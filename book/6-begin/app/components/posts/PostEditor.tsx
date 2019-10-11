@@ -30,7 +30,7 @@
 //         resolve({ width: img.width, height: img.height });
 //       };
 
-//       img.src = e.target.result;
+//       img.src = e.target.result.toString();
 //     };
 
 //     reader.readAsDataURL(file);
@@ -52,16 +52,12 @@
 // };
 
 // class PostEditor extends React.Component<MyProps, MyState> {
-//   private textAreaRef;
-
 //   constructor(props) {
 //     super(props);
 
 //     this.state = {
 //       htmlContent: '',
 //     };
-
-//     this.textAreaRef = React.createRef();
 //   }
 
 //   public render() {
@@ -130,76 +126,72 @@
 //           {htmlContent ? (
 //             <PostContent html={htmlContent} />
 //           ) : (
-//               <MentionsInput
-//                 style={{
-//                   input: {
-//                     border: 'none',
-//                     outline: 'none',
-//                     font: '16px Roboto',
-//                     color: isThemeDark ? '#fff' : '#000',
-//                     fontWeight: 300,
-//                     height: '100vh', // TODO: check on Mobile
-//                     lineHeight: '1.5em',
-//                     backgroundColor: content ? textareaBackgroundColor : 'transparent',
+//             <MentionsInput
+//               style={{
+//                 input: {
+//                   border: 'none',
+//                   outline: 'none',
+//                   font: '16px Roboto',
+//                   color: isThemeDark ? '#fff' : '#000',
+//                   fontWeight: 300,
+//                   height: '100vh', // TODO: check on Mobile
+//                   lineHeight: '1.5em',
+//                   backgroundColor: content ? textareaBackgroundColor : 'transparent',
+//                 },
+//                 suggestions: {
+//                   list: {
+//                     backgroundColor: '#222',
+//                     color: '#fff',
 //                   },
-//                   suggestions: {
-//                     list: {
-//                       backgroundColor: '#222',
-//                       color: '#fff',
-//                     },
 
-//                     item: {
-//                       padding: '5px 15px',
-//                       borderBottom: '1px solid rgba(0,0,0,0.15)',
+//                   item: {
+//                     padding: '5px 15px',
+//                     borderBottom: '1px solid rgba(0,0,0,0.15)',
 
-//                       '&focused': {
-//                         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-//                       },
+//                     '&focused': {
+//                       backgroundColor: 'rgba(255, 255, 255, 0.1)',
 //                     },
 //                   },
+//                 },
+//               }}
+//               autoFocus
+//               value={content}
+//               placeholder={this.props.placeholder ? this.props.placeholder : 'Compose new post'}
+//               onChange={event => {
+//                 this.props.onChanged(event.target.value);
+//               }}
+//             >
+//               <Mention
+//                 trigger="@"
+//                 data={membersMinusCurrentUser.map(u => ({
+//                   id: u.avatarUrl,
+//                   display: u.displayName,
+//                   you: u._id === currentUser._id ? true : false,
+//                 }))}
+//                 markup={'[`@#__display__`](__id__)'}
+//                 displayTransform={(_, display) => {
+//                   return `@${display}`;
 //                 }}
-//                 autoFocus
-//                 value={content}
-//                 placeholder={this.props.placeholder ? this.props.placeholder : 'Compose new post'}
-//                 markup={'[`__type__#__display__`](__id__)'}
-//                 displayTransform={(id, display, type) => {
-//                   if (type === '@') {
-//                     return `@${display}`;
-//                   }
-
-//                   return `[${display} ](${id})`;
-//                 }}
-//                 onChange={event => {
-//                   this.props.onChanged(event.target.value);
-//                 }}
-//               >
-//                 <Mention
-//                   trigger="@"
-//                   data={membersMinusCurrentUser.map(u => ({
-//                     id: u.avatarUrl,
-//                     display: u.displayName,
-//                     you: u._id === currentUser._id ? true : false,
-//                   }))}
-//                   renderSuggestion={suggestion => (
-//                     <React.Fragment>
-//                       <Avatar
-//                         role="presentation"
-//                         src={suggestion.id}
-//                         alt={suggestion.display}
-//                         style={{
-//                           width: '24px',
-//                           height: '24px',
-//                           marginRight: '10px',
-//                           display: 'inline-flex',
-//                           verticalAlign: 'middle',
-//                         }}
-//                       />
-//                       <span style={{ marginRight: '5px' }}>{suggestion.display}</span>
-//                     </React.Fragment>
-//                   )}
-//                 />
-//               </MentionsInput>
-//             )}
+//                 renderSuggestion={suggestion => (
+//                   <React.Fragment>
+//                     <Avatar
+//                       role="presentation"
+//                       src={suggestion.id}
+//                       alt={suggestion.display}
+//                       style={{
+//                         width: '24px',
+//                         height: '24px',
+//                         marginRight: '10px',
+//                         display: 'inline-flex',
+//                         verticalAlign: 'middle',
+//                       }}
+//                     />
+//                     <span style={{ marginRight: '5px' }}>{suggestion.display}</span>
+//                   </React.Fragment>
+//                 )}
+//               />
+//             </MentionsInput>
+//           )}
 //         </div>
 //       </div>
 //     );
@@ -218,10 +210,14 @@
 //       renderer.link = (href, title, text) => {
 //         const t = title ? ` title="${title}"` : '';
 
-    if (text.startsWith('<code>@#')) {
-      return `${text.replace('<code>@#', '<code>@')} `;
-    }
-    
+//         if (text.startsWith('<code>@#')) {
+//           return `${text.replace('<code>@#', '<code>@')} `;
+//         }
+
+//         if (text.startsWith('<code>@#')) {
+//           return `${text.replace('<code>@#', '<code>@')} `;
+//         }
+
 //         return `
 //           <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
 //             ${text}
@@ -271,6 +267,7 @@
 //       });
 
 //       let markdown;
+//       let fileUrl;
 
 //       if (file.type.startsWith('image/')) {
 //         const { width } = await getImageDimension(file);
@@ -281,35 +278,27 @@
 //           responseFromApiServerForUpload.signedRequest,
 //         );
 
-//         const imgSrc = responseFromApiServerForUpload.url;
+//         fileUrl = responseFromApiServerForUpload.url;
+
+//         console.log(fileUrl);
 
 //         const finalWidth = width > 768 ? '100%' : `${width}px`;
 
 //         markdown = `
-//         <div>
-//           <img style="max-width: ${finalWidth}; width:100%" src="${imgSrc}" alt="Async" class="s3-image" />
-//         </div>`;
-//       } else if (file.type === 'application/pdf') {
+//           <div>
+//             <img style="max-width: ${finalWidth}; width:100%" src="${fileUrl}" alt="Async" class="s3-image" />
+//           </div>`;
+//       } else {
 //         await uploadFileUsingSignedPutRequest(file, responseFromApiServerForUpload.signedRequest);
 
-//         const fileUrl = responseFromApiServerForUpload.url;
-
+//         fileUrl = responseFromApiServerForUpload.url;
 //         markdown = `[${file.name}](${fileUrl})`;
 //       }
 
-//       const editor = this.textAreaRef && this.textAreaRef.current;
-//       if (editor) {
-//         const startPos = editor.selectionStart;
-//         editor.value = `${editor.value.substring(0, startPos)}\n${markdown.replace(
-//           /\s+/g,
-//           ' ',
-//         )}${editor.value.substring(startPos, editor.value.length)}`;
+//       const content = `${this.props.content}\n${markdown.replace(/\s+/g, ' ')}`;
 
-//         this.props.onChanged(editor.value);
-//       }
+//       this.props.onChanged(content);
 
-//       // TODO: delete image if image is added but Post is not saved
-//       //       see more on Github's issue
 //       NProgress.done();
 //       notify('You successfully uploaded file.');
 //     } catch (error) {
