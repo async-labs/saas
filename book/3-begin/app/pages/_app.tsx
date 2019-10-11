@@ -4,7 +4,7 @@ import { ThemeProvider } from '@material-ui/styles';
 // 5
 // import { Provider } from 'mobx-react';
 
-import App, { Container } from 'next/app';
+import App from 'next/app';
 import React from 'react';
 
 import { isMobile } from '../lib/isMobile';
@@ -18,8 +18,8 @@ import { themeDark, themeLight } from '../lib/theme';
 // import withStore from '../lib/withStore';
 
 class MyApp extends App<{ isMobile: boolean }> {
-// 5
-// class MyApp extends App<{ mobxStore: Store, isMobile: boolean }> {
+  // 5
+  // class MyApp extends App<{ mobxStore: Store, isMobile: boolean }> {
   public static async getInitialProps({ Component, ctx }) {
     const pageProps = { isMobile: isMobile({ req: ctx.req }) };
 
@@ -49,22 +49,19 @@ class MyApp extends App<{ isMobile: boolean }> {
     // const { Component, pageProps, mobxStore } = this.props;
 
     return (
-      <Container>
-        {/* ThemeProvider makes the theme available down the React
-              tree thanks to React context. */}
-        <ThemeProvider
-          theme={themeDark || themeLight}
-          // theme={mobxStore.currentUser && mobxStore.currentUser.darkTheme ? themeDark : themeLight}
-        >
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
-            <Component {...pageProps} />
-          {/* 5 */}
-          {/* <Provider store={mobxStore}>
-            <Component {...pageProps} />
-          </Provider> */}
-        </ThemeProvider>
-      </Container>
+      <ThemeProvider
+        theme={themeDark || themeLight}
+        // theme={mobxStore.currentUser && mobxStore.currentUser.darkTheme ? themeDark : themeLight}
+      >
+        {/* ThemeProvider makes the theme available down the React tree thanks to React context. */}
+        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+        <CssBaseline />
+        <Component {...pageProps} />
+        {/* 5 */}
+        {/* <Provider store={mobxStore}>
+          <Component {...pageProps} />
+        </Provider> */}
+      </ThemeProvider>
     );
   }
 }
