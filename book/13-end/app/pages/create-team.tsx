@@ -21,7 +21,7 @@ const styleGrid = {
   height: '100%',
 };
 
-type MyProps = { store: Store; isTL: boolean; isMobile: boolean; };
+type MyProps = { store: Store; isTL: boolean; isMobile: boolean };
 
 class CreateTeam extends React.Component<MyProps> {
   public state = {
@@ -40,7 +40,7 @@ class CreateTeam extends React.Component<MyProps> {
       return;
     }
 
-    const file = document.getElementById('upload-file').files[0];
+    const file = (document.getElementById('upload-file') as HTMLFormElement).files[0];
 
     try {
       this.setState({ disabled: true });
@@ -80,7 +80,7 @@ class CreateTeam extends React.Component<MyProps> {
         newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
       });
 
-      document.getElementById('upload-file').value = '';
+      (document.getElementById('upload-file') as HTMLFormElement).value = '';
 
       Router.push(`/team/${team.slug}/team-settings`);
 
@@ -94,7 +94,7 @@ class CreateTeam extends React.Component<MyProps> {
   };
 
   public previewAvatar = () => {
-    const file = document.getElementById('upload-file').files[0];
+    const file = (document.getElementById('upload-file') as HTMLFormElement).files[0];
     if (!file) {
       return;
     }
@@ -119,7 +119,12 @@ class CreateTeam extends React.Component<MyProps> {
         </Head>
         <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
           <Grid container style={styleGrid}>
-            <Grid item sm={12} xs={12} style={{ padding: this.props.isMobile ? '0px' : '0px 30px' }}>
+            <Grid
+              item
+              sm={12}
+              xs={12}
+              style={{ padding: this.props.isMobile ? '0px' : '0px 30px' }}
+            >
               <h3>Create team</h3>
               <p />
               <form onSubmit={this.onSubmit}>
