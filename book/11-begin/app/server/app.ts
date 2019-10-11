@@ -1,9 +1,9 @@
 import './env';
 
-import * as express from 'express';
-import * as helmet from 'helmet';
+import express from 'express';
+import helmet from 'helmet';
 import * as mobxReact from 'mobx-react';
-import * as next from 'next';
+import next from 'next';
 import * as path from 'path';
 
 import { getUser } from '../lib/api/public';
@@ -58,14 +58,9 @@ app.prepare().then(() => {
     if (req.user) {
       if (!req.user.isAdmin && !req.user.defaultTeamSlug) {
         redirectUrl = 'create-team';
+      } else {
+        redirectUrl = `team/${req.user.defaultTeamSlug}/discussions`;
       }
-
-      // 12
-      // if (!req.user.isAdmin && !req.user.defaultTeamSlug) {
-      //   redirectUrl = 'create-team';
-      // } else {
-      //   redirectUrl = `team/${req.user.defaultTeamSlug}/discussions`;
-      // }
     }
 
     res.redirect(`${URL_APP}/${redirectUrl}`);
