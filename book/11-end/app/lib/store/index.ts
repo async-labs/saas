@@ -2,7 +2,7 @@ import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
 
 // 13
-// import * as io from 'socket.io-client';
+// import io from 'socket.io-client';
 
 import { addTeam } from '../api/team-leader';
 import { getTeamList } from '../api/team-member';
@@ -36,14 +36,14 @@ class Store {
 
   constructor({
     initialState = {},
-    isServer,
     // 13
     // socket = null,
+    isServer,
   }: {
     initialState?: any;
-    isServer: boolean;
     // 13
     // socket?: SocketIOClient.Socket;
+    isServer: boolean;
   }) {
     this.isServer = !!isServer;
 

@@ -1,6 +1,6 @@
 import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
-import * as io from 'socket.io-client';
+import io from 'socket.io-client';
 
 import { addTeam } from '../api/team-leader';
 import { getTeamList } from '../api/team-member';

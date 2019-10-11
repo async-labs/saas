@@ -5,7 +5,7 @@ import { action, decorate, observable, runInAction } from 'mobx';
 // import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
 
 // 13
-// import * as io from 'socket.io-client';
+// import io from 'socket.io-client';
 
 // 10
 // import { addTeam } from '../api/team-leader';
@@ -42,14 +42,14 @@ class Store {
 
   constructor({
     initialState = {},
-    isServer,
     // 13
     // socket = null,
+    isServer,
   }: {
     initialState?: any;
-    isServer: boolean;
     // 13
     // socket?: SocketIOClient.Socket;
+    isServer: boolean;
   }) {
     this.isServer = !!isServer;
 
