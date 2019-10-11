@@ -6,11 +6,11 @@ import * as NProgress from 'nprogress';
 import * as gtag from './gtag';
 import { getStore, Store } from './store';
 
-Router.onRouteChangeStart = () => {
+Router.events.on('routeChangeStart', () => {
   NProgress.start();
-};
+});
 
-Router.onRouteChangeComplete = url => {
+Router.events.on('routeChangeComplete', url => {
   NProgress.done();
   gtag.pageview(url);
 
@@ -18,9 +18,9 @@ Router.onRouteChangeComplete = url => {
   if (store) {
     store.changeCurrentUrl(url);
   }
-};
+});
 
-Router.onRouteChangeError = () => NProgress.done();
+Router.events.on('routeChangeError', () => NProgress.done());
 
 export default function withAuth(
   BaseComponent,
@@ -30,8 +30,7 @@ export default function withAuth(
 
   class WithAuth extends React.Component<{ store: Store }> {
     public static async getInitialProps(ctx) {
-
-      const { req, pathname, query } = ctx;
+      const { query, req, pathname } = ctx;
 
       let baseComponentProps = {};
 

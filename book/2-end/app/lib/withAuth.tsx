@@ -7,11 +7,11 @@
 // import * as gtag from './gtag';
 // import { getStore, Store } from './store';
 
-// Router.onRouteChangeStart = () => {
+// Router.events.on('routeChangeStart', () => {
 //   NProgress.start();
-// };
+// });
 
-// Router.onRouteChangeComplete = url => {
+// Router.events.on('routeChangeComplete', url => {
 //   NProgress.done();
 //   gtag.pageview(url);
 
@@ -19,9 +19,9 @@
 //   if (store) {
 //     store.changeCurrentUrl(url);
 //   }
-// };
+// });
 
-// Router.onRouteChangeError = () => NProgress.done();
+// Router.events.on('routeChangeError', () => NProgress.done());
 
 // export default function withAuth(
 //   BaseComponent,
@@ -36,7 +36,7 @@
 //       const { req, pathname } = ctx;
 
 //       // 10
-//       // const { req, pathname, query } = ctx;
+//       // const { query, req, pathname } = ctx;
 
 //       let baseComponentProps = {};
 
