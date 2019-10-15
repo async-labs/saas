@@ -64,10 +64,9 @@ export const deletePost = data =>
 
 // Uploading file to S3
 
-export const getSignedRequestForUpload = ({ file, prefix, bucket, acl = 'private' }) =>
+export const getSignedRequestForUpload = ({ file, prefix, bucket, acl = 'public-read' }) =>
   sendRequestAndGetResponse(`${BASE_PATH}/aws/get-signed-request-for-upload-to-s3`, {
-    method: 'GET',
-    qs: { fileName: file.name, fileType: file.type, prefix, bucket, acl },
+    body: JSON.stringify({ fileName: file.name, fileType: file.type, prefix, bucket, acl }),
   });
 
 export const uploadFileUsingSignedPutRequest = (file, signedRequest, headers = {}) =>

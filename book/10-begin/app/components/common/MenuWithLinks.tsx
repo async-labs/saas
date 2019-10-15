@@ -48,7 +48,11 @@ class MenuWithLinks extends React.PureComponent<{
             ) : (
               <MenuItem
                 onClick={() => {
-                  Router.push(option.href, option.as || option.href);
+                  if (option.external) {
+                    window.location.href = option.href;
+                  } else {
+                    Router.push(option.href, option.as || option.href);
+                  }
                   this.handleClose();
                 }}
                 key={option.href}

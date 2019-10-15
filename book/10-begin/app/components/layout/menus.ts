@@ -30,6 +30,7 @@ const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
     href: `${URL_API}/logout`,
     as: `${URL_API}/logout`,
     simple: true,
+    external: true,
   },
 ];
 

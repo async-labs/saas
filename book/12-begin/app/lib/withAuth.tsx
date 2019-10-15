@@ -74,9 +74,6 @@ export default function withAuth(
       let redirectUrl = '/login';
       let asUrl = '/login';
       if (user) {
-        redirectUrl = '/your-settings';
-        asUrl = '/your-settings';
-
         if (!user.defaultTeamSlug) {
           redirectUrl = '/create-team';
           asUrl = '/create-team';

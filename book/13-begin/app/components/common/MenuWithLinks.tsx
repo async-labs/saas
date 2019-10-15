@@ -42,41 +42,44 @@ class MenuWithLinks extends React.PureComponent<{
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          {options.map(
-            (option, i) =>
-              option.separator ? (
-                <hr style={{ width: '85%', margin: '10px auto' }} key={`separated-${i}`} />
-              ) : (
-                <MenuItem
-                  onClick={() => {
+          {options.map((option, i) =>
+            option.separator ? (
+              <hr style={{ width: '85%', margin: '10px auto' }} key={`separated-${i}`} />
+            ) : (
+              <MenuItem
+                onClick={() => {
+                  if (option.external) {
+                    window.location.href = option.href;
+                  } else {
                     Router.push(option.href, option.as || option.href);
-                    this.handleClose();
-                  }}
-                  key={option.href}
-                  style={{
-                    fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
-                    fontSize: '14px',
-                  }}
-                >
-                  {option.avatarUrl ? (
-                    <Avatar
-                      src={`${option.avatarUrl ||
-                        'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
-                      alt="Team logo"
-                      style={{
-                        margin: '0px 10px 0px 0px',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        height: '32px',
-                        width: '32px',
-                        verticalAlign: 'middle',
-                      }}
-                    />
-                  ) : null}
+                  }
+                  this.handleClose();
+                }}
+                key={option.href}
+                style={{
+                  fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
+                  fontSize: '14px',
+                }}
+              >
+                {option.avatarUrl ? (
+                  <Avatar
+                    src={`${option.avatarUrl ||
+                      'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
+                    alt="Team logo"
+                    style={{
+                      margin: '0px 10px 0px 0px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      height: '32px',
+                      width: '32px',
+                      verticalAlign: 'middle',
+                    }}
+                  />
+                ) : null}
 
-                  {option.text}
-                </MenuItem>
-              ),
+                {option.text}
+              </MenuItem>
+            ),
           )}
         </Menu>
       </div>
