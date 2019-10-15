@@ -8,11 +8,9 @@
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "eslint.autoFixOnSave": true,
-  "prettier.eslintIntegration": true,
   "typescript.updateImportsOnFileMove.enabled": "never",
   "tslint.enable": true,
   "tslint.autoFixOnSave": true,
-  "prettier.tslintIntegration": true,
   "search.exclude": {
     "**/node_modules": true,
     "**/production-server": true,

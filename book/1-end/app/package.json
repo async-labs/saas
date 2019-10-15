@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "next",
-    "build": "next build"
+    "build": "next build",
+    "lint": "tslint -p tsconfig.json"
   },
   "dependencies": {
     "dotenv": "^8.1.0",
@@ -17,7 +18,7 @@
     "@types/node": "12.7.9",
     "@types/react": "16.9.4",
     "@types/react-dom": "16.9.1",
-    "prettier": "^1.7.4",
+    "prettier": "^1.18.2",
     "prettier-tslint": "^0.4.2",
     "tslint": "5.20.0"
   }

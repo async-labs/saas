@@ -10,7 +10,14 @@
     "interface-over-type-literal": false,
     "semicolon": [true, "always", "strict-bound-class-methods"],
     "variable-name": [true, "ban-keywords"],
-    "object-literal-key-quotes": [true, "as-needed"]
+    "object-literal-key-quotes": [true, "as-needed"],
+    "max-line-length": [
+      true,
+      {
+        "limit": 120,
+        "ignore-pattern": "^import |^export {(.*?)}"
+      }
+    ]
   },
   "rulesDirectory": []
 }
