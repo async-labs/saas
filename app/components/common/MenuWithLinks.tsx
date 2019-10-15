@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { SingletonRouter, withRouter } from 'next/router';
+import { NextRouter, withRouter } from 'next/router';
 import Router from 'next/router';
 import React from 'react';
 
@@ -9,7 +9,7 @@ class MenuWithLinks extends React.PureComponent<{
   src?: string;
   alt?: string;
   options: any[];
-  router: SingletonRouter;
+  router: NextRouter;
 }> {
   public state = {
     anchorEl: null,
