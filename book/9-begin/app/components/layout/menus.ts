@@ -3,9 +3,9 @@
 
 import { URL_API } from '../../lib/consts';
 
-const menuOnTheRight = () => [
 // 10
 // const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
+const menuOnTheRight = () => [
   {
     text: 'Your Settings',
     href: '/your-settings',
@@ -35,6 +35,7 @@ const menuOnTheRight = () => [
     href: `${URL_API}/logout`,
     as: `${URL_API}/logout`,
     simple: true,
+    external: true,
   },
 ];
 
