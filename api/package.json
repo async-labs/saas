@@ -77,7 +77,7 @@
     "@types/passport": "1.0.0",
     "@types/request": "^2.48.1",
     "@types/socket.io": "^2.1.2",
-    "@types/stripe": "6.30.5",
+    "@types/stripe": "6.31.4",
     "husky": "2.7.0",
     "jest": "24.8.0",
     "mockingoose": "^2.13.1",
