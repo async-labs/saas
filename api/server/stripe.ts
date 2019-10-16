@@ -46,7 +46,7 @@ function cancelSubscription({ subscriptionId }) {
 function retrieveCard({ customerId, cardId }) {
   logger.debug(customerId);
   logger.debug(cardId);
-  return stripeInstance.customers.retrieveCard(customerId, cardId);
+  return stripeInstance.customers.retrieveSource(customerId, cardId);
 }
 
 function createNewCard({ customerId, token }) {
