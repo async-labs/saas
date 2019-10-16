@@ -19,7 +19,6 @@
     "@types/react-dom": "16.9.1",
     "prettier": "^1.7.4",
     "prettier-tslint": "^0.4.2",
-    "ts-node": "8.4.1",
     "tslint": "5.20.0"
   }
 }
