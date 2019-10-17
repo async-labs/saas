@@ -47,7 +47,7 @@
 // function retrieveCard({ customerId, cardId }) {
 //   logger.debug(customerId);
 //   logger.debug(cardId);
-//   return stripeInstance.customers.retrieveCard(customerId, cardId);
+//   return stripeInstance.customers.retrieveSource(customerId, cardId);
 // }
 
 // function createNewCard({ customerId, token }) {
@@ -95,7 +95,7 @@
 
 // function getListOfInvoices({ customerId }) {
 //   logger.debug('getting list of invoices for customer', customerId);
-//   return stripeInstance.invoices.list({ customer: customerId });
+//   return stripeInstance.invoices.list({ customer: customerId, limit: 100 });
 // }
 
 // export {
