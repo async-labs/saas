@@ -1,5 +1,5 @@
 import { ServerStyleSheets } from '@material-ui/styles';
-import Document, { Head, Main, NextScript } from 'next/document';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
 
 import { GA_TRACKING_ID } from '../lib/consts';
@@ -30,7 +30,7 @@ class MyDocument extends Document {
       this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
 
     return (
-      <html lang="en">
+      <Html lang="en">
         <Head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -135,7 +135,7 @@ class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     );
   }
 
