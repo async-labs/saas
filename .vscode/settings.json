@@ -15,4 +15,5 @@
     "**/.next": true,
     "**/.coverage": true
   },
+  "eslint.autoFixOnSave": true
 }
