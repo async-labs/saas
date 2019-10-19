@@ -20,7 +20,7 @@ const rules = Object.keys(blueprint).reduce((obj, key) => {
 }, {});
 
 const config = {
-  webpack: config => {
+  webpack: (config) => {
     config.plugins = config.plugins || [];
 
     config.plugins = [

@@ -3,7 +3,6 @@
   "files.autoSave": "afterDelay",
   "git.enableSmartCommit": true,
   "git.autofetch": true,
-  "editor.formatOnSave": true,
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
@@ -15,11 +14,18 @@
     "**/.next": true,
     "**/.coverage": true
   },
+  "editor.formatOnSave": true,
   "eslint.autoFixOnSave": true,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
-    { "language": "typescript", "autoFix": true },
-    { "language": "typescriptreact", "autoFix": true }
+    {
+      "autoFix": true,
+      "language": "typescript"
+    },
+    {
+      "autoFix": true,
+      "language": "typescriptreact"
+    }
   ]
 }

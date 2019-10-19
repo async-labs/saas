@@ -1,17 +1,21 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'react', 'prettier'],
   extends: [
     'airbnb',
-    'plugin:@typescript-eslint/recommended',
     'prettier',
+    'prettier/react',
     'prettier/@typescript-eslint',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
   env: {
+    es6: true,
     browser: true,
     jest: true,
   },
-  plugins: ['react', 'jsx-a11y', 'import', 'prettier'],
   rules: {
+    'prettier/prettier': 'error',
     'max-len': ['error', 100],
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
     'no-mixed-operators': 'off',
@@ -34,20 +38,9 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'react/react-in-jsx-scope': 'off',
-    'react/jsx-filename-extension': [
-      'error',
-      {
-        extensions: ['.js'],
-      },
-    ],
-    'prettier/prettier': [
-      'error',
-      {
-        trailingComma: 'all',
-        arrowParens: 'always',
-        printWidth: 100,
-        semi: true,
-      },
-    ],
+    'react/jsx-filename-extension': [1, { extensions: ['tsx'] }],
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-member-accessibility': 'off',
   },
+  overrides: [],
 };
