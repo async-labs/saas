@@ -1,46 +1,25 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'react', 'prettier'],
-  extends: [
-    'airbnb',
-    'prettier',
-    'prettier/react',
-    'prettier/@typescript-eslint',
-    'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended',
-  ],
+  parser: "@typescript-eslint/parser",
+  extends: ["plugin:@typescript-eslint/recommended", "prettier"],
   env: {
-    es6: true,
-    browser: true,
-    jest: true,
+    "es6": true,
+    "node": true
   },
   rules: {
-    'prettier/prettier': 'error',
-    'max-len': ['error', 100],
-    'no-underscore-dangle': ['error', { allow: ['_id'] }],
-    'no-mixed-operators': 'off',
-    'prefer-destructuring': [
+    'prettier/prettier': [
       'error',
       {
-        VariableDeclarator: {
-          array: false,
-          object: true,
-        },
-        AssignmentExpression: {
-          array: true,
-          object: false,
-        },
-      },
-      {
-        enforceForRenamedProperties: false,
+        singleQuote: true,
+        trailingComma: 'all',
+        arrowParens: 'always',
+        printWidth: 100,
+        semi: true
       },
     ],
-    'import/prefer-default-export': 'off',
-    'jsx-a11y/anchor-is-valid': 'off',
-    'react/react-in-jsx-scope': 'off',
-    'react/jsx-filename-extension': [1, { extensions: ['tsx'] }],
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-member-accessibility': 'off',
-  },
-  overrides: [],
-};
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off'
+ },
+  plugins: [
+    "prettier"
+  ]
+}

@@ -14,18 +14,18 @@
     "**/.next": true,
     "**/.coverage": true
   },
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
+  "eslint.enable": true,
+  "eslint.alwaysShowStatus": true,
   "eslint.autoFixOnSave": true,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
-    {
-      "autoFix": true,
-      "language": "typescript"
-    },
-    {
-      "autoFix": true,
-      "language": "typescriptreact"
-    }
-  ]
+    { "language": "typescript", "autoFix": true },
+    { "language": "typescriptreact", "autoFix": true }
+  ],
+  "eslint.workingDirectories": [
+		{ "directory": "./book/1-end/app", "changeProcessCWD": true },
+	]
 }
