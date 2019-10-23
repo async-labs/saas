@@ -25,7 +25,7 @@ const styleLineSeparator = {
   opacity: 0.75,
 };
 
-const getMenuOptions = post => ({
+const getMenuOptions = (post) => ({
   dataId: post._id,
   id: `post-menu-${post._id}`,
 });
@@ -81,7 +81,7 @@ class PostDetail extends React.Component<{
     confirm({
       title: 'Are you sure?',
       message: '',
-      onAnswer: async answer => {
+      onAnswer: async (answer) => {
         if (answer) {
           const { post } = this.props;
           await post.discussion.deletePost(post);
@@ -121,7 +121,9 @@ class PostDetail extends React.Component<{
   }
 
   public renderPostDetail(post: Post, isMobile) {
-    const createdDate = moment(post.createdAt).local().format('MMM Do YYYY');
+    const createdDate = moment(post.createdAt)
+      .local()
+      .format('MMM Do YYYY');
     const lastEditedDate = moment(post.lastUpdatedAt).fromNow();
     return (
       <React.Fragment>

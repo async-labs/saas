@@ -39,10 +39,14 @@ const mongoSchema = new mongoose.Schema({
   stripeSubscription: {
     id: String,
     object: String,
+    // eslint-disable-next-line
     application_fee_percent: Number,
     billing: String,
+    // eslint-disable-next-line
     cancel_at_period_end: Boolean,
+    // eslint-disable-next-line
     billing_cycle_anchor: Number,
+    // eslint-disable-next-line
     canceled_at: Number,
     created: Number,
   },
@@ -52,7 +56,7 @@ const mongoSchema = new mongoose.Schema({
   },
 });
 
-interface ITeamDocument extends mongoose.Document {
+interface TeamDocument extends mongoose.Document {
   teamLeaderId: string;
   name: string;
   slug: string;
@@ -75,56 +79,49 @@ interface ITeamDocument extends mongoose.Document {
   isPaymentFailed: boolean;
 }
 
-interface ITeamModel extends mongoose.Model<ITeamDocument> {
-  add({
-    name,
-    userId,
-  }: {
-  userId: string;
-  name: string;
-  avatarUrl: string;
-  }): Promise<ITeamDocument>;
+interface TeamModel extends mongoose.Model<TeamDocument> {
+  add({ name, userId }: { userId: string; name: string; avatarUrl: string }): Promise<TeamDocument>;
   updateTeam({
     userId,
     teamId,
     name,
     avatarUrl,
   }: {
-  userId: string;
-  teamId: string;
-  name: string;
-  avatarUrl: string;
-  }): Promise<ITeamDocument>;
-  findBySlug(slug: string): Promise<ITeamDocument>;
-  getList(userId: string): Promise<ITeamDocument[]>;
+    userId: string;
+    teamId: string;
+    name: string;
+    avatarUrl: string;
+  }): Promise<TeamDocument>;
+  findBySlug(slug: string): Promise<TeamDocument>;
+  getList(userId: string): Promise<TeamDocument[]>;
   removeMember({
     teamId,
     teamLeaderId,
     userId,
   }: {
-  teamId: string;
-  teamLeaderId: string;
-  userId: string;
+    teamId: string;
+    teamLeaderId: string;
+    userId: string;
   }): Promise<void>;
   subscribeTeam({
     teamLeaderId,
     teamId,
   }: {
-  teamLeaderId: string;
-  teamId: string;
-  }): Promise<ITeamDocument>;
+    teamLeaderId: string;
+    teamId: string;
+  }): Promise<TeamDocument>;
   cancelSubscription({
     teamLeaderId,
     teamId,
   }: {
-  teamLeaderId: string;
-  teamId: string;
-  }): Promise<ITeamDocument>;
+    teamLeaderId: string;
+    teamId: string;
+  }): Promise<TeamDocument>;
   cancelSubscriptionAfterFailedPayment({
     subscriptionId,
   }: {
-  subscriptionId: string;
-  }): Promise<ITeamDocument>;
+    subscriptionId: string;
+  }): Promise<TeamDocument>;
 }
 
 class TeamClass extends mongoose.Model {
@@ -156,9 +153,7 @@ class TeamClass extends mongoose.Model {
     return team;
   }
 
-  public static async updateTeam({
-    userId, teamId, name, avatarUrl,
-  }) {
+  public static async updateTeam({ userId, teamId, name, avatarUrl }) {
     const team = await this.findById(teamId, 'slug name defaultTeam teamLeaderId');
 
     if (!team) {
@@ -241,7 +236,9 @@ class TeamClass extends mongoose.Model {
   }
 
   public static async cancelSubscription({ teamLeaderId, teamId }) {
-    const team = await this.findById(teamId).select('teamLeaderId isSubscriptionActive stripeSubscription');
+    const team = await this.findById(teamId).select(
+      'teamLeaderId isSubscriptionActive stripeSubscription',
+    );
 
     if (team.teamLeaderId !== teamLeaderId) {
       throw new Error('You do not have permission to subscribe Team.');
@@ -268,6 +265,7 @@ class TeamClass extends mongoose.Model {
   }
 
   public static async cancelSubscriptionAfterFailedPayment({ subscriptionId }) {
+    // eslint-disable-next-line
     const team: any = await this.find({ 'stripeSubscription.id': subscriptionId })
       .select('teamLeaderId isSubscriptionActive stripeSubscription isPaymentFailed')
       .setOptions({ lean: true });
@@ -296,6 +294,6 @@ class TeamClass extends mongoose.Model {
 
 mongoSchema.loadClass(TeamClass);
 
-const Team = mongoose.model<ITeamDocument, ITeamModel>('Team', mongoSchema);
+const Team = mongoose.model<TeamDocument, TeamModel>('Team', mongoSchema);
 
 export default Team;

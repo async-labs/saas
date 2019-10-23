@@ -9,7 +9,7 @@
     "start": "node production-server/server/app.js",
     "now": "now && now alias",
     "now-rm": "now rm saas-app --safe --yes",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint . --ext .ts,.tsx",
     "test": "jest --coverage --passWithNoTests",
     "processes-3000": "ss -lptn 'sport = :3000'",
     "processes-node": "ps -e|grep node",

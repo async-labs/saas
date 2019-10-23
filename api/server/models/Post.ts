@@ -15,11 +15,11 @@ import Team from './Team';
 
 mongoose.set('useFindAndModify', false);
 
-function deletePostFiles(posts: IPostDocument[]) {
+function deletePostFiles(posts: PostDocument[]) {
   const imgRegEx = /\<img.+data-src=[\"|\'](.+?)[\"|\']/g;
   const files: { [key: string]: string[] } = {};
 
-  posts.forEach(post => {
+  posts.forEach((post) => {
     let res = imgRegEx.exec(post.content);
 
     while (res) {
@@ -39,9 +39,9 @@ function deletePostFiles(posts: IPostDocument[]) {
     }
   });
 
-  Object.keys(files).forEach(bucket => {
-    chunk(files[bucket], 1000).forEach(fileList =>
-      deleteFiles(bucket, fileList).catch(err => logger.error(err)),
+  Object.keys(files).forEach((bucket) => {
+    chunk(files[bucket], 1000).forEach((fileList) =>
+      deleteFiles(bucket, fileList).catch((err) => logger.error(err)),
     );
   });
 }
@@ -109,7 +109,7 @@ function markdownToHtml(content) {
   return marked(he.decode(content));
 }
 
-interface IPostDocument extends mongoose.Document {
+interface PostDocument extends mongoose.Document {
   createdUserId: string;
   discussionId: string;
   content: string;
@@ -118,14 +118,14 @@ interface IPostDocument extends mongoose.Document {
   lastUpdatedAt: Date;
 }
 
-interface IPostModel extends mongoose.Model<IPostDocument> {
+interface PostModel extends mongoose.Model<PostDocument> {
   getList({
     userId,
     discussionId,
   }: {
     userId: string;
     discussionId: string;
-  }): Promise<IPostDocument[]>;
+  }): Promise<PostDocument[]>;
 
   add({
     content,
@@ -135,7 +135,7 @@ interface IPostModel extends mongoose.Model<IPostDocument> {
     content: string;
     userId: string;
     discussionId: string;
-  }): Promise<IPostDocument>;
+  }): Promise<PostDocument>;
 
   edit({
     content,
@@ -145,7 +145,7 @@ interface IPostModel extends mongoose.Model<IPostDocument> {
     content: string;
     userId: string;
     id: string;
-  }): Promise<IPostDocument>;
+  }): Promise<PostDocument>;
 
   uploadFile({
     userId,
@@ -166,6 +166,7 @@ class PostClass extends mongoose.Model {
   public static async getList({ userId, discussionId }) {
     await this.checkPermission({ userId, discussionId });
 
+    // eslint-disable-next-line
     const filter: any = { discussionId };
 
     return this.find(filter).sort({ createdAt: 1 });
@@ -264,7 +265,7 @@ class PostClass extends mongoose.Model {
 
 mongoSchema.loadClass(PostClass);
 
-const Post = mongoose.model<IPostDocument, IPostModel>('Post', mongoSchema);
+const Post = mongoose.model<PostDocument, PostModel>('Post', mongoSchema);
 
 export default Post;
-export { IPostDocument, deletePostFiles };
+export { PostDocument, deletePostFiles };

@@ -15,8 +15,8 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
     externalServer
       ? {}
       : {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
+          'Content-type': 'application/json; charset=UTF-8',
+        },
   );
 
   const { request } = opts;

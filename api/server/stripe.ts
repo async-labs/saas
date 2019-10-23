@@ -40,6 +40,7 @@ function createSubscription({ customerId, teamId, teamLeaderId }) {
 
 function cancelSubscription({ subscriptionId }) {
   logger.debug('cancel subscription', subscriptionId);
+  // eslint-disable-next-line
   return stripeInstance.subscriptions.del(subscriptionId, { at_period_end: false });
 }
 
@@ -56,6 +57,7 @@ function createNewCard({ customerId, token }) {
 
 function updateCustomer({ customerId, newCardId }) {
   logger.debug('updating customer', customerId);
+  // eslint-disable-next-line
   return stripeInstance.customers.update(customerId, { default_source: newCardId });
 }
 
@@ -76,6 +78,7 @@ function stripeWebHooks({ server }) {
       try {
         const event = await verifyWebHook(req);
         // logger.info(JSON.stringify(event.data.object));
+        // eslint-disable-next-line
         // @ts-ignore
         // some problem with @types/stripe ?
         const { subscription } = event.data.object;

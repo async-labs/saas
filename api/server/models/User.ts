@@ -63,6 +63,7 @@ const mongoSchema = new mongoose.Schema({
     object: String,
     created: Number,
     currency: String,
+    // eslint-disable-next-line
     default_source: String,
     description: String,
   },
@@ -73,7 +74,9 @@ const mongoSchema = new mongoose.Schema({
     funding: String,
     country: String,
     last4: String,
+    // eslint-disable-next-line
     exp_month: Number,
+    // eslint-disable-next-line
     exp_year: Number,
   },
   hasCardInformation: {
@@ -82,15 +85,18 @@ const mongoSchema = new mongoose.Schema({
   },
   stripeListOfInvoices: {
     object: String,
+    // eslint-disable-next-line
     has_more: Boolean,
     data: [
       {
         id: String,
         object: String,
+        // eslint-disable-next-line
         amount_paid: Number,
         date: Number,
         customer: String,
         subscription: String,
+        // eslint-disable-next-line
         hosted_invoice_url: String,
         billing: String,
         paid: Boolean,
@@ -103,7 +109,7 @@ const mongoSchema = new mongoose.Schema({
   darkTheme: Boolean,
 });
 
-export interface IUserDocument extends mongoose.Document {
+export interface UserDocument extends mongoose.Document {
   googleId: string;
   googleToken: { accessToken: string; refreshToken: string };
   slug: string;
@@ -151,13 +157,13 @@ export interface IUserDocument extends mongoose.Document {
         number: string;
         teamId: string;
         teamName: string;
-      }
+      },
     ];
   };
   darkTheme: boolean;
 }
 
-interface IUserModel extends mongoose.Model<IUserDocument> {
+interface UserModel extends mongoose.Model<UserDocument> {
   publicFields(): string[];
 
   updateProfile({
@@ -168,9 +174,9 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     userId: string;
     name: string;
     avatarUrl: string;
-  }): Promise<IUserDocument[]>;
+  }): Promise<UserDocument[]>;
 
-  getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<IUserDocument[]>;
+  getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<UserDocument[]>;
 
   signInOrSignUp({
     googleId,
@@ -184,9 +190,9 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     displayName: string;
     avatarUrl: string;
     googleToken: { refreshToken?: string; accessToken?: string };
-  }): Promise<IUserDocument>;
+  }): Promise<UserDocument>;
 
-  signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<IUserDocument>;
+  signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<UserDocument>;
 
   createCustomer({
     userId,
@@ -194,7 +200,7 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
   }: {
     userId: string;
     stripeToken: object;
-  }): Promise<IUserDocument>;
+  }): Promise<UserDocument>;
 
   createNewCardUpdateCustomer({
     userId,
@@ -202,8 +208,8 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
   }: {
     userId: string;
     stripeToken: object;
-  }): Promise<IUserDocument>;
-  getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<IUserDocument>;
+  }): Promise<UserDocument>;
+  getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<UserDocument>;
   toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 }
 
@@ -473,8 +479,8 @@ class UserClass extends mongoose.Model {
 
 mongoSchema.loadClass(UserClass);
 
-const User = mongoose.model<IUserDocument, IUserModel>('User', mongoSchema);
-User.ensureIndexes(err => {
+const User = mongoose.model<UserDocument, UserModel>('User', mongoSchema);
+User.ensureIndexes((err) => {
   if (err) {
     logger.error(`User.ensureIndexes: ${err.stack}`);
   }

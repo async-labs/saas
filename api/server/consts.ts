@@ -3,7 +3,7 @@
 // // or
 // import * as CONSTS from './consts';
 
-function get(name: string, required: boolean = false, alternateName: string = null): string {
+function get(name: string, required = false, alternateName: string = null): string {
   const val = process.env[name] || null;
   if (!val && required) {
     throw new Error(`${alternateName || name} environment variable is required.`);
@@ -22,13 +22,17 @@ export const PORT_APP = +get('APP_PORT') || 3000;
 
 let urlAPI: string = get('URL_API');
 if (!urlAPI) {
-  urlAPI = IS_DEV ? get('DEVELOPMENT_URL_API') || `http://localhost:${PORT_API}` : get('PRODUCTION_URL_API', true, 'URL_API');
+  urlAPI = IS_DEV
+    ? get('DEVELOPMENT_URL_API') || `http://localhost:${PORT_API}`
+    : get('PRODUCTION_URL_API', true, 'URL_API');
 }
 export const URL_API = urlAPI;
 
 let urlAPP: string = get('URL_APP');
 if (!urlAPP) {
-  urlAPP = IS_DEV ? get('DEVELOPMENT_URL_APP') || `http://localhost:${PORT_APP}` : get('PRODUCTION_URL_APP', true, 'URL_APP');
+  urlAPP = IS_DEV
+    ? get('DEVELOPMENT_URL_APP') || `http://localhost:${PORT_APP}`
+    : get('PRODUCTION_URL_APP', true, 'URL_APP');
 }
 export const URL_APP = urlAPP;
 
@@ -54,7 +58,9 @@ if (!sessionSecret) {
   if (!IS_DEV) {
     throw new Error('SESSION_SECRET environment variable is required.');
   }
-  sessionSecret = Math.random().toString(36).substring(2);
+  sessionSecret = Math.random()
+    .toString(36)
+    .substring(2);
 }
 
 export const SESSION_SECRET: string = sessionSecret;
@@ -63,7 +69,8 @@ export const GOOGLE_CLIENTID: string = get('GOOGLE_CLIENTID') || get('Google_cli
 export const GOOGLE_CLIENTSECRET: string = get('GOOGLE_CLIENTSECRET') || get('Google_clientSecret');
 
 export const AMAZON_ACCESSKEYID: string = get('AMAZON_ACCESSKEYID') || get('Amazon_accessKeyId');
-export const AMAZON_SECRETACCESSKEY: string = get('AMAZON_SECRETACCESSKEY') || get('Amazon_secretAccessKey');
+export const AMAZON_SECRETACCESSKEY: string =
+  get('AMAZON_SECRETACCESSKEY') || get('Amazon_secretAccessKey');
 
 export const EMAIL_SUPPORT_FROM_ADDRESS: string = get('EMAIL_SUPPORT_FROM_ADDRESS');
 
@@ -75,12 +82,17 @@ export const STRIPE_TEST_SECRETKEY = get('STRIPE_TEST_SECRETKEY') || get('Stripe
 export const STRIPE_LIVE_SECRETKEY = get('STRIPE_LIVE_SECRETKEY') || get('Stripe_Live_SecretKey');
 export const STRIPE_SECRETKEY = IS_DEV ? STRIPE_TEST_SECRETKEY : STRIPE_LIVE_SECRETKEY;
 
-export const STRIPE_TEST_PUBLISHABLEKEY = get('STRIPE_TEST_PUBLISHABLEKEY') || get('Stripe_Test_PublishableKey');
-export const STRIPE_LIVE_PUBLISHABLEKEY = get('STRIPE_LIVE_PUBLISHABLEKEY') || get('Stripe_Live_PublishableKey');
-export const STRIPE_PUBLISHABLEKEY = IS_DEV ? STRIPE_TEST_PUBLISHABLEKEY : STRIPE_LIVE_PUBLISHABLEKEY;
+export const STRIPE_TEST_PUBLISHABLEKEY =
+  get('STRIPE_TEST_PUBLISHABLEKEY') || get('Stripe_Test_PublishableKey');
+export const STRIPE_LIVE_PUBLISHABLEKEY =
+  get('STRIPE_LIVE_PUBLISHABLEKEY') || get('Stripe_Live_PublishableKey');
+export const STRIPE_PUBLISHABLEKEY = IS_DEV
+  ? STRIPE_TEST_PUBLISHABLEKEY
+  : STRIPE_LIVE_PUBLISHABLEKEY;
 
 export const STRIPE_TEST_PLANID: string = get('STRIPE_TEST_PLANID') || get('Stripe_Test_PlanId');
 export const STRIPE_LIVE_PLANID: string = get('STRIPE_LIVE_PLANID') || get('Stripe_Live_PlanId');
 export const STRIPE_PLANID = IS_DEV ? STRIPE_TEST_PLANID : STRIPE_LIVE_PLANID;
 
-export const STRIPE_LIVE_ENDPOINTSECRET: string = get('STRIPE_LIVE_ENDPOINTSECRET') || get('Stripe_Live_EndpointSecret');
+export const STRIPE_LIVE_ENDPOINTSECRET: string =
+  get('STRIPE_LIVE_ENDPOINTSECRET') || get('Stripe_Live_EndpointSecret');

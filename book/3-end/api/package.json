@@ -6,7 +6,7 @@
     "dev": "nodemon server/app.ts",
     "build": "rm -rf production-server/ && tsc --project tsconfig.server.json",
     "start": "node production-server/app.js",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint . --ext .ts,.tsx",
     "test": "jest --coverage"
   },
   "husky": {
