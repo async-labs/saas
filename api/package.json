@@ -9,7 +9,7 @@
     "start": "node production-server/app.js",
     "now": "now && now alias",
     "now-rm": "now rm saas-api --safe --yes",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest --coverage",
     "processes-8000": "ss -lptn 'sport = :8000'",
     "processes-node": "ps -e|grep node",
@@ -80,9 +80,14 @@
     "@types/stripe": "6.31.4",
     "husky": "2.7.0",
     "jest": "24.8.0",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "prettier": "^1.18.2",
     "mockingoose": "^2.13.1",
     "ts-jest": "^24.0.2",
-    "ts-node-dev": "^1.0.0-pre.40",
-    "tslint": "5.18.0"
+    "ts-node-dev": "^1.0.0-pre.40"
   }
 }

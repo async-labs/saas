@@ -20,9 +20,14 @@ import logger from './logs';
 import Team from './models/Team';
 
 import {
-  COOKIE_DOMAIN, IS_DEV, MONGO_URL,
-  PORT_API as PORT, SESSION_NAME, SESSION_SECRET,
-  URL_API as ROOT_URL, URL_APP,
+  COOKIE_DOMAIN,
+  IS_DEV,
+  MONGO_URL,
+  PORT_API as PORT,
+  SESSION_NAME,
+  SESSION_SECRET,
+  URL_API as ROOT_URL,
+  URL_APP,
 } from './consts';
 
 const options = {

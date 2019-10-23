@@ -58,8 +58,13 @@
     "@types/react-jss": "8.6.3",
     "@types/socket.io-client": "^1.4.32",
     "@types/styled-jsx": "2.2.8",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
     "jest": "24.8.0",
-    "ts-node-dev": "^1.0.0-pre.40",
-    "tslint": "5.20.0"
+    "prettier": "^1.18.2",
+    "ts-node-dev": "^1.0.0-pre.40"
   }
 }
