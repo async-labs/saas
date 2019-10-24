@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 
 import { sendEmailNotification } from './src/sendEmailForNewPost';
 
-export const sendEmailForNewPost = async event => {
+export const sendEmailForNewPost = async (event) => {
   console.log('Received event:', JSON.stringify(event, null, 2));
 
   if (
@@ -15,7 +15,13 @@ export const sendEmailForNewPost = async event => {
     return { message: 'Some data is missing from body of POST request', event };
   }
 
-  console.log(event.discussionName, event.discussionLink, event.postContent, event.authorName, event.userIds);
+  console.log(
+    event.discussionName,
+    event.discussionLink,
+    event.postContent,
+    event.authorName,
+    event.userIds,
+  );
 
   const dev = process.env.NODE_ENV !== 'production';
 

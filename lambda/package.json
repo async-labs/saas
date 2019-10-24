@@ -5,25 +5,11 @@
   "license": "UNLICENSE",
   "private": true,
   "scripts": {
-    "lint": "tslint '*.ts'"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.14.123",
-    "@types/mongoose": "^5.3.26",
-    "@types/node": "^11.13.7",
-    "aws-sdk": "^2.443.0",
-    "serverless-dotenv-plugin": "^2.0.1",
-    "serverless-plugin-typescript": "^1.1.7",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
     "@octokit/rest": "^16.25.0",
     "body-parser": "^1.18.3",
-    "chart.js": "^2.8.0",
-    "chartjs-node": "^1.7.1",
-    "chartjs-plugin-datalabels": "^0.6.0",
     "email-addresses": "^3.0.3",
     "express": "^4.16.4",
     "he": "^1.2.0",
@@ -39,5 +25,21 @@
     "socket.io": "^2.2.0",
     "stripe": "^6.31.0",
     "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.123",
+    "@types/mongoose": "^5.3.26",
+    "@types/node": "^11.13.7",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "aws-sdk": "^2.443.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "prettier": "^1.18.2",
+    "serverless-dotenv-plugin": "^2.0.1",
+    "serverless-plugin-typescript": "^1.1.7",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.4.5"
   }
 }

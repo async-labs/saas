@@ -28,6 +28,7 @@
   "eslint.workingDirectories": [
     { "directory": "./app", "changeProcessCWD": true },
     { "directory": "./api", "changeProcessCWD": true },
+    { "directory": "./lambda", "changeProcessCWD": true },
     { "directory": "./book/1-end/app", "changeProcessCWD": true },
     { "directory": "./book/2-begin/app", "changeProcessCWD": true },
     { "directory": "./book/2-end/app", "changeProcessCWD": true },
@@ -78,5 +79,6 @@
     { "directory": "./book/14-begin/api", "changeProcessCWD": true },
     { "directory": "./book/14-end/app", "changeProcessCWD": true },
     { "directory": "./book/14-end/api", "changeProcessCWD": true },
+    { "directory": "./book/14-end/lambda", "changeProcessCWD": true },
 	]
 }
