@@ -1,5 +1,5 @@
 {
-  "name": "14-begin-api",
+  "name": "13-begin-api",
   "version": "1",
   "license": "MIT",
   "scripts": {
@@ -7,7 +7,7 @@
     "build": "rm -rf production-server/ && tsc --project tsconfig.server.json",
     "postinstall": "rm -rf production-server/ && tsc --project tsconfig.server.json",
     "start": "node production-server/app.js",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint . --ext .ts,.tsx",
     "test": "jest --coverage",
     "processes-8000": "ss -lptn 'sport = :8000'",
     "processes-node": "ps -e|grep node",
@@ -69,12 +69,17 @@
     "@types/request": "^2.48.1",
     "@types/socket.io": "^2.1.2",
     "@types/stripe": "6.31.4",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
     "husky": "2.7.0",
     "jest": "24.8.0",
     "mockingoose": "^2.13.1",
     "nodemon": "^1.19.1",
+    "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
-    "ts-node-dev": "^1.0.0-pre.40",
-    "tslint": "5.18.0"
+    "ts-node-dev": "^1.0.0-pre.40"
   }
 }

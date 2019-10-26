@@ -42,10 +42,7 @@ import logger from './logs';
 // 10
 // import Team from './models/Team';
 
-import {
-  PORT_API as PORT,
-  URL_API as ROOT_URL, URL_APP,
-} from './consts';
+import { PORT_API as PORT, URL_API as ROOT_URL, URL_APP } from './consts';
 
 // 6
 // import {
@@ -164,7 +161,9 @@ server.get('*', (_, res) => {
 //   logger.info(`> Ready on ${ROOT_URL}`);
 // });
 
-server.listen(PORT, err => {
-  if (err) { throw err; }
+server.listen(PORT, (err) => {
+  if (err) {
+    throw err;
+  }
   logger.info(`> Ready on ${ROOT_URL}`);
 });

@@ -1,5 +1,5 @@
 {
-  "name": "7-end-app",
+  "name": "6-end-app",
   "version": "1",
   "license": "MIT",
   "scripts": {
@@ -7,7 +7,7 @@
     "build": "next build && tsc --project tsconfig.server.json",
     "postinstall": "next build && rm -rf production-server/ & tsc --project tsconfig.server.json",
     "start": "node production-server/server/app.js",
-    "lint": "tslint -p tsconfig.json && tslint -p tsconfig.server.json",
+    "lint": "eslint . --ext .ts,.tsx",
     "test": "jest --coverage --passWithNoTests",
     "processes-3000": "ss -lptn 'sport = :3000'",
     "processes-node": "ps -e|grep node",
@@ -57,8 +57,13 @@
     "@types/react-jss": "8.6.3",
     "@types/socket.io-client": "^1.4.32",
     "@types/styled-jsx": "2.2.8",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
     "jest": "24.8.0",
-    "ts-node-dev": "^1.0.0-pre.40",
-    "tslint": "5.20.0"
+    "prettier": "^1.18.2",
+    "ts-node-dev": "^1.0.0-pre.40"
   }
 }

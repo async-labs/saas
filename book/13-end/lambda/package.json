@@ -1,22 +1,11 @@
 {
-  "name": "daily-email",
-  "version": "0.0.1",
+  "name": "13-end-daily-email",
+  "version": "1",
   "main": "index.js",
   "license": "UNLICENSE",
   "private": true,
   "scripts": {
-    "lint": "tslint '*.ts'"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.14.123",
-    "@types/mongoose": "^5.3.26",
-    "@types/node": "^11.13.7",
-    "aws-sdk": "^2.443.0",
-    "serverless-dotenv-plugin": "^2.0.1",
-    "serverless-plugin-typescript": "^1.1.7",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
     "@octokit/rest": "^16.25.0",
@@ -39,5 +28,27 @@
     "socket.io": "^2.2.0",
     "stripe": "^6.31.0",
     "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.123",
+    "@types/mongoose": "^5.3.26",
+    "@types/node": "^11.13.7",
+    "aws-sdk": "^2.443.0",
+    "serverless-dotenv-plugin": "^2.0.1",
+    "serverless-plugin-typescript": "^1.1.7",
+    "ts-node": "^8.1.0",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "2.7.0",
+    "jest": "24.8.0",
+    "mockingoose": "^2.13.1",
+    "nodemon": "^1.19.1",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
+    "ts-node-dev": "^1.0.0-pre.40",
+    "typescript": "^3.4.5"
   }
 }
