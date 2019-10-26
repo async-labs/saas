@@ -40,7 +40,8 @@
 
 // async function subscribe({ email, listName }) {
 //   const data = {
-//     email_address: email,
+//     // eslint-disable-next-line
+    email_address: email,
 //     status: 'subscribed',
 //   };
 

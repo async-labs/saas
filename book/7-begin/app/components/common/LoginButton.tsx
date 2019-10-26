@@ -19,7 +19,7 @@ class LoginButton extends React.PureComponent<
   // 10
   // { next?: string; invitationToken?: string },
   { email: string }
-  > {
+> {
   public state = { email: '' };
 
   public render() {

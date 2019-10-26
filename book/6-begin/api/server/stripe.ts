@@ -41,7 +41,8 @@
 
 // function cancelSubscription({ subscriptionId }) {
 //   logger.debug('cancel subscription', subscriptionId);
-//   return stripeInstance.subscriptions.del(subscriptionId, { at_period_end: false });
+//   // eslint-disable-next-line
+  return stripeInstance.subscriptions.del(subscriptionId, { at_period_end: false });
 // }
 
 // function retrieveCard({ customerId, cardId }) {
@@ -57,7 +58,8 @@
 
 // function updateCustomer({ customerId, newCardId }) {
 //   logger.debug('updating customer', customerId);
-//   return stripeInstance.customers.update(customerId, { default_source: newCardId });
+//   // eslint-disable-next-line
+  return stripeInstance.customers.update(customerId, { default_source: newCardId });
 // }
 
 // function verifyWebHook(request) {

@@ -54,6 +54,7 @@ app.prepare().then(() => {
     nextfn();
   });
 
+  // eslint-disable-next-line
   server.get('/', async (req: any, res) => {
     let redirectUrl = 'login';
 

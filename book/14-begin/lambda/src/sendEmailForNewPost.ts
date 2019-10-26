@@ -5,7 +5,7 @@ import sendEmail from './api/aws-ses';
 import getEmailTemplate, { EmailTemplate } from './api/models/EmailTemplate';
 import User from './api/models/User';
 
-// interface IUserDocumentWithId extends IUserDocument {
+// interface UserDocumentWithId extends UserDocument {
 //   _id: string;
 // }
 
@@ -49,14 +49,14 @@ async function sendEmailNotification({
     .select('email')
     .setOptions({ lean: true });
 
-  const usersToNotify = users.filter(user => userIds.includes(user._id.toString()));
+  const usersToNotify = users.filter((user) => userIds.includes(user._id.toString()));
 
   console.log('usersToNotify', usersToNotify);
 
   const jobs = _.flatten(
     usersToNotify
-      .filter(user => !!user.email)
-      .map(async user => {
+      .filter((user) => !!user.email)
+      .map(async (user) => {
         try {
           await sendEmail({
             from: `From async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,

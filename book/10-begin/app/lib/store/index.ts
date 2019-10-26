@@ -29,7 +29,7 @@ class Store {
 
   public currentUser?: User = null;
   public currentTeam?: Team;
-  public currentUrl: string = '';
+  public currentUrl = '';
   public isLoggingIn = true;
 
   // 13
@@ -41,6 +41,7 @@ class Store {
     // socket = null,
     isServer,
   }: {
+    // eslint-disable-next-line
     initialState?: any;
     // 13
     // socket?: SocketIOClient.Socket;
@@ -93,8 +94,9 @@ class Store {
     this.setCurrentUser(user, true, selectedTeamSlug);
   }
 
+  // eslint-disable-next-line
   public setTeams(teams: any[], selectedTeamSlug?: string) {
-    const teamObjs = teams.map(t => new Team({ store: this, ...t }));
+    const teamObjs = teams.map((t) => new Team({ store: this, ...t }));
 
     if (teams && teams.length > 0 && !selectedTeamSlug) {
       selectedTeamSlug = teamObjs[0].slug;
@@ -175,7 +177,7 @@ class Store {
   }
 
   public editTeamFromLocalCache(data) {
-    const team = this.teams.find(item => item._id === data._id);
+    const team = this.teams.find((item) => item._id === data._id);
 
     if (team) {
       if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
@@ -189,7 +191,7 @@ class Store {
   }
 
   public removeTeamFromLocalCache(teamId: string) {
-    const team = this.teams.find(t => t._id === teamId);
+    const team = this.teams.find((t) => t._id === teamId);
 
     this.teams.remove(team);
   }
@@ -237,7 +239,7 @@ class Store {
     if (this.currentTeam) {
       this.currentTeam
         .loadInitialMembers()
-        .catch(err => console.error('Error while loading Users', err));
+        .catch((err) => console.error('Error while loading Users', err));
 
       // 12
       // this.currentTeam
@@ -270,6 +272,7 @@ function initStore(initialState = {}) {
   if (isServer) {
     return new Store({ initialState, isServer: true });
   } else {
+    // eslint-disable-next-line
     const win: any = window;
 
     if (!store) {
@@ -310,6 +313,8 @@ function initStore(initialState = {}) {
 }
 
 function getStore() {
+function getStore() {
+  // eslint-disable-next-line
   return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
 }
 

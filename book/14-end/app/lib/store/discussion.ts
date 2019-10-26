@@ -45,11 +45,11 @@ class Discussion {
   }
 
   get members() {
-    return this.memberIds.map(id => this.team.members.get(id)).filter(u => !!u);
+    return this.memberIds.map((id) => this.team.members.get(id)).filter((u) => !!u);
   }
 
   public setInitialPosts(posts) {
-    const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
+    const postObjs = posts.map((t) => new Post({ discussion: this, store: this.store, ...t }));
     this.posts.replace(postObjs);
   }
 
@@ -65,7 +65,7 @@ class Discussion {
       const { posts = [] } = await getPostList(this._id);
 
       runInAction(() => {
-        const postObjs = posts.map(t => new Post({ discussion: this, store: this.store, ...t }));
+        const postObjs = posts.map((t) => new Post({ discussion: this, store: this.store, ...t }));
         this.posts.replace(postObjs);
       });
     } finally {
@@ -102,7 +102,7 @@ class Discussion {
   }
 
   public addPostToLocalCache(data) {
-    const oldPost = this.posts.find(t => t._id === data._id);
+    const oldPost = this.posts.find((t) => t._id === data._id);
     if (oldPost) {
       this.posts.remove(oldPost);
     }
@@ -115,14 +115,14 @@ class Discussion {
   }
 
   public editPostFromLocalCache(data) {
-    const post = this.posts.find(t => t._id === data._id);
+    const post = this.posts.find((t) => t._id === data._id);
     if (post) {
       post.changeLocalCache(data);
     }
   }
 
   public removePostFromLocalCache(postId) {
-    const post = this.posts.find(t => t._id === postId);
+    const post = this.posts.find((t) => t._id === postId);
     this.posts.remove(post);
   }
 
@@ -136,7 +136,7 @@ class Discussion {
       socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
-    return new Promise<Post>(resolve => {
+    return new Promise<Post>((resolve) => {
       runInAction(() => {
         const obj = this.addPostToLocalCache(post);
         resolve(obj);
@@ -189,7 +189,7 @@ class Discussion {
   }
 
   public editDiscussionFromLocalCache(data) {
-    const discussion = this.team.discussions.find(item => item._id === data._id);
+    const discussion = this.team.discussions.find((item) => item._id === data._id);
     if (discussion) {
       if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
         discussion.changeLocalCache(data);
@@ -202,11 +202,11 @@ class Discussion {
   }
 
   public removeDiscussionFromLocalCache(discussionId: string) {
-    const discussion = this.team.discussions.find(item => item._id === discussionId);
+    const discussion = this.team.discussions.find((item) => item._id === discussionId);
     this.team.discussions.remove(discussion);
   }
 
-  public handleDiscussionRealtimeEvent = data => {
+  public handleDiscussionRealtimeEvent = (data) => {
     console.log('discussion realtime event', data);
     const { action: actionName } = data;
 
@@ -249,11 +249,11 @@ class Discussion {
 
   private setInitialDiscussions(discussions) {
     const discussionObjs = discussions.map(
-      d => new Discussion({ team: this.team, store: this.store, ...d }),
+      (d) => new Discussion({ team: this.team, store: this.store, ...d }),
     );
 
     this.team.discussions.replace(
-      discussionObjs.filter(d => !d.isDraft || d.createdUserId === this.store.currentUser._id),
+      discussionObjs.filter((d) => !d.isDraft || d.createdUserId === this.store.currentUser._id),
     );
   }
 }

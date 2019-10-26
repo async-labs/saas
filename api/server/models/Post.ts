@@ -167,6 +167,7 @@ class PostClass extends mongoose.Model {
     await this.checkPermission({ userId, discussionId });
 
     // eslint-disable-next-line
+    // eslint-disable-next-line
     const filter: any = { discussionId };
 
     return this.find(filter).sort({ createdAt: 1 });

@@ -22,9 +22,14 @@ import logger from './logs';
 import Team from './models/Team';
 
 import {
-  COOKIE_DOMAIN, IS_DEV, MONGO_URL,
-  PORT_API as PORT, SESSION_NAME, SESSION_SECRET,
-  URL_API as ROOT_URL, URL_APP,
+  COOKIE_DOMAIN,
+  IS_DEV,
+  MONGO_URL,
+  PORT_API as PORT,
+  SESSION_NAME,
+  SESSION_SECRET,
+  URL_API as ROOT_URL,
+  URL_APP,
 } from './consts';
 
 const options = {
@@ -60,6 +65,7 @@ const sessionOptions = {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
     domain: COOKIE_DOMAIN,
+    // eslint-disable-next-line
   } as any,
 };
 
@@ -109,6 +115,7 @@ server.get('/uploaded-file', async (req, res) => {
     }
   }
 
+  // eslint-disable-next-line
   const data: any = await signRequestForLoad(filePath, bucket);
 
   res.redirect(data.signedRequest);
@@ -127,7 +134,9 @@ server.get('*', (_, res) => {
 //   logger.info(`> Ready on ${ROOT_URL}`);
 // });
 
-server.listen(PORT, err => {
-  if (err) { throw err; }
+server.listen(PORT, (err) => {
+  if (err) {
+    throw err;
+  }
   logger.info(`> Ready on ${ROOT_URL}`);
 });

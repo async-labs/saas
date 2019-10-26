@@ -5,7 +5,7 @@
 // import logger from '../logs';
 // import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
 // import Team from './Team';
-// import User, { IUserDocument } from './User';
+// import User, { UserDocument } from './User';
 
 // import {
 //   EMAIL_SUPPORT_FROM_ADDRESS, URL_APP as ROOT_URL,
@@ -37,14 +37,14 @@
 
 // mongoSchema.index({ teamId: 1, email: 1 }, { unique: true });
 
-// interface IInvitationDocument extends mongoose.Document {
+// interface InvitationDocument extends mongoose.Document {
 //   teamId: string;
 //   email: string;
 //   createdAt: Date;
 //   token: string;
 // }
 
-// interface IInvitationModel extends mongoose.Model<IInvitationDocument> {
+// interface InvitationModel extends mongoose.Model<InvitationDocument> {
 //   add({
 //     userId,
 //     teamId,
@@ -53,12 +53,12 @@
 //     userId: string;
 //     teamId: string;
 //     email: string;
-//   }): IInvitationDocument;
+//   }): InvitationDocument;
 
 //   getTeamInvitedUsers({ userId, teamId }: { userId: string; teamId: string });
 //   getTeamByToken({ token }: { token: string });
 //   removeIfMemberAdded({ token, userId }: { token: string; userId: string });
-//   addUserToTeam({ token, user }: { token: string; user: IUserDocument });
+//   addUserToTeam({ token, user }: { token: string; user: UserDocument });
 // }
 
 // function generateToken() {
@@ -236,6 +236,6 @@
 
 // mongoSchema.loadClass(InvitationClass);
 
-// const Invitation = mongoose.model<IInvitationDocument, IInvitationModel>('Invitation', mongoSchema);
+// const Invitation = mongoose.model<InvitationDocument, InvitationModel>('Invitation', mongoSchema);
 
 // export default Invitation;

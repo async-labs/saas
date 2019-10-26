@@ -73,6 +73,7 @@ async function loadTeamData(team, userId, body) {
 
   const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
+  // eslint-disable-next-line
   const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
   return data;

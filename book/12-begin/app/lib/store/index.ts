@@ -40,6 +40,7 @@ class Store {
     // socket = null,
     isServer,
   }: {
+    // eslint-disable-next-line
     initialState?: any;
     // 13
     // socket?: SocketIOClient.Socket;
@@ -92,6 +93,7 @@ class Store {
     this.setCurrentUser(user, true, selectedTeamSlug);
   }
 
+  // eslint-disable-next-line
   public setTeams(teams: any[], selectedTeamSlug?: string) {
     const teamObjs = teams.map(t => new Team({ store: this, ...t }));
 
@@ -268,6 +270,7 @@ function initStore(initialState = {}) {
   if (isServer) {
     return new Store({ initialState, isServer: true });
   } else {
+    // eslint-disable-next-line
     const win: any = window;
 
     if (!store) {
@@ -308,6 +311,7 @@ function initStore(initialState = {}) {
 }
 
 function getStore() {
+  // eslint-disable-next-line
   return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
 }
 

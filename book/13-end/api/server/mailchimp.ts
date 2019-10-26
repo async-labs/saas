@@ -1,8 +1,6 @@
 import * as request from 'request';
 
-import {
-  MAILCHIMP_API_KEY, MAILCHIMP_REGION, MAILCHIMP_SAAS_ALL_LIST_ID,
-} from './consts';
+import { MAILCHIMP_API_KEY, MAILCHIMP_REGION, MAILCHIMP_SAAS_ALL_LIST_ID } from './consts';
 
 const LIST_IDS = {
   signups: MAILCHIMP_SAAS_ALL_LIST_ID,
@@ -39,6 +37,7 @@ function callAPI({ path, method, data }) {
 
 async function subscribe({ email, listName }) {
   const data = {
+    // eslint-disable-next-line
     email_address: email,
     status: 'subscribed',
   };

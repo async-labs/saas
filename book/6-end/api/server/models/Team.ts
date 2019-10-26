@@ -56,7 +56,7 @@
 //   // },
 // });
 
-// interface ITeamDocument extends mongoose.Document {
+// interface TeamDocument extends mongoose.Document {
 //   teamLeaderId: string;
 //   name: string;
 //   slug: string;
@@ -80,7 +80,7 @@
 //   // isPaymentFailed: boolean;
 // }
 
-// interface ITeamModel extends mongoose.Model<ITeamDocument> {
+// interface TeamModel extends mongoose.Model<TeamDocument> {
 //   add({
 //     name,
 //     userId,
@@ -88,7 +88,7 @@
 //   userId: string;
 //   name: string;
 //   avatarUrl: string;
-//   }): Promise<ITeamDocument>;
+//   }): Promise<TeamDocument>;
 //   updateTeam({
 //     userId,
 //     teamId,
@@ -99,9 +99,9 @@
 //   teamId: string;
 //   name: string;
 //   avatarUrl: string;
-//   }): Promise<ITeamDocument>;
-//   findBySlug(slug: string): Promise<ITeamDocument>;
-//   getList(userId: string): Promise<ITeamDocument[]>;
+//   }): Promise<TeamDocument>;
+//   findBySlug(slug: string): Promise<TeamDocument>;
+//   getList(userId: string): Promise<TeamDocument[]>;
 //   removeMember({
 //     teamId,
 //     teamLeaderId,
@@ -119,19 +119,19 @@
 //   // }: {
 //   // teamLeaderId: string;
 //   // teamId: string;
-//   // }): Promise<ITeamDocument>;
+//   // }): Promise<TeamDocument>;
 //   // cancelSubscription({
 //   //   teamLeaderId,
 //   //   teamId,
 //   // }: {
 //   // teamLeaderId: string;
 //   // teamId: string;
-//   // }): Promise<ITeamDocument>;
+//   // }): Promise<TeamDocument>;
 //   // cancelSubscriptionAfterFailedPayment({
 //   //   subscriptionId,
 //   // }: {
 //   // subscriptionId: string;
-//   // }): Promise<ITeamDocument>;
+//   // }): Promise<TeamDocument>;
 // }
 
 // class TeamClass extends mongoose.Model {
@@ -304,6 +304,6 @@
 
 // mongoSchema.loadClass(TeamClass);
 
-// const Team = mongoose.model<ITeamDocument, ITeamModel>('Team', mongoSchema);
+// const Team = mongoose.model<TeamDocument, TeamModel>('Team', mongoSchema);
 
 // export default Team;

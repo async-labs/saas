@@ -38,7 +38,7 @@ const mongoSchema = new mongoose.Schema({
   },
 });
 
-interface IDiscussionDocument extends mongoose.Document {
+interface DiscussionDocument extends mongoose.Document {
   createdUserId: string;
   teamId: string;
   name: string;
@@ -47,14 +47,14 @@ interface IDiscussionDocument extends mongoose.Document {
   createdAt: Date;
 }
 
-interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
+interface DiscussionModel extends mongoose.Model<DiscussionDocument> {
   getList({
     userId,
     teamId,
   }: {
     userId: string;
     teamId: string;
-  }): Promise<{ discussions: IDiscussionDocument[] }>;
+  }): Promise<{ discussions: DiscussionDocument[] }>;
 
   add({
     name,
@@ -68,7 +68,7 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
     teamId: string;
     memberIds: string[];
     notificationType: string;
-  }): Promise<IDiscussionDocument>;
+  }): Promise<DiscussionDocument>;
 
   edit({
     userId,
@@ -82,7 +82,7 @@ interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
     name: string;
     memberIds: string[];
     notificationType: string;
-  }): Promise<IDiscussionDocument>;
+  }): Promise<DiscussionDocument>;
 
   delete({ userId, id }: { userId: string; id: string }): Promise<{ teamId: string }>;
 }
@@ -114,8 +114,10 @@ class DiscussionClass extends mongoose.Model {
   public static async getList({ userId, teamId }) {
     await this.checkPermission({ userId, teamId });
 
+    // eslint-disable-next-line
     const filter: any = { teamId, memberIds: userId };
 
+    // eslint-disable-next-line
     const discussions: any[] = await this.find(filter).setOptions({ lean: true });
 
     return { discussions };
@@ -204,7 +206,7 @@ class DiscussionClass extends mongoose.Model {
 
 mongoSchema.loadClass(DiscussionClass);
 
-const Discussion = mongoose.model<IDiscussionDocument, IDiscussionModel>('Discussion', mongoSchema);
+const Discussion = mongoose.model<DiscussionDocument, DiscussionModel>('Discussion', mongoSchema);
 
 export default Discussion;
-export { IDiscussionDocument };
+export { DiscussionDocument };

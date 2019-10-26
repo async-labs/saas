@@ -23,8 +23,8 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
   const reader = new FileReader();
   const img = new Image();
 
-  return new Promise(resolve => {
-    reader.onload = e => {
+  return new Promise((resolve) => {
+    reader.onload = (e) => {
       img.onload = () => {
         resolve({ width: img.width, height: img.height });
       };
@@ -64,7 +64,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
     const { content, members, store } = this.props;
     const { currentUser } = store;
 
-    const membersMinusCurrentUser = members.filter(member => member._id !== currentUser._id);
+    const membersMinusCurrentUser = members.filter((member) => member._id !== currentUser._id);
 
     const isThemeDark = store && store.currentUser && store.currentUser.darkTheme === true;
     const textareaBackgroundColor = isThemeDark ? '#303030' : '#fff';
@@ -97,7 +97,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
             id="upload-file"
             type="file"
             style={{ display: 'none' }}
-            onChange={event => {
+            onChange={(event) => {
               const file = event.target.files[0];
               event.target.value = '';
               this.uploadFile(file);
@@ -156,13 +156,13 @@ class PostEditor extends React.Component<MyProps, MyState> {
               autoFocus
               value={content}
               placeholder={this.props.placeholder ? this.props.placeholder : 'Compose new post'}
-              onChange={event => {
+              onChange={(event) => {
                 this.props.onChanged(event.target.value);
               }}
             >
               <Mention
                 trigger="@"
-                data={membersMinusCurrentUser.map(u => ({
+                data={membersMinusCurrentUser.map((u) => ({
                   id: u.avatarUrl,
                   display: u.displayName,
                   you: u._id === currentUser._id ? true : false,
@@ -171,7 +171,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
                 displayTransform={(_, display) => {
                   return `@${display}`;
                 }}
-                renderSuggestion={suggestion => (
+                renderSuggestion={(suggestion) => (
                   <React.Fragment>
                     <Avatar
                       role="presentation"

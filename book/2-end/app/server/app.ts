@@ -55,7 +55,8 @@
 //     nextfn();
 //   });
 
-//   server.get('/', async (req: any, res) => {
+//   // eslint-disable-next-line
+  server.get('/', async (req: any, res) => {
 //     let redirectUrl = 'first-page';
 
 //     // 5

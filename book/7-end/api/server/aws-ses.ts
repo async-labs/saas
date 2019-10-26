@@ -1,8 +1,6 @@
 import * as aws from 'aws-sdk';
 
-import {
-  AMAZON_ACCESSKEYID, AMAZON_SECRETACCESSKEY,
-} from './consts';
+import { AMAZON_ACCESSKEYID, AMAZON_SECRETACCESSKEY } from './consts';
 
 export default function sendEmail(options) {
   aws.config.update({

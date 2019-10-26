@@ -8,7 +8,7 @@ import getEmailTemplate from './models/EmailTemplate';
 
 import Invitation from './models/Invitation';
 
-import User, { IUserDocument } from './models/User';
+import User, { UserDocument } from './models/User';
 import PasswordlessMongoStore from './passwordless';
 
 import {
@@ -136,7 +136,7 @@ function setupGoogle({ ROOT_URL, server }) {
     ),
   );
 
-  passport.serializeUser((user: IUserDocument, done) => {
+  passport.serializeUser((user: UserDocument, done) => {
     done(null, user._id);
   });
 
@@ -156,8 +156,10 @@ function setupGoogle({ ROOT_URL, server }) {
     };
 
     if (req.query && req.query.next && req.query.next.startsWith('/')) {
+      // eslint-disable-next-line
       req.session.next_url = req.query.next;
     } else {
+      // eslint-disable-next-line
       req.session.next_url = null;
     }
 
@@ -178,7 +180,7 @@ function setupGoogle({ ROOT_URL, server }) {
     (req, res) => {
       if (req.user && req.session.invitationToken) {
         Invitation.addUserToTeam({ token: req.session.invitationToken, user: req.user }).catch(
-          err => logger.error(err),
+          (err) => logger.error(err),
         );
       }
 

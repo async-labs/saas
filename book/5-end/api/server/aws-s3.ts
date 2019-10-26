@@ -42,6 +42,7 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, 
 
   const key = `${prefix}/${randomStringForPrefix}/${fileName}`;
 
+  // eslint-disable-next-line
   const params: any = {
     Bucket: bucket,
     Key: key,

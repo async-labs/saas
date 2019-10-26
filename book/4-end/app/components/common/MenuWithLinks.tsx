@@ -8,6 +8,7 @@ import React from 'react';
 class MenuWithLinks extends React.PureComponent<{
   src?: string;
   alt?: string;
+    // eslint-disable-next-line
   options: any[];
   router: NextRouter;
 }> {

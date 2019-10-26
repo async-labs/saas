@@ -3,7 +3,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 
 class MenuWithMenuItems extends React.PureComponent<{
+  // eslint-disable-next-line
   menuOptions: any;
+  // eslint-disable-next-line
   itemOptions: any[];
 }> {
   public state = {
@@ -22,7 +24,7 @@ class MenuWithMenuItems extends React.PureComponent<{
           aria-haspopup="true"
           style={{ fontSize: '14px', opacity: 0.7, cursor: 'pointer' }}
           className="material-icons"
-          onClick={e => this.handleClick(e)}
+          onClick={(e) => this.handleClick(e)}
         >
           more_vert
         </i>
@@ -38,7 +40,7 @@ class MenuWithMenuItems extends React.PureComponent<{
               key={option.dataId + i}
               data-id={option.dataId}
               data-more-id={option.dataMoreId}
-              onClick={e => {
+              onClick={(e) => {
                 this.setState({ menuElm: null });
                 option.onClick(e);
               }}
@@ -51,7 +53,7 @@ class MenuWithMenuItems extends React.PureComponent<{
     );
   }
 
-  public handleClick = event => {
+  public handleClick = (event) => {
     event.preventDefault();
     this.setState({ menuElm: event.currentTarget });
   };

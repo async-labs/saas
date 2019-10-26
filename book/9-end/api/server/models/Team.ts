@@ -55,7 +55,7 @@ const mongoSchema = new mongoose.Schema({
   // },
 });
 
-interface ITeamDocument extends mongoose.Document {
+interface TeamDocument extends mongoose.Document {
   teamLeaderId: string;
   name: string;
   slug: string;
@@ -79,36 +79,29 @@ interface ITeamDocument extends mongoose.Document {
   // isPaymentFailed: boolean;
 }
 
-interface ITeamModel extends mongoose.Model<ITeamDocument> {
-  add({
-    name,
-    userId,
-  }: {
-  userId: string;
-  name: string;
-  avatarUrl: string;
-  }): Promise<ITeamDocument>;
+interface TeamModel extends mongoose.Model<TeamDocument> {
+  add({ name, userId }: { userId: string; name: string; avatarUrl: string }): Promise<TeamDocument>;
   updateTeam({
     userId,
     teamId,
     name,
     avatarUrl,
   }: {
-  userId: string;
-  teamId: string;
-  name: string;
-  avatarUrl: string;
-  }): Promise<ITeamDocument>;
-  findBySlug(slug: string): Promise<ITeamDocument>;
-  getList(userId: string): Promise<ITeamDocument[]>;
+    userId: string;
+    teamId: string;
+    name: string;
+    avatarUrl: string;
+  }): Promise<TeamDocument>;
+  findBySlug(slug: string): Promise<TeamDocument>;
+  getList(userId: string): Promise<TeamDocument[]>;
   removeMember({
     teamId,
     teamLeaderId,
     userId,
   }: {
-  teamId: string;
-  teamLeaderId: string;
-  userId: string;
+    teamId: string;
+    teamLeaderId: string;
+    userId: string;
   }): Promise<void>;
 
   // 11
@@ -118,19 +111,19 @@ interface ITeamModel extends mongoose.Model<ITeamDocument> {
   // }: {
   // teamLeaderId: string;
   // teamId: string;
-  // }): Promise<ITeamDocument>;
+  // }): Promise<TeamDocument>;
   // cancelSubscription({
   //   teamLeaderId,
   //   teamId,
   // }: {
   // teamLeaderId: string;
   // teamId: string;
-  // }): Promise<ITeamDocument>;
+  // }): Promise<TeamDocument>;
   // cancelSubscriptionAfterFailedPayment({
   //   subscriptionId,
   // }: {
   // subscriptionId: string;
-  // }): Promise<ITeamDocument>;
+  // }): Promise<TeamDocument>;
 }
 
 class TeamClass extends mongoose.Model {
@@ -162,9 +155,7 @@ class TeamClass extends mongoose.Model {
     return team;
   }
 
-  public static async updateTeam({
-    userId, teamId, name, avatarUrl,
-  }) {
+  public static async updateTeam({ userId, teamId, name, avatarUrl }) {
     const team = await this.findById(teamId, 'slug name defaultTeam teamLeaderId');
 
     if (!team) {
@@ -303,6 +294,6 @@ class TeamClass extends mongoose.Model {
 
 mongoSchema.loadClass(TeamClass);
 
-const Team = mongoose.model<ITeamDocument, ITeamModel>('Team', mongoSchema);
+const Team = mongoose.model<TeamDocument, TeamModel>('Team', mongoSchema);
 
 export default Team;

@@ -8,7 +8,8 @@
 
 // import { URL_API } from '../consts';
 
-// export default async function sendRequestAndGetResponse(path, opts: any = {}) {
+// // eslint-disable-next-line
+export default async function sendRequestAndGetResponse(path, opts: any = {}) {
 //   const { externalServer } = opts;
 
 //   const headers = Object.assign(

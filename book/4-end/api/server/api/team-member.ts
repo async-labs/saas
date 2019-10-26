@@ -85,8 +85,8 @@ router.use((req, res, next) => {
 //     });
 //   }
 
-//   const data: any = { initialMembers, initialInvitations };
-
+//   // eslint-disable-next-line
+  const data: any = { initialMembers, initialInvitations };
 //   return data;
 // }
 
@@ -107,7 +107,8 @@ router.use((req, res, next) => {
 
 //   const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
-//   const data: any = { initialMembers, initialInvitations, initialDiscussions };
+//   // eslint-disable-next-line
+  const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
 //   return data;
 // }

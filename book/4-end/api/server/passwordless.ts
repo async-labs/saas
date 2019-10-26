@@ -8,7 +8,7 @@
 
 // import User from './models/User';
 
-// interface ITokenDocument extends mongoose.Document {
+// interface TokenDocument extends mongoose.Document {
 //   hashedToken: string;
 //   uid: string;
 //   ttl: Date;
@@ -35,7 +35,7 @@
 //   email: String,
 // });
 
-// const PasswordlessToken = mongoose.model<ITokenDocument>(
+// const PasswordlessToken = mongoose.model<TokenDocument>(
 //   'PasswordlessToken',
 //   mongoSchema,
 //   'passwordless-token',

@@ -138,9 +138,9 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     if (ifTeamLeaderMustBeCustomer) {
       notify(
         'To add a third team member, you have to become a paid customer.' +
-        '<p />' +
-        ' To become a paid customer,' +
-        ' navigate to Billing page.',
+          '<p />' +
+          ' To become a paid customer,' +
+          ' navigate to Billing page.',
       );
       return;
     }
@@ -148,7 +148,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     this.setState({ inviteMemberOpen: true });
   };
 
-  public removeMember = event => {
+  public removeMember = (event) => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('You have not selected a Team.');
@@ -164,7 +164,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     confirm({
       title: 'Are you sure?',
       message: '',
-      onAnswer: async answer => {
+      onAnswer: async (answer) => {
         if (answer) {
           try {
             await currentTeam.removeMember(userId);
@@ -236,7 +236,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                 <TextField
                   value={newName}
                   helperText="Team name as seen by your team members"
-                  onChange={event => {
+                  onChange={(event) => {
                     this.setState({ newName: event.target.value });
                   }}
                 />
@@ -301,7 +301,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                 </TableHead>
 
                 <TableBody>
-                  {Array.from(currentTeam.members.values()).map(m => (
+                  {Array.from(currentTeam.members.values()).map((m) => (
                     <TableRow key={m._id}>
                       <TableCell style={{ width: '300px' }}>
                         <Hidden smDown>
@@ -348,7 +348,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                     </TableHead>
 
                     <TableBody>
-                      {Array.from(currentTeam.invitedUsers.values()).map(i => (
+                      {Array.from(currentTeam.invitedUsers.values()).map((i) => (
                         <TableRow key={i._id}>
                           <TableCell style={{ width: '300px' }}>{i.email}</TableCell>
                           <TableCell>Sent</TableCell>

@@ -42,6 +42,7 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, 
 
   const key = `${prefix}/${randomStringForPrefix}/${fileName}`;
 
+  // eslint-disable-next-line
   const params: any = {
     Bucket: bucket,
     Key: key,
@@ -116,7 +117,7 @@ function deleteFiles(bucket: string, files: string[]) {
   const params = {
     Bucket: bucket,
     Delete: {
-      Objects: files.map(f => ({ Key: f })),
+      Objects: files.map((f) => ({ Key: f })),
     },
   };
 

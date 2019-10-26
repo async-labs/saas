@@ -72,7 +72,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
               label="Type name of Discussion"
               helperText="Give a short and informative name to Discussion"
               value={this.state.name}
-              onChange={event => {
+              onChange={(event) => {
                 this.setState({ name: event.target.value });
               }}
             />
@@ -131,7 +131,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
     this.props.onClose();
   };
 
-  public handleMembersChange = memberIds => {
+  public handleMembersChange = (memberIds) => {
     this.setState({ memberIds });
   };
 
@@ -189,7 +189,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
     const { currentUser } = store;
 
     const members = Array.from(store.currentTeam.members.values()).filter(
-      user => user._id !== currentUser._id,
+      (user) => user._id !== currentUser._id,
     );
 
     return (

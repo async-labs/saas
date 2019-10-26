@@ -16,7 +16,7 @@
 
 // mongoose.set('useFindAndModify', false);
 
-// function deletePostFiles(posts: IPostDocument[]) {
+// function deletePostFiles(posts: PostDocument[]) {
 //   const imgRegEx = /\<img.+data-src=[\"|\'](.+?)[\"|\']/g;
 //   const files: { [key: string]: string[] } = {};
 
@@ -81,10 +81,10 @@
 //   renderer.link = (href, title, text) => {
 //     const t = title ? ` title="${title}"` : '';
 
-    if (text.startsWith('<code>@#')) {
-      return `${text.replace('<code>@#', '<code>@')} `;
-    }
-    
+if (text.startsWith('<code>@#')) {
+  return `${text.replace('<code>@#', '<code>@')} `;
+}
+
 //     return `
 //       <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
 //         ${text}
@@ -110,7 +110,7 @@
 //   return marked(he.decode(content));
 // }
 
-// interface IPostDocument extends mongoose.Document {
+// interface PostDocument extends mongoose.Document {
 //   createdUserId: string;
 //   discussionId: string;
 //   content: string;
@@ -119,14 +119,14 @@
 //   lastUpdatedAt: Date;
 // }
 
-// interface IPostModel extends mongoose.Model<IPostDocument> {
+// interface PostModel extends mongoose.Model<PostDocument> {
 //   getList({
 //     userId,
 //     discussionId,
 //   }: {
 //     userId: string;
 //     discussionId: string;
-//   }): Promise<IPostDocument[]>;
+//   }): Promise<PostDocument[]>;
 
 //   add({
 //     content,
@@ -136,7 +136,7 @@
 //     content: string;
 //     userId: string;
 //     discussionId: string;
-//   }): Promise<IPostDocument>;
+//   }): Promise<PostDocument>;
 
 //   edit({
 //     content,
@@ -146,7 +146,7 @@
 //     content: string;
 //     userId: string;
 //     id: string;
-//   }): Promise<IPostDocument>;
+//   }): Promise<PostDocument>;
 
 //   uploadFile({
 //     userId,
@@ -167,7 +167,8 @@
 //   public static async getList({ userId, discussionId }) {
 //     await this.checkPermission({ userId, discussionId });
 
-//     const filter: any = { discussionId };
+//     // eslint-disable-next-line
+    const filter: any = { discussionId };
 
 //     return this.find(filter).sort({ createdAt: 1 });
 //   }
@@ -265,7 +266,7 @@
 
 // mongoSchema.loadClass(PostClass);
 
-// const Post = mongoose.model<IPostDocument, IPostModel>('Post', mongoSchema);
+// const Post = mongoose.model<PostDocument, PostModel>('Post', mongoSchema);
 
 // export default Post;
-// export { IPostDocument, deletePostFiles };
+// export { PostDocument, deletePostFiles };

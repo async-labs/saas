@@ -59,7 +59,7 @@ class Team {
 
   public isLoadingMembers = false;
   public isInitialMembersLoaded = false;
-  public initialDiscussionSlug: string = '';
+  public initialDiscussionSlug = '';
 
   constructor(params) {
     this._id = params._id;

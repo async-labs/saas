@@ -259,6 +259,7 @@ class Layout extends React.Component<MyProps> {
   private renderBookMention() {
     const { isMobile } = this.props;
 
+    // eslint-disable-next-line
     const style: any = {
       padding: '10px',
       textAlign: 'right',

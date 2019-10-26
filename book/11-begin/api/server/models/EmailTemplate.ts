@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
-interface IEmailTemplateDocument extends mongoose.Document {
+interface EmailTemplateDocument extends mongoose.Document {
   name: string;
   subject: string;
   message: string;
 }
 
-const EmailTemplate = mongoose.model<IEmailTemplateDocument>(
+const EmailTemplate = mongoose.model<EmailTemplateDocument>(
   'EmailTemplate',
   new mongoose.Schema({
     name: {
@@ -101,8 +101,9 @@ insertTemplates();
 
 export default async function getEmailTemplate(
   name: string,
+  // eslint-disable-next-line
   params: any,
-  template?: IEmailTemplateDocument,
+  template?: EmailTemplateDocument,
 ) {
   const source =
     template ||
@@ -120,4 +121,4 @@ export default async function getEmailTemplate(
   };
 }
 
-export { EmailTemplate, IEmailTemplateDocument };
+export { EmailTemplate, EmailTemplateDocument };

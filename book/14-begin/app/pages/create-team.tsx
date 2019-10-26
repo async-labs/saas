@@ -101,7 +101,7 @@ class CreateTeam extends React.Component<MyProps> {
 
     const reader = new FileReader();
 
-    reader.onload = e => {
+    reader.onload = (e) => {
       this.setState({ newAvatarUrl: e.target.result });
     };
 
@@ -133,7 +133,7 @@ class CreateTeam extends React.Component<MyProps> {
                   value={this.state.newName}
                   label="Type your team's name."
                   helperText="Team name as seen by your team members."
-                  onChange={event => {
+                  onChange={(event) => {
                     this.setState({ newName: event.target.value });
                   }}
                 />

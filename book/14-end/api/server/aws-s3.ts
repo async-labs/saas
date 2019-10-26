@@ -3,9 +3,7 @@ import logger from './logs';
 
 import Team from './models/Team';
 
-import {
-  AMAZON_ACCESSKEYID, AMAZON_SECRETACCESSKEY,
-} from './consts';
+import { AMAZON_ACCESSKEYID, AMAZON_SECRETACCESSKEY } from './consts';
 
 async function checkPrefix(prefix, user) {
   // Prefix must be either user slug or user's team slug
@@ -17,7 +15,7 @@ async function checkPrefix(prefix, user) {
     .select('slug')
     .setOptions({ lean: true });
 
-  if (!teams.find(t => t.slug === prefix)) {
+  if (!teams.find((t) => t.slug === prefix)) {
     throw new Error('Wrong prefix.');
   }
 }
@@ -42,6 +40,7 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, 
 
   const key = `${prefix}/${randomStringForPrefix}/${fileName}`;
 
+  // eslint-disable-next-line
   const params: any = {
     Bucket: bucket,
     Key: key,
@@ -116,7 +115,7 @@ function deleteFiles(bucket: string, files: string[]) {
   const params = {
     Bucket: bucket,
     Delete: {
-      Objects: files.map(f => ({ Key: f })),
+      Objects: files.map((f) => ({ Key: f })),
     },
   };
 

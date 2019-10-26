@@ -260,6 +260,7 @@ class Layout extends React.Component<MyProps> {
     const { isMobile } = this.props;
 
     // eslint-disable-next-line
+    // eslint-disable-next-line
     const style: any = {
       padding: '10px',
       textAlign: 'right',

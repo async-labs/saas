@@ -8,10 +8,7 @@ import * as React from 'react';
 
 import Layout from '../components/layout';
 
-import {
-  getSignedRequestForUpload,
-  uploadFileUsingSignedPutRequest,
-} from '../lib/api/team-member';
+import { getSignedRequestForUpload, uploadFileUsingSignedPutRequest } from '../lib/api/team-member';
 
 import notify from '../lib/notifier';
 import { resizeImage } from '../lib/resizeImage';
@@ -24,7 +21,7 @@ const styleGrid = {
   height: '100%',
 };
 
-type MyProps = { store: Store; isTL: boolean; error?: string; isMobile: boolean; };
+type MyProps = { store: Store; isTL: boolean; error?: string; isMobile: boolean };
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class YourSettings extends React.Component<MyProps, MyState> {
@@ -62,7 +59,13 @@ class YourSettings extends React.Component<MyProps, MyState> {
           <title>Your Settings at Async</title>
           <meta name="description" content="description" />
         </Head>
-        <div style={{ padding: this.props.isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
+        <div
+          style={{
+            padding: this.props.isMobile ? '0px' : '0px 30px',
+            fontSize: '15px',
+            height: '100%',
+          }}
+        >
           <Grid container style={styleGrid}>
             <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
               <h3>Your Settings</h3>
@@ -90,7 +93,7 @@ class YourSettings extends React.Component<MyProps, MyState> {
                   autoComplete="off"
                   value={newName}
                   helperText="Your name as seen by your team members"
-                  onChange={event => {
+                  onChange={(event) => {
                     this.setState({ newName: event.target.value });
                   }}
                 />

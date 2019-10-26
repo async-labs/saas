@@ -10,9 +10,6 @@
   "dependencies": {
     "@octokit/rest": "^16.25.0",
     "body-parser": "^1.18.3",
-    "chart.js": "^2.8.0",
-    "chartjs-node": "^1.7.1",
-    "chartjs-plugin-datalabels": "^0.6.0",
     "email-addresses": "^3.0.3",
     "express": "^4.16.4",
     "he": "^1.2.0",

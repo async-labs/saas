@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import * as socketio from 'socket.io';
 
 import logger from './logs';
-import { IDiscussionDocument } from './models/Discussion';
-import { IPostDocument } from './models/Post';
+import { DiscussionDocument } from './models/Discussion';
+import { PostDocument } from './models/Post';
 
 let io: socketio.Server = null;
 
@@ -23,7 +23,6 @@ function getSocket(socketId?: string) {
 }
 
 function setup({ http, origin, sessionMiddleware }) {
-
   if (io === null) {
     io = socketio(http, {
       origins: `${origin}:443`,
@@ -35,7 +34,7 @@ function setup({ http, origin, sessionMiddleware }) {
         logger.debug(`Socket middleware - ID: ${socket.id}`);
         next();
       })
-      .on('connection', socket => {
+      .on('connection', (socket) => {
         if (
           !socket.request.session ||
           !socket.request.session.passport ||
@@ -52,22 +51,22 @@ function setup({ http, origin, sessionMiddleware }) {
 
         socket.join(`user-${userId}`);
 
-        socket.on('joinTeam', teamId => {
+        socket.on('joinTeam', (teamId) => {
           logger.debug(`    joinTeam ${teamId}`);
           socket.join(`team-${teamId}`);
         });
 
-        socket.on('leaveTeam', teamId => {
+        socket.on('leaveTeam', (teamId) => {
           logger.debug(`** leaveTeam ${teamId}`);
           socket.leave(`team-${teamId}`);
         });
 
-        socket.on('joinDiscussion', discussionId => {
+        socket.on('joinDiscussion', (discussionId) => {
           logger.debug(`    joinDiscussion ${discussionId}`);
           socket.join(`discussion-${discussionId}`);
         });
 
-        socket.on('leaveDiscussion', discussionId => {
+        socket.on('leaveDiscussion', (discussionId) => {
           logger.debug(`** leaveDiscussion ${discussionId}`);
           socket.leave(`discussion-${discussionId}`);
         });
@@ -84,7 +83,7 @@ function discussionAdded({
   discussion,
 }: {
   socketId?: string;
-  discussion: IDiscussionDocument;
+  discussion: DiscussionDocument;
 }) {
   const roomName = `team-${discussion.teamId}`;
 
@@ -99,7 +98,7 @@ function discussionEdited({
   discussion,
 }: {
   socketId?: string;
-  discussion: IDiscussionDocument;
+  discussion: DiscussionDocument;
 }) {
   const roomName = `team-${discussion.teamId}`;
   const socket = getSocket(socketId);
@@ -129,7 +128,7 @@ function discussionDeleted({
   }
 }
 
-function postAdded({ socketId, post }: { socketId?: string; post: IPostDocument }) {
+function postAdded({ socketId, post }: { socketId?: string; post: PostDocument }) {
   // Emit "postEvent" event to discussion's room
   const roomName = `discussion-${post.discussionId}`;
 
@@ -139,7 +138,7 @@ function postAdded({ socketId, post }: { socketId?: string; post: IPostDocument 
   }
 }
 
-function postEdited({ socketId, post }: { socketId?: string; post: IPostDocument }) {
+function postEdited({ socketId, post }: { socketId?: string; post: PostDocument }) {
   // Emit "postEvent" event to discussion's room
   const roomName = `discussion-${post.discussionId}`;
 

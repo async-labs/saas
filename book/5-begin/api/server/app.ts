@@ -86,7 +86,8 @@ server.use(express.json());
 //     httpOnly: true,
 //     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
 //     domain: COOKIE_DOMAIN,
-//   } as any,
+//     // eslint-disable-next-line
+  } as any,
 // };
 
 // if (!IS_DEV) {
@@ -143,7 +144,8 @@ api(server);
 //   //   }
 //   // }
 
-//   const data: any = await signRequestForLoad(filePath, bucket);
+//   // eslint-disable-next-line
+  const data: any = await signRequestForLoad(filePath, bucket);
 
 //   res.redirect(data.signedRequest);
 // });

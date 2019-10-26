@@ -2,7 +2,7 @@ function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
   const img = document.createElement('img');
   const canvas = document.createElement('canvas');
 
-  const resize = resolve => () => {
+  const resize = (resolve) => () => {
     let isResizeNeeded = false;
     let width = img.width;
     let height = img.height;
@@ -27,7 +27,7 @@ function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      canvas.toBlob(blob => {
+      canvas.toBlob((blob) => {
         resolve(blob);
       }, file.type);
     } else {
@@ -35,9 +35,9 @@ function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
     }
   };
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = (e) => {
       img.src = e.target.result.toString();
 
       img.onload = resize(resolve);

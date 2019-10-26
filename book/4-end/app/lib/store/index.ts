@@ -58,6 +58,7 @@ class Store {
     // socket = null,
     isServer,
   }: {
+    // eslint-disable-next-line
     initialState?: any;
     // 13
     // socket?: SocketIOClient.Socket;
@@ -323,6 +324,7 @@ function initStore(initialState = {}) {
   if (isServer) {
     return new Store({ initialState, isServer: true });
   } else {
+    // eslint-disable-next-line
     const win: any = window;
 
     if (!store) {
@@ -363,6 +365,7 @@ function initStore(initialState = {}) {
 }
 
 function getStore() {
+  // eslint-disable-next-line
   return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
 }
 

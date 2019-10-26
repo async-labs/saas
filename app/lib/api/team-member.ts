@@ -17,8 +17,8 @@ export const getInitialData = (options: any = {}) =>
   );
 
 // eslint-disable-next-line
-export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>
-  sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
+// eslint-disable-next-line
+export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>  sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
     method: 'GET',
     qs: params,
   });

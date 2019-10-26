@@ -34,7 +34,7 @@ class Store {
   // public currentTeam?: Team;
 
   public currentUser?: User = null;
-  public currentUrl: string = '';
+  public currentUrl = '';
   public isLoggingIn = true;
 
   // 13
@@ -46,6 +46,7 @@ class Store {
     // socket = null,
     isServer,
   }: {
+    // eslint-disable-next-line
     initialState?: any;
     // 13
     // socket?: SocketIOClient.Socket;
@@ -306,6 +307,7 @@ function initStore(initialState = {}) {
   if (isServer) {
     return new Store({ initialState, isServer: true });
   } else {
+    // eslint-disable-next-line
     const win: any = window;
 
     if (!store) {
@@ -346,6 +348,8 @@ function initStore(initialState = {}) {
 }
 
 function getStore() {
+function getStore() {
+  // eslint-disable-next-line
   return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
 }
 

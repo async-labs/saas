@@ -78,8 +78,8 @@ async function loadTeamData(team, userId) {
     });
   }
 
+  // eslint-disable-next-line
   const data: any = { initialMembers, initialInvitations };
-
   return data;
 }
 
@@ -100,7 +100,8 @@ async function loadTeamData(team, userId) {
 
 //   const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
-//   const data: any = { initialMembers, initialInvitations, initialDiscussions };
+//   // eslint-disable-next-line
+  const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
 //   return data;
 // }

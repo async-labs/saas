@@ -186,7 +186,7 @@ class PostForm extends React.Component<MyProps, MyState> {
       const newPost = await discussion.addPost(content);
 
       if (discussion.notificationType === 'email') {
-        const userIdsForLambda = discussion.memberIds.filter(m => m !== discussion.createdUserId);
+        const userIdsForLambda = discussion.memberIds.filter((m) => m !== discussion.createdUserId);
         await discussion.sendDataToLambdaApiMethod({
           discussionName: discussion.name,
           discussionLink: `${URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,

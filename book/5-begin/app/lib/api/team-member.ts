@@ -5,6 +5,7 @@ import sendRequestAndGetResponse from './sendRequestAndGetResponse';
 
 const BASE_PATH = '/api/v1/team-member';
 
+// eslint-disable-next-line
 export const getInitialData = (options: any = {}) =>
   sendRequestAndGetResponse(
     `${BASE_PATH}/get-initial-data`,
@@ -23,8 +24,8 @@ export const getInitialData = (options: any = {}) =>
 //   });
 
 // 12
-// export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>
-//   sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
+// // eslint-disable-next-line
+export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>//   sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
 //     method: 'GET',
 //     qs: params,
 //   });

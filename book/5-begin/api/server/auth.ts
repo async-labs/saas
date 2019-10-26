@@ -16,7 +16,7 @@
 // // 10
 // // import Invitation from './models/Invitation';
 
-// import User, { IUserDocument } from './models/User';
+// import User, { UserDocument } from './models/User';
 
 // // 9
 // // import PasswordlessMongoStore from './passwordless';
@@ -147,7 +147,7 @@
 //     ),
 //   );
 
-//   passport.serializeUser((user: IUserDocument, done) => {
+//   passport.serializeUser((user: UserDocument, done) => {
 //     done(null, user._id);
 //   });
 
@@ -167,9 +167,11 @@
 //     };
 
 //     if (req.query && req.query.next && req.query.next.startsWith('/')) {
-//       req.session.next_url = req.query.next;
+//       // eslint-disable-next-line
+      req.session.next_url = req.query.next;
 //     } else {
-//       req.session.next_url = null;
+//       // eslint-disable-next-line
+      req.session.next_url = null;
 //     }
 
 //     // 10

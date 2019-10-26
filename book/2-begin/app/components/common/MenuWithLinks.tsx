@@ -9,7 +9,8 @@
 // class MenuWithLinks extends React.PureComponent<{
 //   src?: string;
 //   alt?: string;
-//   options: any[];
+//     // eslint-disable-next-line
+  options: any[];
 //   router: NextRouter;
 // }> {
 //   public state = {

@@ -18,12 +18,12 @@ class DiscussionList extends React.Component<Props> {
   };
 
   public componentDidMount() {
-    this.props.team.loadDiscussions().catch(err => notify(err));
+    this.props.team.loadDiscussions().catch((err) => notify(err));
   }
 
   public componentDidUpdate(prevProps: Props) {
     if (this.props.team._id !== prevProps.team._id) {
-      this.props.team.loadDiscussions().catch(err => notify(err));
+      this.props.team.loadDiscussions().catch((err) => notify(err));
     }
   }
 
@@ -50,7 +50,7 @@ class DiscussionList extends React.Component<Props> {
         <p />
         <ul style={{ listStyle: 'none', padding: '0px' }}>
           {team &&
-            team.orderedDiscussions.map(d => {
+            team.orderedDiscussions.map((d) => {
               return (
                 <DiscussionListItem
                   key={d._id}
@@ -71,7 +71,7 @@ class DiscussionList extends React.Component<Props> {
     );
   }
 
-  public addDiscussion = event => {
+  public addDiscussion = (event) => {
     event.preventDefault();
     this.setState({ discussionFormOpen: true });
   };

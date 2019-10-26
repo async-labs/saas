@@ -70,6 +70,7 @@ function getSuggestions(suggestions, inputValue, selectedItems) {
 }
 
 class DownshiftMultiple extends React.Component<{
+  // eslint-disable-next-line
   classes: any;
   onChange: (selectedItems) => void;
   suggestions: Array<{ label: string; value: string }>;

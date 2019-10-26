@@ -7,7 +7,7 @@
     "build": "rm -rf production-server/ && tsc --project tsconfig.server.json",
     "postinstall": "rm -rf production-server/ && tsc --project tsconfig.server.json",
     "start": "node production-server/app.js",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint . --ext .ts,.tsx",
     "test": "jest --coverage",
     "processes-8000": "ss -lptn 'sport = :8000'",
     "processes-node": "ps -e|grep node",

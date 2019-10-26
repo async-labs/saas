@@ -1,7 +1,7 @@
 import * as bodyParser from 'body-parser';
 import * as stripe from 'stripe';
 import logger from './logs';
-import Team from './models/Team';
+// import Team from './models/Team';
 
 import {
   STRIPE_LIVE_ENDPOINTSECRET as ENDPOINT_SECRET,
@@ -78,14 +78,13 @@ function stripeWebHooks({ server }) {
       try {
         const event = await verifyWebHook(req);
         // logger.info(JSON.stringify(event.data.object));
-        // eslint-disable-next-line
-        // @ts-ignore
-        // some problem with @types/stripe ?
-        const { subscription } = event.data.object;
-        // logger.info(JSON.stringify(subscription));
-        await Team.cancelSubscriptionAfterFailedPayment({
-          subscriptionId: JSON.stringify(subscription),
-        });
+
+        // const { subscription } = event.data.object;
+        // await Team.cancelSubscriptionAfterFailedPayment({
+        //   subscriptionId: JSON.stringify(subscription),
+        // });
+
+        logger.info(event);
 
         res.sendStatus(200);
       } catch (err) {

@@ -4,8 +4,8 @@
 // import * as socketio from 'socket.io';
 
 // import logger from './logs';
-// import { IDiscussionDocument } from './models/Discussion';
-// import { IPostDocument } from './models/Post';
+// import { DiscussionDocument } from './models/Discussion';
+// import { PostDocument } from './models/Post';
 
 // let io: socketio.Server = null;
 
@@ -85,7 +85,7 @@
 //   discussion,
 // }: {
 //   socketId?: string;
-//   discussion: IDiscussionDocument;
+//   discussion: DiscussionDocument;
 // }) {
 //   const roomName = `team-${discussion.teamId}`;
 
@@ -100,7 +100,7 @@
 //   discussion,
 // }: {
 //   socketId?: string;
-//   discussion: IDiscussionDocument;
+//   discussion: DiscussionDocument;
 // }) {
 //   const roomName = `team-${discussion.teamId}`;
 //   const socket = getSocket(socketId);
@@ -130,7 +130,7 @@
 //   }
 // }
 
-// function postAdded({ socketId, post }: { socketId?: string; post: IPostDocument }) {
+// function postAdded({ socketId, post }: { socketId?: string; post: PostDocument }) {
 //   // Emit "postEvent" event to discussion's room
 //   const roomName = `discussion-${post.discussionId}`;
 
@@ -140,7 +140,7 @@
 //   }
 // }
 
-// function postEdited({ socketId, post }: { socketId?: string; post: IPostDocument }) {
+// function postEdited({ socketId, post }: { socketId?: string; post: PostDocument }) {
 //   // Emit "postEvent" event to discussion's room
 //   const roomName = `discussion-${post.discussionId}`;
 

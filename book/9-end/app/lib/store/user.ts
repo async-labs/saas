@@ -43,9 +43,9 @@ class User {
   //   has_more: boolean;
   // };
 
-  public darkTheme: boolean = true;
+  public darkTheme = true;
 
-  public isLoggedIn: boolean = false;
+  public isLoggedIn = false;
 
   constructor(params) {
     this.store = params.store;

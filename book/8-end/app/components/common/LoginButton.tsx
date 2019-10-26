@@ -17,7 +17,7 @@ class LoginButton extends React.PureComponent<
   // 10
   // { next?: string; invitationToken?: string },
   { email: string }
-  > {
+> {
   public state = { email: '' };
 
   public render() {
@@ -57,7 +57,7 @@ class LoginButton extends React.PureComponent<
               type="email"
               label="Email address"
               value={this.state.email}
-              onChange={event => {
+              onChange={(event) => {
                 this.setState({ email: event.target.value });
               }}
               style={{ width: '300px' }}
@@ -74,7 +74,7 @@ class LoginButton extends React.PureComponent<
     );
   }
 
-  private onSubmit = async event => {
+  private onSubmit = async (event) => {
     event.preventDefault();
     const { email } = this.state;
 

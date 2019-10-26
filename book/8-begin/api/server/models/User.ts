@@ -113,7 +113,7 @@ const mongoSchema = new mongoose.Schema({
   // },
 });
 
-export interface IUserDocument extends mongoose.Document {
+export interface UserDocument extends mongoose.Document {
   googleId: string;
   googleToken: { accessToken: string; refreshToken: string };
   slug: string;
@@ -170,7 +170,7 @@ export interface IUserDocument extends mongoose.Document {
   // };
 }
 
-interface IUserModel extends mongoose.Model<IUserDocument> {
+interface UserModel extends mongoose.Model<UserDocument> {
   publicFields(): string[];
 
   updateProfile({
@@ -181,9 +181,9 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     userId: string;
     name: string;
     avatarUrl: string;
-  }): Promise<IUserDocument[]>;
+  }): Promise<UserDocument[]>;
 
-  getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<IUserDocument[]>;
+  getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<UserDocument[]>;
 
   signInOrSignUp({
     googleId,
@@ -197,9 +197,9 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
     email: string;
     displayName: string;
     avatarUrl: string;
-  }): Promise<IUserDocument>;
+  }): Promise<UserDocument>;
 
-  signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<IUserDocument>;
+  signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<UserDocument>;
 
   // 11
   // createCustomer({
@@ -208,7 +208,7 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
   // }: {
   //   userId: string;
   //   stripeToken: object;
-  // }): Promise<IUserDocument>;
+  // }): Promise<UserDocument>;
 
   // createNewCardUpdateCustomer({
   //   userId,
@@ -216,8 +216,8 @@ interface IUserModel extends mongoose.Model<IUserDocument> {
   // }: {
   //   userId: string;
   //   stripeToken: object;
-  // }): Promise<IUserDocument>;
-  // getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<IUserDocument>;
+  // }): Promise<UserDocument>;
+  // getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<UserDocument>;
   toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 }
 
@@ -515,8 +515,8 @@ class UserClass extends mongoose.Model {
 
 mongoSchema.loadClass(UserClass);
 
-const User = mongoose.model<IUserDocument, IUserModel>('User', mongoSchema);
-User.ensureIndexes(err => {
+const User = mongoose.model<UserDocument, UserModel>('User', mongoSchema);
+User.ensureIndexes((err) => {
   if (err) {
     logger.error(`User.ensureIndexes: ${err.stack}`);
   }

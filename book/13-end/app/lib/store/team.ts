@@ -54,7 +54,7 @@ class Team {
 
   public isLoadingMembers = false;
   public isInitialMembersLoaded = false;
-  public initialDiscussionSlug: string = '';
+  public initialDiscussionSlug = '';
 
   constructor(params) {
     this._id = params._id;
@@ -112,7 +112,7 @@ class Team {
   }
 
   public getDiscussionBySlug(slug): Discussion {
-    return this.discussions.find(d => d.slug === slug);
+    return this.discussions.find((d) => d.slug === slug);
   }
 
   public setInitialDiscussionSlug(slug: string) {
@@ -123,7 +123,7 @@ class Team {
 
   public setInitialDiscussions(discussions) {
     const discussionObjs = discussions.map(
-      t => new Discussion({ team: this, store: this.store, ...t }),
+      (t) => new Discussion({ team: this, store: this.store, ...t }),
     );
 
     this.discussions.replace(discussionObjs);
@@ -151,8 +151,8 @@ class Team {
       const newList: Discussion[] = [];
 
       runInAction(() => {
-        discussions.forEach(d => {
-          const disObj = this.discussions.find(obj => obj._id === d._id);
+        discussions.forEach((d) => {
+          const disObj = this.discussions.find((obj) => obj._id === d._id);
           if (disObj) {
             disObj.changeLocalCache(d);
             newList.push(disObj);
@@ -181,14 +181,14 @@ class Team {
   }
 
   public editDiscussionFromLocalCache(data) {
-    const discussion = this.discussions.find(item => item._id === data.id);
+    const discussion = this.discussions.find((item) => item._id === data.id);
     if (discussion) {
       discussion.changeLocalCache(data);
     }
   }
 
   public removeDiscussionFromLocalCache(discussionId: string) {
-    const discussion = this.discussions.find(item => item._id === discussionId);
+    const discussion = this.discussions.find((item) => item._id === discussionId);
     this.discussions.remove(discussion);
   }
 
@@ -199,7 +199,7 @@ class Team {
       ...data,
     });
 
-    return new Promise<Discussion>(resolve => {
+    return new Promise<Discussion>((resolve) => {
       runInAction(() => {
         const obj = this.addDiscussionToLocalCache(discussion);
         resolve(obj);
@@ -214,7 +214,7 @@ class Team {
     });
 
     runInAction(() => {
-      const discussion = this.discussions.find(d => d._id === id);
+      const discussion = this.discussions.find((d) => d._id === id);
 
       this.removeDiscussionFromLocalCache(id);
 

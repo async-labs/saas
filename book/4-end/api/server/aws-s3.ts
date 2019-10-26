@@ -43,7 +43,8 @@
 
 //   const key = `${prefix}/${randomStringForPrefix}/${fileName}`;
 
-//   const params: any = {
+//   // eslint-disable-next-line
+  const params: any = {
 //     Bucket: bucket,
 //     Key: key,
 //     Expires: 60,

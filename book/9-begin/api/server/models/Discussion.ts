@@ -39,7 +39,7 @@
 //   },
 // });
 
-// interface IDiscussionDocument extends mongoose.Document {
+// interface DiscussionDocument extends mongoose.Document {
 //   createdUserId: string;
 //   teamId: string;
 //   name: string;
@@ -48,14 +48,14 @@
 //   createdAt: Date;
 // }
 
-// interface IDiscussionModel extends mongoose.Model<IDiscussionDocument> {
+// interface DiscussionModel extends mongoose.Model<DiscussionDocument> {
 //   getList({
 //     userId,
 //     teamId,
 //   }: {
 //     userId: string;
 //     teamId: string;
-//   }): Promise<{ discussions: IDiscussionDocument[] }>;
+//   }): Promise<{ discussions: DiscussionDocument[] }>;
 
 //   add({
 //     name,
@@ -69,7 +69,7 @@
 //     teamId: string;
 //     memberIds: string[];
 //     notificationType: string;
-//   }): Promise<IDiscussionDocument>;
+//   }): Promise<DiscussionDocument>;
 
 //   edit({
 //     userId,
@@ -83,7 +83,7 @@
 //     name: string;
 //     memberIds: string[];
 //     notificationType: string;
-//   }): Promise<IDiscussionDocument>;
+//   }): Promise<DiscussionDocument>;
 
 //   delete({ userId, id }: { userId: string; id: string }): Promise<{ teamId: string }>;
 // }
@@ -205,7 +205,7 @@
 
 // mongoSchema.loadClass(DiscussionClass);
 
-// const Discussion = mongoose.model<IDiscussionDocument, IDiscussionModel>('Discussion', mongoSchema);
+// const Discussion = mongoose.model<DiscussionDocument, DiscussionModel>('Discussion', mongoSchema);
 
 // export default Discussion;
-// export { IDiscussionDocument };
+// export { DiscussionDocument };

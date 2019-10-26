@@ -33,7 +33,7 @@ function renderInput(inputProps) {
 
 function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, selectedItems }) {
   const isHighlighted = highlightedIndex === index;
-  const isSelected = (selectedItems || []).map(i => i.value).indexOf(suggestion.value) > -1;
+  const isSelected = (selectedItems || []).map((i) => i.value).indexOf(suggestion.value) > -1;
 
   return (
     <MenuItem
@@ -52,9 +52,9 @@ function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, sele
 
 function getSuggestions(suggestions, inputValue, selectedItems) {
   let count = 0;
-  const selectedValues = (selectedItems || []).map(i => i.value);
+  const selectedValues = (selectedItems || []).map((i) => i.value);
 
-  return suggestions.filter(suggestion => {
+  return suggestions.filter((suggestion) => {
     const keep =
       (!inputValue ||
         (selectedValues.indexOf(suggestion.value) === -1 &&
@@ -70,6 +70,7 @@ function getSuggestions(suggestions, inputValue, selectedItems) {
 }
 
 class DownshiftMultiple extends React.Component<{
+  // eslint-disable-next-line
   classes: any;
   onChange: (selectedItems) => void;
   suggestions: Array<{ label: string; value: string }>;
@@ -103,7 +104,7 @@ class DownshiftMultiple extends React.Component<{
           inputValue={inputValue}
           onChange={this.handleChange}
           selectedItem={selectedItems}
-          itemToString={item => item.value}
+          itemToString={(item) => item.value}
         >
           {({
             getInputProps,
@@ -124,7 +125,7 @@ class DownshiftMultiple extends React.Component<{
                 // re-rendering needed for fixing label transition bug
                 key: `text-field-${!!selectedItems.length}`,
                 InputProps: getInputProps({
-                  startAdornment: selectedItems.map(item => (
+                  startAdornment: selectedItems.map((item) => (
                     <Chip
                       key={item.value}
                       tabIndex={-1}
@@ -159,7 +160,7 @@ class DownshiftMultiple extends React.Component<{
     );
   }
 
-  public handleKeyDown = event => {
+  public handleKeyDown = (event) => {
     const { inputValue, selectedItems } = this.state;
     if (selectedItems.length && !inputValue.length && keycode(event) === 'backspace') {
       this.setState({
@@ -171,14 +172,14 @@ class DownshiftMultiple extends React.Component<{
     }
   };
 
-  public handleInputChange = event => {
+  public handleInputChange = (event) => {
     this.setState({ inputValue: event.target.value });
   };
 
-  public handleChange = item => {
+  public handleChange = (item) => {
     let { selectedItems } = this.state;
 
-    if (selectedItems.map(i => i.value).indexOf(item.value) === -1) {
+    if (selectedItems.map((i) => i.value).indexOf(item.value) === -1) {
       selectedItems = [...selectedItems, item];
     }
 
@@ -191,7 +192,7 @@ class DownshiftMultiple extends React.Component<{
     this.props.onChange(selectedItems);
   };
 
-  public handleDelete = item => () => {
+  public handleDelete = (item) => () => {
     const selectedItems = [...this.state.selectedItems];
     selectedItems.splice(selectedItems.indexOf(item), 1);
 
@@ -200,7 +201,7 @@ class DownshiftMultiple extends React.Component<{
   };
 }
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     flexGrow: 1,
     height: 100,

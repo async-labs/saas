@@ -54,7 +54,6 @@ export default function withStore(App) {
 
         // 10
         // initialState: { user, teamSlug, currentUrl: ctx.asPath, ...initialData },
-
       };
     }
 
