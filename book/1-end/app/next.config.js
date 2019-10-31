@@ -2,13 +2,13 @@ const dotenv = require('dotenv');
 const fs = require('fs');
 const webpack = require('webpack');
 
-var current = { ...process.env };
+let current = { ...process.env };
 const result = dotenv.config();
 if (!result.error) {
   current = { ...current, ...result.parsed };
 }
 
-var blueprint = { NODE_ENV: process.env.NODE_ENV };
+let blueprint = { NODE_ENV: process.env.NODE_ENV };
 try {
   blueprint = { ...blueprint, ...dotenv.parse(fs.readFileSync('./.env.blueprint', 'utf8')) };
 } catch (err) {

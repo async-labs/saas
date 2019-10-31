@@ -11,7 +11,7 @@
     "**/node_modules": true,
     "**/production-server": true,
     "**/lambda/src/api": true,
-    "**/.next": true,
+    // "**/.next": true,
     "**/.coverage": true
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",

@@ -4,24 +4,24 @@
   "license": "MIT",
   "scripts": {
     "dev": "next",
-    "build": "next build",
+    "build": "next build && tsc --project tsconfig.server.json",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
     "dotenv": "^8.1.0",
-    "next": "9.0.7",
-    "react": "16.10.1",
-    "react-dom": "16.10.1",
-    "typescript": "3.6.3"
+    "next": "9.1.2",
+    "react": "16.11.0",
+    "react-dom": "16.11.0",
+    "typescript": "3.6.4"
   },
   "devDependencies": {
-    "@types/node": "12.7.9",
-    "@types/react": "16.9.4",
-    "@types/react-dom": "16.9.1",
-    "@typescript-eslint/eslint-plugin": "^2.4.0",
-    "@typescript-eslint/parser": "^2.4.0",
-    "eslint": "^6.5.1",
-    "eslint-config-prettier": "^6.4.0",
+    "@types/node": "12.12.3",
+    "@types/react": "16.9.11",
+    "@types/react-dom": "16.9.3",
+    "@typescript-eslint/eslint-plugin": "^2.6.0",
+    "@typescript-eslint/parser": "^2.6.0",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-prettier": "^3.1.1",
     "prettier": "^1.18.2"
   }
