@@ -8,7 +8,7 @@
     "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
-    "dotenv": "^8.1.0",
+    "dotenv-webpack": "^1.7.0",
     "next": "9.1.2",
     "react": "16.11.0",
     "react-dom": "16.11.0",

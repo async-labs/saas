@@ -2,8 +2,8 @@ import Document, { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
 
 class MyDocument extends Document {
-  // comment123
   public render() {
+    console.log(process.env.STRIPEPUBLISHABLEKEY);
     return (
       <Html lang="en">
         <Head>
