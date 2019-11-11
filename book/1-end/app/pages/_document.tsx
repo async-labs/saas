@@ -3,7 +3,7 @@ import React from 'react';
 
 class MyDocument extends Document {
   public render() {
-    console.log(process.env.STRIPEPUBLISHABLEKEY);
+    console.log(process.env.URL_APP);
     return (
       <Html lang="en">
         <Head>
