@@ -3,6 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import { NextRouter, withRouter } from 'next/router';
 import React from 'react';
 import MenuWithLinks from '../common/MenuWithLinks';
+import Confirm from '../common/Confirm';
 import Notifier from '../common/Notifier';
 import { menuOnTheRight } from './menus';
 
@@ -44,6 +45,7 @@ function ThemeWrapper({ children, firstGridItem, isMobile }) {
         {children}
       </Grid>
       <Notifier />
+      <Confirm />
     </React.Fragment>
   );
 }
