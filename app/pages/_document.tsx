@@ -4,8 +4,6 @@ import React from 'react';
 
 import { GA_TRACKING_ID } from '../lib/consts';
 
-// comment456
-
 class MyDocument extends Document {
   public static getInitialProps = async (ctx) => {
     // Render app and page and get the context of the page with collected side effects.
