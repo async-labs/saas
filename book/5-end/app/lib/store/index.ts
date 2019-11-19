@@ -34,7 +34,7 @@ class Store {
   // public currentTeam?: Team;
 
   public currentUser?: User = null;
-  public currentUrl: string = '';
+  public currentUrl = '';
   public isLoggingIn = true;
 
   // 13

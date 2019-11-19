@@ -28,17 +28,17 @@ export const getTeamList = () =>
     method: 'GET',
   });
 
-export const addDiscussion = data =>
+export const addDiscussion = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/discussions/add`, {
     body: JSON.stringify(data),
   });
 
-export const editDiscussion = data =>
+export const editDiscussion = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/discussions/edit`, {
     body: JSON.stringify(data),
   });
 
-export const deleteDiscussion = data =>
+export const deleteDiscussion = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/discussions/delete`, {
     body: JSON.stringify(data),
   });
@@ -49,17 +49,17 @@ export const getPostList = (discussionId: string) =>
     qs: { discussionId },
   });
 
-export const addPost = data =>
+export const addPost = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/posts/add`, {
     body: JSON.stringify(data),
   });
 
-export const editPost = data =>
+export const editPost = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/posts/edit`, {
     body: JSON.stringify(data),
   });
 
-export const deletePost = data =>
+export const deletePost = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/posts/delete`, {
     body: JSON.stringify(data),
   });
@@ -79,12 +79,12 @@ export const uploadFileUsingSignedPutRequest = (file, signedRequest, headers = {
     headers,
   });
 
-export const updateProfile = data =>
+export const updateProfile = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/user/update-profile`, {
     body: JSON.stringify(data),
   });
 
-export const toggleTheme = data =>
+export const toggleTheme = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/user/toggle-theme`, {
     body: JSON.stringify(data),
   });

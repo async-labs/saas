@@ -1,5 +1,6 @@
 import { inject, observer } from 'mobx-react';
 import Link from 'next/link';
+import React from 'react';
 
 import { Store } from '../../lib/store';
 

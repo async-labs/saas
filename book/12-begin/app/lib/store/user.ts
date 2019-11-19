@@ -35,14 +35,14 @@ class User {
         teamName: string;
         date: number;
         hosted_invoice_url: string;
-      }
+      },
     ];
     has_more: boolean;
   };
 
-  public darkTheme: boolean = true;
+  public darkTheme = true;
 
-  public isLoggedIn: boolean = false;
+  public isLoggedIn = false;
 
   constructor(params) {
     this.store = params.store;

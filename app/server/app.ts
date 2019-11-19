@@ -36,9 +36,7 @@ app.prepare().then(() => {
   }
 
   // middleware that populates req.user via fetching from API
-  // eslint-disable-next-line
   server.use(async (req: any, _, nextfn) => {
-    // eslint-disable-next-line
     const headers: any = {};
     if (req.headers && req.headers.cookie) {
       headers.cookie = req.headers.cookie;
@@ -54,7 +52,6 @@ app.prepare().then(() => {
     nextfn();
   });
 
-  // eslint-disable-next-line
   server.get('/', async (req: any, res) => {
     let redirectUrl = 'login';
 

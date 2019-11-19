@@ -6,7 +6,6 @@ import { makeQueryString } from './makeQueryString';
 
 import { URL_API } from '../consts';
 
-// eslint-disable-next-line
 export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   const { externalServer } = opts;
 

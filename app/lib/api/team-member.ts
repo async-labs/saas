@@ -4,7 +4,6 @@ import { LAMBDA_API_ENDPOINT } from '../consts';
 
 const BASE_PATH = '/api/v1/team-member';
 
-// eslint-disable-next-line
 export const getInitialData = (options: any = {}) =>
   sendRequestAndGetResponse(
     `${BASE_PATH}/get-initial-data`,
@@ -16,9 +15,8 @@ export const getInitialData = (options: any = {}) =>
     ),
   );
 
-// eslint-disable-next-line
-// eslint-disable-next-line
-export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>  sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
+export const getDiscussionList = (params): Promise<{ discussions: any[] }> =>
+  sendRequestAndGetResponse(`${BASE_PATH}/discussions/list`, {
     method: 'GET',
     qs: params,
   });

@@ -13,13 +13,13 @@ type Props = {
 
 class MemberChooser extends React.Component<Props> {
   public render() {
-    const suggestions = this.props.members.map(user => ({
+    const suggestions = this.props.members.map((user) => ({
       label: user.displayName,
       value: user._id,
     }));
 
     const selectedItems = suggestions.filter(
-      s => this.props.selectedMemberIds.indexOf(s.value) !== -1,
+      (s) => this.props.selectedMemberIds.indexOf(s.value) !== -1,
     );
 
     return (
@@ -33,8 +33,8 @@ class MemberChooser extends React.Component<Props> {
     );
   }
 
-  private handleAutoCompleteChange = selectedItems => {
-    this.props.onChange(selectedItems.map(i => i.value));
+  private handleAutoCompleteChange = (selectedItems) => {
+    this.props.onChange(selectedItems.map((i) => i.value));
   };
 }
 

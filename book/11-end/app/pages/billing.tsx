@@ -273,9 +273,9 @@ class YourBilling extends React.Component<Props, State> {
         ) : (
           <React.Fragment>
             {currentUser.stripeListOfInvoices.data.map((invoice, i) => (
-              <React.Fragment>
+              <React.Fragment key={i}>
                 <p>Your history of payments:</p>
-                <li key={i}>
+                <li>
                   ${invoice.amount_paid / 100} was paid on{' '}
                   {moment(invoice.date * 1000).format('MMM Do YYYY')} for Team '{invoice.teamName}'
                   -{' '}

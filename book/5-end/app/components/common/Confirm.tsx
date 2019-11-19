@@ -14,7 +14,7 @@ class Confirm extends React.Component {
     title: 'Are you sure?',
     message: '',
     successMessage: '',
-    onAnswer: a => a,
+    onAnswer: (a) => a,
   };
 
   public render() {

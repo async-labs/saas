@@ -21,7 +21,15 @@ const styleGridIsMobile = {
   padding: '0px 0px 0px 10px',
 };
 
-function ThemeWrapper({ children, firstGridItem, isMobile }) {
+function ThemeWrapper({
+  children,
+  firstGridItem,
+  isMobile,
+}: {
+  children: React.ReactNode;
+  firstGridItem: boolean;
+  isMobile: boolean;
+}) {
   return (
     <React.Fragment>
       <Grid

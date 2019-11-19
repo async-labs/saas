@@ -42,7 +42,7 @@ class Store {
 
   // public currentUser?: User = null;
 
-  public currentUrl: string = '';
+  public currentUrl = '';
 
   public isLoggingIn = false;
 

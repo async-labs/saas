@@ -34,7 +34,15 @@ const styleNoTeamDiv = {
   padding: '20px',
 };
 
-function ThemeWrapper({ children, firstGridItem, isMobile }) {
+function ThemeWrapper({
+  children,
+  firstGridItem,
+  isMobile,
+}: {
+  children: React.ReactNode;
+  firstGridItem: boolean;
+  isMobile: boolean;
+}) {
   return (
     <React.Fragment>
       <Grid

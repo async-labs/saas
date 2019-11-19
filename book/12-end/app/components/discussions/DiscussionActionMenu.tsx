@@ -11,7 +11,7 @@ import EditDiscussionForm from './EditDiscussionForm';
 
 import { URL_APP } from '../../lib/consts';
 
-const getMenuOptions = discussion => ({
+const getMenuOptions = (discussion) => ({
   dataId: discussion._id,
   id: `discussion-menu-${discussion._id}`,
 });
@@ -83,7 +83,7 @@ class DiscussionActionMenu extends React.Component<{
       </React.Fragment>
     );
   }
-  public handleCopyUrl = async event => {
+  public handleCopyUrl = async (event) => {
     const { store } = this.props;
     const { currentTeam } = store;
 
@@ -92,10 +92,8 @@ class DiscussionActionMenu extends React.Component<{
       return;
     }
 
-    const selectedDiscussion = currentTeam.discussions.find(d => d._id === id);
-    const discussionUrl = `${URL_APP}/team/${currentTeam.slug}/discussions/${
-      selectedDiscussion.slug
-      }`;
+    const selectedDiscussion = currentTeam.discussions.find((d) => d._id === id);
+    const discussionUrl = `${URL_APP}/team/${currentTeam.slug}/discussions/${selectedDiscussion.slug}`;
 
     try {
       if (window.navigator) {
@@ -109,7 +107,7 @@ class DiscussionActionMenu extends React.Component<{
     }
   };
 
-  public editDiscussion = event => {
+  public editDiscussion = (event) => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('You have not selected Team.');
@@ -121,12 +119,12 @@ class DiscussionActionMenu extends React.Component<{
       return;
     }
 
-    const selectedDiscussion = currentTeam.discussions.find(d => d._id === id);
+    const selectedDiscussion = currentTeam.discussions.find((d) => d._id === id);
 
     this.setState({ discussionFormOpen: true, selectedDiscussion });
   };
 
-  public deleteDiscussion = async event => {
+  public deleteDiscussion = async (event) => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
       notify('You have not selected Team.');
@@ -138,7 +136,7 @@ class DiscussionActionMenu extends React.Component<{
     confirm({
       title: 'Are you sure?',
       message: '',
-      onAnswer: async answer => {
+      onAnswer: async (answer) => {
         if (!answer) {
           return;
         }

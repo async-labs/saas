@@ -106,39 +106,39 @@ class YourBilling extends React.Component<Props, State> {
                   </Button>
                 </StripeCheckout>
               ) : (
-                  <span>
-                    {' '}
-                    <i
-                      className="material-icons"
-                      color="action"
-                      style={{ verticalAlign: 'text-bottom' }}
-                    >
-                      done
+                <span>
+                  {' '}
+                  <i
+                    className="material-icons"
+                    color="action"
+                    style={{ verticalAlign: 'text-bottom' }}
+                  >
+                    done
                   </i>{' '}
-                    Your default payment method:
+                  Your default payment method:
                   <li>
-                      {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
+                    {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
                   </li>
-                    <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
-                    <li>
-                      Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
-                    </li>
-                    <p />
-                    <StripeCheckout
-                      stripeKey={STRIPEPUBLISHABLEKEY}
-                      token={this.addNewCardOnClick}
-                      name="Add new card information"
-                      email={currentUser.email}
-                      allowRememberMe={false}
-                      panelLabel="Update card"
-                      description={'New card will be your default card.'}
-                    >
-                      <Button variant="outlined" color="primary">
-                        Update card
+                  <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
+                  <li>
+                    Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
+                  </li>
+                  <p />
+                  <StripeCheckout
+                    stripeKey={STRIPEPUBLISHABLEKEY}
+                    token={this.addNewCardOnClick}
+                    name="Add new card information"
+                    email={currentUser.email}
+                    allowRememberMe={false}
+                    panelLabel="Update card"
+                    description={'New card will be your default card.'}
+                  >
+                    <Button variant="outlined" color="primary">
+                      Update card
                     </Button>
-                    </StripeCheckout>
-                  </span>
-                )}
+                  </StripeCheckout>
+                </span>
+              )}
               <p />
               <br />
               <h4>Payment history</h4>
@@ -207,7 +207,10 @@ class YourBilling extends React.Component<Props, State> {
       return (
         <React.Fragment>
           <p>You are not a paying customer.</p>
-          <p>Buy subscription using your current card, see below section for current card information.</p>
+          <p>
+            Buy subscription using your current card, see below section for current card
+            information.
+          </p>
           <Button variant="contained" color="primary" onClick={this.createSubscriptionOnClick}>
             Buy subscription
           </Button>
@@ -268,27 +271,27 @@ class YourBilling extends React.Component<Props, State> {
             <p>You have no history of payments.</p>
           </React.Fragment>
         ) : (
-            <React.Fragment>
-              {currentUser.stripeListOfInvoices.data.map((invoice, i) => (
-                <React.Fragment>
-                  <p>Your history of payments:</p>
-                  <li key={i}>
-                    ${invoice.amount_paid / 100} was paid on{' '}
-                    {moment(invoice.date * 1000).format('MMM Do YYYY')} for Team '{invoice.teamName}'
+          <React.Fragment>
+            {currentUser.stripeListOfInvoices.data.map((invoice, i) => (
+              <React.Fragment key={i}>
+                <p>Your history of payments:</p>
+                <li>
+                  ${invoice.amount_paid / 100} was paid on{' '}
+                  {moment(invoice.date * 1000).format('MMM Do YYYY')} for Team '{invoice.teamName}'
                   -{' '}
-                    <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">
-                      See invoice
+                  <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">
+                    See invoice
                   </a>
-                  </li>
-                </React.Fragment>
-              ))}
-            </React.Fragment>
-          )}
+                </li>
+              </React.Fragment>
+            ))}
+          </React.Fragment>
+        )}
       </React.Fragment>
     );
   }
 
-  private addCard = async token => {
+  private addCard = async (token) => {
     const { currentUser, currentTeam } = this.props.store;
 
     NProgress.start();
@@ -306,7 +309,7 @@ class YourBilling extends React.Component<Props, State> {
     }
   };
 
-  private addNewCardOnClick = async token => {
+  private addNewCardOnClick = async (token) => {
     const { currentUser } = this.props.store;
 
     NProgress.start();

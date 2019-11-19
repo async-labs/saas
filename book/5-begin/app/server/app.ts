@@ -92,7 +92,7 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(PORT_APP, err => {
+  server.listen(PORT_APP, (err) => {
     if (err) {
       throw err;
     }

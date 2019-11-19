@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+// import TextField from '@material-ui/core/TextField';
 import React from 'react';
 
 import { makeQueryString } from '../../lib/api/makeQueryString';
@@ -19,7 +19,7 @@ class LoginButton extends React.PureComponent<
   // 10
   // { next?: string; invitationToken?: string },
   { email: string }
-  > {
+> {
   public state = { email: '' };
 
   public render() {
