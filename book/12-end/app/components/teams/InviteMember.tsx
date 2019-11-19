@@ -37,7 +37,7 @@ class InviteMember extends React.Component<Props, State> {
             autoComplete="off"
             value={this.state.email}
             placeholder="Email"
-            onChange={event => {
+            onChange={(event) => {
               this.setState({ email: event.target.value });
             }}
           />

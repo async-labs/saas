@@ -71,8 +71,7 @@
 // }
 
 // class DownshiftMultiple extends React.Component<{
-//   // eslint-disable-next-line
-  classes: any;
+//   classes: any;
 //   onChange: (selectedItems) => void;
 //   suggestions: Array<{ label: string; value: string }>;
 //   selectedItems: Array<{ label: string; value: string }>;

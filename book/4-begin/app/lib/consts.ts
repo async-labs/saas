@@ -12,13 +12,17 @@ export const PORT_API = +process.env.API_PORT || +process.env.PORT_API || 8000;
 
 let urlAPI: string = process.env.URL_API;
 if (!urlAPI) {
-  urlAPI = IS_DEV ? process.env.DEVELOPMENT_URL_API || `http://localhost:${PORT_API}` : process.env.PRODUCTION_URL_API;
+  urlAPI = IS_DEV
+    ? process.env.DEVELOPMENT_URL_API || `http://localhost:${PORT_API}`
+    : process.env.PRODUCTION_URL_API;
 }
 export const URL_API = urlAPI;
 
 let urlAPP: string = process.env.URL_APP;
 if (!urlAPP) {
-  urlAPP = IS_DEV ? process.env.DEVELOPMENT_URL_APP || `http://localhost:${PORT_APP}` : process.env.PRODUCTION_URL_APP;
+  urlAPP = IS_DEV
+    ? process.env.DEVELOPMENT_URL_APP || `http://localhost:${PORT_APP}`
+    : process.env.PRODUCTION_URL_APP;
 }
 export const URL_APP = urlAPP;
 

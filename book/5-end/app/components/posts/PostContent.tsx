@@ -81,7 +81,7 @@
 //       <div
 //         ref={elm => (this.postBodyElm = elm)}
 //         style={{ fontSize: '15px', lineHeight: '2em', fontWeight: 300, wordBreak: 'break-all' }}
-// 
+//
 //         dangerouslySetInnerHTML={{ __html: html }}
 //       />
 //     );

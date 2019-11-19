@@ -348,8 +348,6 @@ function initStore(initialState = {}) {
 }
 
 function getStore() {
-function getStore() {
-  // eslint-disable-next-line
   return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
 }
 

@@ -10,7 +10,7 @@ Router.events.on('routeChangeStart', () => {
   NProgress.start();
 });
 
-Router.events.on('routeChangeComplete', url => {
+Router.events.on('routeChangeComplete', (url) => {
   NProgress.done();
   gtag.pageview(url);
 

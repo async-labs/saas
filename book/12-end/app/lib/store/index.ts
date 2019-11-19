@@ -24,7 +24,7 @@ class Store {
 
   public currentUser?: User = null;
   public currentTeam?: Team;
-  public currentUrl: string = '';
+  public currentUrl = '';
   public isLoggingIn = true;
 
   public socket: SocketIOClient.Socket;
@@ -58,7 +58,7 @@ class Store {
         console.log('socket: ## disconnected');
       });
 
-      socket.on('reconnect', attemptNumber => {
+      socket.on('reconnect', (attemptNumber) => {
         console.log('socket: $$ reconnected', attemptNumber);
 
         if (this.currentTeam) {
@@ -87,7 +87,7 @@ class Store {
 
   // eslint-disable-next-line
   public setTeams(teams: any[], selectedTeamSlug?: string) {
-    const teamObjs = teams.map(t => new Team({ store: this, ...t }));
+    const teamObjs = teams.map((t) => new Team({ store: this, ...t }));
 
     if (teams && teams.length > 0 && !selectedTeamSlug) {
       selectedTeamSlug = teamObjs[0].slug;
@@ -167,7 +167,7 @@ class Store {
   }
 
   public editTeamFromLocalCache(data) {
-    const team = this.teams.find(item => item._id === data._id);
+    const team = this.teams.find((item) => item._id === data._id);
 
     if (team) {
       if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
@@ -181,7 +181,7 @@ class Store {
   }
 
   public removeTeamFromLocalCache(teamId: string) {
-    const team = this.teams.find(t => t._id === teamId);
+    const team = this.teams.find((t) => t._id === teamId);
 
     this.teams.remove(team);
   }
@@ -209,7 +209,7 @@ class Store {
     }
   }
 
-  private handleTeamRealtimeEvent = data => {
+  private handleTeamRealtimeEvent = (data) => {
     console.log('team realtime event', data);
     const { action: actionName } = data;
 
@@ -226,11 +226,11 @@ class Store {
     if (this.currentTeam) {
       this.currentTeam
         .loadInitialMembers()
-        .catch(err => console.error('Error while loading Users', err));
+        .catch((err) => console.error('Error while loading Users', err));
 
       this.currentTeam
         .loadDiscussions()
-        .catch(err => console.error('Error while loading Discussions', err));
+        .catch((err) => console.error('Error while loading Discussions', err));
     }
   }
 }

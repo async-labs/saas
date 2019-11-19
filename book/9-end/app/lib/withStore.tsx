@@ -5,7 +5,7 @@ import { getInitialData } from './api/team-member';
 import { getStore, initStore, Store } from './store';
 
 export default function withStore(App) {
-  class AppWithMobx extends React.Component {
+  class AppWithMobx extends React.Component<{ initialState: any }> {
     public static async getInitialProps(appContext) {
       let appProps = {};
       if (typeof App.getInitialProps === 'function') {

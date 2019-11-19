@@ -11,7 +11,7 @@ import { Discussion, Post, Store, User } from '../../lib/store';
 
 import PostEditor from './PostEditor';
 
-import { URL_APP } from '../../lib/consts';
+// import { URL_APP } from '../../lib/consts';
 
 const styles = {
   paper: {

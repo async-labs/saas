@@ -89,7 +89,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                 label="Type name of Discussion"
                 helperText="Give a short and informative name to new Discussion"
                 value={this.state.name}
-                onChange={event => {
+                onChange={(event) => {
                   this.setState({ name: event.target.value });
                 }}
               />
@@ -140,7 +140,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
               <p />
               <PostEditor
                 content={this.state.content}
-                onChanged={content => this.setState({ content })}
+                onChanged={(content) => this.setState({ content })}
                 members={Array.from(store.currentTeam.members.values())}
               />
               <p />
@@ -173,7 +173,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     );
   }
 
-  public handleMemberChange = memberIds => {
+  public handleMemberChange = (memberIds) => {
     this.setState({ memberIds });
   };
 
@@ -221,7 +221,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       const post = await discussion.addPost(content);
 
       if (discussion.notificationType === 'email') {
-        const userIdsForLambda = discussion.memberIds.filter(m => m !== discussion.createdUserId);
+        const userIdsForLambda = discussion.memberIds.filter((m) => m !== discussion.createdUserId);
         console.log(discussion.notificationType, userIdsForLambda);
         await discussion.sendDataToLambdaApiMethod({
           discussionName: discussion.name,
@@ -254,7 +254,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     const { currentUser } = store;
 
     const members = Array.from(store.currentTeam.members.values()).filter(
-      user => user._id !== currentUser._id,
+      (user) => user._id !== currentUser._id,
     );
 
     return (

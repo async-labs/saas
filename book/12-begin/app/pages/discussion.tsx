@@ -34,7 +34,7 @@ class DiscussionComp extends React.Component<Props> {
     const { store, isServer, discussionSlug } = this.props;
 
     if (store.currentTeam && (!isServer || !discussionSlug)) {
-      store.currentTeam.loadDiscussions().catch(err => notify(err));
+      store.currentTeam.loadDiscussions().catch((err) => notify(err));
     }
 
     // 13
@@ -129,7 +129,7 @@ class DiscussionComp extends React.Component<Props> {
     const discussion = this.getDiscussion(discussionSlug);
 
     if (!isServer && discussion) {
-      discussion.loadPosts().catch(err => notify(err));
+      discussion.loadPosts().catch((err) => notify(err));
     }
   }
 
@@ -197,7 +197,7 @@ class DiscussionComp extends React.Component<Props> {
           </h4>{' '}
           Visible to :{' '}
           {discussion
-            ? discussion.members.map(m => (
+            ? discussion.members.map((m) => (
                 <Tooltip
                   title={m.displayName}
                   placement="right"
@@ -260,7 +260,7 @@ class DiscussionComp extends React.Component<Props> {
     return (
       <React.Fragment>
         {discussion
-          ? discussion.posts.map(p =>
+          ? discussion.posts.map((p) =>
               selectedPost && selectedPost._id === p._id ? (
                 <PostForm
                   key={p._id}
@@ -294,11 +294,11 @@ class DiscussionComp extends React.Component<Props> {
     );
   }
 
-  private onEditClickCallback = post => {
+  private onEditClickCallback = (post) => {
     this.setState({ selectedPost: post, showMarkdownClicked: false });
   };
 
-  private onSnowMarkdownClickCallback = post => {
+  private onSnowMarkdownClickCallback = (post) => {
     this.setState({ selectedPost: post, showMarkdownClicked: true });
   };
 
