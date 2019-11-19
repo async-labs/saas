@@ -34,7 +34,15 @@ const styleNoTeamDiv = {
   padding: '20px',
 };
 
-function ThemeWrapper({ children, firstGridItem, isMobile }) {
+function ThemeWrapper({
+  children,
+  firstGridItem,
+  isMobile,
+}: {
+  children: React.ReactNode;
+  firstGridItem: boolean;
+  isMobile: boolean;
+}) {
   return (
     <React.Fragment>
       <Grid
@@ -259,8 +267,6 @@ class Layout extends React.Component<MyProps> {
   private renderBookMention() {
     const { isMobile } = this.props;
 
-    // eslint-disable-next-line
-    // eslint-disable-next-line
     const style: any = {
       padding: '10px',
       textAlign: 'right',

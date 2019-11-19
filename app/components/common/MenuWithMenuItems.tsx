@@ -3,9 +3,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 
 class MenuWithMenuItems extends React.PureComponent<{
-  // eslint-disable-next-line
   menuOptions: any;
-  // eslint-disable-next-line
   itemOptions: any[];
 }> {
   public state = {
