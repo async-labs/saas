@@ -6,7 +6,6 @@
     "dev": "tsnd --respawn --transpileOnly server/app.ts",
     "build": "rm -rf production-server/ && tsc --project tsconfig.server.json",
     "postinstall": "rm -rf production-server/ && tsc --project tsconfig.server.json",
-    "prestart": "rm -rf production-server/ && tsc --project tsconfig.server.json",
     "start": "node production-server/app.js",
     "now": "now && now alias",
     "now-rm": "now rm saas-api --safe --yes",
