@@ -80,6 +80,6 @@ app.prepare().then(() => {
     // if (err) {
     //   throw err;
     // }
-    console.log(`> Ready on ${URL_APP} ${URL_API} ${IS_DEV}`);
+    console.log(`> Ready on ${URL_APP} ${URL_API} ${IS_DEV} ${PORT_APP}`);
   });
 });
