@@ -177,9 +177,10 @@ function setupGoogle({ ROOT_URL, server }) {
     }),
     (req, res) => {
       if (req.user && req.session.invitationToken) {
-        Invitation.addUserToTeam({ token: req.session.invitationToken, user: req.user }).catch(
-          (err) => logger.error(err),
-        );
+        Invitation.addUserToTeam({
+          token: req.session.invitationToken,
+          user: req.user,
+        }).catch((err) => logger.error(err));
       }
 
       let redirectUrlAfterLogin;
