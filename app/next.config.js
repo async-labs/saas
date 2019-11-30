@@ -1,42 +1,20 @@
-// eslint-disable-next-line
-const dotenv = require('dotenv');
+/* eslint-disable */
+require('dotenv').config();
 
-// eslint-disable-next-line
-const fs = require('fs');
-
-// eslint-disable-next-line
-const webpack = require('webpack');
-
-let current = { ...process.env };
-const result = dotenv.config();
-if (!result.error) {
-  current = { ...current, ...result.parsed };
-}
-
-let blueprint = { NODE_ENV: process.env.NODE_ENV };
-try {
-  blueprint = { ...blueprint, ...dotenv.parse(fs.readFileSync('./.env.blueprint', 'utf8')) };
-} catch (err) {
-  console.log(err);
-}
-const rules = Object.keys(blueprint).reduce((obj, key) => {
-  obj[`process.env.${key}`] = JSON.stringify(current[key]);
-  return obj;
-}, {});
-
-const config = {
-  webpack: (config) => {
-    config.plugins = config.plugins || [];
-
-    config.plugins = [
-      ...config.plugins,
-
-      // Read the .env file
-      new webpack.DefinePlugin(rules),
-    ];
-
-    return config;
+module.exports = {
+  env: {
+    BUCKET_FOR_TEAM_AVATARS: process.env.BUCKET_FOR_TEAM_AVATARS,
+    STRIPEPUBLISHABLEKEY: process.env.STRIPEPUBLISHABLEKEY,
+    BUCKET_FOR_POSTS: process.env.BUCKET_FOR_POSTS,
+    LAMBDA_API_ENDPOINT: process.env.LAMBDA_API_ENDPOINT,
+    URL_APP: process.env.URL_APP,
+    URL_API: process.env.URL_API,
+    GA_TRACKING_ID: process.env.GA_TRACKING_ID,
+    DEVELOPMENT_URL_API: process.env.DEVELOPMENT_URL_API,
+    DEVELOPMENT_URL_APP: process.env.DEVELOPMENT_URL_APP,
+    PRODUCTION_URL_API: process.env.PRODUCTION_URL_API,
+    PRODUCTION_URL_APP: process.env.PRODUCTION_URL_APP,
+    PORT: process.env.PORT,
+    PORT_API: process.env.PORT_API,
   },
 };
-
-module.exports = config;
