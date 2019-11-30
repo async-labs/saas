@@ -1,6 +1,6 @@
 branch-defaults:
   default:
-    environment: app-saas
+    environment: saas-app-env
 environment-defaults:
   async-github1-env:
     branch: null
