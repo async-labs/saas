@@ -6,10 +6,10 @@ export const NODE_ENV = process.env.NODE_ENV || 'development';
 
 export const IS_DEV = NODE_ENV !== 'production';
 
-// in production at AWS EB, PORT_APP is 3000, which is wrong
-// setting PORT_APP to 8081 for production so nginx works as expected
+// Heroku sets PORT
+// AWS EB with nginx requires PORT to be 8081
+// set env var in AWS EB dashboard PORT=8081
 export const PORT_APP = IS_DEV ? 3000 : process.env.PORT || 8081;
-// export const PORT_APP = IS_DEV ? 3000 : 8081;
 
 export const PORT_API = +process.env.API_PORT || +process.env.PORT_API || 8000;
 
