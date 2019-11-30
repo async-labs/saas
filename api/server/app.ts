@@ -127,5 +127,5 @@ server.get('*', (_, res) => {
 });
 
 http.listen(PORT, () => {
-  logger.info(`> Ready on ${ROOT_URL}`);
+  logger.info(`> Ready on ${ROOT_URL} ${IS_DEV}`);
 });

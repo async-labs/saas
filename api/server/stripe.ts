@@ -13,7 +13,7 @@ const stripeInstance = new stripe(API_KEY);
 
 function createCustomer({ token, teamLeaderEmail, teamLeaderId }) {
   return stripeInstance.customers.create({
-    description: 'Stripe Customer at async-await.com',
+    description: 'Stripe Customer at saas-app.builderbook.org',
     email: teamLeaderEmail,
     source: token,
     metadata: {

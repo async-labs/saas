@@ -18,7 +18,7 @@ class Login extends React.Component<{ next?: string; firstGridItem: boolean }> {
         <div style={{ textAlign: 'center', margin: '0 20px' }}>
           <Head>
             <title>Log in to SaaS by Async</title>
-            <meta name="description" content="Login page for saas-app.async-await.com" />
+            <meta name="description" content="Login page for saas-app.builderbook.org" />
           </Head>
           <br />
           <p style={{ margin: '45px auto', fontSize: '44px', fontWeight: 400 }}>Log in</p>

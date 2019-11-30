@@ -41,7 +41,7 @@ if (!cookieDomain) {
   cookieDomain = IS_DEV ? get('DEVELOPMENT_COOKIE_DOMAIN') : get('PRODUCTION_COOKIE_DOMAIN');
 }
 if (!cookieDomain) {
-  cookieDomain = IS_DEV ? 'localhost' : '.async-await.com';
+  cookieDomain = IS_DEV ? 'localhost' : '.builderbook.org';
 }
 export const COOKIE_DOMAIN = cookieDomain;
 

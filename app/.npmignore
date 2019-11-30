@@ -2,6 +2,7 @@
 .next/
 .vscode/
 node_modules/
+production-server/
 
 test
 .coverage

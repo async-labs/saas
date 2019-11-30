@@ -5,10 +5,8 @@
   "scripts": {
     "dev": "tsnd --respawn --transpileOnly --project tsconfig.server.json --ignore-watch .next -- server/app.ts",
     "build": "next build && tsc --project tsconfig.server.json",
-    "postinstall": "next build && rm -rf production-server/ & tsc --project tsconfig.server.json",
+    "postinstall": "next build && rm -rf production-server/ && tsc --project tsconfig.server.json",
     "start": "node production-server/server/app.js",
-    "now": "now && now alias",
-    "now-rm": "now rm saas-app --safe --yes",
     "lint": "eslint . --ext .ts,.tsx",
     "test": "jest --coverage --passWithNoTests",
     "processes-3000": "ss -lptn 'sport = :3000'",

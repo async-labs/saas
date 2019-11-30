@@ -137,7 +137,7 @@ class InvitationClass extends mongoose.Model {
     );
 
     await sendEmail({
-      from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
+      from: `Kelly from saas-app.builderbook.org <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
       to: [email],
       subject: template.subject,
       body: template.message,

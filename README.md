@@ -5,7 +5,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 - The boilerplate comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you can focus on features that differentiate your product.
 - We've used this boilerplate to launch our own SaaS businesses:
   - [Async](https://async-await.com) - communication tool for small teams of software developers
-  - [Builder Book](https://builderbook.org) - learn how to build full-stack web apps from scratch
+  - [Builder Book](https://builderbook.org) - books and custom saas boilerplate
 
 ## Live demo:
 
@@ -150,7 +150,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   <CORSRule>
       <AllowedOrigin>http://localhost:3000</AllowedOrigin>
       <AllowedOrigin>http://app.saas.localhost:3000</AllowedOrigin>
-      <AllowedOrigin>https://saas-app.async-await.com</AllowedOrigin>
+      <AllowedOrigin>https://saas-app.builderbook.org</AllowedOrigin>
       <AllowedMethod>POST</AllowedMethod>
       <AllowedMethod>GET</AllowedMethod>
       <AllowedMethod>PUT</AllowedMethod>
@@ -163,7 +163,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   </CORSConfiguration>
   ```
 
-- Make sure to update allowed origin with your actual `URL_APP`. In our case, it's `https://saas-app.async-await.com` for production, `http://app.saas.localhost:3000` for staging locally and `http://localhost:3000` for development.
+- Make sure to update allowed origin with your actual `URL_APP`. In our case, it's `https://saas-app.builderbook.org` for production, `http://app.saas.localhost:3000` for staging locally and `http://localhost:3000` for development.
 
 - Once `.env` is created, you can run the `app` app. Navigate to the `app` folder, run `yarn install` to add all packages, then run the command below:
   ```

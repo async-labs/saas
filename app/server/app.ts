@@ -9,7 +9,7 @@ import * as path from 'path';
 import { getUser } from '../lib/api/public';
 import routesWithSlug from './routesWithSlug';
 
-import { IS_DEV, PORT_APP, URL_APP } from '../lib/consts';
+import { IS_DEV, PORT_APP, URL_API, URL_APP } from '../lib/consts';
 
 mobxReact.useStaticRendering(true);
 
@@ -76,10 +76,10 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(PORT_APP, (err) => {
-    if (err) {
-      throw err;
-    }
-    console.log(`> Ready on ${URL_APP}`);
+  server.listen(PORT_APP, () => {
+    // if (err) {
+    //   throw err;
+    // }
+    console.log(`> Ready on ${URL_APP} ${URL_API} ${IS_DEV}`);
   });
 });
