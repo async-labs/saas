@@ -10,7 +10,7 @@
   "dependencies": {
     "@material-ui/core": "4.6.1",
     "@material-ui/styles": "^4.6.0",
-    "dotenv-webpack": "^1.7.0",
+    "dotenv": "^8.2.0",
     "next": "9.1.2",
     "nprogress": "0.2.0",
     "react": "16.11.0",
