@@ -31,7 +31,7 @@ class MyApp extends App<{ isMobile: boolean }> {
     const { Component, pageProps } = this.props;
 
     return (
-      <ThemeProvider theme={true ? themeDark : themeLight}>
+      <ThemeProvider theme={false ? themeDark : themeLight}>
         <CssBaseline />
         <Component {...pageProps} />
       </ThemeProvider>

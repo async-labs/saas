@@ -15,13 +15,6 @@ class MyDocument extends Document {
 
     const initialProps = await Document.getInitialProps(ctx);
 
-    // console.log(initialProps);
-    // console.log(initialProps.styles);
-    // console.log(React.Children.toArray(initialProps.styles));
-  
-    // console.log(sheets);
-    // console.log(sheets.getStyleElement());
-
     return {
       ...initialProps,
       // Styles fragment is rendered after the app and page rendering finish.
@@ -62,7 +55,7 @@ class MyDocument extends Document {
             }
           />
 
-          {/* <style>
+          <style>
             {`
               a,
               a:focus {
@@ -125,7 +118,7 @@ class MyDocument extends Document {
                 padding: 10px;
               }
             `}
-          </style> */}
+          </style>
         </Head>
         <body>
           <Main />
