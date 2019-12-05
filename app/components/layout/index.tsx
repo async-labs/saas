@@ -6,15 +6,15 @@ import Link from 'next/link';
 import { NextRouter, withRouter } from 'next/router';
 import React from 'react';
 
-import { Store } from '../../lib/store';
+import { URL_API } from '../../lib/consts';
+
+import { Store, Team } from '../../lib/store';
 
 import Confirm from '../common/Confirm';
 import Loading from '../common/Loading';
 import MenuWithLinks from '../common/MenuWithLinks';
 import Notifier from '../common/Notifier';
 import DiscussionList from '../discussions/DiscussionList';
-
-import { menuOnTheRight } from './menus';
 
 const styleGrid = {
   width: '100vw',
@@ -34,7 +34,37 @@ const styleNoTeamDiv = {
   padding: '20px',
 };
 
-function ThemeWrapper({
+const menuOnTheRight = ({ currentTeam }: { currentTeam: Team }) => [
+  {
+    text: 'Your Settings',
+    href: '/your-settings',
+    simple: true,
+  },
+  {
+    text: 'Team Settings',
+    href: `/team-settings?teamSlug=${currentTeam.slug}`,
+    as: `/team/${currentTeam.slug}/team-settings`,
+    simple: true,
+  },
+  {
+    text: 'Billing',
+    href: `/billing?teamSlug=${currentTeam.slug}`,
+    as: `/team/${currentTeam.slug}/billing`,
+    simple: true,
+  },
+  {
+    separator: true,
+  },
+  {
+    text: 'Log out',
+    href: `${URL_API}/logout`,
+    as: `${URL_API}/logout`,
+    simple: true,
+    external: true,
+  },
+];
+
+function LayoutWrapper({
   children,
   firstGridItem,
   isMobile,
@@ -104,38 +134,38 @@ class Layout extends React.Component<MyProps> {
 
     if (store.isLoggingIn) {
       return (
-        <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
+        <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
           <Grid item sm={10} xs={12}>
             <Loading text="loading User ..." />
           </Grid>
-        </ThemeWrapper>
+        </LayoutWrapper>
       );
     }
 
     if (!currentUser) {
       return (
-        <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
+        <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
           <Grid item sm={12} xs={12}>
             {children}
           </Grid>
-        </ThemeWrapper>
+        </LayoutWrapper>
       );
     }
 
     if (store.isLoadingTeams || !store.isInitialTeamsLoaded) {
       return (
-        <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
+        <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
           <Grid item sm={10} xs={12}>
             <Loading text="loading Teams ..." />
           </Grid>
-        </ThemeWrapper>
+        </LayoutWrapper>
       );
     }
 
     if (!currentTeam) {
       if (teamRequired) {
         return (
-          <ThemeWrapper firstGridItem={false} isMobile={isMobile}>
+          <LayoutWrapper firstGridItem={false} isMobile={isMobile}>
             <Grid item sm={10} xs={12}>
               <div style={styleNoTeamDiv}>
                 Select existing team or create a new team.
@@ -147,21 +177,21 @@ class Layout extends React.Component<MyProps> {
                 </Link>
               </div>
             </Grid>
-          </ThemeWrapper>
+          </LayoutWrapper>
         );
       } else {
         return (
-          <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
+          <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
             <Grid item sm={10} xs={12}>
               {children}
             </Grid>
-          </ThemeWrapper>
+          </LayoutWrapper>
         );
       }
     }
 
     return (
-      <ThemeWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
+      <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile}>
         <Grid container direction="row" justify="flex-start" alignItems="stretch" style={styleGrid}>
           {firstGridItem ? (
             <Grid
@@ -260,7 +290,7 @@ class Layout extends React.Component<MyProps> {
             {children}
           </Grid>
         </Grid>
-      </ThemeWrapper>
+      </LayoutWrapper>
     );
   }
 

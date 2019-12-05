@@ -20,8 +20,6 @@ const Index = () => (
   </Layout>
 );
 
-console.log(process.env.URL_APP);
-
 export default Index;
 
 // import Button from '@material-ui/core/Button';
