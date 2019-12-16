@@ -69,7 +69,7 @@ app.prepare().then(() => {
   routesWithSlug({ server, app });
 
   server.get('/robots.txt', (_, res) => {
-    res.sendFile(path.join(__dirname, '../static', 'robots.txt'));
+    res.sendFile(path.join(__dirname, './', 'robots.txt'));
   });
 
   server.get('*', (req, res) => {

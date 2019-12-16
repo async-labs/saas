@@ -39,10 +39,7 @@ class MyDocument extends Document {
             rel="shortcut icon"
             href="https://storage.googleapis.com/async-await/async-favicon32.png"
           />
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400:latin"
-          />
+
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
           <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
 
@@ -50,8 +47,8 @@ class MyDocument extends Document {
             rel="stylesheet"
             href={
               isThemeDark
-                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
-                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
+                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css'
+                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css'
             }
           />
 
@@ -59,14 +56,14 @@ class MyDocument extends Document {
             {`
               a,
               a:focus {
-                font-weight: 400;
+                font-weight: 600;
                 color: ${isThemeDark ? '#fff' : '#000'};
                 text-decoration: none;
                 outline: none;
               }
               a:hover,
               button:hover {
-                opacity: 0.75;
+                opacity: 0.6;
                 cursor: pointer;
               }
               hr {
