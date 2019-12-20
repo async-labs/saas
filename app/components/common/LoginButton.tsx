@@ -10,8 +10,6 @@ import { styleLoginButton } from '../../lib/sharedStyles';
 
 import { URL_API } from '../../lib/consts';
 
-// TS errors: https://github.com/mui-org/material-ui/issues/8198
-
 class LoginButton extends React.PureComponent<
   { next?: string; invitationToken?: string },
   { email: string }
@@ -69,13 +67,14 @@ class LoginButton extends React.PureComponent<
   private onSubmit = async (event) => {
     event.preventDefault();
     const { email } = this.state;
+    const { next, invitationToken } = this.props;
 
     if (!email) {
       notify('Email is required');
     }
 
     try {
-      await sendLoginToken(email);
+      await sendLoginToken({ email, next, invitationToken });
       this.setState({ email: '' });
       notify('We emailed you a login link.');
     } catch (error) {

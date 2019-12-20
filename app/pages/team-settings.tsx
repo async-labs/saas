@@ -307,7 +307,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                           <Avatar
                             role="presentation"
                             src={m.avatarUrl}
-                            alt={m.avatarUrl}
+                            alt={(m.displayName || m.email)[0]}
                             key={m._id}
                             style={{
                               margin: '0px 5px',
@@ -318,7 +318,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                             }}
                           />
                         </Hidden>
-                        {m.displayName}
+                        {m.displayName || m.email}
                       </TableCell>
                       <TableCell>
                         {isTL && m._id !== currentUser._id ? 'Team Member' : 'Team Leader'}

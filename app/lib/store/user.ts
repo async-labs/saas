@@ -18,6 +18,7 @@ class User {
   public displayName: string | null;
   public avatarUrl: string | null;
   public defaultTeamSlug: string;
+  public isSignedupViaGoogle: boolean;
 
   public hasCardInformation: boolean;
   public stripeCard: {
@@ -60,6 +61,7 @@ class User {
     this.stripeListOfInvoices = params.stripeListOfInvoices;
     this.darkTheme = !!params.darkTheme;
     this.isLoggedIn = !!params.isLoggedIn;
+    this.isSignedupViaGoogle = !!params.isSignedupViaGoogle;
   }
 
   public async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {

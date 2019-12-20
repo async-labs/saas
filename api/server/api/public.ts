@@ -8,11 +8,15 @@ router.get('/get-user', (req, res) => {
   res.json({ user: req.user || null });
 });
 
-router.get('/invitations/get-team-by-token', async (req, res, next) => {
+router.get('/invitations/accept-and-get-team-by-token', async (req, res, next) => {
   try {
     const team = await Invitation.getTeamByToken({
       token: req.query.token,
     });
+
+    if (req.user) {
+      await Invitation.addUserToTeam({ token: req.query.token, user: req.user });
+    }
 
     res.json({ team });
   } catch (err) {

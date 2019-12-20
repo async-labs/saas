@@ -16,6 +16,7 @@ module.exports = {
         semi: true
       },
     ],
+    '@typescript-eslint/camelcase': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off'
  },

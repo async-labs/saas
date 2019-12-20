@@ -13,8 +13,9 @@ export const getUser = (options = {}) =>
     ),
   );
 
-export const getInvitedTeamByToken = (token: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/invitations/get-team-by-token`, {
+export const acceptAndGetInvitedTeamByToken = (token: string, request) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/invitations/accept-and-get-team-by-token`, {
+    request,
     method: 'GET',
     qs: { token },
   });
@@ -24,7 +25,16 @@ export const removeInvitationIfMemberAdded = (token: string) =>
     body: JSON.stringify({ token }),
   });
 
-export const sendLoginToken = (email: string) =>
+export const sendLoginToken = ({
+  email,
+  next,
+  invitationToken,
+}: {
+  email: string;
+  next?: string;
+  invitationToken?: string;
+}) =>
   sendRequestAndGetResponse('/auth/send-token', {
+    qs: { next, invitationToken },
     body: JSON.stringify({ email }),
   });

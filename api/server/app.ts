@@ -63,7 +63,7 @@ const sessionOptions = {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
     domain: COOKIE_DOMAIN,
-    // eslint-disable-next-line
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any,
 };
 
@@ -112,7 +112,7 @@ server.get('/uploaded-file', async (req, res) => {
     }
   }
 
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data: any = await signRequestForLoad(filePath, bucket);
 
   res.redirect(data.signedRequest);
