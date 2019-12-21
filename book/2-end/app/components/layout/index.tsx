@@ -1,8 +1,8 @@
-// import Avatar from '@material-ui/core/Avatar';
+import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
-// import MenuWithLinks from '../common/MenuWithLinks';
-import Confirm from '../common/Confirm';
+import MenuWithLinks from '../common/MenuWithLinks';
+// import Confirm from '../common/Confirm';
 import Notifier from '../common/Notifier';
 
 const styleGrid = {
@@ -78,23 +78,30 @@ class Layout extends React.Component<MyProps> {
                   />
                 </g>
               </svg>
-              <p>Clickable Avatar</p>
-              {/* <MenuWithLinks
+              <MenuWithLinks
                 options={[
+                  {
+                    text: 'Index page',
+                    href: '/',
+                    highlighterSlug: '/',
+                  },
                   {
                     text: 'Your Settings',
                     href: '/your-settings',
-                    simple: true,
+                    highlighterSlug: '/your-settings',
                   },
                   {
                     separator: true,
+                  },
+                  {
+                    text: 'Log out',
+                    href: '/logout',
                   },
                 ]}
               >
                 <Avatar
                   src={'https://storage.googleapis.com/async-await/default-user.png'}
-                  // 6
-                  // alt={`Logo of ${currentUser.displayName}`}
+                  alt="Add username here later in the book"
                   style={{
                     margin: '20px auto',
                     cursor: 'pointer',
@@ -107,18 +114,17 @@ class Layout extends React.Component<MyProps> {
                 <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
                   arrow_drop_down
                 </i>
-              </MenuWithLinks> */}
+              </MenuWithLinks>
             </div>
             <hr />
             <p />
             <p />
+            <Notifier />
           </Grid>
         ) : null}
         <Grid item sm={10} xs={12}>
           {children}
         </Grid>
-        <Notifier />
-        <Confirm />
       </Grid>
     );
   }
