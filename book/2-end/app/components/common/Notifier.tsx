@@ -1,7 +1,7 @@
 import Snackbar from '@material-ui/core/Snackbar';
 import React from 'react';
 
-export let openSnackbarFn;
+export let openSnackbarExternal;
 
 class Notifier extends React.PureComponent {
   public state = {
@@ -11,7 +11,7 @@ class Notifier extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    openSnackbarFn = this.openSnackbar;
+    openSnackbarExternal = this.openSnackbar;
   }
 
   public render() {

@@ -2,7 +2,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import MenuWithLinks from '../common/MenuWithLinks';
-// import Confirm from '../common/Confirm';
+import Confirmer from '../common/Confirmer';
 import Notifier from '../common/Notifier';
 
 const styleGrid = {
@@ -119,12 +119,13 @@ class Layout extends React.Component<MyProps> {
             <hr />
             <p />
             <p />
-            <Notifier />
           </Grid>
         ) : null}
         <Grid item sm={10} xs={12}>
           {children}
         </Grid>
+        <Notifier />
+        <Confirmer />
       </Grid>
     );
   }
