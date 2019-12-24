@@ -78,12 +78,17 @@ class LoginButton extends React.PureComponent<
     event.preventDefault();
     const { email } = this.state;
 
+    // 10
+    // const { next, invitationToken } = this.props;
+
     if (!email) {
       notify('Email is required');
     }
 
     try {
       await sendLoginToken(email);
+      // 10
+      // await sendLoginToken({ email, next, invitationToken });
       this.setState({ email: '' });
       notify('We emailed you a login link.');
     } catch (error) {
