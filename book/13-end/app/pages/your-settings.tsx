@@ -78,13 +78,15 @@ class YourSettings extends React.Component<MyProps, MyState> {
                 >
                   done
                 </i>{' '}
-                You signed up on Async using your Google account.
+                {currentUser.isSignedupViaGoogle
+                  ? 'You signed up on Async using your Google account.'
+                  : 'You signed up on Async using your email.'}
                 <li>
                   {' '}
-                  Your Google/Async email: <b>{currentUser.email}</b>
+                  Your email: <b>{currentUser.email}</b>
                 </li>
                 <li>
-                  Your Google/Async username: <b>{currentUser.displayName}</b>
+                  Your name: <b>{currentUser.displayName}</b>
                 </li>
               </p>
               <form onSubmit={this.onSubmit} autoComplete="off">

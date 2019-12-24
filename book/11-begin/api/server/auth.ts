@@ -5,10 +5,8 @@ import * as passwordless from 'passwordless';
 import sendEmail from './aws-ses';
 import logger from './logs';
 import getEmailTemplate from './models/EmailTemplate';
-
-import Invitation from './models/Invitation';
-
 import User, { UserDocument } from './models/User';
+import Invitation from './models/Invitation';
 import PasswordlessMongoStore from './passwordless';
 
 import {
@@ -33,7 +31,7 @@ function setupPasswordless({ server, ROOT_URL }) {
       logger.debug(template.message);
 
       await sendEmail({
-        from: `Kelly from async-await.com <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        from: `Kelly from saas-app.builderbook.org <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [recipient],
         subject: template.subject,
         body: template.message,
@@ -47,7 +45,6 @@ function setupPasswordless({ server, ROOT_URL }) {
   });
 
   server.use(passwordless.sessionSupport());
-  server.use(passwordless.acceptToken({ successRedirect: URL_APP }));
 
   server.use((req, __, next) => {
     if (req.user && typeof req.user === 'string') {
@@ -59,6 +56,52 @@ function setupPasswordless({ server, ROOT_URL }) {
       next();
     }
   });
+
+  server.get(
+    '/auth/logged_in',
+    passwordless.acceptToken(),
+    (req, __, next) => {
+      if (req.user && typeof req.user === 'string') {
+        User.findById(req.user, User.publicFields(), (err, user) => {
+          req.user = user;
+          next(err);
+        });
+      } else {
+        next();
+      }
+    },
+    (req, res) => {
+      if (req.user && req.session.invitationToken) {
+        Invitation.addUserToTeam({
+          token: req.session.invitationToken,
+          user: req.user,
+        }).catch((err) => logger.error(err));
+
+        req.session.invitationToken = null;
+      }
+
+      let redirectUrlAfterLogin;
+
+      if (req.user && req.session.next_url) {
+        redirectUrlAfterLogin = req.session.next_url;
+      } else {
+        redirectUrlAfterLogin = '/your-settings';
+
+        if (!req.user || !req.user.defaultTeamSlug) {
+          redirectUrlAfterLogin = '/create-team';
+        }
+
+        // 12
+        // if (!req.user || !req.user.defaultTeamSlug) {
+        //   redirectUrlAfterLogin = '/create-team';
+        // } else {
+        //   redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
+        // }
+      }
+
+      res.redirect(`${URL_APP}${redirectUrlAfterLogin}`);
+    },
+  );
 
   server.post(
     '/auth/send-token',
@@ -81,7 +124,21 @@ function setupPasswordless({ server, ROOT_URL }) {
       },
       { userField: 'email' },
     ),
-    (__, res) => {
+    (req, res) => {
+      if (req.query && req.query.next && req.query.next.startsWith('/')) {
+        // eslint-disable-next-line
+        req.session.next_url = req.query.next;
+      } else {
+        // eslint-disable-next-line
+        req.session.next_url = null;
+      }
+
+      if (req.query && req.query.invitationToken) {
+        req.session.invitationToken = req.query.invitationToken;
+      } else {
+        req.session.invitationToken = null;
+      }
+
       res.json({ done: 1 });
     },
   );
@@ -110,7 +167,7 @@ function setupGoogle({ ROOT_URL, server }) {
     }
 
     try {
-      const user = await User.signInOrSignUp({
+      const user = await User.signInOrSignUpViaGoogle({
         googleId: profile.id,
         email,
         googleToken: { accessToken, refreshToken },
@@ -179,9 +236,12 @@ function setupGoogle({ ROOT_URL, server }) {
     }),
     (req, res) => {
       if (req.user && req.session.invitationToken) {
-        Invitation.addUserToTeam({ token: req.session.invitationToken, user: req.user }).catch(
-          (err) => logger.error(err),
-        );
+        Invitation.addUserToTeam({
+          token: req.session.invitationToken,
+          user: req.user,
+        }).catch((err) => logger.error(err));
+
+        req.session.invitationToken = null;
       }
 
       let redirectUrlAfterLogin;
@@ -189,12 +249,14 @@ function setupGoogle({ ROOT_URL, server }) {
       if (req.user && req.session.next_url) {
         redirectUrlAfterLogin = req.session.next_url;
       } else {
-        if (!req.user.defaultTeamSlug) {
+        redirectUrlAfterLogin = '/your-settings';
+
+        if (!req.user || !req.user.defaultTeamSlug) {
           redirectUrlAfterLogin = '/create-team';
         }
 
         // 12
-        // if (!req.user.defaultTeamSlug) {
+        // if (!req.user || !req.user.defaultTeamSlug) {
         //   redirectUrlAfterLogin = '/create-team';
         // } else {
         //   redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;

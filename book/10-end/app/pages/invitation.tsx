@@ -7,19 +7,19 @@ import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
 import Layout from '../components/layout';
-import { getInvitedTeamByToken, removeInvitationIfMemberAdded } from '../lib/api/public';
+import { acceptAndGetInvitedTeamByToken, removeInvitationIfMemberAdded } from '../lib/api/public';
 import { Store, Team } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
 class Invitation extends React.Component<{ store: Store; team: Team; token: string }> {
-  public static async getInitialProps({ query }) {
+  public static async getInitialProps({ query, req }) {
     const { token } = query;
     if (!token) {
       return {};
     }
 
     try {
-      const { team } = await getInvitedTeamByToken(token);
+      const { team } = await acceptAndGetInvitedTeamByToken(token, req);
 
       return { team, token };
     } catch (error) {
