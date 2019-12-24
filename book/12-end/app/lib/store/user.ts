@@ -4,8 +4,10 @@ import {
   createCustomerApiMethod,
   createNewCardAndUpdateCustomerApiMethod,
   getListOfInvoices,
-} from '../api/team-leader';
-import { toggleTheme, updateProfile } from '../api/team-member';
+  toggleTheme,
+  updateProfile
+} from '../api/team-member';
+
 import { Store } from './index';
 
 class User {
@@ -18,6 +20,7 @@ class User {
   public displayName: string | null;
   public avatarUrl: string | null;
   public defaultTeamSlug: string;
+  public isSignedupViaGoogle: boolean;
 
   public hasCardInformation: boolean;
   public stripeCard: {
@@ -35,7 +38,7 @@ class User {
         teamName: string;
         date: number;
         hosted_invoice_url: string;
-      },
+      }
     ];
     has_more: boolean;
   };
@@ -55,11 +58,13 @@ class User {
     this.avatarUrl = params.avatarUrl;
     this.defaultTeamSlug = params.defaultTeamSlug;
 
+    this.darkTheme = !!params.darkTheme;
+    this.isLoggedIn = !!params.isLoggedIn;
+    this.isSignedupViaGoogle = !!params.isSignedupViaGoogle;
+
     this.hasCardInformation = params.hasCardInformation;
     this.stripeCard = params.stripeCard;
     this.stripeListOfInvoices = params.stripeListOfInvoices;
-    this.darkTheme = !!params.darkTheme;
-    this.isLoggedIn = !!params.isLoggedIn;
   }
 
   public async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {
@@ -139,11 +144,11 @@ decorate(User, {
   displayName: observable,
   avatarUrl: observable,
   defaultTeamSlug: observable,
+  isLoggedIn: observable,
 
   hasCardInformation: observable,
   stripeCard: observable,
   stripeListOfInvoices: observable,
-  isLoggedIn: observable,
 
   updateProfile: action,
   toggleTheme: action,

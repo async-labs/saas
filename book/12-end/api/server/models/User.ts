@@ -10,7 +10,6 @@ import { subscribe } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
 
 import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
-
 import Invitation from './Invitation';
 import Team from './Team';
 
@@ -35,6 +34,11 @@ const mongoSchema = new mongoose.Schema({
   googleToken: {
     accessToken: String,
     refreshToken: String,
+  },
+  isSignedupViaGoogle: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
   slug: {
     type: String,
@@ -70,7 +74,6 @@ const mongoSchema = new mongoose.Schema({
     object: String,
     created: Number,
     currency: String,
-    // eslint-disable-next-line
     default_source: String,
     description: String,
   },
@@ -81,9 +84,7 @@ const mongoSchema = new mongoose.Schema({
     funding: String,
     country: String,
     last4: String,
-    // eslint-disable-next-line
     exp_month: Number,
-    // eslint-disable-next-line
     exp_year: Number,
   },
   hasCardInformation: {
@@ -92,18 +93,15 @@ const mongoSchema = new mongoose.Schema({
   },
   stripeListOfInvoices: {
     object: String,
-    // eslint-disable-next-line
     has_more: Boolean,
     data: [
       {
         id: String,
         object: String,
-        // eslint-disable-next-line
         amount_paid: Number,
         date: Number,
         customer: String,
         subscription: String,
-        // eslint-disable-next-line
         hosted_invoice_url: String,
         billing: String,
         paid: Boolean,
@@ -165,7 +163,7 @@ export interface UserDocument extends mongoose.Document {
         number: string;
         teamId: string;
         teamName: string;
-      },
+      }
     ];
   };
 }
@@ -185,7 +183,7 @@ interface UserModel extends mongoose.Model<UserDocument> {
 
   getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<UserDocument[]>;
 
-  signInOrSignUp({
+  signInOrSignUpViaGoogle({
     googleId,
     googleToken,
     email,
@@ -315,17 +313,23 @@ class UserClass extends mongoose.Model {
       .setOptions({ lean: true });
   }
 
-  public static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
-    const user = await this.findOne({ googleId })
-      .select(this.publicFields().join(' '))
+  public static async signInOrSignUpViaGoogle({
+    googleId,
+    email,
+    googleToken,
+    displayName,
+    avatarUrl,
+  }) {
+    const user = await this.findOne({ email })
+      .select([...this.publicFields(), 'googleId'].join(' '))
       .setOptions({ lean: true });
 
     if (user) {
-      if (_.isEmpty(googleToken)) {
+      if (_.isEmpty(googleToken) && user.googleId) {
         return user;
       }
 
-      const modifier = {};
+      const modifier = { googleId };
       if (googleToken.accessToken) {
         modifier['googleToken.accessToken'] = googleToken.accessToken;
       }
@@ -334,8 +338,7 @@ class UserClass extends mongoose.Model {
         modifier['googleToken.refreshToken'] = googleToken.refreshToken;
       }
 
-      await this.updateOne({ googleId }, { $set: modifier });
-
+      await this.updateOne({ email }, { $set: modifier });
       return user;
     }
 
@@ -349,6 +352,7 @@ class UserClass extends mongoose.Model {
       displayName,
       avatarUrl,
       slug,
+      isSignedupViaGoogle: true,
       defaultTeamSlug: '',
     });
 
@@ -469,9 +473,8 @@ class UserClass extends mongoose.Model {
       'email',
       'avatarUrl',
       'slug',
-      'isGithubConnected',
+      'isSignedupViaGoogle',
       'defaultTeamSlug',
-
       'hasCardInformation',
       'stripeCustomer',
       'stripeCard',
