@@ -10,17 +10,17 @@ import { subscribe } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
 
 import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
-
 import Invitation from './Invitation';
 import Team from './Team';
 
-import {
-  createCustomer,
-  createNewCard,
-  getListOfInvoices,
-  retrieveCard,
-  updateCustomer,
-} from '../stripe';
+// 11
+// import {
+//   createCustomer,
+//   createNewCard,
+//   getListOfInvoices,
+//   retrieveCard,
+//   updateCustomer,
+// } from '../stripe';
 
 import { EMAIL_SUPPORT_FROM_ADDRESS } from '../consts';
 
@@ -35,6 +35,11 @@ const mongoSchema = new mongoose.Schema({
   googleToken: {
     accessToken: String,
     refreshToken: String,
+  },
+  isSignedupViaGoogle: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
   slug: {
     type: String,
@@ -65,54 +70,49 @@ const mongoSchema = new mongoose.Schema({
 
   darkTheme: Boolean,
 
-  stripeCustomer: {
-    id: String,
-    object: String,
-    created: Number,
-    currency: String,
-    // eslint-disable-next-line
-    default_source: String,
-    description: String,
-  },
-  stripeCard: {
-    id: String,
-    object: String,
-    brand: String,
-    funding: String,
-    country: String,
-    last4: String,
-    // eslint-disable-next-line
-    exp_month: Number,
-    // eslint-disable-next-line
-    exp_year: Number,
-  },
-  hasCardInformation: {
-    type: Boolean,
-    default: false,
-  },
-  stripeListOfInvoices: {
-    object: String,
-    // eslint-disable-next-line
-    has_more: Boolean,
-    data: [
-      {
-        id: String,
-        object: String,
-        // eslint-disable-next-line
-        amount_paid: Number,
-        date: Number,
-        customer: String,
-        subscription: String,
-        // eslint-disable-next-line
-        hosted_invoice_url: String,
-        billing: String,
-        paid: Boolean,
-        number: String,
-        teamId: String,
-        teamName: String,
-      },
-    ],
-  },
+  // 11
+  // stripeCustomer: {
+  //   id: String,
+  //   object: String,
+  //   created: Number,
+  //   currency: String,
+  //   default_source: String,
+  //   description: String,
+  // },
+  // stripeCard: {
+  //   id: String,
+  //   object: String,
+  //   brand: String,
+  //   funding: String,
+  //   country: String,
+  //   last4: String,
+  //   exp_month: Number,
+  //   exp_year: Number,
+  // },
+  // hasCardInformation: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  // stripeListOfInvoices: {
+  //   object: String,
+  //   has_more: Boolean,
+  //   data: [
+  //     {
+  //       id: String,
+  //       object: String,
+  //       amount_paid: Number,
+  //       date: Number,
+  //       customer: String,
+  //       subscription: String,
+  //       hosted_invoice_url: String,
+  //       billing: String,
+  //       paid: Boolean,
+  //       number: String,
+  //       teamId: String,
+  //       teamName: String,
+  //     },
+  //   ],
+  // },
 });
 
 export interface UserDocument extends mongoose.Document {
@@ -130,44 +130,45 @@ export interface UserDocument extends mongoose.Document {
 
   darkTheme: boolean;
 
-  hasCardInformation: boolean;
-  stripeCustomer: {
-    id: string;
-    default_source: string;
-    created: number;
-    object: string;
-    description: string;
-  };
-  stripeCard: {
-    id: string;
-    object: string;
-    brand: string;
-    country: string;
-    last4: string;
-    exp_month: number;
-    exp_year: number;
-    funding: string;
-  };
-  stripeListOfInvoices: {
-    object: string;
-    has_more: boolean;
-    data: [
-      {
-        id: string;
-        object: string;
-        amount_paid: number;
-        date: number;
-        customer: string;
-        subscription: string;
-        hosted_invoice_url: string;
-        billing: string;
-        paid: boolean;
-        number: string;
-        teamId: string;
-        teamName: string;
-      },
-    ];
-  };
+  // 11
+  // hasCardInformation: boolean;
+  // stripeCustomer: {
+  //   id: string;
+  //   default_source: string;
+  //   created: number;
+  //   object: string;
+  //   description: string;
+  // };
+  // stripeCard: {
+  //   id: string;
+  //   object: string;
+  //   brand: string;
+  //   country: string;
+  //   last4: string;
+  //   exp_month: number;
+  //   exp_year: number;
+  //   funding: string;
+  // };
+  // stripeListOfInvoices: {
+  //   object: string;
+  //   has_more: boolean;
+  //   data: [
+  //     {
+  //       id: string;
+  //       object: string;
+  //       amount_paid: number;
+  //       date: number;
+  //       customer: string;
+  //       subscription: string;
+  //       hosted_invoice_url: string;
+  //       billing: string;
+  //       paid: boolean;
+  //       number: string;
+  //       teamId: string;
+  //       teamName: string;
+  //     }
+  //   ];
+  // };
 }
 
 interface UserModel extends mongoose.Model<UserDocument> {
@@ -185,7 +186,7 @@ interface UserModel extends mongoose.Model<UserDocument> {
 
   getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<UserDocument[]>;
 
-  signInOrSignUp({
+  signInOrSignUpViaGoogle({
     googleId,
     googleToken,
     email,
@@ -201,22 +202,23 @@ interface UserModel extends mongoose.Model<UserDocument> {
 
   signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<UserDocument>;
 
-  createCustomer({
-    userId,
-    stripeToken,
-  }: {
-    userId: string;
-    stripeToken: object;
-  }): Promise<UserDocument>;
+  // 11
+  // createCustomer({
+  //   userId,
+  //   stripeToken,
+  // }: {
+  //   userId: string;
+  //   stripeToken: object;
+  // }): Promise<UserDocument>;
 
-  createNewCardUpdateCustomer({
-    userId,
-    stripeToken,
-  }: {
-    userId: string;
-    stripeToken: object;
-  }): Promise<UserDocument>;
-  getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<UserDocument>;
+  // createNewCardUpdateCustomer({
+  //   userId,
+  //   stripeToken,
+  // }: {
+  //   userId: string;
+  //   stripeToken: object;
+  // }): Promise<UserDocument>;
+  // getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<UserDocument>;
   toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 }
 
@@ -238,74 +240,75 @@ class UserClass extends mongoose.Model {
       .setOptions({ lean: true });
   }
 
-  public static async createCustomer({ userId, stripeToken }) {
-    const user = await this.findById(userId, 'email');
+  // 11
+  // public static async createCustomer({ userId, stripeToken }) {
+  //   const user = await this.findById(userId, 'email');
 
-    const customerObj = await createCustomer({
-      token: stripeToken.id,
-      teamLeaderEmail: user.email,
-      teamLeaderId: userId,
-    });
+  //   const customerObj = await createCustomer({
+  //     token: stripeToken.id,
+  //     teamLeaderEmail: user.email,
+  //     teamLeaderId: userId,
+  //   });
 
-    logger.debug(customerObj.default_source.toString());
+  //   logger.debug(customerObj.default_source.toString());
 
-    const cardObj = await retrieveCard({
-      customerId: customerObj.id,
-      cardId: customerObj.default_source.toString(),
-    });
+  //   const cardObj = await retrieveCard({
+  //     customerId: customerObj.id,
+  //     cardId: customerObj.default_source.toString(),
+  //   });
 
-    const modifier = { stripeCustomer: customerObj, stripeCard: cardObj, hasCardInformation: true };
+  //   const modifier = { stripeCustomer: customerObj, stripeCard: cardObj, hasCardInformation: true };
 
-    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
-      .select('stripeCustomer stripeCard hasCardInformation')
-      .setOptions({ lean: true });
-  }
+  //   return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
+  //     .select('stripeCustomer stripeCard hasCardInformation')
+  //     .setOptions({ lean: true });
+  // }
 
-  public static async createNewCardUpdateCustomer({ userId, stripeToken }) {
-    const user = await this.findById(userId, 'stripeCustomer');
+  // public static async createNewCardUpdateCustomer({ userId, stripeToken }) {
+  //   const user = await this.findById(userId, 'stripeCustomer');
 
-    logger.debug('called static method on User');
+  //   logger.debug('called static method on User');
 
-    const newCardObj = await createNewCard({
-      customerId: user.stripeCustomer.id,
-      token: stripeToken.id,
-    });
+  //   const newCardObj = await createNewCard({
+  //     customerId: user.stripeCustomer.id,
+  //     token: stripeToken.id,
+  //   });
 
-    logger.debug(newCardObj.id);
+  //   logger.debug(newCardObj.id);
 
-    const updatedCustomerObj = await updateCustomer({
-      customerId: user.stripeCustomer.id,
-      newCardId: newCardObj.id,
-    });
+  //   const updatedCustomerObj = await updateCustomer({
+  //     customerId: user.stripeCustomer.id,
+  //     newCardId: newCardObj.id,
+  //   });
 
-    const modifier = { stripeCustomer: updatedCustomerObj, stripeCard: newCardObj };
+  //   const modifier = { stripeCustomer: updatedCustomerObj, stripeCard: newCardObj };
 
-    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
-      .select('stripeCard')
-      .setOptions({ lean: true });
-  }
+  //   return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
+  //     .select('stripeCard')
+  //     .setOptions({ lean: true });
+  // }
 
-  public static async getListOfInvoicesForCustomer({ userId }) {
-    const user = await this.findById(userId, 'stripeCustomer');
+  // public static async getListOfInvoicesForCustomer({ userId }) {
+  //   const user = await this.findById(userId, 'stripeCustomer');
 
-    logger.debug('called static method on User');
+  //   logger.debug('called static method on User');
 
-    const newListOfInvoices = await getListOfInvoices({
-      customerId: user.stripeCustomer.id,
-    });
+  //   const newListOfInvoices = await getListOfInvoices({
+  //     customerId: user.stripeCustomer.id,
+  //   });
 
-    const modifier = {
-      stripeListOfInvoices: newListOfInvoices,
-    };
+  //   const modifier = {
+  //     stripeListOfInvoices: newListOfInvoices,
+  //   };
 
-    if (!newListOfInvoices) {
-      throw new Error('There is no payment history.');
-    }
+  //   if (!newListOfInvoices) {
+  //     throw new Error('There is no payment history.');
+  //   }
 
-    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
-      .select('stripeListOfInvoices')
-      .setOptions({ lean: true });
-  }
+  //   return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
+  //     .select('stripeListOfInvoices')
+  //     .setOptions({ lean: true });
+  // }
 
   public static async getTeamMembers({ userId, teamId }) {
     const team = await this.checkPermissionAndGetTeam({ userId, teamId });
@@ -315,17 +318,23 @@ class UserClass extends mongoose.Model {
       .setOptions({ lean: true });
   }
 
-  public static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
-    const user = await this.findOne({ googleId })
-      .select(this.publicFields().join(' '))
+  public static async signInOrSignUpViaGoogle({
+    googleId,
+    email,
+    googleToken,
+    displayName,
+    avatarUrl,
+  }) {
+    const user = await this.findOne({ email })
+      .select([...this.publicFields(), 'googleId'].join(' '))
       .setOptions({ lean: true });
 
     if (user) {
-      if (_.isEmpty(googleToken)) {
+      if (_.isEmpty(googleToken) && user.googleId) {
         return user;
       }
 
-      const modifier = {};
+      const modifier = { googleId };
       if (googleToken.accessToken) {
         modifier['googleToken.accessToken'] = googleToken.accessToken;
       }
@@ -334,8 +343,7 @@ class UserClass extends mongoose.Model {
         modifier['googleToken.refreshToken'] = googleToken.refreshToken;
       }
 
-      await this.updateOne({ googleId }, { $set: modifier });
-
+      await this.updateOne({ email }, { $set: modifier });
       return user;
     }
 
@@ -349,6 +357,7 @@ class UserClass extends mongoose.Model {
       displayName,
       avatarUrl,
       slug,
+      isSignedupViaGoogle: true,
       defaultTeamSlug: '',
     });
 
@@ -469,13 +478,14 @@ class UserClass extends mongoose.Model {
       'email',
       'avatarUrl',
       'slug',
-      'isGithubConnected',
+      'isSignedupViaGoogle',
       'defaultTeamSlug',
 
-      'hasCardInformation',
-      'stripeCustomer',
-      'stripeCard',
-      'stripeListOfInvoices',
+      // 11
+      // 'hasCardInformation',
+      // 'stripeCustomer',
+      // 'stripeCard',
+      // 'stripeListOfInvoices',
       'darkTheme',
     ];
   }
