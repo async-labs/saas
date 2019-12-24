@@ -31,6 +31,8 @@ class Layout extends React.Component<MyProps> {
 
     const isThemeDark = false;
 
+    console.log(isMobile);
+
     return (
       <Grid
         container
@@ -122,6 +124,7 @@ class Layout extends React.Component<MyProps> {
           </Grid>
         ) : null}
         <Grid item sm={10} xs={12}>
+          {isMobile ? <hr /> : null}
           {children}
         </Grid>
         <Notifier />

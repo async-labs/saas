@@ -7,17 +7,15 @@ import { themeDark, themeLight } from '../lib/theme';
 
 class MyApp extends App<{ isMobile: boolean }> {
   public static async getInitialProps({ Component, ctx }) {
-    const pageProps = { isMobile: isMobile({ req: ctx.req }) };
+    const pageProps = { isMobile: isMobile({ req: ctx.req }), firstGridItem: true };
 
     if (Component.getInitialProps) {
       Object.assign(pageProps, await Component.getInitialProps(ctx));
     }
 
-    return { pageProps };
-  }
+    console.log(pageProps);
 
-  constructor(props) {
-    super(props);
+    return { pageProps };
   }
 
   public componentDidMount() {
