@@ -4,9 +4,8 @@ import {
   createCustomerApiMethod,
   createNewCardAndUpdateCustomerApiMethod,
   getListOfInvoices,
-  toggleTheme,
-  updateProfile
-} from '../api/team-member';
+} from '../api/team-leader';
+import { toggleTheme, updateProfile } from '../api/team-member';
 
 import { Store } from './index';
 
