@@ -10,7 +10,6 @@ import { subscribe } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
 
 import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
-
 import Invitation from './Invitation';
 import Team from './Team';
 
@@ -36,6 +35,11 @@ const mongoSchema = new mongoose.Schema({
   googleToken: {
     accessToken: String,
     refreshToken: String,
+  },
+  isSignedupViaGoogle: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
   slug: {
     type: String,
@@ -182,7 +186,7 @@ interface UserModel extends mongoose.Model<UserDocument> {
 
   getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<UserDocument[]>;
 
-  signInOrSignUp({
+  signInOrSignUpViaGoogle({
     googleId,
     googleToken,
     email,
@@ -314,17 +318,23 @@ class UserClass extends mongoose.Model {
       .setOptions({ lean: true });
   }
 
-  public static async signInOrSignUp({ googleId, email, googleToken, displayName, avatarUrl }) {
-    const user = await this.findOne({ googleId })
-      .select(this.publicFields().join(' '))
+  public static async signInOrSignUpViaGoogle({
+    googleId,
+    email,
+    googleToken,
+    displayName,
+    avatarUrl,
+  }) {
+    const user = await this.findOne({ email })
+      .select([...this.publicFields(), 'googleId'].join(' '))
       .setOptions({ lean: true });
 
     if (user) {
-      if (_.isEmpty(googleToken)) {
+      if (_.isEmpty(googleToken) && user.googleId) {
         return user;
       }
 
-      const modifier = {};
+      const modifier = { googleId };
       if (googleToken.accessToken) {
         modifier['googleToken.accessToken'] = googleToken.accessToken;
       }
@@ -333,8 +343,7 @@ class UserClass extends mongoose.Model {
         modifier['googleToken.refreshToken'] = googleToken.refreshToken;
       }
 
-      await this.updateOne({ googleId }, { $set: modifier });
-
+      await this.updateOne({ email }, { $set: modifier });
       return user;
     }
 
@@ -348,6 +357,7 @@ class UserClass extends mongoose.Model {
       displayName,
       avatarUrl,
       slug,
+      isSignedupViaGoogle: true,
       defaultTeamSlug: '',
     });
 
@@ -468,7 +478,7 @@ class UserClass extends mongoose.Model {
       'email',
       'avatarUrl',
       'slug',
-      'isGithubConnected',
+      'isSignedupViaGoogle',
       'defaultTeamSlug',
 
       // 11

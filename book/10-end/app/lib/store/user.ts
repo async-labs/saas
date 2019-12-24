@@ -1,10 +1,12 @@
 import { action, decorate, observable, runInAction } from 'mobx';
 
-import {
-  createCustomerApiMethod,
-  createNewCardAndUpdateCustomerApiMethod,
-  getListOfInvoices,
-} from '../api/team-leader';
+// 11
+// import {
+//   createCustomerApiMethod,
+//   createNewCardAndUpdateCustomerApiMethod,
+//   getListOfInvoices,
+// } from '../api/team-leader';
+
 import { toggleTheme, updateProfile } from '../api/team-member';
 import { Store } from './index';
 
@@ -18,27 +20,29 @@ class User {
   public displayName: string | null;
   public avatarUrl: string | null;
   public defaultTeamSlug: string;
+  public isSignedupViaGoogle: boolean;
 
-  public hasCardInformation: boolean;
-  public stripeCard: {
-    brand: string;
-    funding: string;
-    last4: string;
-    exp_month: number;
-    exp_year: number;
-  };
-  public stripeListOfInvoices: {
-    object: string;
-    data: [
-      {
-        amount_paid: number;
-        teamName: string;
-        date: number;
-        hosted_invoice_url: string;
-      },
-    ];
-    has_more: boolean;
-  };
+  // 11
+  // public hasCardInformation: boolean;
+  // public stripeCard: {
+  //   brand: string;
+  //   funding: string;
+  //   last4: string;
+  //   exp_month: number;
+  //   exp_year: number;
+  // };
+  // public stripeListOfInvoices: {
+  //   object: string;
+  //   data: [
+  //     {
+  //       amount_paid: number;
+  //       teamName: string;
+  //       date: number;
+  //       hosted_invoice_url: string;
+  //     }
+  //   ];
+  //   has_more: boolean;
+  // };
 
   public darkTheme = true;
 
@@ -55,11 +59,14 @@ class User {
     this.avatarUrl = params.avatarUrl;
     this.defaultTeamSlug = params.defaultTeamSlug;
 
-    this.hasCardInformation = params.hasCardInformation;
-    this.stripeCard = params.stripeCard;
-    this.stripeListOfInvoices = params.stripeListOfInvoices;
     this.darkTheme = !!params.darkTheme;
     this.isLoggedIn = !!params.isLoggedIn;
+    this.isSignedupViaGoogle = !!params.isSignedupViaGoogle;
+
+    // 11
+    // this.hasCardInformation = params.hasCardInformation;
+    // this.stripeCard = params.stripeCard;
+    // this.stripeListOfInvoices = params.stripeListOfInvoices;
   }
 
   public async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {
@@ -75,48 +82,49 @@ class User {
     });
   }
 
-  public async createCustomer({ token }: { token: object }) {
-    try {
-      const { hasCardInformation, stripeCard } = await createCustomerApiMethod({
-        token,
-      });
+  // 11
+  // public async createCustomer({ token }: { token: object }) {
+  //   try {
+  //     const { hasCardInformation, stripeCard } = await createCustomerApiMethod({
+  //       token,
+  //     });
 
-      runInAction(() => {
-        this.hasCardInformation = hasCardInformation;
-        this.stripeCard = stripeCard;
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+  //     runInAction(() => {
+  //       this.hasCardInformation = hasCardInformation;
+  //       this.stripeCard = stripeCard;
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
 
-  public async createNewCardAndUpdateCustomer({ token }: { token: object }) {
-    try {
-      const { stripeCard } = await createNewCardAndUpdateCustomerApiMethod({
-        token,
-      });
+  // public async createNewCardAndUpdateCustomer({ token }: { token: object }) {
+  //   try {
+  //     const { stripeCard } = await createNewCardAndUpdateCustomerApiMethod({
+  //       token,
+  //     });
 
-      runInAction(() => {
-        this.stripeCard = stripeCard;
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+  //     runInAction(() => {
+  //       this.stripeCard = stripeCard;
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
 
-  public async getListOfInvoices() {
-    try {
-      const { stripeListOfInvoices } = await getListOfInvoices();
-      runInAction(() => {
-        this.stripeListOfInvoices = stripeListOfInvoices;
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+  // public async getListOfInvoices() {
+  //   try {
+  //     const { stripeListOfInvoices } = await getListOfInvoices();
+  //     runInAction(() => {
+  //       this.stripeListOfInvoices = stripeListOfInvoices;
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
 
   public async toggleTheme(darkTheme: boolean) {
     this.darkTheme = darkTheme;
@@ -139,11 +147,12 @@ decorate(User, {
   displayName: observable,
   avatarUrl: observable,
   defaultTeamSlug: observable,
-
-  hasCardInformation: observable,
-  stripeCard: observable,
-  stripeListOfInvoices: observable,
   isLoggedIn: observable,
+
+  // 11
+  // hasCardInformation: observable,
+  // stripeCard: observable,
+  // stripeListOfInvoices: observable,
 
   updateProfile: action,
   toggleTheme: action,

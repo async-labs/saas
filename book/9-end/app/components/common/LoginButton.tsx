@@ -10,8 +10,6 @@ import { styleLoginButton } from '../../lib/sharedStyles';
 
 import { URL_API } from '../../lib/consts';
 
-// TS errors: https://github.com/mui-org/material-ui/issues/8198
-
 class LoginButton extends React.PureComponent<
   { next?: string },
   // 10
