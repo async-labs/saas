@@ -2,18 +2,13 @@ import './env';
 
 import express from 'express';
 import helmet from 'helmet';
-import * as mobxReact from 'mobx-react';
 import next from 'next';
 import * as path from 'path';
 
 import { getUser } from '../lib/api/public';
 
-// 10
-// import routesWithSlug from './routesWithSlug';
-
-import { IS_DEV, PORT_APP, URL_APP } from '../lib/consts';
-
-mobxReact.useStaticRendering(true);
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const IS_DEV = NODE_ENV !== 'production';
 
 const app = next({ dev: IS_DEV });
 const handle = app.getRequestHandler();
@@ -81,7 +76,7 @@ app.prepare().then(() => {
       // }
     }
 
-    res.redirect(`${URL_APP}/${redirectUrl}`);
+    res.redirect(`${process.env.URL_APP}/${redirectUrl}`);
   });
 
   // 10
@@ -95,10 +90,10 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(PORT_APP, (err) => {
+  server.listen(process.env.PORT_APP, (err) => {
     if (err) {
       throw err;
     }
-    console.log(`> Ready on ${URL_APP}`);
+    console.log(`> Ready on ${process.env.URL_APP}`);
   });
 });
