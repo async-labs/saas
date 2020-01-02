@@ -6,16 +6,20 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import React from 'react';
 
-let openConfirmDialogFn;
+export let openConfirmDialogExternal;
 
-class Confirm extends React.Component {
+class Confirmer extends React.Component {
   public state = {
     open: false,
     title: 'Are you sure?',
     message: '',
-    successMessage: '',
-    onAnswer: (a) => a,
+    onAnswer: null,
   };
+
+  constructor(props) {
+    super(props);
+    openConfirmDialogExternal = this.openConfirmDialog;
+  }
 
   public render() {
     return (
@@ -41,10 +45,6 @@ class Confirm extends React.Component {
     );
   }
 
-  public componentDidMount() {
-    openConfirmDialogFn = this.openConfirmDialog;
-  }
-
   public handleClose = () => {
     this.setState({ open: false });
     this.state.onAnswer(false);
@@ -60,16 +60,4 @@ class Confirm extends React.Component {
   };
 }
 
-export function openConfirmDialog({
-  title,
-  message,
-  onAnswer,
-}: {
-  title: string;
-  message: string;
-  onAnswer: (answer) => void;
-}) {
-  openConfirmDialogFn({ title, message, onAnswer });
-}
-
-export default Confirm;
+export default Confirmer;

@@ -2,9 +2,6 @@ import { ServerStyleSheets } from '@material-ui/styles';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
 
-// 4
-// import { GA_TRACKING_ID } from '../lib/consts';
-
 class MyDocument extends Document {
   public static getInitialProps = async (ctx) => {
     // Render app and page and get the context of the page with collected side effects.
@@ -21,17 +18,14 @@ class MyDocument extends Document {
     return {
       ...initialProps,
       // Styles fragment is rendered after the app and page rendering finish.
-      styles: <React.Fragment>{sheets.getStyleElement()}</React.Fragment>,
+      styles: [...React.Children.toArray(initialProps.styles), sheets.getStyleElement()],
     };
   };
 
   public render() {
-    const isThemeDark = true;
+    const isThemeDark = false;
 
-    // 6
-    // const isThemeDark =
-    //   this.props.__NEXT_DATA__.props.initialState.user &&
-    //   this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
+    console.log('rendered on the server');
 
     return (
       <Html lang="en">
@@ -45,33 +39,31 @@ class MyDocument extends Document {
             rel="shortcut icon"
             href="https://storage.googleapis.com/async-await/async-favicon32.png"
           />
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400:latin"
-          />
+
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+          <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
+
           <link
             rel="stylesheet"
             href={
               isThemeDark
-                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
-                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
+                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css'
+                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css'
             }
           />
-          <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
 
           <style>
             {`
               a,
               a:focus {
-                font-weight: 400;
+                font-weight: 600;
                 color: ${isThemeDark ? '#fff' : '#000'};
                 text-decoration: none;
                 outline: none;
               }
               a:hover,
               button:hover {
-                opacity: 0.75;
+                opacity: 0.6;
                 cursor: pointer;
               }
               hr {
@@ -124,51 +116,14 @@ class MyDocument extends Document {
               }
             `}
           </style>
-          {/* 4 */}
-          {/* {this.gtag()} */}
         </Head>
-        <body
-          style={{
-            font: '15px Roboto',
-            color: isThemeDark ? '#fff' : '#000',
-            fontWeight: 300,
-            lineHeight: '1.5em',
-            padding: '0px 0px 0px 0px !important',
-            letterSpacing: '0.01em',
-          }}
-        >
+        <body>
           <Main />
           <NextScript />
         </body>
       </Html>
     );
   }
-
-  // 4
-  // private gtag() {
-  //   if (!GA_TRACKING_ID) {
-  //     return;
-  //   }
-
-  //   return (
-  //     <div>
-  //       <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
-  //       <script
-  //
-  //         dangerouslySetInnerHTML={{
-  //           __html: `
-  //               window.dataLayer = window.dataLayer || [];
-  //               function gtag(){
-  //                 dataLayer.push(arguments);
-  //               }
-  //               gtag('js', new Date());
-  //               gtag('config', '${GA_TRACKING_ID}');
-  //             `,
-  //         }}
-  //       />
-  //     </div>
-  //   );
-  // }
 }
 
 export default MyDocument;
