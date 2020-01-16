@@ -8,8 +8,23 @@ import NProgress from 'nprogress';
 
 import confirm from '../lib/confirm';
 import notify from '../lib/notify';
+import { getUser } from '../lib/api/public';
 
 class Index extends React.Component {
+  public static async getInitialProps(ctx) {
+    const { req } = ctx;
+
+    const user = await getUser(req);
+
+    const initialProps = { user };
+
+    console.log(user);
+
+    return {
+      ...initialProps,
+    };
+  }
+
   public render() {
     return (
       <Layout {...this.props}>
@@ -30,7 +45,7 @@ class Index extends React.Component {
                 title: 'Are you sure?',
                 message: 'explanatory message',
                 onAnswer: async (answer) => {
-                  console.log(answer);
+                  // console.log(answer);
                   if (!answer) {
                     return;
                   }

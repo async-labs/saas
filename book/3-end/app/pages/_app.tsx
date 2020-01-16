@@ -13,7 +13,7 @@ class MyApp extends App<{ isMobile: boolean }> {
       Object.assign(pageProps, await Component.getInitialProps(ctx));
     }
 
-    console.log(pageProps);
+    // console.log(pageProps);
 
     return { pageProps };
   }

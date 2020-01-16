@@ -31,7 +31,7 @@ class Layout extends React.Component<MyProps> {
 
     const isThemeDark = false;
 
-    console.log(isMobile);
+    // console.log(isMobile);
 
     return (
       <Grid

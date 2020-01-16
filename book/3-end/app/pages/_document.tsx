@@ -25,7 +25,7 @@ class MyDocument extends Document {
   public render() {
     const isThemeDark = false;
 
-    console.log('rendered on the server');
+    // console.log('rendered on the server');
 
     return (
       <Html lang="en">
