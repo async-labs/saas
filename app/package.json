@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "license": "MIT",
   "scripts": {
-    "dev": "tsnd --respawn --transpileOnly --project tsconfig.server.json --ignore-watch .next -- server/app.ts",
+    "dev": "ts-node-dev --respawn --transpileOnly --project tsconfig.server.json --ignore-watch .next -- server/app.ts",
     "build": "next build && tsc --project tsconfig.server.json && cp server/robots.txt production-server/server",
     "postinstall": "next build && rm -rf production-server/ && tsc --project tsconfig.server.json && cp server/robots.txt production-server/server",
     "start": "node production-server/server/app.js",

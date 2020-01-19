@@ -25,7 +25,7 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
 
   if (response.status >= 400) {
     // console.error(text);
-    throw new Error(response.statusText);
+    throw new Error(response.status.toString());
   }
 
   try {

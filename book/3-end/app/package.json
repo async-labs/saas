@@ -3,8 +3,8 @@
   "version": "1",
   "license": "MIT",
   "scripts": {
-    "dev": "next",
-    "build": "next build && tsc --project tsconfig.server.json",
+    "dev": "ts-node-dev --respawn --transpileOnly --project tsconfig.server.json --ignore-watch .next server/server.ts",
+    "build": "next build",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
@@ -12,7 +12,6 @@
     "@material-ui/styles": "^4.6.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "helmet": "^3.21.2",
     "isomorphic-unfetch": "^3.0.0",
     "next": "9.1.2",
     "nprogress": "0.2.0",
@@ -32,6 +31,7 @@
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.16.0",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "ts-node-dev": "^1.0.0-pre.44"
   }
 }

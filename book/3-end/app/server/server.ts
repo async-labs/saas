@@ -1,7 +1,44 @@
+import express from 'express';
+import next from 'next';
+
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const IS_DEV = NODE_ENV !== 'production';
+
+const app = next({ dev: IS_DEV });
+const handle = app.getRequestHandler();
+
+app.prepare().then(() => {
+  const server = express();
+
+  // give all Nextjs's request to Nextjs before anything else
+  server.get('/_next/*', (req, res) => {
+    console.log('next server, page');
+    handle(req, res);
+  });
+
+  server.use(express.json());
+
+  server.get('/api/v1/public/get-user', (req, res) => {
+    console.log(req.body);
+    console.log('express server, user object');
+    res.json({ user: { email: 'team@builderbook.org' } });
+  });
+
+  server.all('*', (req, res) => {
+    handle(req, res);
+  });
+
+  server.listen(process.env.PORT_APP, (err) => {
+    if (err) {
+      throw err;
+    }
+    console.log(`> Ready on ${process.env.URL_APP}`);
+  });
+});
+
 // import './env';
 
 // import express from 'express';
-// import helmet from 'helmet';
 // import next from 'next';
 
 // import { getUser } from '../lib/api/public';
@@ -20,11 +57,6 @@
 //     handle(req, res);
 //   });
 
-//   server.get('/static/*', (req, res) => {
-//     handle(req, res);
-//   });
-
-//   server.use(helmet());
 //   server.use(express.json());
 
 //   // middleware that populates req.user via fetching from API
@@ -44,9 +76,9 @@
 //     nextfn();
 //   });
 
-//   server.get('*', (req, res) => {
-//     handle(req, res);
-//   });
+// server.all('*', (req, res) => {
+//   handle(req, res);
+// });
 
 //   server.listen(process.env.PORT_APP, (err) => {
 //     if (err) {
