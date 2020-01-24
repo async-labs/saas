@@ -17,9 +17,9 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
     Object.assign({ method: 'POST', credentials: 'include' }, opts, { headers }),
   );
 
-  console.log(`${process.env.URL_APP}${path}${qs}`);
-  console.log(response.status);
-  console.log(response.statusText);
+  // console.log(`${process.env.URL_APP}${path}${qs}`);
+  // console.log(response.status);
+  // console.log(response.statusText);
 
   const text = await response.text();
 
