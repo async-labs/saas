@@ -1,4 +1,4 @@
-import { openConfirmDialog } from '../components/common/Confirm';
+import { openConfirmDialogExternal } from '../components/common/Confirmer';
 
 export default function confirm({
   title,
@@ -9,5 +9,5 @@ export default function confirm({
   message: string;
   onAnswer: (answer) => void;
 }) {
-  openConfirmDialog({ title, message, onAnswer });
+  openConfirmDialogExternal({ title, message, onAnswer });
 }

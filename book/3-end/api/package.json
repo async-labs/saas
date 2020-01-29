@@ -9,8 +9,7 @@
   "dependencies": {
     "dotenv": "8.2.0",
     "express": "4.17.1",
-    "typescript": "3.7.4",
-    "winston": "3.2.1"
+    "typescript": "3.7.4"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
