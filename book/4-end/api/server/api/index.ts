@@ -15,5 +15,3 @@ export default function api(server: express.Express) {
   server.use('/api/v1/public', publicApi, handleError);
   server.use('/api/v1/team-member', teamMemberApi, handleError);
 }
-
-// introduce logger ?
