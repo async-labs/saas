@@ -3,7 +3,9 @@ import * as mongoose from 'mongoose';
 
 import { generateSlug } from '../utils/slugify';
 
-// mongoose.set('useFindAndModify', false);
+import logger from '../logs';
+
+mongoose.set('useFindAndModify', false);
 
 const mongoSchema = new mongoose.Schema({
   googleId: {
@@ -214,7 +216,7 @@ mongoSchema.loadClass(UserClass);
 const User = mongoose.model<UserDocument, UserModel>('User', mongoSchema);
 User.ensureIndexes((err) => {
   if (err) {
-    console.error(`User.ensureIndexes: ${err.stack}`);
+    logger.error(`User.ensureIndexes: ${err.stack}`);
   }
 });
 

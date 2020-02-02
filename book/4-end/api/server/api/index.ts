@@ -1,10 +1,12 @@
 import * as express from 'express';
 
+import logger from '../logs';
+
 import publicApi from './public';
 import teamMemberApi from './team-member';
 
 function handleError(err, _, res, __) {
-  console.error(err.stack);
+  logger.error(err.stack);
 
   res.json({ error: err.message || err.toString() });
 }
