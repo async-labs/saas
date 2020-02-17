@@ -19,8 +19,3 @@ export const updateProfile = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/user/update-profile`, {
     body: JSON.stringify(data),
   });
-
-export const toggleTheme = (data) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/user/toggle-theme`, {
-    body: JSON.stringify(data),
-  });

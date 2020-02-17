@@ -1,9 +1,9 @@
-import * as _ from 'lodash';
+// import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
 import { generateSlug } from '../utils/slugify';
 
-import logger from '../logs';
+// import logger from '../logs';
 
 mongoose.set('useFindAndModify', false);
 
@@ -27,17 +27,16 @@ const mongoSchema = new mongoose.Schema({
   darkTheme: Boolean,
 });
 
-export interface UserDocument extends mongoose.Document {
+interface UserDocument extends mongoose.Document {
   slug: string;
   createdAt: Date;
   email: string;
   displayName: string;
   avatarUrl: string;
-  darkTheme: boolean;
 }
 
 interface UserModel extends mongoose.Model<UserDocument> {
-  publicFields(): string[];
+  getUserBySlug({ slug }: { slug: string }): Promise<UserDocument[]>;
 
   updateProfile({
     userId,
@@ -48,11 +47,15 @@ interface UserModel extends mongoose.Model<UserDocument> {
     name: string;
     avatarUrl: string;
   }): Promise<UserDocument[]>;
-
-  toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 }
 
 class UserClass extends mongoose.Model {
+  public static async getUserBySlug({ slug }) {
+    const userDoc = await this.findOne({ slug });
+
+    return userDoc;
+  }
+
   public static async updateProfile({ userId, name, avatarUrl }) {
     const user = await this.findById(userId, 'slug displayName');
 
@@ -67,23 +70,16 @@ class UserClass extends mongoose.Model {
       .select('displayName avatarUrl slug')
       .setOptions({ lean: true });
   }
-
-  public static publicFields(): string[] {
-    return ['_id', 'id', 'displayName', 'email', 'avatarUrl', 'slug', 'darkTheme'];
-  }
-
-  public static toggleTheme({ userId, darkTheme }) {
-    return this.updateOne({ _id: userId }, { darkTheme: !!darkTheme });
-  }
 }
 
 mongoSchema.loadClass(UserClass);
 
 const User = mongoose.model<UserDocument, UserModel>('User', mongoSchema);
-User.ensureIndexes((err) => {
-  if (err) {
-    logger.error(`User.ensureIndexes: ${err.stack}`);
-  }
-});
+
+// User.ensureIndexes((err) => {
+//   if (err) {
+//     logger.error(`User.ensureIndexes: ${err.stack}`);
+//   }
+// });
 
 export default User;
