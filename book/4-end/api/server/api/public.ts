@@ -2,13 +2,30 @@ import * as express from 'express';
 
 import User from '../models/User';
 
-// import logger from '../logs';
+import logger from '../logs';
 
 const router = express.Router();
 
 // router.get('/get-user', (req, res) => {
 //   res.json({ user: req.user || null });
 // });
+
+router.post('/get-user-by-slug', async (_, res, next) => {
+  logger.info('Express route');
+  try {
+    // const { slug } = req.body;
+
+    // logger.info(slug);
+
+    // const user = await User.getUserBySlug({ slug });
+
+    const user = { email: 'abc', displayName: 'ccc' };
+
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.post('/user/update-profile', async (req, res, next) => {
   try {

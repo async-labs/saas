@@ -3,7 +3,7 @@ import * as mongoose from 'mongoose';
 
 import { generateSlug } from '../utils/slugify';
 
-// import logger from '../logs';
+import logger from '../logs';
 
 mongoose.set('useFindAndModify', false);
 
@@ -36,7 +36,7 @@ interface UserDocument extends mongoose.Document {
 }
 
 interface UserModel extends mongoose.Model<UserDocument> {
-  getUserBySlug({ slug }: { slug: string }): Promise<UserDocument[]>;
+  getUserBySlug({ slug }: { slug: string }): Promise<UserDocument>;
 
   updateProfile({
     userId,
@@ -51,9 +51,13 @@ interface UserModel extends mongoose.Model<UserDocument> {
 
 class UserClass extends mongoose.Model {
   public static async getUserBySlug({ slug }) {
-    const userDoc = await this.findOne({ slug });
+    logger.info('static method');
 
-    return userDoc;
+    // const userDoc = this.findOne({ slug });
+
+    // console.log(userDoc);
+
+    return this.findOne({ slug }, 'email displayName', { lean: true });
   }
 
   public static async updateProfile({ userId, name, avatarUrl }) {

@@ -2,8 +2,8 @@ import * as express from 'express';
 
 import logger from '../logs';
 
-import publicApi from './public';
-import teamMemberApi from './team-member';
+import publicExpressRoutes from './public';
+import teamMemberExpressRoutes from './team-member';
 
 function handleError(err, _, res, __) {
   logger.error(err.stack);
@@ -12,6 +12,6 @@ function handleError(err, _, res, __) {
 }
 
 export default function api(server: express.Express) {
-  server.use('/api/v1/public', publicApi, handleError);
-  server.use('/api/v1/team-member', teamMemberApi, handleError);
+  server.use('/api/v1/public', publicExpressRoutes, handleError);
+  server.use('/api/v1/team-member', teamMemberExpressRoutes, handleError);
 }

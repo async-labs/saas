@@ -10,6 +10,7 @@ const options = {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
+  useUnifiedTopology: true,
 };
 
 mongoose.connect(process.env.MONGO_URL, options);
