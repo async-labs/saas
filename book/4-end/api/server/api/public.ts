@@ -10,18 +10,16 @@ const router = express.Router();
 //   res.json({ user: req.user || null });
 // });
 
-router.post('/get-user-by-slug', async (_, res, next) => {
+router.post('/get-user-by-slug', async (req, res, next) => {
   logger.info('Express route');
   try {
-    // const { slug } = req.body;
+    const { slug } = req.body;
 
-    // logger.info(slug);
+    logger.info(slug);
 
-    // const user = await User.getUserBySlug({ slug });
+    const user = await User.getUserBySlug({ slug });
 
-    const user = { email: 'abc', displayName: 'ccc' };
-
-    res.json(user);
+    res.json({ user });
   } catch (err) {
     next(err);
   }

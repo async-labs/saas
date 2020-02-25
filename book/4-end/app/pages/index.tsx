@@ -18,7 +18,7 @@ class Index extends React.Component<Props> {
 
     const slug = 'team-builder-book';
 
-    const { user } = await getUserBySlugApiMethod(slug);
+    const user = await getUserBySlugApiMethod(slug);
 
     console.log(user);
 
