@@ -3,7 +3,7 @@ import * as mongoose from 'mongoose';
 
 import { generateSlug } from '../utils/slugify';
 
-import logger from '../logs';
+// import logger from '../logs';
 
 mongoose.set('useFindAndModify', false);
 
@@ -19,6 +19,7 @@ const mongoSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+
     required: true,
     unique: true,
   },
@@ -51,12 +52,7 @@ interface UserModel extends mongoose.Model<UserDocument> {
 
 class UserClass extends mongoose.Model {
   public static async getUserBySlug({ slug }) {
-    logger.info('static method');
-
-    // const userDoc = this.findOne({ slug });
-
-    // console.log(userDoc);
-
+    console.log('Static method');
     return this.findOne({ slug }, 'email displayName', { lean: true });
   }
 

@@ -2,7 +2,7 @@ import * as express from 'express';
 
 import User from '../models/User';
 
-import logger from '../logs';
+// import logger from '../logs';
 
 const router = express.Router();
 
@@ -11,11 +11,9 @@ const router = express.Router();
 // });
 
 router.post('/get-user-by-slug', async (req, res, next) => {
-  logger.info('Express route');
+  console.log('Express route');
   try {
     const { slug } = req.body;
-
-    logger.info(slug);
 
     const user = await User.getUserBySlug({ slug });
 

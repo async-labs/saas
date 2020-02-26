@@ -14,8 +14,6 @@ type Props = { user: { email: string; displayName: string } };
 
 class Index extends React.Component<Props> {
   public static async getInitialProps() {
-    // console.log(ctx);
-
     const slug = 'team-builder-book';
 
     const user = await getUserBySlugApiMethod(slug);
