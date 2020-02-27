@@ -5,7 +5,7 @@ import User from '../../../server/models/User';
 import { generateSlug } from '../../../server/utils/slugify';
 
 describe('slugify', () => {
-  const slugs = ['john-and-johnson', 'john-and-johnson-1', 'john'];
+  const slugs = ['john-johnson', 'john-johnson-1', 'john'];
 
   const finderMock = (query) => {
     if (slugs.includes(query.getQuery().slug)) {
@@ -35,7 +35,7 @@ describe('slugify', () => {
     expect.assertions(1);
 
     return generateSlug(User, 'John & Johnson@#$').then((slug) => {
-      expect(slug).toBe('john-and-johnson-2');
+      expect(slug).toBe('john-johnson-2');
     });
   });
 
