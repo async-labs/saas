@@ -2,8 +2,6 @@ import * as express from 'express';
 
 import User from '../models/User';
 
-// import logger from '../logs';
-
 const router = express.Router();
 
 // router.get('/get-user', (req, res) => {

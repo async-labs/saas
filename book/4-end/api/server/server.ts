@@ -4,8 +4,6 @@ import * as mongoose from 'mongoose';
 
 import api from './api';
 
-import logger from './logs';
-
 const options = {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -29,7 +27,7 @@ server.listen(process.env.PORT_API, (err) => {
   if (err) {
     throw err;
   }
-  logger.info(`> Ready on ${process.env.URL_API}`);
+  console.log(`> Ready on ${process.env.URL_API}`);
 });
 
 // import './env';

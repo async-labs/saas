@@ -1,12 +1,10 @@
 import * as express from 'express';
 
-import logger from '../logs';
-
 import publicExpressRoutes from './public';
 import teamMemberExpressRoutes from './team-member';
 
 function handleError(err, _, res, __) {
-  logger.error(err.stack);
+  console.error(err.stack);
 
   res.json({ error: err.message || err.toString() });
 }

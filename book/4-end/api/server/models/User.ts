@@ -3,8 +3,6 @@ import * as mongoose from 'mongoose';
 
 import { generateSlug } from '../utils/slugify';
 
-// import logger from '../logs';
-
 mongoose.set('useFindAndModify', false);
 
 const mongoSchema = new mongoose.Schema({
@@ -76,7 +74,7 @@ const User = mongoose.model<UserDocument, UserModel>('User', mongoSchema);
 
 // User.ensureIndexes((err) => {
 //   if (err) {
-//     logger.error(`User.ensureIndexes: ${err.stack}`);
+//     console.error(`User.ensureIndexes: ${err.stack}`);
 //   }
 // });
 

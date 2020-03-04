@@ -1,5 +1,4 @@
 import * as mongoose from 'mongoose';
-
 import '../../../server/env';
 import User from '../../../server/models/User';
 import { generateSlug } from '../../../server/utils/slugify';
@@ -15,13 +14,13 @@ describe('slugify', () => {
 
     await mongoose.connect(process.env.MONGO_URL, options);
 
-    const newUsers = [
+    const mockUsers = [
       { slug: 'john', email: 'john@example.com', createdAt: new Date() },
       { slug: 'john-johnson', email: 'john-johnson@example.com', createdAt: new Date() },
       { slug: 'john-johnson-1', email: 'john-johnson-1@example.com', createdAt: new Date() },
     ];
 
-    await User.insertMany(newUsers);
+    await User.insertMany(mockUsers);
 
     done();
   });

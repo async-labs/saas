@@ -1,7 +1,5 @@
 import * as aws from 'aws-sdk';
 
-import logger from './logs';
-
 async function signRequestForUpload({ fileName, fileType, prefix, bucket, acl = 'private' }) {
   aws.config.update({
     region: 'us-west-1',
@@ -43,7 +41,7 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, acl = 
       };
 
       if (err) {
-        logger.error(err);
+        console.error(err);
         reject(err);
       } else {
         resolve(returnData);
@@ -74,7 +72,7 @@ function signRequestForLoad(path, bucket) {
       };
 
       if (err) {
-        logger.error(err);
+        console.error(err);
         reject(err);
       } else {
         resolve(returnData);
