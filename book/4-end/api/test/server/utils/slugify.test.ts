@@ -14,7 +14,6 @@ describe('slugify', () => {
     };
 
     await mongoose.connect(process.env.MONGO_URL, options);
-    await User.deleteMany({});
 
     const newUsers = [
       { slug: 'john', email: 'john@example.com', createdAt: new Date() },
@@ -52,7 +51,7 @@ describe('slugify', () => {
   });
 
   afterAll(async (done) => {
-    await User.deleteMany({});
+    await User.deleteMany({ slug: { $in: ['john', 'john-johnson', 'john-johnson-1'] } });
     await mongoose.disconnect();
 
     done();
