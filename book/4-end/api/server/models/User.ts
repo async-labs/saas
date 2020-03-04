@@ -19,13 +19,11 @@ const mongoSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-
     required: true,
     unique: true,
   },
   displayName: String,
   avatarUrl: String,
-  darkTheme: Boolean,
 });
 
 interface UserDocument extends mongoose.Document {

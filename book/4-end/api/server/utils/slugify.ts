@@ -28,16 +28,4 @@ async function generateSlug(Model, name, filter = {}) {
   return createUniqueSlug(Model, origSlug, 1, filter);
 }
 
-async function generateNumberSlug(Model, filter = {}, n = 1) {
-  const obj = await Model.findOne({ slug: n, ...filter })
-    .select('_id')
-    .setOptions({ lean: true });
-
-  if (!obj) {
-    return `${n}`;
-  }
-
-  return generateNumberSlug(Model, filter, ++n);
-}
-
-export { generateSlug, generateNumberSlug };
+export { generateSlug };

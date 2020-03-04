@@ -1,19 +1,27 @@
 import '../../../server/env';
-
-import mockingoose from 'mockingoose';
+import * as mongoose from 'mongoose';
 import User from '../../../server/models/User';
 import { generateSlug } from '../../../server/utils/slugify';
 
 describe('slugify', () => {
-  const slugs = ['john-johnson', 'john-johnson-1', 'john'];
+  beforeAll(async () => {
+    const options = {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true,
+    };
 
-  const finderMock = (query) => {
-    if (slugs.includes(query.getQuery().slug)) {
-      return { id: 'id' };
-    }
-  };
+    mongoose.connect(process.env.MONGO_URL, options);
 
-  mockingoose(User).toReturn(finderMock, 'findOne');
+    const newUsers = [
+      { slug: 'john', email: 'john@example.com', createdAt: new Date() },
+      { slug: 'john-johnson', email: 'john-johnson@example.com', createdAt: new Date() },
+      { slug: 'john-johnson-1', email: 'john-johnson-1@example.com', createdAt: new Date() },
+    ];
+
+    await User.insertMany(newUsers);
+  });
 
   test('not duplicated', () => {
     expect.assertions(1);
@@ -39,7 +47,7 @@ describe('slugify', () => {
     });
   });
 
-  afterAll(() => {
-    mockingoose(User).reset();
+  afterAll(async () => {
+    await User.deleteMany({ slug: 'john' });
   });
 });
