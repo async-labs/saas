@@ -1,10 +1,11 @@
-import '../../../server/env';
 import * as mongoose from 'mongoose';
+
+import '../../../server/env';
 import User from '../../../server/models/User';
 import { generateSlug } from '../../../server/utils/slugify';
 
 describe('slugify', () => {
-  beforeAll(async () => {
+  beforeAll(async (done) => {
     const options = {
       useNewUrlParser: true,
       useCreateIndex: true,
@@ -12,7 +13,8 @@ describe('slugify', () => {
       useUnifiedTopology: true,
     };
 
-    mongoose.connect(process.env.MONGO_URL, options);
+    await mongoose.connect(process.env.MONGO_URL, options);
+    await User.deleteMany({});
 
     const newUsers = [
       { slug: 'john', email: 'john@example.com', createdAt: new Date() },
@@ -21,6 +23,8 @@ describe('slugify', () => {
     ];
 
     await User.insertMany(newUsers);
+
+    done();
   });
 
   test('not duplicated', () => {
@@ -47,7 +51,10 @@ describe('slugify', () => {
     });
   });
 
-  afterAll(async () => {
-    await User.deleteMany({ slug: 'john' });
+  afterAll(async (done) => {
+    await User.deleteMany({});
+    await mongoose.disconnect();
+
+    done();
   });
 });
