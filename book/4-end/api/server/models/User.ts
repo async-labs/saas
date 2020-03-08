@@ -72,10 +72,4 @@ mongoSchema.loadClass(UserClass);
 
 const User = mongoose.model<UserDocument, UserModel>('User', mongoSchema);
 
-// User.ensureIndexes((err) => {
-//   if (err) {
-//     console.error(`User.ensureIndexes: ${err.stack}`);
-//   }
-// });
-
 export default User;
