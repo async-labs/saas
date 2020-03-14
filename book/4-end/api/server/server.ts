@@ -1,4 +1,5 @@
 import './env';
+// import * as cors from 'cors';
 import * as express from 'express';
 import * as mongoose from 'mongoose';
 
@@ -14,6 +15,8 @@ const options = {
 mongoose.connect(process.env.MONGO_URL, options);
 
 const server = express();
+
+// server.use(cors({ origin: process.env.URL_APP, credentials: true }));
 
 server.use(express.json());
 

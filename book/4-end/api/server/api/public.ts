@@ -9,7 +9,8 @@ const router = express.Router();
 // });
 
 router.post('/get-user-by-slug', async (req, res, next) => {
-  console.log('Express route');
+  console.log('Express route: /get-user-by-slug');
+
   try {
     const { slug } = req.body;
 
@@ -22,10 +23,14 @@ router.post('/get-user-by-slug', async (req, res, next) => {
 });
 
 router.post('/user/update-profile', async (req, res, next) => {
-  try {
-    const { name, avatarUrl, userId } = req.body;
+  console.log('Express route: /user/update-profile');
 
-    // get userId properly, from req.body
+  try {
+    const { name, avatarUrl } = req.body;
+
+    const userId = '5e6427a51c9d440000c9ba6f';
+
+    console.log(name);
 
     const updatedUser = await User.updateProfile({
       userId: userId,
