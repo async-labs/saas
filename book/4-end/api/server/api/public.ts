@@ -30,8 +30,6 @@ router.post('/user/update-profile', async (req, res, next) => {
 
     const userId = '5e6427a51c9d440000c9ba6f';
 
-    console.log(name);
-
     const updatedUser = await User.updateProfile({
       userId: userId,
       name,

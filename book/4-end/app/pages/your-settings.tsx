@@ -491,15 +491,19 @@ class YourSettings extends React.Component<MyProps, MyState> {
       return;
     }
 
+    if (typeof newName === 'number') {
+      notify('newName is not number');
+      return;
+    }
+
     NProgress.start();
     this.setState({ disabled: true });
 
     try {
-      const updatedUser = await updateProfileApiMethod({
+      await updateProfileApiMethod({
         name: newName,
         avatarUrl: newAvatarUrl,
       });
-      console.log(updatedUser.newName);
 
       notify('You successfully updated your profile.');
     } catch (error) {
