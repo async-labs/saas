@@ -491,11 +491,6 @@ class YourSettings extends React.Component<MyProps, MyState> {
       return;
     }
 
-    if (typeof newName === 'number') {
-      notify('newName is not number');
-      return;
-    }
-
     NProgress.start();
     this.setState({ disabled: true });
 
