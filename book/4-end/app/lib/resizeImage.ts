@@ -37,6 +37,7 @@ function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
 
   return new Promise((resolve) => {
     const reader = new FileReader();
+
     reader.onload = (e) => {
       img.src = e.target.result.toString();
 

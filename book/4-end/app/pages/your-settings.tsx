@@ -367,6 +367,10 @@ import * as React from 'react';
 import Layout from '../components/layout';
 
 import { getUserBySlugApiMethod, updateProfileApiMethod } from '../lib/api/public';
+import {
+  getSignedRequestForUploadApiMethod,
+  uploadFileUsingSignedPutRequestApiMethod,
+} from '../lib/api/team-member';
 
 import notify from '../lib/notify';
 
@@ -461,7 +465,7 @@ class YourSettings extends React.Component<MyProps, MyState> {
               component="span"
               disabled={this.state.disabled}
             >
-              Update photo
+              Update avatar
             </Button>
           </label>
           <input
@@ -510,7 +514,59 @@ class YourSettings extends React.Component<MyProps, MyState> {
   };
 
   private uploadFile = async () => {
-    // to be defined
+    const { user } = this.props;
+
+    const fileElement = document.getElementById('upload-file') as HTMLFormElement;
+    const file = fileElement.files[0];
+
+    if (file == null) {
+      notify('No file selected for upload.');
+      return;
+    }
+
+    const fileName = file.name;
+    const fileType = file.type;
+
+    NProgress.start();
+    this.setState({ disabled: true });
+
+    const bucket = process.env.BUCKET_FOR_AVATARS;
+
+    const prefix = `${user.slug}`;
+
+    try {
+      const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({
+        fileName,
+        fileType,
+        prefix,
+        bucket,
+      });
+
+      await uploadFileUsingSignedPutRequestApiMethod(
+        fileName,
+        responseFromApiServerForUpload.signedRequest,
+        {
+          'Cache-Control': 'max-age=2592000',
+        },
+      );
+
+      this.setState({
+        newAvatarUrl: responseFromApiServerForUpload.url,
+      });
+
+      await updateProfileApiMethod({
+        name: this.state.newName,
+        avatarUrl: this.state.newAvatarUrl,
+      });
+
+      notify('You successfully uploaded new avatar.');
+    } catch (error) {
+      notify(error);
+    } finally {
+      fileElement.value = '';
+      this.setState({ disabled: false });
+      NProgress.done();
+    }
   };
 }
 

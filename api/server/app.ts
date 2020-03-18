@@ -12,12 +12,10 @@ import * as path from 'path';
 
 import api from './api';
 import { setupGoogle, setupPasswordless } from './auth';
-import { signRequestForLoad } from './aws-s3';
 import { setup as realtime } from './realtime';
 import { stripeWebHooks } from './stripe';
 
 import logger from './logs';
-import Team from './models/Team';
 
 import {
   COOKIE_DOMAIN,
@@ -82,41 +80,6 @@ api(server);
 
 const http = new httpModule.Server(server);
 realtime({ http, origin: URL_APP, sessionMiddleware });
-
-server.get('/uploaded-file', async (req, res) => {
-  if (!req.user) {
-    res.redirect(`${URL_APP}/login`);
-    return;
-  }
-
-  const { path: filePath, bucket, teamSlug } = req.query;
-
-  if (!filePath) {
-    res.status(401).end('Missing required data');
-    return;
-  }
-
-  if (!bucket) {
-    res.status(401).end('Missing required data');
-    return;
-  }
-
-  if (teamSlug) {
-    const team = await Team.findOne({ slug: teamSlug })
-      .select('memberIds')
-      .setOptions({ lean: true });
-
-    if (!team || !team.memberIds.includes(req.user.id)) {
-      res.status(401).end('You do not have permission.');
-      return;
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const data: any = await signRequestForLoad(filePath, bucket);
-
-  res.redirect(data.signedRequest);
-});
 
 server.get('/robots.txt', (_, res) => {
   res.sendFile(path.join(__dirname, '../static', 'robots.txt'));

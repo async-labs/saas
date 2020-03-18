@@ -1,13 +1,12 @@
 import * as aws from 'aws-sdk';
 
-async function signRequestForUpload({ fileName, fileType, prefix, bucket, acl = 'private' }) {
+async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
   aws.config.update({
-    region: 'us-west-1',
-    accessKeyId: process.env.AMAZON_ACCESSKEYID,
-    secretAccessKey: process.env.AMAZON_SECRETACCESSKEY,
+    region: 'us-east-1',
+    accessKeyId: process.env.AWS_ACCESSKEYID,
+    secretAccessKey: process.env.AWS_SECRETACCESSKEY,
   });
 
-  const s3 = new aws.S3({ apiVersion: 'latest' });
   const randomStringForPrefix =
     Math.random()
       .toString(36)
@@ -18,8 +17,9 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, acl = 
 
   const key = `${prefix}/${randomStringForPrefix}/${fileName}`;
 
-  // eslint-disable-next-line
-  const params: any = {
+  const acl = 'private';
+
+  const params = {
     Bucket: bucket,
     Key: key,
     Expires: 60,
@@ -27,16 +27,12 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, acl = 
     ACL: acl,
   };
 
-  // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putObject-property
-  // About Key: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
+  const s3 = new aws.S3({ apiVersion: 'latest' });
 
-  // > You must ensure that you have static or previously resolved credentials
-  // > if you call this method synchronously (with no callback), otherwise it may not properly sign the request
   return new Promise((resolve, reject) => {
     s3.getSignedUrl('putObject', params, (err, data) => {
       const returnData = {
         signedRequest: data,
-        path: key,
         url: `https://${bucket}.s3.amazonaws.com/${key}`,
       };
 
@@ -50,62 +46,4 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, acl = 
   });
 }
 
-function signRequestForLoad(path, bucket) {
-  aws.config.update({
-    region: 'us-west-1',
-    accessKeyId: process.env.AMAZON_ACCESSKEYID,
-    secretAccessKey: process.env.AMAZON_SECRETACCESSKEY,
-  });
-
-  const s3 = new aws.S3({ apiVersion: 'latest' });
-
-  const params = {
-    Bucket: bucket,
-    Key: path,
-    Expires: 60,
-  };
-
-  return new Promise((resolve, reject) => {
-    s3.getSignedUrl('getObject', params, (err, data) => {
-      const returnData = {
-        signedRequest: data,
-      };
-
-      if (err) {
-        console.error(err);
-        reject(err);
-      } else {
-        resolve(returnData);
-      }
-    });
-  });
-}
-
-function deleteFiles(bucket: string, files: string[]) {
-  aws.config.update({
-    region: 'us-west-1',
-    accessKeyId: process.env.AMAZON_ACCESSKEYID,
-    secretAccessKey: process.env.AMAZON_SECRETACCESSKEY,
-  });
-
-  const s3 = new aws.S3({ apiVersion: 'latest' });
-
-  const params = {
-    Bucket: bucket,
-    Delete: {
-      Objects: files.map((f) => ({ Key: f })),
-    },
-  };
-
-  return new Promise((resolve, reject) => {
-    s3.deleteObjects(params, (err, res) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(res);
-      }
-    });
-  });
-}
-
-export { signRequestForUpload, signRequestForLoad, deleteFiles };
+export { signRequestForUpload };

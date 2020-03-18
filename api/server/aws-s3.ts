@@ -72,37 +72,6 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, 
   });
 }
 
-function signRequestForLoad(path, bucket) {
-  aws.config.update({
-    region: 'us-west-1',
-    accessKeyId: AMAZON_ACCESSKEYID,
-    secretAccessKey: AMAZON_SECRETACCESSKEY,
-  });
-
-  const s3 = new aws.S3({ apiVersion: 'latest' });
-
-  const params = {
-    Bucket: bucket,
-    Key: path,
-    Expires: 60,
-  };
-
-  return new Promise((resolve, reject) => {
-    s3.getSignedUrl('getObject', params, (err, data) => {
-      const returnData = {
-        signedRequest: data,
-      };
-
-      if (err) {
-        logger.error(err);
-        reject(err);
-      } else {
-        resolve(returnData);
-      }
-    });
-  });
-}
-
 function deleteFiles(bucket: string, files: string[]) {
   aws.config.update({
     region: 'us-west-1',
@@ -130,4 +99,4 @@ function deleteFiles(bucket: string, files: string[]) {
   });
 }
 
-export { signRequestForUpload, signRequestForLoad, deleteFiles };
+export { signRequestForUpload, deleteFiles };

@@ -4,3 +4,5 @@ SEO for APP and API
 makeQueryString when it is needed
 
 Logs for API with winston
+
+deleteFiles after introducing Post
