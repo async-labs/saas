@@ -7,11 +7,7 @@ export const getSignedRequestForUploadApiMethod = ({ fileName, fileType, prefix,
     body: JSON.stringify({ fileName, fileType, prefix, bucket }),
   });
 
-export const uploadFileUsingSignedPutRequestApiMethod = (
-  file: File,
-  signedRequest: string,
-  headers = {},
-) =>
+export const uploadFileUsingSignedPutRequestApiMethod = (file, signedRequest, headers = {}) =>
   sendRequestAndGetResponse(signedRequest, {
     externalServer: true,
     method: 'PUT',

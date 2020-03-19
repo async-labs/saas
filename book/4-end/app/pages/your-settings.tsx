@@ -515,7 +515,7 @@ class YourSettings extends React.Component<MyProps, MyState> {
 
   private uploadFile = async () => {
     const fileElement = document.getElementById('upload-file') as HTMLFormElement;
-    const file: File = fileElement.files[0];
+    const file = fileElement.files[0];
 
     if (file == null) {
       notify('No file selected for upload.');
