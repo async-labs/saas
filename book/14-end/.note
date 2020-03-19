@@ -6,3 +6,5 @@ makeQueryString when it is needed
 Logs for API with winston
 
 deleteFiles after introducing Post
+
+Failed to execute 'fetch' on 'Window': Failed to parse URL from http://localhost:8000undefined

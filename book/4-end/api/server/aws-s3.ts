@@ -2,7 +2,7 @@ import * as aws from 'aws-sdk';
 
 async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
   aws.config.update({
-    region: 'us-east-1',
+    region: 'us-west-1',
     accessKeyId: process.env.AWS_ACCESSKEYID,
     secretAccessKey: process.env.AWS_SECRETACCESSKEY,
   });
@@ -26,6 +26,8 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
     ContentType: fileType,
     ACL: acl,
   };
+
+  console.log(prefix);
 
   const s3 = new aws.S3({ apiVersion: 'latest' });
 

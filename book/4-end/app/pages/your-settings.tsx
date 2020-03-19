@@ -514,8 +514,6 @@ class YourSettings extends React.Component<MyProps, MyState> {
   };
 
   private uploadFile = async () => {
-    const { user } = this.props;
-
     const fileElement = document.getElementById('upload-file') as HTMLFormElement;
     const file = fileElement.files[0];
 
@@ -532,7 +530,9 @@ class YourSettings extends React.Component<MyProps, MyState> {
 
     const bucket = process.env.BUCKET_FOR_AVATARS;
 
-    const prefix = `${user.slug}`;
+    console.log(bucket);
+
+    const prefix = 'team-builder-book';
 
     try {
       const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({

@@ -1,9 +1,15 @@
 import 'isomorphic-unfetch';
 
 export default async function sendRequestAndGetResponse(path, opts: any = {}) {
-  const headers = Object.assign({}, opts.headers || {}, {
-    'Content-type': 'application/json; charset=UTF-8',
-  });
+  const headers = Object.assign(
+    {},
+    opts.headers || {},
+    opts.externalServer
+      ? {}
+      : {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+  );
 
   const { request } = opts;
   if (request && request.headers && request.headers.cookie) {
@@ -12,14 +18,14 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
 
   const qs = opts.qs || '';
 
-  console.log(`before: ${process.env.URL_API}${path}${qs}`);
+  // console.log(`before: ${process.env.URL_API}${path}${qs}`);
 
   const response = await fetch(
-    `${process.env.URL_API}${path}${qs}`,
+    opts.externalServer ? `${path}${qs}` : `${process.env.URL_API}${path}${qs}`,
     Object.assign({ method: 'POST', credentials: 'include' }, opts, { headers }),
   );
 
-  console.log(`after: ${process.env.URL_API}${path}${qs}`);
+  // console.log(`after: ${process.env.URL_API}${path}${qs}`);
 
   // console.log(response.status);
   // console.log(response.statusText);

@@ -16,6 +16,8 @@ router.post('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) =
       bucket,
     });
 
+    console.log(returnData);
+
     res.json(returnData);
   } catch (err) {
     next(err);
