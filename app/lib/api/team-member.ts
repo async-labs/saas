@@ -69,7 +69,7 @@ export const getSignedRequestForUpload = ({ file, prefix, bucket, acl = 'public-
     body: JSON.stringify({ fileName: file.name, fileType: file.type, prefix, bucket, acl }),
   });
 
-export const uploadFileUsingSignedPutRequest = (file, signedRequest, headers = {}) =>
+export const uploadFileUsingSignedPutRequest = (file: File, signedRequest: string, headers = {}) =>
   sendRequestAndGetResponse(signedRequest, {
     externalServer: true,
     method: 'PUT',
