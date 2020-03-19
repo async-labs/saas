@@ -543,11 +543,9 @@ class YourSettings extends React.Component<MyProps, MyState> {
       });
 
       await uploadFileUsingSignedPutRequestApiMethod(
-        fileName,
+        file,
         responseFromApiServerForUpload.signedRequest,
-        {
-          'Cache-Control': 'max-age=2592000',
-        },
+        { 'Cache-Control': 'max-age=2592000' },
       );
 
       this.setState({

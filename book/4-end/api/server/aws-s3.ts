@@ -1,12 +1,7 @@
+import * as url from 'url';
 import * as aws from 'aws-sdk';
 
 async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
-  aws.config.update({
-    region: 'us-west-1',
-    accessKeyId: process.env.AWS_ACCESSKEYID,
-    secretAccessKey: process.env.AWS_SECRETACCESSKEY,
-  });
-
   const randomStringForPrefix =
     Math.random()
       .toString(36)
@@ -17,7 +12,7 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
 
   const key = `${prefix}/${randomStringForPrefix}/${fileName}`;
 
-  const acl = 'private';
+  const acl = 'public-read';
 
   const params = {
     Bucket: bucket,
@@ -29,13 +24,20 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
 
   console.log(prefix);
 
-  const s3 = new aws.S3({ apiVersion: 'latest' });
+  const s3 = new aws.S3({
+    apiVersion: 'latest',
+    region: 'us-east-1',
+    accessKeyId: process.env.AWS_ACCESSKEYID,
+    secretAccessKey: process.env.AWS_SECRETACCESSKEY,
+  });
 
   return new Promise((resolve, reject) => {
     s3.getSignedUrl('putObject', params, (err, data) => {
+      const parsedUrl = url.parse(data);
+
       const returnData = {
         signedRequest: data,
-        url: `https://${bucket}.s3.amazonaws.com/${key}`,
+        url: `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}`,
       };
 
       if (err) {

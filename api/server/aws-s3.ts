@@ -1,3 +1,4 @@
+import * as url from 'url';
 import * as aws from 'aws-sdk';
 import logger from './logs';
 
@@ -23,13 +24,13 @@ async function checkPrefix(prefix, user) {
 async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, acl = 'private' }) {
   await checkPrefix(prefix, user);
 
-  aws.config.update({
+  const s3 = new aws.S3({
+    apiVersion: 'latest',
     region: 'us-west-1',
     accessKeyId: AMAZON_ACCESSKEYID,
     secretAccessKey: AMAZON_SECRETACCESSKEY,
   });
 
-  const s3 = new aws.S3({ apiVersion: 'latest' });
   const randomStringForPrefix =
     Math.random()
       .toString(36)
@@ -56,10 +57,12 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket, user, 
   // > if you call this method synchronously (with no callback), otherwise it may not properly sign the request
   return new Promise((resolve, reject) => {
     s3.getSignedUrl('putObject', params, (err, data) => {
+      const parsedUrl = url.parse(data);
+
       const returnData = {
         signedRequest: data,
         path: key,
-        url: `https://${bucket}.s3.amazonaws.com/${key}`,
+        url: `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}`,
       };
 
       if (err) {
