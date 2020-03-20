@@ -184,7 +184,7 @@ class YourSettings extends React.Component<MyProps, MyState> {
     const { currentUser } = store;
 
     const fileElm = document.getElementById('upload-file') as HTMLFormElement;
-    const file = fileElm.files[0];
+    const file: File = fileElm.files[0];
 
     if (file == null) {
       notify('No file selected for upload.');
