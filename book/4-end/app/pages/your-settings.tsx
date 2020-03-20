@@ -372,6 +372,8 @@ import {
   uploadFileUsingSignedPutRequestApiMethod,
 } from '../lib/api/team-member';
 
+import { resizeImage } from '../lib/resizeImage';
+
 import notify from '../lib/notify';
 
 type MyProps = {
@@ -530,8 +532,6 @@ class YourSettings extends React.Component<MyProps, MyState> {
 
     const bucket = process.env.BUCKET_FOR_AVATARS;
 
-    console.log(bucket);
-
     const prefix = 'team-builder-book';
 
     try {
@@ -542,8 +542,13 @@ class YourSettings extends React.Component<MyProps, MyState> {
         bucket,
       });
 
+      const resizedFile = await resizeImage(file, 128, 128);
+
+      console.log(file);
+      console.log(resizedFile);
+
       await uploadFileUsingSignedPutRequestApiMethod(
-        file,
+        resizedFile,
         responseFromApiServerForUpload.signedRequest,
         { 'Cache-Control': 'max-age=2592000' },
       );
