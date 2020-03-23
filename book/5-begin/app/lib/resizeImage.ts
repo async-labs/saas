@@ -1,51 +1,59 @@
-// 6
-// function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
-//   const img = document.createElement('img');
-//   const canvas = document.createElement('canvas');
+function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
+  const image = document.createElement('img');
 
-//   const resize = resolve => () => {
-//     let isResizeNeeded = false;
-//     let width = img.width;
-//     let height = img.height;
+  const resize = (resolve) => () => {
+    let isResizeNeeded = false;
+    let width = image.width;
+    let height = image.height;
 
-//     if (width > height) {
-//       if (width > MAX_WIDTH) {
-//         isResizeNeeded = true;
-//         height *= MAX_WIDTH / width;
-//         width = MAX_WIDTH;
-//       }
-//     } else {
-//       if (height > MAX_HEIGHT) {
-//         isResizeNeeded = true;
-//         width *= MAX_HEIGHT / height;
-//         height = MAX_HEIGHT;
-//       }
-//     }
+    if (width > height) {
+      if (width > MAX_WIDTH) {
+        isResizeNeeded = true;
+        height *= MAX_WIDTH / width;
+        width = MAX_WIDTH;
+      }
+    } else {
+      if (height > MAX_HEIGHT) {
+        isResizeNeeded = true;
+        width *= MAX_HEIGHT / height;
+        height = MAX_HEIGHT;
+      }
+    }
 
-//     if (isResizeNeeded) {
-//       canvas.width = width;
-//       canvas.height = height;
-//       const ctx = canvas.getContext('2d');
-//       ctx.drawImage(img, 0, 0, width, height);
+    if (isResizeNeeded) {
+      const canvas = document.createElement('canvas');
 
-//       canvas.toBlob(blob => {
-//         resolve(blob);
-//       }, file.type);
-//     } else {
-//       resolve(file);
-//     }
-//   };
+      canvas.width = width;
+      canvas.height = height;
 
-//   return new Promise(resolve => {
-//     const reader = new FileReader();
-//     reader.onload = e => {
-//       img.src = e.target.result.toString();
+      console.log(width, height);
 
-//       img.onload = resize(resolve);
-//     };
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(image, 0, 0, width, height);
 
-//     reader.readAsDataURL(file);
-//   });
-// }
+      canvas.toBlob((blob) => {
+        resolve(blob);
+      }, file.type);
+    } else {
+      resolve(file);
+    }
+  };
 
-// export { resizeImage };
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+
+    console.log(`before ${image.src}`);
+
+    reader.onload = (e) => {
+      image.src = e.target.result.toString();
+
+      image.onload = resize(resolve);
+
+      console.log(`after ${image.src}`);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+export { resizeImage };

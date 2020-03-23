@@ -1,43 +1,45 @@
 import * as express from 'express';
 
-// 10
-// import Invitation from '../models/Invitation';
+import User from '../models/User';
 
 const router = express.Router();
 
-router.get('/get-user', (req, res) => {
-  res.json({ user: req.user || null });
+// router.get('/get-user', (req, res) => {
+//   res.json({ user: req.user || null });
+// });
+
+router.post('/get-user-by-slug', async (req, res, next) => {
+  console.log('Express route: /get-user-by-slug');
+
+  try {
+    const { slug } = req.body;
+
+    const user = await User.getUserBySlug({ slug });
+
+    res.json({ user });
+  } catch (err) {
+    next(err);
+  }
 });
 
-// temporary in 6
-// router.get('/get-user', (_, res) => {
-//   res.json({ user: { email: 'team@async-await.com' } || null });
-// });
+router.post('/user/update-profile', async (req, res, next) => {
+  console.log('Express route: /user/update-profile');
 
-// 10
-// router.get('/invitations/get-team-by-token', async (req, res, next) => {
-//   try {
-//     const team = await Invitation.getTeamByToken({
-//       token: req.query.token,
-//     });
+  try {
+    const { name, avatarUrl } = req.body;
 
-//     res.json({ team });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    const userId = '5e6427a51c9d440000c9ba6f';
 
-// router.post('/invitations/remove-invitation-if-member-added', async (req, res, next) => {
-//   try {
-//     const team = await Invitation.removeIfMemberAdded({
-//       token: req.body.token,
-//       userId: req.user.id,
-//     });
+    const updatedUser = await User.updateProfile({
+      userId: userId,
+      name,
+      avatarUrl,
+    });
 
-//     res.json({ team });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+    res.json({ updatedUser });
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;

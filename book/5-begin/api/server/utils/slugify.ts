@@ -1,58 +1,31 @@
-// 6
-// const slugify = text =>
-//   text
-//     .toString()
-//     .toLowerCase()
-//     .trim()
-//     // Replace spaces with -
-//     .replace(/\s+/g, '-')
-//     // Replace & with 'and'
-//     .replace(/&/g, '-and-')
-//     // Remove all non-word chars
-//     .replace(/(?!\w)[\x00-\xC0]/g, '-') // eslint-disable-line
-//     // Replace multiple - with single -
-//     .trim('-')
-//     .replace(/\-\-+/g, '-') // eslint-disable-line
-//     // Remove - from start & end
-//     .replace(/-$/, '')
-//     .replace(/^-/, '');
+import * as _ from 'lodash';
 
-// async function createUniqueSlug(Model, slug, count, filter) {
-//   const obj = await Model.findOne({ slug: `${slug}-${count}`, ...filter })
-//     .select('_id')
-//     .setOptions({ lean: true });
+const slugify = (text) => _.kebabCase(text);
 
-//   if (!obj) {
-//     return `${slug}-${count}`;
-//   }
+async function createUniqueSlug(Model, slug, count, filter) {
+  const obj = await Model.findOne({ slug: `${slug}-${count}`, ...filter })
+    .select('_id')
+    .setOptions({ lean: true });
 
-//   return createUniqueSlug(Model, slug, count + 1, filter);
-// }
+  if (!obj) {
+    return `${slug}-${count}`;
+  }
 
-// async function generateSlug(Model, name, filter = {}) {
-//   const origSlug = slugify(name);
+  return createUniqueSlug(Model, slug, count + 1, filter);
+}
 
-//   const obj = await Model.findOne({ slug: origSlug, ...filter })
-//     .select('_id')
-//     .setOptions({ lean: true });
+async function generateSlug(Model, name, filter = {}) {
+  const origSlug = slugify(name);
 
-//   if (!obj) {
-//     return origSlug;
-//   }
+  const obj = await Model.findOne({ slug: origSlug, ...filter })
+    .select('_id')
+    .setOptions({ lean: true });
 
-//   return createUniqueSlug(Model, origSlug, 1, filter);
-// }
+  if (!obj) {
+    return origSlug;
+  }
 
-// async function generateNumberSlug(Model, filter = {}, n = 1) {
-//   const obj = await Model.findOne({ slug: n, ...filter })
-//     .select('_id')
-//     .setOptions({ lean: true });
+  return createUniqueSlug(Model, origSlug, 1, filter);
+}
 
-//   if (!obj) {
-//     return `${n}`;
-//   }
-
-//   return generateNumberSlug(Model, filter, ++n);
-// }
-
-// export { generateSlug, generateNumberSlug };
+export { generateSlug };

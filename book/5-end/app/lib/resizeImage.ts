@@ -1,11 +1,10 @@
 function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
-  const img = document.createElement('img');
-  const canvas = document.createElement('canvas');
+  const image = document.createElement('img');
 
   const resize = (resolve) => () => {
     let isResizeNeeded = false;
-    let width = img.width;
-    let height = img.height;
+    let width = image.width;
+    let height = image.height;
 
     if (width > height) {
       if (width > MAX_WIDTH) {
@@ -22,10 +21,15 @@ function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
     }
 
     if (isResizeNeeded) {
+      const canvas = document.createElement('canvas');
+
       canvas.width = width;
       canvas.height = height;
+
+      console.log(width, height);
+
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
+      ctx.drawImage(image, 0, 0, width, height);
 
       canvas.toBlob((blob) => {
         resolve(blob);
@@ -37,10 +41,15 @@ function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
 
   return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      img.src = e.target.result.toString();
 
-      img.onload = resize(resolve);
+    console.log(`before ${image.src}`);
+
+    reader.onload = (e) => {
+      image.src = e.target.result.toString();
+
+      image.onload = resize(resolve);
+
+      console.log(`after ${image.src}`);
     };
 
     reader.readAsDataURL(file);

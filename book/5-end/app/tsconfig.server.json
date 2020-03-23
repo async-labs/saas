@@ -2,7 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "production-server/"
+    "outDir": "production-server/",
+    "target": "es2017",
   },
-  "include": ["./server/**/*.ts"]
+  "include": [
+    "./server/**/*.ts"
+  ]
 }
