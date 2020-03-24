@@ -20,8 +20,11 @@
     "cors": "^2.8.5",
     "dotenv": "8.2.0",
     "express": "4.17.1",
+    "express-session": "^1.17.0",
     "lodash": "^4.17.15",
     "mongoose": "^5.9.2",
+    "passport": "^0.4.1",
+    "passport-google-oauth": "^2.0.0",
     "typescript": "3.8.2"
   },
   "devDependencies": {
