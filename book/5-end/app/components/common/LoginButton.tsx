@@ -5,17 +5,18 @@ import { makeQueryString } from '../../lib/api/makeQueryString';
 
 import { styleLoginButton } from '../../lib/sharedStyles';
 
-class LoginButton extends React.PureComponent<
-  { redirectAfterLogin?: string; invitationToken?: string },
-  { email: string }
-> {
+type MyProps = { redirectAfterLogin?: string };
+
+type MyState = { email: string };
+
+class LoginButton extends React.PureComponent<MyProps, MyState> {
   public state = { email: '' };
 
   public render() {
-    const { redirectAfterLogin, invitationToken } = this.props;
+    const { redirectAfterLogin } = this.props;
 
     let url = `${process.env.URL_API}/auth/google`;
-    const qs = makeQueryString({ redirectAfterLogin, invitationToken });
+    const qs = makeQueryString({ redirectAfterLogin });
 
     if (qs) {
       url += `?${qs}`;

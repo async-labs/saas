@@ -24,6 +24,7 @@ server.use(cors({ origin: process.env.URL_APP, credentials: true }));
 server.use(express.json());
 
 const MongoStore = mongoSessionStore(session);
+
 const sessionOptions = {
   name: process.env.SESSION_NAME,
   secret: process.env.SESSION_SECRET,
@@ -47,6 +48,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const sessionMiddleware = session(sessionOptions);
+
 server.use(sessionMiddleware);
 
 setupGoogle({ server, ROOT_URL: process.env.URL_API });

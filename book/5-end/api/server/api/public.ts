@@ -4,9 +4,9 @@ import User from '../models/User';
 
 const router = express.Router();
 
-// router.get('/get-user', (req, res) => {
-//   res.json({ user: req.user || null });
-// });
+router.get('/get-user', (req, res) => {
+  res.json({ user: req.user || null });
+});
 
 router.post('/get-user-by-slug', async (req, res, next) => {
   console.log('Express route: /get-user-by-slug');
