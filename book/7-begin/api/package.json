@@ -44,7 +44,7 @@
     "isomorphic-unfetch": "3.0.0",
     "lodash": "4.17.11",
     "marked": "0.6.3",
-    "mongoose": "5.6.2",
+    "mongoose": "5.7.5",
     "passport": "0.4.0",
     "passport-google-oauth": "2.0.0",
     "passwordless": "^1.1.3",
