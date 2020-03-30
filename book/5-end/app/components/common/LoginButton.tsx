@@ -1,26 +1,13 @@
 import Button from '@material-ui/core/Button';
 import React from 'react';
 
-import { makeQueryString } from '../../lib/api/makeQueryString';
-
 import { styleLoginButton } from '../../lib/sharedStyles';
 
-type MyProps = { redirectAfterLogin?: string };
-
-type MyState = { email: string };
-
-class LoginButton extends React.PureComponent<MyProps, MyState> {
-  public state = { email: '' };
-
+class LoginButton extends React.PureComponent {
   public render() {
-    const { redirectAfterLogin } = this.props;
+    const url = `${process.env.URL_API}/auth/google`;
 
-    let url = `${process.env.URL_API}/auth/google`;
-    const qs = makeQueryString({ redirectAfterLogin });
-
-    if (qs) {
-      url += `?${qs}`;
-    }
+    console.log(url);
 
     return (
       <React.Fragment>

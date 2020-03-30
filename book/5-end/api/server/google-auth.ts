@@ -66,16 +66,6 @@ function setupGoogle({ ROOT_URL, server }) {
       prompt: 'select_account',
     };
 
-    if (
-      req.query &&
-      req.query.redirectUrlAfterLogin &&
-      req.query.redirectUrlAfterLogin.startsWith('/')
-    ) {
-      req.session.nextUrl = req.query.redirectUrlAfterLogin;
-    } else {
-      req.session.nextUrl = null;
-    }
-
     passport.authenticate('google', options)(req, res, next);
   });
 
@@ -84,16 +74,8 @@ function setupGoogle({ ROOT_URL, server }) {
     passport.authenticate('google', {
       failureRedirect: '/login',
     }),
-    (req, res) => {
-      let redirectUrlAfterLogin;
-
-      if (req.user && req.session.next_url) {
-        redirectUrlAfterLogin = req.session.next_url;
-      } else {
-        redirectUrlAfterLogin = '/your-settings';
-      }
-
-      res.redirect(`${process.env.URL_APP}${redirectUrlAfterLogin}`);
+    (_, res) => {
+      res.redirect(`${process.env.URL_APP}/your-settings`);
     },
   );
 }

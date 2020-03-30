@@ -6,7 +6,7 @@ import * as session from 'express-session';
 import * as mongoose from 'mongoose';
 
 import api from './api';
-import { setupGoogle } from './google-auth';
+// import { setupGoogle } from './google-auth';
 
 const options = {
   useNewUrlParser: true,
@@ -37,7 +37,7 @@ const sessionOptions = {
   cookie: {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
-    domain: process.env.COOKIE_DOMAIN,
+    // domain: process.env.COOKIE_DOMAIN,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any,
 };
@@ -45,13 +45,14 @@ const sessionOptions = {
 if (process.env.NODE_ENV === 'production') {
   server.set('trust proxy', 1); // sets req.hostname, req.ip
   sessionOptions.cookie.secure = true; // sets cookie over HTTPS only
+  console.log('https only');
 }
 
 const sessionMiddleware = session(sessionOptions);
 
 server.use(sessionMiddleware);
 
-setupGoogle({ server, ROOT_URL: process.env.URL_API });
+// setupGoogle({ server, ROOT_URL: process.env.URL_API });
 
 api(server);
 

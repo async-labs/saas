@@ -12,9 +12,12 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   );
 
   const { request } = opts;
+
   if (request && request.headers && request.headers.cookie) {
     headers.cookie = request.headers.cookie;
   }
+
+  console.log(headers.cookie);
 
   const qs = opts.qs || '';
 

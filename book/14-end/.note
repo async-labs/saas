@@ -2,11 +2,40 @@ helmet and compression for Express servers
 
 SEO (robots and sitemap) for APP and API
 
-makeQueryString when it is needed
-
 Logs for API with winston
 
 Google Analytics inside withAuth
 
 deleteFiles after introducing Post
 
+---
+
+makeQueryString when it is needed
+
+Since `href` has to be URI-encoded, we convert `redirectUrlAfterLogin` string into URI-encoded string using `makeQueryString` method. We define this method in a new file `book/5-begin/app/lib/api/makeQueryString.ts`:
+```
+function makeQueryString(params) {
+  const query = Object.keys(params)
+    .filter((k) => !!params[k])
+    .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+    .join('&');
+
+  return query;
+}
+
+export { makeQueryString };
+```
+
+`makeQueryString` method relies on native (part of official API) JavaScript method `encodeURIComponent` that URI-encodes string:
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+
+So if `redirectUrlAfterLogin` has value `?x=test1&y=test2` then `qs` will be `%3Fx%3Dtest1%26y%3Dtest2` and the last string is a valid format for URL:
+```
+console.log(makeQueryString('?x=test1&y=test2'));
+// expected output: "%3Fx%3Dtest1%26y%3Dtest2"
+```
+
+We URI encode `qs` part of our API endpoint because entire string for `href` must be in valid, URI-encoded, format. You can read more on URL syntax here:
+
+https://www.w3.org/Addressing/URL/url-spec.html
