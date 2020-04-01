@@ -35,7 +35,7 @@ app.prepare().then(() => {
     server.set('trust proxy', 1); // sets req.hostname, req.ip
   }
 
-  // middleware that populates req.user via fetching from API
+  // middleware that populates req.user via fetching from API server
   server.use(async (req: any, _, nextfn) => {
     const headers: any = {};
     if (req.headers && req.headers.cookie) {

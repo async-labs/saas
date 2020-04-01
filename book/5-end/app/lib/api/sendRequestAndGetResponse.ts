@@ -17,8 +17,6 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
     headers.cookie = request.headers.cookie;
   }
 
-  console.log(headers.cookie);
-
   const qs = opts.qs || '';
 
   // console.log(`before: ${process.env.URL_API}${path}${qs}`);

@@ -31,25 +31,19 @@ const sessionOptions = {
   store: new MongoStore({
     mongooseConnection: mongoose.connection,
     ttl: 14 * 24 * 60 * 60, // save session 14 days
+    autoRemove: 'interval',
+    autoRemoveInterval: 1440, // clears every day
   }),
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
-    // domain: process.env.COOKIE_DOMAIN,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any,
+    secure: false,
+  },
 };
 
-if (process.env.NODE_ENV === 'production') {
-  server.set('trust proxy', 1); // sets req.hostname, req.ip
-  sessionOptions.cookie.secure = true; // sets cookie over HTTPS only
-  console.log('https only');
-}
-
 const sessionMiddleware = session(sessionOptions);
-
 server.use(sessionMiddleware);
 
 // setupGoogle({ server, ROOT_URL: process.env.URL_API });
