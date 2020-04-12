@@ -5,6 +5,7 @@ import User from '../models/User';
 const router = express.Router();
 
 router.get('/get-user', (req, res) => {
+  console.log(req.user);
   res.json({ user: req.user || null });
 });
 
