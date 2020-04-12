@@ -366,7 +366,7 @@ import * as React from 'react';
 
 import Layout from '../components/layout';
 
-import { getUserBySlugApiMethod, updateProfileApiMethod } from '../lib/api/public';
+import { getUserApiMethod, updateProfileApiMethod } from '../lib/api/public';
 import {
   getSignedRequestForUploadApiMethod,
   uploadFileUsingSignedPutRequestApiMethod,
@@ -385,14 +385,22 @@ type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class YourSettings extends React.Component<MyProps, MyState> {
   public static async getInitialProps() {
-    const slug = 'team-builder-book';
-
-    const user = await getUserBySlugApiMethod(slug);
+    const user = await getUserApiMethod();
 
     console.log(user);
 
     return { ...user };
   }
+
+  // public static async getInitialProps() {
+  //   const slug = 'team-builder-book';
+
+  //   const user = await getUserBySlugApiMethod(slug);
+
+  //   console.log(user);
+
+  //   return { ...user };
+  // }
 
   constructor(props) {
     super(props);

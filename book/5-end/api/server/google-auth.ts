@@ -3,12 +3,12 @@ import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
 
 import User, { UserDocument } from './models/User';
 
-function setupGoogle({ ROOT_URL, server }) {
+function setupGoogle({ server }) {
   if (!process.env.GOOGLE_CLIENTID) {
     return;
   }
 
-  const verify = async (accessToken, refreshToken, profile, verified) => {
+  const verify = async (accessToken, refreshToken, profile, done) => {
     let email;
     let avatarUrl;
 
@@ -29,9 +29,9 @@ function setupGoogle({ ROOT_URL, server }) {
         avatarUrl,
       });
 
-      verified(null, user);
+      done(null, user);
     } catch (err) {
-      verified(err);
+      done(err);
       console.error(err);
     }
   };
@@ -41,7 +41,7 @@ function setupGoogle({ ROOT_URL, server }) {
       {
         clientID: process.env.GOOGLE_CLIENTID,
         clientSecret: process.env.GOOGLE_CLIENTSECRET,
-        callbackURL: `${ROOT_URL}/oauth2callback`,
+        callbackURL: `${process.env.URL_API}/oauth2callback`,
       },
       verify,
     ),
@@ -67,6 +67,8 @@ function setupGoogle({ ROOT_URL, server }) {
     };
 
     passport.authenticate('google', options)(req, res, next);
+
+    console.log('/auth/google');
   });
 
   server.get(
@@ -75,6 +77,7 @@ function setupGoogle({ ROOT_URL, server }) {
       failureRedirect: '/login',
     }),
     (_, res) => {
+      console.log('/oauth2callback');
       res.redirect(`${process.env.URL_APP}/your-settings`);
     },
   );

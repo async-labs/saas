@@ -22,6 +22,20 @@ const mongoSchema = new mongoose.Schema({
   },
   displayName: String,
   avatarUrl: String,
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  googleToken: {
+    accessToken: String,
+    refreshToken: String,
+  },
+  isSignedupViaGoogle: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 // interface UserDocument extends mongoose.Document {
@@ -51,15 +65,15 @@ interface UserModel extends mongoose.Model<UserDocument> {
   signInOrSignUpViaGoogle({
     googleId,
     email,
-    googleToken,
     displayName,
     avatarUrl,
+    googleToken,
   }: {
     googleId: string;
     email: string;
     displayName: string;
     avatarUrl: string;
-    googleToken: { refreshToken?: string; accessToken?: string };
+    googleToken: { accessToken?: string; refreshToken?: string };
   }): Promise<UserDocument>;
 }
 
@@ -90,29 +104,15 @@ class UserClass extends mongoose.Model {
   }
 
   public static publicFields(): string[] {
-    return [
-      '_id',
-      'id',
-      'displayName',
-      'email',
-      'avatarUrl',
-      'slug',
-      'isSignedupViaGoogle',
-      'defaultTeamSlug',
-      'hasCardInformation',
-      'stripeCustomer',
-      'stripeCard',
-      'stripeListOfInvoices',
-      'darkTheme',
-    ];
+    return ['_id', 'id', 'displayName', 'email', 'avatarUrl', 'slug', 'isSignedupViaGoogle'];
   }
 
   public static async signInOrSignUpViaGoogle({
     googleId,
     email,
-    googleToken,
     displayName,
     avatarUrl,
+    googleToken,
   }) {
     const user = await this.findOne({ email })
       .select([...this.publicFields(), 'googleId'].join(' '))
@@ -147,7 +147,6 @@ class UserClass extends mongoose.Model {
       displayName,
       avatarUrl,
       slug,
-      defaultTeamSlug: '',
       isSignedupViaGoogle: true,
     });
 

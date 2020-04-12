@@ -6,7 +6,7 @@ import * as session from 'express-session';
 import * as mongoose from 'mongoose';
 
 import api from './api';
-// import { setupGoogle } from './google-auth';
+import { setupGoogle } from './google-auth';
 
 const options = {
   useNewUrlParser: true,
@@ -46,7 +46,7 @@ const sessionOptions = {
 const sessionMiddleware = session(sessionOptions);
 server.use(sessionMiddleware);
 
-// setupGoogle({ server, ROOT_URL: process.env.URL_API });
+setupGoogle({ server });
 
 api(server);
 
