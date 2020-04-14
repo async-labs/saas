@@ -97,7 +97,9 @@ class Layout extends React.Component<MyProps> {
                   },
                   {
                     text: 'Log out',
-                    href: '/logout',
+                    href: `${process.env.URL_API}/logout`,
+                    as: `${process.env.URL_API}/logout`,
+                    externalServer: true,
                   },
                 ]}
               >
@@ -123,7 +125,7 @@ class Layout extends React.Component<MyProps> {
             <p />
           </Grid>
         ) : null}
-        <Grid item sm={10} xs={12}>
+        <Grid item sm={firstGridItem ? 10 : 12} xs={12}>
           {isMobile ? <hr /> : null}
           {children}
         </Grid>

@@ -355,7 +355,7 @@
 
 // export default YourSettings;
 
-// v3
+// v3-v5
 
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -366,7 +366,7 @@ import * as React from 'react';
 
 import Layout from '../components/layout';
 
-import { getUserApiMethod, updateProfileApiMethod } from '../lib/api/public';
+import { updateProfileApiMethod } from '../lib/api/public';
 import {
   getSignedRequestForUploadApiMethod,
   uploadFileUsingSignedPutRequestApiMethod,
@@ -376,6 +376,8 @@ import { resizeImage } from '../lib/resizeImage';
 
 import notify from '../lib/notify';
 
+import withAuth from '../lib/withAuth';
+
 type MyProps = {
   isMobile: boolean;
   user: { email: string; displayName: string; slug: string; avatarUrl: string };
@@ -384,19 +386,19 @@ type MyProps = {
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class YourSettings extends React.Component<MyProps, MyState> {
-  public static async getInitialProps(ctx) {
-    const headers: any = {};
+  // public static async getInitialProps(ctx) {
+  //   const headers: any = {};
 
-    if (ctx.req.headers && ctx.req.headers.cookie) {
-      headers.cookie = ctx.req.headers.cookie;
-    }
+  //   if (ctx.req.headers && ctx.req.headers.cookie) {
+  //     headers.cookie = ctx.req.headers.cookie;
+  //   }
 
-    const user = await getUserApiMethod({ headers });
+  //   const user = await getUserApiMethod({ headers });
 
-    console.log(user);
+  //   console.log(user);
 
-    return { ...user };
-  }
+  //   return { ...user };
+  // }
 
   // public static async getInitialProps() {
   //   const slug = 'team-builder-book';
@@ -587,4 +589,4 @@ class YourSettings extends React.Component<MyProps, MyState> {
   };
 }
 
-export default YourSettings;
+export default withAuth(YourSettings);

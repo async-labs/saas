@@ -3,7 +3,7 @@ import React from 'react';
 
 import * as NProgress from 'nprogress';
 
-import { getUser } from '../lib/api/public';
+import { getUserApiMethod } from '../lib/api/public';
 
 Router.events.on('routeChangeStart', () => {
   NProgress.start();
@@ -19,54 +19,57 @@ type MyProps = {
   user: { email: string; displayName: string; slug: string; avatarUrl: string };
 };
 
-export default function withAuth(
-  BaseComponent,
-  { loginRequired = true, logoutRequired = false } = {},
-) {
+export default function withAuth(Component, { loginRequired = true, logoutRequired = false } = {}) {
   class WithAuth extends React.Component<MyProps> {
     public static async getInitialProps(ctx) {
-      const { req, pathname } = ctx;
+      const { req, res } = ctx;
 
-      let baseComponentProps = {};
+      let pageComponentProps = {};
 
-      let firstGridItem = true;
-
-      if (pathname.includes('/login')) {
-        firstGridItem = false;
+      if (Component.getInitialProps) {
+        pageComponentProps = await Component.getInitialProps(ctx);
       }
 
-      if (BaseComponent.getInitialProps) {
-        baseComponentProps = await BaseComponent.getInitialProps(ctx);
+      const headers: any = {};
+      if (req.headers && req.headers.cookie) {
+        headers.cookie = req.headers.cookie;
       }
 
-      const user = await getUser();
+      const { user } = await getUserApiMethod({ headers });
 
-      return {
-        ...baseComponentProps,
-        isServer: !!req,
-        firstGridItem,
-        user,
-      };
-    }
-
-    public async componentDidMount() {
-      const user = await getUser();
+      console.log(user);
 
       if (loginRequired && !logoutRequired && !user) {
-        Router.push('/login');
+        if (res) {
+          res.writeHead(302, { Location: '/login' });
+          res.end();
+        } else {
+          Router.push('/login');
+        }
         return;
       }
 
       let redirectUrl = '/login';
       let asUrl = '/login';
+
       if (user) {
         redirectUrl = `/your-settings`;
         asUrl = `/your-settings`;
       }
 
       if (logoutRequired && user) {
-        Router.push(redirectUrl, asUrl);
+        if (res) {
+          res.writeHead(302, { Location: asUrl });
+          res.end();
+        } else {
+          Router.push(redirectUrl, asUrl);
+        }
       }
+
+      return {
+        ...pageComponentProps,
+        user,
+      };
     }
 
     public render() {
@@ -80,7 +83,7 @@ export default function withAuth(
         return null;
       }
 
-      return <BaseComponent {...this.props} />;
+      return <Component {...this.props} />;
     }
   }
 

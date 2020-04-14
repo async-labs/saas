@@ -2,6 +2,7 @@ import Head from 'next/head';
 import React from 'react';
 import LoginButton from '../components/common/LoginButton';
 import Layout from '../components/layout';
+import withAuth from '../lib/withAuth';
 
 class Login extends React.Component {
   public render() {
@@ -27,4 +28,4 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+export default withAuth(Login, { logoutRequired: true });
