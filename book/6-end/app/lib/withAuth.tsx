@@ -41,8 +41,7 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
 
       if (loginRequired && !logoutRequired && !user) {
         if (res) {
-          res.writeHead(302, { Location: '/login' });
-          res.end();
+          res.redirect('/login');
         } else {
           Router.push('/login');
         }
@@ -59,8 +58,7 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
 
       if (logoutRequired && user) {
         if (res) {
-          res.writeHead(302, { Location: asUrl });
-          res.end();
+          res.redirect(`${redirectUrl}`);
         } else {
           Router.push(redirectUrl, asUrl);
         }
