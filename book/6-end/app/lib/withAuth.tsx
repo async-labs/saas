@@ -1,119 +1,79 @@
-import { inject, observer } from 'mobx-react';
 import Router from 'next/router';
 import React from 'react';
 
 import * as NProgress from 'nprogress';
-import * as gtag from './gtag';
-import { getStore, Store } from './store';
+
+import { getUserApiMethod } from '../lib/api/public';
 
 Router.events.on('routeChangeStart', () => {
   NProgress.start();
 });
 
-Router.events.on('routeChangeComplete', (url) => {
+Router.events.on('routeChangeComplete', () => {
   NProgress.done();
-  gtag.pageview(url);
-
-  const store = getStore();
-  if (store) {
-    store.changeCurrentUrl(url);
-  }
 });
 
 Router.events.on('routeChangeError', () => NProgress.done());
 
-export default function withAuth(
-  BaseComponent,
-  { loginRequired = true, logoutRequired = false } = {},
-  // 10
-  // { loginRequired = true, logoutRequired = false, teamRequired = true } = {},
-) {
-  BaseComponent = inject('store')(BaseComponent);
+type MyProps = {
+  user: { email: string; displayName: string; slug: string; avatarUrl: string };
+};
 
-  class WithAuth extends React.Component<{ store: Store }> {
+export default function withAuth(Component, { loginRequired = true, logoutRequired = false } = {}) {
+  class WithAuth extends React.Component<MyProps> {
     public static async getInitialProps(ctx) {
-      const { req, pathname } = ctx;
+      const { req, res } = ctx;
 
-      // 10
-      // const { query, req, pathname } = ctx;
+      let pageComponentProps = {};
 
-      let baseComponentProps = {};
-
-      let firstGridItem = true;
-
-      if (
-        pathname.includes('/login') ||
-        pathname.includes('/signup')
-        // 10
-        // pathname.includes('/invitation') ||
-        // pathname.includes('/create-team')
-      ) {
-        firstGridItem = false;
+      if (Component.getInitialProps) {
+        pageComponentProps = await Component.getInitialProps(ctx);
       }
 
-      // 10
-      // const { teamSlug } = query;
-
-      // 12
-      // const { teamSlug, discussionSlug } = query;
-
-      if (BaseComponent.getInitialProps) {
-        baseComponentProps = await BaseComponent.getInitialProps(ctx);
+      const headers: any = {};
+      if (req.headers && req.headers.cookie) {
+        headers.cookie = req.headers.cookie;
       }
 
-      return {
-        ...baseComponentProps,
-        // 10
-        // teamSlug,
-        // teamRequired,
+      const { user } = await getUserApiMethod({ headers });
 
-        // 12
-        // discussionSlug,
-        isServer: !!req,
-        firstGridItem,
-      };
-    }
-
-    public componentDidMount() {
-      const { store } = this.props;
-
-      const user = store.currentUser;
+      console.log(user);
 
       if (loginRequired && !logoutRequired && !user) {
-        Router.push('/login');
+        if (res) {
+          res.writeHead(302, { Location: '/login' });
+          res.end();
+        } else {
+          Router.push('/login');
+        }
         return;
       }
 
       let redirectUrl = '/login';
       let asUrl = '/login';
+
       if (user) {
-        redirectUrl = '/your-settings';
-        asUrl = '/your-settings';
-
-        // 10
-        // if (!user.defaultTeamSlug) {
-        //   redirectUrl = '/create-team';
-        //   asUrl = '/create-team';
-        // }
-
-        // 12
-        // if (!user.defaultTeamSlug) {
-        //   redirectUrl = '/create-team';
-        //   asUrl = '/create-team';
-        // } else {
-        //   redirectUrl = `/discussion?teamSlug=${user.defaultTeamSlug}`;
-        //   asUrl = `/team/${user.defaultTeamSlug}/discussions`;
-        // }
+        redirectUrl = `/your-settings`;
+        asUrl = `/your-settings`;
       }
 
       if (logoutRequired && user) {
-        Router.push(redirectUrl, asUrl);
+        if (res) {
+          res.writeHead(302, { Location: asUrl });
+          res.end();
+        } else {
+          Router.push(redirectUrl, asUrl);
+        }
       }
+
+      return {
+        ...pageComponentProps,
+        user,
+      };
     }
 
     public render() {
-      const { store } = this.props;
-      const user = store.currentUser;
+      const { user } = this.props;
 
       if (loginRequired && !logoutRequired && !user) {
         return null;
@@ -123,9 +83,9 @@ export default function withAuth(
         return null;
       }
 
-      return <BaseComponent {...this.props} />;
+      return <Component {...this.props} />;
     }
   }
 
-  return inject('store')(observer(WithAuth));
+  return WithAuth;
 }

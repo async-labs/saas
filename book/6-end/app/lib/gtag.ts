@@ -17,7 +17,6 @@ export const event = ({ action, category, label, value }) => {
   if (!GA_TRACKING_ID) {
     return;
   }
-
   // eslint-disable-next-line
   (window as any).gtag('event', action, {
     // eslint-disable-next-line
