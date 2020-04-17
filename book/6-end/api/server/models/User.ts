@@ -78,6 +78,8 @@ interface UserModel extends mongoose.Model<UserDocument> {
     avatarUrl: string;
     googleToken: { accessToken?: string; refreshToken?: string };
   }): Promise<UserDocument>;
+
+  signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<UserDocument>;
 }
 
 class UserClass extends mongoose.Model {
@@ -162,6 +164,54 @@ class UserClass extends mongoose.Model {
     }
 
     const template = await getEmailTemplate('welcome', { userName: displayName }, emailTemplate);
+
+    try {
+      await sendEmail({
+        from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: template.subject,
+        body: template.message,
+      });
+    } catch (err) {
+      console.error('Email sending error:', err);
+    }
+
+    try {
+      await subscribe({ email, listName: 'signups' });
+    } catch (error) {
+      console.error('Mailchimp error:', error);
+    }
+
+    return _.pick(newUser, this.publicFields());
+  }
+
+  public static async signUpByEmail({ uid, email }) {
+    const user = await this.findOne({ email })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
+
+    if (user) {
+      throw Error('User already exists');
+    }
+
+    const slug = await generateSlug(this, email);
+
+    const newUser = await this.create({
+      _id: uid,
+      createdAt: new Date(),
+      email,
+      slug,
+    });
+
+    const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
+      lean: true,
+    });
+
+    if (!emailTemplate) {
+      throw new Error('welcome Email template not found');
+    }
+
+    const template = await getEmailTemplate('welcome', { userName: email }, emailTemplate);
 
     try {
       await sendEmail({

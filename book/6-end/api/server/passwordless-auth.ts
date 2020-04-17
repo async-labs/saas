@@ -3,7 +3,7 @@ import * as passwordless from 'passwordless';
 import sendEmail from './aws-ses';
 import getEmailTemplate from './models/EmailTemplate';
 import User from './models/User';
-import PasswordlessMongoStore from './passwordless';
+import PasswordlessMongoStore from './passwordless-token-mongostore';
 
 function setupPasswordless({ server }) {
   const mongoStore = new PasswordlessMongoStore();

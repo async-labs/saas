@@ -1,30 +1,29 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
-interface EmailTemplateDocument extends mongoose.Document {
+const mongoSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  subject: {
+    type: String,
+    required: true,
+  },
+  message: {
+    type: String,
+    required: true,
+  },
+});
+
+export interface EmailTemplateDocument extends mongoose.Document {
   name: string;
   subject: string;
   message: string;
 }
 
-const EmailTemplate = mongoose.model<EmailTemplateDocument>(
-  'EmailTemplate',
-  new mongoose.Schema({
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    subject: {
-      type: String,
-      required: true,
-    },
-    message: {
-      type: String,
-      required: true,
-    },
-  }),
-);
+export const EmailTemplate = mongoose.model<EmailTemplateDocument>('EmailTemplate', mongoSchema);
 
 async function insertTemplates() {
   const templates = [
@@ -116,5 +115,3 @@ export default async function getEmailTemplate(
     subject: _.template(source.subject)(params),
   };
 }
-
-export { EmailTemplate, EmailTemplateDocument };
