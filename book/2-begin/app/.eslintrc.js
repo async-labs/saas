@@ -24,10 +24,9 @@ module.exports = {
       }
     ],
     "@typescript-eslint/camelcase": "off",
-    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "react/no-unescaped-entities": "off",
-    "react/jsx-filename-extension": ["error", { extensions: [".tsx"] }]
+    "react/jsx-filename-extension": ["error", { extensions: [".tsx"] }],
   },
   plugins: ["prettier", "react"]
 };

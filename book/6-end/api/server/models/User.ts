@@ -155,22 +155,18 @@ class UserClass extends mongoose.Model {
       isSignedupViaGoogle: true,
     });
 
-    const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
-      lean: true,
-    });
+    const emailTemplate = await getEmailTemplate('welcome', { userName: displayName });
 
     if (!emailTemplate) {
       throw new Error('Welcome email template not found');
     }
 
-    const template = await getEmailTemplate('welcome', { userName: displayName }, emailTemplate);
-
     try {
       await sendEmail({
         from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [email],
-        subject: template.subject,
-        body: template.message,
+        subject: emailTemplate.subject,
+        body: emailTemplate.message,
       });
     } catch (err) {
       console.error('Email sending error:', err);
@@ -203,22 +199,18 @@ class UserClass extends mongoose.Model {
       slug,
     });
 
-    const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
-      lean: true,
-    });
+    const emailTemplate = await getEmailTemplate('welcome', { userName: email });
 
     if (!emailTemplate) {
-      throw new Error('welcome Email template not found');
+      throw new Error('Email template "welcome" not found in database.');
     }
-
-    const template = await getEmailTemplate('welcome', { userName: email }, emailTemplate);
 
     try {
       await sendEmail({
         from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [email],
-        subject: template.subject,
-        body: template.message,
+        subject: emailTemplate.subject,
+        body: emailTemplate.message,
       });
     } catch (err) {
       console.error('Email sending error:', err);

@@ -4,7 +4,7 @@ SEO (robots and sitemap) for APP and API
 
 Logs for API with winston
 
-Google Analytics inside withAuth
+Google Analytics in Chapter 12
 
 deleteFiles after introducing Post
 
@@ -51,6 +51,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 ---
+
+app//.eslintrc.js
+
 
 api/.eslintrc.js
 '@typescript-eslint/no-explicit-any': 'off',

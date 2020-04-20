@@ -30,8 +30,8 @@ async function insertTemplates() {
   const templates = [
     {
       name: 'welcome',
-      subject: 'Welcome to SaaS by Async',
-      message: `<%= userName %>,
+      subject: 'Welcome to SaaS boilerplate by Async',
+      message: `Welcome <%= userName %>,
         <p>
           Thanks for signing up on our <a href="https://github.com/async-labs/saas" target="blank">SaaS boilerplate</a>!
         </p>
@@ -74,20 +74,13 @@ async function insertTemplates() {
 
 insertTemplates();
 
-export default async function getEmailTemplate(
-  name: string,
-  // eslint-disable-next-line
-  params: any,
-  template?: EmailTemplateDocument,
-) {
-  const source =
-    template ||
-    (await EmailTemplate.findOne({ name }).setOptions({
-      lean: true,
-    }));
+export default async function getEmailTemplate(name: string, params: any) {
+  const source = await EmailTemplate.findOne({ name }).setOptions({
+    lean: true,
+  });
 
   if (!source) {
-    throw new Error('Email Template is not found.');
+    throw new Error('Email Template is not found in database.');
   }
 
   return {
