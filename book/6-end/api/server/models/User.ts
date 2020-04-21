@@ -4,7 +4,7 @@ import * as mongoose from 'mongoose';
 import sendEmail from '../aws-ses';
 import { subscribe } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
-import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
+import getEmailTemplate from './EmailTemplate';
 
 mongoose.set('useFindAndModify', false);
 

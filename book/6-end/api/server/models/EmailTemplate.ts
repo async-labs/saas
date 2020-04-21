@@ -75,18 +75,16 @@ async function insertTemplates() {
 insertTemplates();
 
 export default async function getEmailTemplate(name: string, params: any) {
-  const source = await EmailTemplate.findOne({ name }).setOptions({
+  const et = await EmailTemplate.findOne({ name }).setOptions({
     lean: true,
   });
 
-  if (!source) {
+  if (!et) {
     throw new Error('Email Template is not found in database.');
   }
 
   return {
-    message: _.template(source.message)(params),
-    subject: _.template(source.subject)(params),
+    message: _.template(et.message)(params),
+    subject: _.template(et.subject)(params),
   };
 }
-
-export { EmailTemplate, EmailTemplateDocument };
