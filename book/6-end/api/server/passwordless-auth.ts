@@ -46,36 +46,6 @@ function setupPasswordless({ server }) {
     }
   });
 
-  server.get(
-    '/auth/logged_in',
-    passwordless.acceptToken(),
-    (req, __, next) => {
-      if (req.user && typeof req.user === 'string') {
-        User.findById(req.user, User.publicFields(), (err, user) => {
-          req.user = user;
-          next(err);
-        });
-      } else {
-        next();
-      }
-    },
-    (req, res) => {
-      let redirectUrlAfterLogin;
-
-      if (req.user && req.session.next_url) {
-        redirectUrlAfterLogin = req.session.next_url;
-      } else {
-        if (!req.user || !req.user.defaultTeamSlug) {
-          redirectUrlAfterLogin = '/create-team';
-        } else {
-          redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
-        }
-      }
-
-      res.redirect(`${process.env.URL_APP}${redirectUrlAfterLogin}`);
-    },
-  );
-
   server.post(
     '/auth/send-token',
     passwordless.requestToken(
@@ -99,6 +69,24 @@ function setupPasswordless({ server }) {
     ),
     (_, res) => {
       res.json({ done: 1 });
+    },
+  );
+
+  server.get(
+    '/auth/logged_in',
+    passwordless.acceptToken(),
+    (req, __, next) => {
+      if (req.user && typeof req.user === 'string') {
+        User.findById(req.user, User.publicFields(), (err, user) => {
+          req.user = user;
+          next(err);
+        });
+      } else {
+        next();
+      }
+    },
+    (_, res) => {
+      res.redirect(`${process.env.URL_APP}/your-settings`);
     },
   );
 

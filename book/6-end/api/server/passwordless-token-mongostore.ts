@@ -60,7 +60,7 @@ MongoStore.prototype.authenticate = async function authenticate(token, uid, call
       const res = await bcrypt.compare(token, item.hashedToken);
       if (res) {
         if (item.email) {
-          await User.signUpByEmail({ uid, email: item.email });
+          await User.signUpByPasswordless({ uid, email: item.email });
         }
 
         callback(null, true, item.originUrl);

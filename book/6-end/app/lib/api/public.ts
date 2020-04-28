@@ -22,3 +22,9 @@ export const updateProfileApiMethod = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/user/update-profile`, {
     body: JSON.stringify(data),
   });
+
+export const sendLoginToken = ({ email }: { email: string }) =>
+  sendRequestAndGetResponse('/auth/send-token', {
+    body: JSON.stringify({ email }),
+  });
+  

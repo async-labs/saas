@@ -57,8 +57,8 @@ class LoginButton extends React.PureComponent<
               Log in with email
             </Button>
           </form>
-          <br />
           <p />
+          <br />
         </div>
       </React.Fragment>
     );
