@@ -1,5 +1,3 @@
-// https://www.npmjs.com/package/passwordless-mongostore-bcrypt-node
-
 import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose';
 import * as TokenStore from 'passwordless-tokenstore';

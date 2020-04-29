@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
 
-import { sendLoginToken } from '../../lib/api/public';
+import { emailLoginLink } from '../../lib/api/public';
 import notify from '../../lib/notify';
 import { styleLoginButton } from '../../lib/sharedStyles';
 
@@ -62,7 +62,7 @@ class LoginButton extends React.PureComponent {
     }
 
     try {
-      await sendLoginToken({ email });
+      await emailLoginLink({ email });
       this.setState({ email: '' });
       notify('Async emailed you a login link.');
     } catch (error) {

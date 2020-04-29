@@ -7,7 +7,6 @@ import PasswordlessMongoStore from './passwordless-token-mongostore';
 
 function setupPasswordless({ server }) {
   const mongoStore = new PasswordlessMongoStore();
-  passwordless.init(mongoStore);
 
   passwordless.addDelivery(async (tokenToSend, uidToSend, recipient, callback) => {
     try {
@@ -33,6 +32,7 @@ function setupPasswordless({ server }) {
     }
   });
 
+  passwordless.init(mongoStore);
   server.use(passwordless.sessionSupport());
 
   server.use((req, __, next) => {
@@ -47,7 +47,7 @@ function setupPasswordless({ server }) {
   });
 
   server.post(
-    '/auth/send-token',
+    '/auth/email-login-link',
     passwordless.requestToken(
       async (email, __, callback) => {
         try {

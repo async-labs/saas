@@ -23,8 +23,8 @@ export const updateProfileApiMethod = (data) =>
     body: JSON.stringify(data),
   });
 
-export const sendLoginToken = ({ email }: { email: string }) =>
-  sendRequestAndGetResponse('/auth/send-token', {
+export const emailLoginLink = ({ email }: { email: string }) =>
+  sendRequestAndGetResponse('/auth/email-login-link', {
     body: JSON.stringify({ email }),
   });
   

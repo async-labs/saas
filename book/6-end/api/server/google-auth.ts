@@ -82,10 +82,10 @@ function setupGoogle({ server }) {
     },
   );
 
-  server.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect(`${process.env.URL_APP}/login`);
-  });
+  // server.get('/logout', (req, res) => {
+  //   req.logout();
+  //   res.redirect(`${process.env.URL_APP}/login`);
+  // });
 }
 
 export { setupGoogle };
