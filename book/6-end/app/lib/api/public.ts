@@ -25,6 +25,6 @@ export const updateProfileApiMethod = (data) =>
 
 export const emailLoginLink = ({ email }: { email: string }) =>
   sendRequestAndGetResponse('/auth/email-login-link', {
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ user: email }),
   });
   

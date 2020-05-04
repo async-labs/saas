@@ -79,7 +79,13 @@ interface UserModel extends mongoose.Model<UserDocument> {
     googleToken: { accessToken?: string; refreshToken?: string };
   }): Promise<UserDocument>;
 
-  signUpByPasswordless({ uid, email }: { uid: string; email: string }): Promise<UserDocument>;
+  signInOrSignUpByPasswordless({
+    uid,
+    email,
+  }: {
+    uid: string;
+    email: string;
+  }): Promise<UserDocument>;
 }
 
 class UserClass extends mongoose.Model {
@@ -181,7 +187,7 @@ class UserClass extends mongoose.Model {
     return _.pick(newUser, this.publicFields());
   }
 
-  public static async signUpByPasswordless({ uid, email }) {
+  public static async signInOrSignUpByPasswordless({ uid, email }) {
     const user = await this.findOne({ email })
       .select(this.publicFields().join(' '))
       .setOptions({ lean: true });

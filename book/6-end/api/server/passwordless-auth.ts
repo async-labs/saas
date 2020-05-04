@@ -16,8 +16,6 @@ function setupPasswordless({ server }) {
         }/auth/logged_in?token=${tokenToSend}&uid=${encodeURIComponent(uidToSend)}`,
       });
 
-      console.debug(template.message);
-
       await sendEmail({
         from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [recipient],
@@ -48,25 +46,22 @@ function setupPasswordless({ server }) {
 
   server.post(
     '/auth/email-login-link',
-    passwordless.requestToken(
-      async (email, __, callback) => {
-        try {
-          const user = await User.findOne({ email })
-            .select('_id')
-            .setOptions({ lean: true });
+    passwordless.requestToken(async (email, __, callback) => {
+      try {
+        const user = await User.findOne({ email })
+          .select('_id')
+          .setOptions({ lean: true });
 
-          if (user) {
-            callback(null, user._id);
-          } else {
-            const id = await mongoStore.storeOrUpdateByEmail(email);
-            callback(null, id);
-          }
-        } catch (error) {
-          callback(error);
+        if (user) {
+          callback(null, user._id);
+        } else {
+          const id = await mongoStore.storeOrUpdateByEmail(email);
+          callback(null, id);
         }
-      },
-      { userField: 'email' },
-    ),
+      } catch (error) {
+        callback(error, null);
+      }
+    }),
     (_, res) => {
       res.json({ done: 1 });
     },

@@ -49,12 +49,12 @@ async function insertTemplates() {
         Kelly & Timur, Team Async
       `,
     },
-    // {
-    //   name: 'login',
-    //   subject: 'Login link for saas-app.builderbook.org',
-    //   message: `
-    //     <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
-    // },
+    {
+      name: 'login',
+      subject: 'Login link for saas-app.builderbook.org',
+      message: `
+        <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
+    },
   ];
 
   for (const t of templates) {
