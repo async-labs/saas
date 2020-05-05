@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
 
-import { emailLoginLink } from '../../lib/api/public';
+import { emailLoginLinkApiMethod } from '../../lib/api/public';
 import notify from '../../lib/notify';
 import { styleLoginButton } from '../../lib/sharedStyles';
 
@@ -62,9 +62,9 @@ class LoginButton extends React.PureComponent {
     }
 
     try {
-      await emailLoginLink({ email });
+      await emailLoginLinkApiMethod({ email });
       this.setState({ email: '' });
-      notify('Async emailed you a login link.');
+      notify('SaaS boilerplate emailed you a login link.');
     } catch (error) {
       notify(error);
     }

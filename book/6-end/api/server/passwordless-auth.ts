@@ -37,6 +37,7 @@ function setupPasswordless({ server }) {
     if (req.user && typeof req.user === 'string') {
       User.findById(req.user, User.publicFields(), (err, user) => {
         req.user = user;
+        console.log('passwordless middleware');
         next(err);
       });
     } else {
