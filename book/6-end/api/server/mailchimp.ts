@@ -6,21 +6,18 @@ const LIST_IDS = {
 
 function callAPI({ path, method, data }): Promise<Response> {
   const ROOT_URI = `https://${process.env.MAILCHIMP_REGION}.api.mailchimp.com/3.0`;
-  // For us, MAILCHIMP_REGION has value of 'us17'.
-
-  const API_KEY = process.env.MAILCHIMP_API_KEY;
 
   return fetch(`${ROOT_URI}${path}`, {
     method,
     headers: {
       Accept: 'application/json',
-      Authorization: `Basic ${Buffer.from(`apikey:${API_KEY}`).toString('base64')}`,
+      Authorization: `Basic ${Buffer.from(`apikey:${process.env.MAILCHIMP_API_KEY}`, 'base64')}`,
     },
     body: JSON.stringify(data),
   });
 }
 
-async function subscribe({ email, listName }) {
+async function addToMailchimp({ email, listName }) {
   const data = {
     // eslint-disable-next-line
     email_address: email,
@@ -32,4 +29,4 @@ async function subscribe({ email, listName }) {
   await callAPI({ path, method: 'POST', data });
 }
 
-export { subscribe };
+export { addToMailchimp };

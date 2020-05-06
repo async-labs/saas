@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
 import sendEmail from '../aws-ses';
-import { subscribe } from '../mailchimp';
+import { addToMailchimp } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
 import getEmailTemplate from './EmailTemplate';
 
@@ -179,7 +179,7 @@ class UserClass extends mongoose.Model {
     }
 
     try {
-      await subscribe({ email, listName: 'signups' });
+      await addToMailchimp({ email, listName: 'signups' });
     } catch (error) {
       console.error('Mailchimp error:', error);
     }
@@ -223,7 +223,7 @@ class UserClass extends mongoose.Model {
     }
 
     try {
-      await subscribe({ email, listName: 'signups' });
+      await addToMailchimp({ email, listName: 'signups' });
     } catch (error) {
       console.error('Mailchimp error:', error);
     }
