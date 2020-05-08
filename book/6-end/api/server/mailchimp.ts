@@ -11,7 +11,9 @@ function callAPI({ path, method, data }): Promise<Response> {
     method,
     headers: {
       Accept: 'application/json',
-      Authorization: `Basic ${Buffer.from(`apikey:${process.env.MAILCHIMP_API_KEY}`, 'base64')}`,
+      Authorization: `Basic ${Buffer.from(`apikey:${process.env.MAILCHIMP_API_KEY}`).toString(
+        'base64',
+      )}`,
     },
     body: JSON.stringify(data),
   });
