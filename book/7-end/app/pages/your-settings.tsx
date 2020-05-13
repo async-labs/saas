@@ -366,7 +366,7 @@ import * as React from 'react';
 
 import Layout from '../components/layout';
 
-import { updateProfileApiMethod } from '../lib/api/public';
+import { updateProfileApiMethod } from '../lib/api/team-member';
 import {
   getSignedRequestForUploadApiMethod,
   uploadFileUsingSignedPutRequestApiMethod,

@@ -1,11 +1,14 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/styles';
+import { Provider } from 'mobx-react';
 import App from 'next/app';
 import React from 'react';
 import { isMobile } from '../lib/isMobile';
+import { Store } from '../lib/store';
 import { themeDark, themeLight } from '../lib/theme';
+import withStore from '../lib/withStore';
 
-class MyApp extends App<{ isMobile: boolean }> {
+class MyApp extends App<{ isMobile: boolean; mobxStore: Store }> {
   public static async getInitialProps({ Component, ctx }) {
     let firstGridItem = true;
 
@@ -30,15 +33,19 @@ class MyApp extends App<{ isMobile: boolean }> {
     }
   }
   public render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, mobxStore } = this.props;
 
     return (
-      <ThemeProvider theme={false ? themeDark : themeLight}>
+      <ThemeProvider
+        theme={mobxStore.currentUser && mobxStore.currentUser.darkTheme ? themeDark : themeLight}
+      >
         <CssBaseline />
-        <Component {...pageProps} />
+        <Provider store={mobxStore}>
+          <Component {...pageProps} />
+        </Provider>
       </ThemeProvider>
     );
   }
 }
 
-export default MyApp;
+export default withStore(MyApp);

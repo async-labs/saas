@@ -39,8 +39,6 @@ class MyApp extends App<{ mobxStore: Store; isMobile: boolean }> {
       <ThemeProvider
         theme={mobxStore.currentUser && mobxStore.currentUser.darkTheme ? themeDark : themeLight}
       >
-        {/* ThemeProvider makes the theme available down the React tree thanks to React context. */}
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <Provider store={mobxStore}>
           <Component {...pageProps} />

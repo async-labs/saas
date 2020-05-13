@@ -51,9 +51,6 @@ class User {
     this.avatarUrl = params.avatarUrl;
     this.defaultTeamSlug = params.defaultTeamSlug;
 
-    this.hasCardInformation = params.hasCardInformation;
-    this.stripeCard = params.stripeCard;
-    this.stripeListOfInvoices = params.stripeListOfInvoices;
     this.darkTheme = !!params.darkTheme;
     this.isLoggedIn = !!params.isLoggedIn;
     this.isSignedupViaGoogle = !!params.isSignedupViaGoogle;
@@ -94,9 +91,6 @@ decorate(User, {
   avatarUrl: observable,
   defaultTeamSlug: observable,
 
-  hasCardInformation: observable,
-  stripeCard: observable,
-  stripeListOfInvoices: observable,
   isLoggedIn: observable,
 
   updateProfile: action,
