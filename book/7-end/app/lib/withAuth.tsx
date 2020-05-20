@@ -1,26 +1,28 @@
+import { observer } from 'mobx-react';
 import Router from 'next/router';
 import React from 'react';
 
 import * as NProgress from 'nprogress';
 
-import { getUserApiMethod } from '../lib/api/public';
+import { getStore, Store } from './store';
 
 Router.events.on('routeChangeStart', () => {
   NProgress.start();
 });
 
-Router.events.on('routeChangeComplete', () => {
+Router.events.on('routeChangeComplete', (url) => {
   NProgress.done();
+
+  const store = getStore();
+  if (store) {
+    store.changeCurrentUrl(url);
+  }
 });
 
 Router.events.on('routeChangeError', () => NProgress.done());
 
-type MyProps = {
-  user: { email: string; displayName: string; slug: string; avatarUrl: string };
-};
-
 export default function withAuth(Component, { loginRequired = true, logoutRequired = false } = {}) {
-  class WithAuth extends React.Component<MyProps> {
+  class WithAuth extends React.Component<{ store: Store }> {
     public static async getInitialProps(ctx) {
       const { req, res } = ctx;
 
@@ -35,7 +37,8 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
         headers.cookie = req.headers.cookie;
       }
 
-      const { user } = await getUserApiMethod({ headers });
+      const store = getStore();
+      const user = store.currentUser;
 
       console.log(user);
 
@@ -66,12 +69,12 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
 
       return {
         ...pageComponentProps,
-        user,
       };
     }
 
     public render() {
-      const { user } = this.props;
+      const { store } = this.props;
+      const user = store.currentUser;
 
       if (loginRequired && !logoutRequired && !user) {
         return null;
@@ -85,5 +88,5 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
     }
   }
 
-  return WithAuth;
+  return observer(WithAuth);
 }
