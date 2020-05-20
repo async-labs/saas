@@ -78,7 +78,7 @@ class MyApp extends App<{ isMobile: boolean }> {
       >
         <CssBaseline />
         <Provider store={store}>
-          <Component {...pageProps} />
+          <Component {...pageProps} store={store} />
         </Provider>
       </ThemeProvider>
     );

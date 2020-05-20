@@ -1,4 +1,4 @@
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import Router from 'next/router';
 import React from 'react';
 
@@ -26,8 +26,6 @@ export default function withAuth(
   BaseComponent,
   { loginRequired = true, logoutRequired = false, teamRequired = true } = {},
 ) {
-  BaseComponent = inject('store')(BaseComponent);
-
   class WithAuth extends React.Component<{ store: Store }> {
     public static async getInitialProps(ctx) {
       const { query, req, pathname } = ctx;
@@ -104,5 +102,5 @@ export default function withAuth(
     }
   }
 
-  return inject('store')(observer(WithAuth));
+  return observer(WithAuth);
 }
