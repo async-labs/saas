@@ -1,7 +1,6 @@
 import * as mobx from 'mobx';
 import { action, decorate, observable } from 'mobx';
 import { useStaticRendering } from 'mobx-react'
-import { useMemo } from 'react'
 
 import { User } from './user';
 
