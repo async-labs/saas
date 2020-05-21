@@ -1,5 +1,8 @@
 import express from 'express';
+import * as mobxReact from 'mobx-react';
 import next from 'next';
+
+mobxReact.useStaticRendering(true);
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const IS_DEV = NODE_ENV !== 'production';

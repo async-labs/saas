@@ -8,7 +8,7 @@ import { themeDark, themeLight } from '../lib/theme';
 import { getUserApiMethod } from '../lib/api/public';
 // import { getInitialDataApiMethod } from '../lib/api/team-member';
 import { isMobile } from '../lib/isMobile';
-import { getStore, initStore, Store } from '../lib/store';
+import { getStore, initializeStore, Store } from '../lib/store';
 
 class MyApp extends App<{ isMobile: boolean }> {
   public static async getInitialProps({ Component, ctx }) {
@@ -26,8 +26,8 @@ class MyApp extends App<{ isMobile: boolean }> {
 
     const appProps = { pageProps };
 
-    // if store initialized already, do not load data again
-    if (getStore()) {
+    const store = getStore();
+    if (store) {
       return appProps;
     }
 
@@ -71,7 +71,7 @@ class MyApp extends App<{ isMobile: boolean }> {
   constructor(props) {
     super(props);
 
-    this.store = initStore(props.initialState);
+    this.store = initializeStore(props.initialState);
   }
 
   public render() {

@@ -1,4 +1,3 @@
-import { observer } from 'mobx-react';
 import Router from 'next/router';
 import React from 'react';
 
@@ -88,5 +87,5 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
     }
   }
 
-  return observer(WithAuth);
+  return WithAuth;
 }

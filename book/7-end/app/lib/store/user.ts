@@ -7,7 +7,6 @@ class User {
   public store: Store;
 
   public _id: string;
-  public isAdmin: boolean;
   public slug: string;
   public email: string | null;
   public displayName: string | null;
@@ -44,7 +43,6 @@ class User {
     this.store = params.store;
 
     this._id = params._id;
-    this.isAdmin = params.isAdmin;
     this.slug = params.slug;
     this.email = params.email;
     this.displayName = params.displayName;
