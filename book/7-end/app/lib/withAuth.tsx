@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react';
 import Router from 'next/router';
 import React from 'react';
 
@@ -23,7 +24,7 @@ Router.events.on('routeChangeError', () => NProgress.done());
 export default function withAuth(Component, { loginRequired = true, logoutRequired = false } = {}) {
   class WithAuth extends React.Component<{ store: Store }> {
     public static async getInitialProps(ctx) {
-      const { req, res } = ctx;
+      const { req } = ctx;
 
       let pageComponentProps = {};
 
@@ -31,44 +32,62 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
         pageComponentProps = await Component.getInitialProps(ctx);
       }
 
-      const headers: any = {};
-      if (req.headers && req.headers.cookie) {
-        headers.cookie = req.headers.cookie;
-      }
+      // const store = getStore();
+      // const user = store.currentUser;
 
-      const store = getStore();
+      // console.log(user);
+
+      // if (loginRequired && !logoutRequired && !user) {
+      //   if (res) {
+      //     res.redirect('/login');
+      //   } else {
+      //     Router.push('/login');
+      //   }
+      //   return;
+      // }
+
+      // let redirectUrl = '/login';
+      // let asUrl = '/login';
+
+      // if (user) {
+      //   redirectUrl = `/your-settings`;
+      //   asUrl = `/your-settings`;
+      // }
+
+      // if (logoutRequired && user) {
+      //   if (res) {
+      //     res.redirect(`${redirectUrl}`);
+      //   } else {
+      //     Router.push(redirectUrl, asUrl);
+      //   }
+      // }
+
+      return {
+        ...pageComponentProps,
+        isServer: !!req,
+      };
+    }
+
+    public componentDidMount() {
+      const { store } = this.props;
+
       const user = store.currentUser;
 
-      console.log(user);
-
       if (loginRequired && !logoutRequired && !user) {
-        if (res) {
-          res.redirect('/login');
-        } else {
-          Router.push('/login');
-        }
+        Router.push('/login');
         return;
       }
 
       let redirectUrl = '/login';
       let asUrl = '/login';
-
       if (user) {
         redirectUrl = `/your-settings`;
         asUrl = `/your-settings`;
       }
 
       if (logoutRequired && user) {
-        if (res) {
-          res.redirect(`${redirectUrl}`);
-        } else {
-          Router.push(redirectUrl, asUrl);
-        }
+        Router.push(redirectUrl, asUrl);
       }
-
-      return {
-        ...pageComponentProps,
-      };
     }
 
     public render() {
@@ -87,5 +106,5 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
     }
   }
 
-  return WithAuth;
+  return observer(WithAuth);
 }

@@ -56,7 +56,7 @@ let store: Store = null;
 function initializeStore(initialState = {}) {
   const isServer = typeof window === 'undefined';
 
-  const _store = store ?? new Store({ initialState, isServer });
+  const _store = (store !== null && store !== undefined) ? store : new Store({ initialState, isServer });
 
   // For SSG and SSR always create a new store
   if (typeof window === 'undefined') {

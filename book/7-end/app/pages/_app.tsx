@@ -31,9 +31,20 @@ class MyApp extends App<{ isMobile: boolean }> {
       return appProps;
     }
 
-    let user = null;
+    const { req } = ctx;
+
+    const headers: any = {};
+    if (req.headers && req.headers.cookie) {
+      headers.cookie = req.headers.cookie;
+    }
+
+    let userObj = null;
     try {
-      user = ctx.req ? ctx.req.user : await getUserApiMethod();
+      if (ctx.req && ctx.req.user) {
+        userObj = ctx.req.user;
+      }
+      const { user } = await getUserApiMethod({ headers});
+      userObj = user;
     } catch (error) {
       console.log(error);
     }
@@ -54,7 +65,7 @@ class MyApp extends App<{ isMobile: boolean }> {
 
     return {
       ...appProps,
-      initialState: { user, currentUrl: ctx.asPath },
+      initialState: { user: userObj, currentUrl: ctx.asPath },
     };
   }
 
@@ -77,6 +88,8 @@ class MyApp extends App<{ isMobile: boolean }> {
   public render() {
     const { Component, pageProps } = this.props;
     const store = this.store;
+
+    console.log(store.currentUser);
 
     return (
       <ThemeProvider
