@@ -40,9 +40,6 @@ class MyApp extends App<{ isMobile: boolean }> {
 
     let userObj = null;
     try {
-      if (ctx.req && ctx.req.user) {
-        userObj = ctx.req.user;
-      }
       const { user } = await getUserApiMethod({ headers});
       userObj = user;
     } catch (error) {
