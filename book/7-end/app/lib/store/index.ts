@@ -67,11 +67,15 @@ function initializeStore(initialState = {}) {
     store = _store
   }
 
+  console.log(store);
+
+  // test
+
   return _store
 }
 
 function getStore() {
-  return (typeof window !== 'undefined' && (window as any).__STORE__) || store;
+  return store;
 }
 
 export { User, Store, initializeStore, getStore };

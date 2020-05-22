@@ -68,27 +68,27 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
       };
     }
 
-    public componentDidMount() {
-      const { store } = this.props;
+    // public componentDidMount() {
+    //   const { store } = this.props;
 
-      const user = store.currentUser;
+    //   const user = store.currentUser;
 
-      if (loginRequired && !logoutRequired && !user) {
-        Router.push('/login');
-        return;
-      }
+    //   if (loginRequired && !logoutRequired && !user) {
+    //     Router.push('/login');
+    //     return;
+    //   }
 
-      let redirectUrl = '/login';
-      let asUrl = '/login';
-      if (user) {
-        redirectUrl = `/your-settings`;
-        asUrl = `/your-settings`;
-      }
+    //   let redirectUrl = '/login';
+    //   let asUrl = '/login';
+    //   if (user) {
+    //     redirectUrl = `/your-settings`;
+    //     asUrl = `/your-settings`;
+    //   }
 
-      if (logoutRequired && user) {
-        Router.push(redirectUrl, asUrl);
-      }
-    }
+    //   if (logoutRequired && user) {
+    //     Router.push(redirectUrl, asUrl);
+    //   }
+    // }
 
     public render() {
       const { store } = this.props;
