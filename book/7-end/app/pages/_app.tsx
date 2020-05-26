@@ -79,6 +79,8 @@ class MyApp extends App<{ isMobile: boolean }> {
   constructor(props) {
     super(props);
 
+    console.log('MyApp.constructor');
+
     this.store = initializeStore(props.initialState);
   }
 

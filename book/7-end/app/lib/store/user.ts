@@ -11,47 +11,21 @@ class User {
   public email: string | null;
   public displayName: string | null;
   public avatarUrl: string | null;
-  public defaultTeamSlug: string;
   public isSignedupViaGoogle: boolean;
 
-  public hasCardInformation: boolean;
-  public stripeCard: {
-    brand: string;
-    funding: string;
-    last4: string;
-    exp_month: number;
-    exp_year: number;
-  };
-  public stripeListOfInvoices: {
-    object: string;
-    data: [
-      {
-        amount_paid: number;
-        teamName: string;
-        date: number;
-        hosted_invoice_url: string;
-      },
-    ];
-    has_more: boolean;
-  };
-
-  public darkTheme = true;
-
   public isLoggedIn = false;
+  public darkTheme = false;
 
   constructor(params) {
     this.store = params.store;
-
     this._id = params._id;
     this.slug = params.slug;
     this.email = params.email;
     this.displayName = params.displayName;
     this.avatarUrl = params.avatarUrl;
-    this.defaultTeamSlug = params.defaultTeamSlug;
-
-    this.darkTheme = !!params.darkTheme;
-    this.isLoggedIn = !!params.isLoggedIn;
     this.isSignedupViaGoogle = !!params.isSignedupViaGoogle;
+    this.isLoggedIn = !!params.isLoggedIn;
+    this.darkTheme = !!params.darkTheme;
   }
 
   public async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {
@@ -87,9 +61,8 @@ decorate(User, {
   email: observable,
   displayName: observable,
   avatarUrl: observable,
-  defaultTeamSlug: observable,
-
   isLoggedIn: observable,
+  darkTheme: observable,
 
   updateProfile: action,
   toggleTheme: action,

@@ -13,7 +13,6 @@ class Store {
 
   public currentUser?: User = null;
   public currentUrl = '';
-  public isLoggingIn = true;
 
   constructor({
     initialState = {},
@@ -46,7 +45,6 @@ class Store {
 decorate(Store, {
   currentUser: observable,
   currentUrl: observable,
-  isLoggingIn: observable,
 
   changeCurrentUrl: action,
 });
@@ -68,8 +66,6 @@ function initializeStore(initialState = {}) {
   }
 
   console.log(store);
-
-  // test
 
   return _store
 }
