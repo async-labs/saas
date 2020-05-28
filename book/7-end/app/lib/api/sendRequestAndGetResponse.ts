@@ -1,7 +1,5 @@
 import 'isomorphic-unfetch';
 
-// import { getStore } from '../store';
-
 export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   const headers = Object.assign(
     {},
@@ -42,22 +40,6 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
 
   try {
     const data = JSON.parse(text);
-
-    // const store = getStore();
-
-    // if (data.error) {
-    //   if (response.status === 201 && data.error === 'You need to log in.' && !externalServer) {
-    //     if (store && store.currentUser && store.currentUser.isLoggedIn && !store.isServer) {
-    //       store.currentUser.logout();
-    //     }
-    //   }
-
-    //   throw new Error(data.error);
-    // }
-
-    // if (store && store.currentUser && !store.currentUser.isLoggedIn && !store.isServer) {
-    //   store.currentUser.login();
-    // }
 
     return data;
   } catch (err) {

@@ -13,7 +13,6 @@ class User {
   public avatarUrl: string | null;
   public isSignedupViaGoogle: boolean;
 
-  public isLoggedIn = false;
   public darkTheme = false;
 
   constructor(params) {
@@ -24,7 +23,6 @@ class User {
     this.displayName = params.displayName;
     this.avatarUrl = params.avatarUrl;
     this.isSignedupViaGoogle = !!params.isSignedupViaGoogle;
-    this.isLoggedIn = !!params.isLoggedIn;
     this.darkTheme = !!params.darkTheme;
   }
 
@@ -46,14 +44,6 @@ class User {
     await toggleThemeApiMethod({ darkTheme });
     window.location.reload();
   }
-
-  public login() {
-    this.isLoggedIn = true;
-  }
-
-  public logout() {
-    this.isLoggedIn = false;
-  }
 }
 
 decorate(User, {
@@ -61,13 +51,10 @@ decorate(User, {
   email: observable,
   displayName: observable,
   avatarUrl: observable,
-  isLoggedIn: observable,
   darkTheme: observable,
 
   updateProfile: action,
   toggleTheme: action,
-  login: action,
-  logout: action,
 });
 
 export { User };
