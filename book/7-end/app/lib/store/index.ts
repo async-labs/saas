@@ -65,7 +65,7 @@ function initializeStore(initialState = {}) {
     store = _store
   }
 
-  console.log(store);
+  console.log(_store);
 
   return _store
 }

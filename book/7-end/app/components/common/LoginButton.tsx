@@ -13,7 +13,7 @@ class LoginButton extends React.PureComponent {
   public render() {
     const url = `${process.env.URL_API}/auth/google`;
 
-    console.log(url);
+    // console.log(url);
 
     return (
       <React.Fragment>
