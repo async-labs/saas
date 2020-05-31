@@ -40,9 +40,12 @@ class User {
   }
 
   public async toggleTheme(darkTheme: boolean) {
-    this.darkTheme = darkTheme;
+    // this.darkTheme = darkTheme;
     await toggleThemeApiMethod({ darkTheme });
-    window.location.reload();
+    // window.location.reload();
+    runInAction(() => {
+      this.darkTheme = darkTheme;
+    });
   }
 }
 

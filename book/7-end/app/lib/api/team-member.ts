@@ -15,13 +15,13 @@ export const uploadFileUsingSignedPutRequestApiMethod = (file, signedRequest, he
     headers,
   });
 
-export const toggleThemeApiMethod = (data) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/user/toggle-theme`, {
+export const updateProfileApiMethod = (data) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/user/update-profile`, {
     body: JSON.stringify(data),
   });
 
-export const updateProfileApiMethod = (data) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/user/update-profile`, {
+export const toggleThemeApiMethod = (data) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/user/toggle-theme`, {
     body: JSON.stringify(data),
   });
 
