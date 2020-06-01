@@ -1,7 +1,6 @@
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
-import { observer } from 'mobx-react';
 
 import MenuWithLinks from '../common/MenuWithLinks';
 import Confirmer from '../common/Confirmer';
@@ -170,4 +169,4 @@ class Layout extends React.Component<MyProps> {
   }
 }
 
-export default observer(Layout);
+export default Layout;

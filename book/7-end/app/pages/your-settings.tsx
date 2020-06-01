@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
 import NProgress from 'nprogress';
 import * as React from 'react';
@@ -52,7 +52,7 @@ class YourSettings extends React.Component<MyProps, MyState> {
         >
           <h3>Your Settings</h3>
           <h4 style={{ marginTop: '40px' }}>Your account</h4>
-          <p>
+          <div>
             <i
               className="material-icons"
               color="action"
@@ -63,14 +63,14 @@ class YourSettings extends React.Component<MyProps, MyState> {
             {currentUser.isSignedupViaGoogle
               ? 'You signed up on Async using your Google account.'
               : 'You signed up on Async using your email.'}
+            <p />
             <li>
-              {' '}
               Your email: <b>{currentUser.email}</b>
             </li>
             <li>
               Your name: <b>{currentUser.displayName}</b>
             </li>
-          </p>
+          </div>
           <form onSubmit={this.onSubmit} autoComplete="off">
             <h4>Your name</h4>
             <TextField
@@ -214,4 +214,4 @@ class YourSettings extends React.Component<MyProps, MyState> {
   };
 }
 
-export default withAuth(observer(YourSettings));
+export default withAuth(inject('store')(observer(YourSettings)));

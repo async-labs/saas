@@ -10,6 +10,7 @@ import { getUserApiMethod } from '../lib/api/public';
 import { isMobile } from '../lib/isMobile';
 import { getStore, initializeStore, Store } from '../lib/store';
 
+
 class MyApp extends App<{ isMobile: boolean }> {
   public static async getInitialProps({ Component, ctx }) {
     let firstGridItem = true;
