@@ -18,8 +18,28 @@ export const getUserBySlugApiMethod = (slug) =>
     body: JSON.stringify({ slug }),
   });
 
-export const emailLoginLinkApiMethod = ({ email }: { email: string }) =>
+export const emailLoginLinkApiMethod = ({
+  email,
+  next,
+  invitationToken,
+}: {
+  email: string;
+  next?: string;
+  invitationToken?: string;
+}) =>
   sendRequestAndGetResponse('/auth/email-login-link', {
+    qs: { next, invitationToken },
     body: JSON.stringify({ user: email }),
   });
-  
+
+export const acceptAndGetInvitedTeamByToken = (token: string, request) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/invitations/accept-and-get-team-by-token`, {
+    request,
+    method: 'GET',
+    qs: { token },
+  });
+
+export const removeInvitationIfMemberAdded = (token: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/invitations/remove-invitation-if-member-added`, {
+    body: JSON.stringify({ token }),
+  });

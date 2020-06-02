@@ -172,10 +172,6 @@ class TeamClass extends mongoose.Model {
 
     await this.updateOne({ _id: teamId }, { $set: modifier }, { runValidators: true });
 
-    // if (team.defaultTeam) {
-    //   await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: modifier.slug } });
-    // }
-
     return this.findById(
       teamId,
       'name avatarUrl slug defaultTeam isSubscriptionActive stripeSubscription',

@@ -117,6 +117,7 @@ const mongoSchema = new mongoose.Schema({
 export interface UserDocument extends mongoose.Document {
   googleId: string;
   googleToken: { accessToken: string; refreshToken: string };
+  isSignedupViaGoogle: boolean;
   slug: string;
   createdAt: Date;
 

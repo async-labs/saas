@@ -3,6 +3,8 @@ import * as express from 'express';
 import { signRequestForUpload } from '../aws-s3';
 
 import User from '../models/User';
+import Team from '../models/Team';
+import Invitation from '../models/Invitation';
 
 const router = express.Router();
 
@@ -36,7 +38,7 @@ router.post('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) =
   }
 });
 
-router.post('/user/update-profile', async (req, res, next) => {
+router.post('/user/update-profile', async (req: any, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
@@ -52,13 +54,64 @@ router.post('/user/update-profile', async (req, res, next) => {
   }
 });
 
-router.post('/user/toggle-theme', async (req, res, next) => {
+router.post('/user/toggle-theme', async (req: any, res, next) => {
   try {
     const { darkTheme } = req.body;
 
     await User.toggleTheme({ userId: req.user.id, darkTheme });
 
     res.json({ done: 1 });
+  } catch (err) {
+    next(err);
+  }
+});
+
+async function loadTeamData(team, userId) {
+  const initialMembers = await User.getTeamMembers({
+    userId,
+    teamId: team._id,
+  });
+
+  let initialInvitations = [];
+  if (userId === team.teamLeaderId) {
+    initialInvitations = await Invitation.getTeamInvitedUsers({
+      userId,
+      teamId: team._id,
+    });
+  }
+
+  const data: any = { initialMembers, initialInvitations };
+
+  return data;
+}
+
+router.post('/get-initial-data', async (req: any, res, next) => {
+  try {
+    const teams = await Team.getList(req.user.id);
+
+    let selectedTeamSlug = req.body.teamSlug;
+    if (!selectedTeamSlug && teams && teams.length > 0) {
+      selectedTeamSlug = teams[0].slug;
+    }
+
+    for (const team of teams) {
+      if (team.slug === selectedTeamSlug) {
+        Object.assign(team, await loadTeamData(team, req.user.id));
+        break;
+      }
+    }
+
+    res.json({ teams });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/teams', async (req: any, res, next) => {
+  try {
+    const teams = await Team.getList(req.user.id);
+
+    res.json({ teams });
   } catch (err) {
     next(err);
   }

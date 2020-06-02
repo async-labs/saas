@@ -25,13 +25,18 @@ export const toggleThemeApiMethod = (data) =>
     body: JSON.stringify(data),
   });
 
-// export const getInitialDataApiMethod = (options: any = {}) =>
-//   sendRequestAndGetResponse(
-//     `${BASE_PATH}/get-initial-data`,
-//     Object.assign(
-//       {
-//         body: JSON.stringify(options.data || {}),
-//       },
-//       options,
-//     ),
-//   );
+export const getInitialDataApiMethod = (options: any = {}) =>
+  sendRequestAndGetResponse(
+    `${BASE_PATH}/get-initial-data`,
+    Object.assign(
+      {
+        body: JSON.stringify(options.data || {}),
+      },
+      options,
+    ),
+  );
+
+export const getTeamListApiMethod = () =>
+  sendRequestAndGetResponse(`${BASE_PATH}/teams`, {
+    method: 'GET',
+  });
