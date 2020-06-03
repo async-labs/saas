@@ -1,8 +1,8 @@
 import * as mobx from 'mobx';
-import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
+import { action, decorate, observable } from 'mobx';
 import { useStaticRendering } from 'mobx-react'
 
-import { addTeamApiMethod } from '../api/team-leader';
+// import { addTeamApiMethod } from '../api/team-leader';
 import { getTeamListApiMethod } from '../api/team-member';
 
 import { User } from './user';
@@ -18,9 +18,6 @@ class Store {
   public currentUser?: User = null;
   public currentUrl = '';
 
-  public teams: IObservableArray<Team> = observable([]);
-  public isLoadingTeams = false;
-  public isInitialTeamsLoaded = false;
   public currentTeam?: Team;
 
   constructor({
@@ -36,14 +33,90 @@ class Store {
 
     this.currentUrl = initialState.currentUrl || '';
 
-    if (initialState.teams) {
-      this.setTeams(initialState.teams, initialState.teamSlug);
+    if (initialState.teamSlug) {
+      this.setCurrentTeam(initialState.teamSlug);
     }
   }
 
   public changeCurrentUrl(url: string) {
     this.currentUrl = url;
   }
+
+  // public setTeams(teams: any[], selectedTeamSlug?: string) {
+  //   const teamObjs = teams.map((t) => new Team({ store: this, ...t }));
+
+  //   if (teams && teams.length > 0 && !selectedTeamSlug) {
+  //     selectedTeamSlug = teamObjs[0].slug;
+  //   }
+
+  //   this.teams.replace(teamObjs);
+
+  //   if (selectedTeamSlug) {
+  //     this.setCurrentTeam(selectedTeamSlug);
+  //   }
+
+  //   this.isInitialTeamsLoaded = true;
+  // }
+
+  // public async addTeam({ name, avatarUrl }: { name: string; avatarUrl: string }): Promise<Team> {
+  //   const data = await addTeamApiMethod({ name, avatarUrl });
+  //   const team = new Team({ store: this, ...data });
+
+  //   runInAction(() => {
+  //     this.teams.push(team);
+  //   });
+
+  //   return team;
+  // }
+
+  // public async loadTeams(selectedTeamSlug?: string) {
+  //   if (this.isLoadingTeams || this.isInitialTeamsLoaded) {
+  //     return;
+  //   }
+
+  //   this.isLoadingTeams = true;
+
+  //   try {
+  //     const { teams = [] } = await getTeamListApiMethod();
+
+  //     runInAction(() => {
+  //       this.setTeams(teams, selectedTeamSlug);
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     runInAction(() => {
+  //       this.isLoadingTeams = false;
+  //     });
+  //   }
+  // }
+
+  // public addTeamToLocalCache(data): Team {
+  //   const teamObj = new Team({ user: this.currentUser, store: this, ...data });
+  //   this.teams.unshift(teamObj);
+
+  //   return teamObj;
+  // }
+
+  // public editTeamFromLocalCache(data) {
+  //   const team = this.teams.find((item) => item._id === data._id);
+
+  //   if (team) {
+  //     if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
+  //       team.changeLocalCache(data);
+  //     } else {
+  //       this.removeTeamFromLocalCache(data._id);
+  //     }
+  //   } else if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
+  //     this.addTeamToLocalCache(data);
+  //   }
+  // }
+
+  // public removeTeamFromLocalCache(teamId: string) {
+  //   const team = this.teams.find((t) => t._id === teamId);
+
+  //   this.teams.remove(team);
+  // }
 
   private async setCurrentUser(user) {
     if (user) {
@@ -54,56 +127,7 @@ class Store {
     }
   }
 
-  public setTeams(teams: any[], selectedTeamSlug?: string) {
-    const teamObjs = teams.map((t) => new Team({ store: this, ...t }));
-
-    if (teams && teams.length > 0 && !selectedTeamSlug) {
-      selectedTeamSlug = teamObjs[0].slug;
-    }
-
-    this.teams.replace(teamObjs);
-
-    if (selectedTeamSlug) {
-      this.setCurrentTeam(selectedTeamSlug);
-    }
-
-    this.isInitialTeamsLoaded = true;
-  }
-
-  public async addTeam({ name, avatarUrl }: { name: string; avatarUrl: string }): Promise<Team> {
-    const data = await addTeamApiMethod({ name, avatarUrl });
-    const team = new Team({ store: this, ...data });
-
-    runInAction(() => {
-      this.teams.push(team);
-    });
-
-    return team;
-  }
-
-  public async loadTeams(selectedTeamSlug?: string) {
-    if (this.isLoadingTeams || this.isInitialTeamsLoaded) {
-      return;
-    }
-
-    this.isLoadingTeams = true;
-
-    try {
-      const { teams = [] } = await getTeamListApiMethod();
-
-      runInAction(() => {
-        this.setTeams(teams, selectedTeamSlug);
-      });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      runInAction(() => {
-        this.isLoadingTeams = false;
-      });
-    }
-  }
-
-  public setCurrentTeam(slug: string) {
+  private async setCurrentTeam(slug: string) {
     if (this.currentTeam) {
       if (this.currentTeam.slug === slug) {
         return;
@@ -112,7 +136,9 @@ class Store {
 
     let found = false;
 
-    for (const team of this.teams) {
+    const { teams = [] } = await getTeamListApiMethod();
+
+    for (const team of teams) {
       if (team.slug === slug) {
         found = true;
         this.currentTeam = team;
@@ -124,33 +150,6 @@ class Store {
     if (!found) {
       this.currentTeam = null;
     }
-  }
-
-  public addTeamToLocalCache(data): Team {
-    const teamObj = new Team({ user: this.currentUser, store: this, ...data });
-    this.teams.unshift(teamObj);
-
-    return teamObj;
-  }
-
-  public editTeamFromLocalCache(data) {
-    const team = this.teams.find((item) => item._id === data._id);
-
-    if (team) {
-      if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
-        team.changeLocalCache(data);
-      } else {
-        this.removeTeamFromLocalCache(data._id);
-      }
-    } else if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
-      this.addTeamToLocalCache(data);
-    }
-  }
-
-  public removeTeamFromLocalCache(teamId: string) {
-    const team = this.teams.find((t) => t._id === teamId);
-
-    this.teams.remove(team);
   }
 
   private loadCurrentTeamData() {
@@ -165,15 +164,9 @@ class Store {
 decorate(Store, {
   currentUser: observable,
   currentUrl: observable,
-  teams: observable,
-  isLoadingTeams: observable,
-  isInitialTeamsLoaded: observable,
   currentTeam: observable,
 
   changeCurrentUrl: action,
-  addTeam: action,
-  loadTeams: action,
-  setCurrentTeam: action,
 });
 
 let store: Store = null;
