@@ -3,10 +3,9 @@
 Open source web app that saves you weeks of work when building your own SaaS product.
 
 - The boilerplate comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you can focus on features that differentiate your product.
-- If you are interested in adding custom features to this boilerplate, please fill out our [form](https://builderbook.org/custom-saas-boilerplate).
 - We've used this boilerplate to launch our own SaaS businesses:
   - [Async](https://async-await.com) - communication tool for small teams of software developers
-  - [Builder Book](https://builderbook.org) - books and custom saas boilerplate
+  - [Builder Book](https://builderbook.org) - books that teach you to build web apps from scratch
 
 ## Live demo:
 
@@ -339,9 +338,7 @@ Check out projects built with the code in this open source app. Feel free to add
 
 ## Contributing
 
-If you'd like to contribute, check our [todo list](https://github.com/async-labs/saas/issues/14) for features you can discuss and add. To report a bug, create an [issue](https://github.com/async-labs/saas/issues/new).
-
-Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book), which teaches you how to build this project from scratch (currently available for [pre-order](https://builderbook.org/books/saas-boilerplate/introduction-project-structure) at 50% off).
+Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book), which teaches you how to build this project from scratch (currently available for [pre-order](https://builderbook.org/books/saas-boilerplate/introduction-project-structure) at 60% off).
 
 ## Team
 
