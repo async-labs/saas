@@ -262,12 +262,12 @@ class DiscussionComp extends React.Component<Props> {
                   discussion={discussion}
                   members={discussion.members}
                   onFinished={() => {
-                    setImmediate(() => {
+                    setTimeout(() => {
                       this.setState({
                         selectedPost: null,
                         showMarkdownClicked: false,
                       });
-                    });
+                    }, 0);
                   }}
                 />
               ) : (

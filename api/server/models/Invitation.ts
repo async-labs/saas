@@ -119,31 +119,36 @@ class InvitationClass extends mongoose.Model {
       });
     }
 
-    const emailTemplate = await EmailTemplate.findOne({ name: 'invitation' }).setOptions({
-      lean: true,
-    });
+    try {
+      const emailTemplate = await EmailTemplate.findOne({ name: 'invitation' }).setOptions({
+        lean: true,
+      });
 
-    if (!emailTemplate) {
-      throw new Error('invitation Email template not found');
+      if (!emailTemplate) {
+        throw new Error('invitation Email template not found');
+      }
+
+      const template = await getEmailTemplate(
+        'invitation',
+        {
+          teamName: team.name,
+          invitationURL: `${ROOT_URL}/invitation?token=${token}`,
+        },
+        emailTemplate,
+      );
+
+      await sendEmail({
+        from: `Kelly from saas-app.builderbook.org <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: template.subject,
+        body: template.message,
+      });
+    } catch (error) {
+      logger.error(error);
+      await this.deleteOne({ teamId, email });
+
+      throw error;
     }
-
-    const template = await getEmailTemplate(
-      'invitation',
-      {
-        teamName: team.name,
-        invitationURL: `${ROOT_URL}/invitation?token=${token}`,
-      },
-      emailTemplate,
-    );
-
-    await sendEmail({
-      from: `Kelly from saas-app.builderbook.org <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
-      to: [email],
-      subject: template.subject,
-      body: template.message,
-    }).catch((err) => {
-      logger.error('Email sending error:', err);
-    });
 
     return await this.findOne({ teamId, email }).setOptions({ lean: true });
   }

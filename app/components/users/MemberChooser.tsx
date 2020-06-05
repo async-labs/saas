@@ -14,7 +14,7 @@ type Props = {
 class MemberChooser extends React.Component<Props> {
   public render() {
     const suggestions = this.props.members.map((user) => ({
-      label: user.displayName,
+      label: user.displayName || user.email,
       value: user._id,
     }));
 
