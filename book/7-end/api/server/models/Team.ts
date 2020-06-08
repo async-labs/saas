@@ -6,10 +6,6 @@ import User from './User';
 mongoose.set('useFindAndModify', false);
 
 const mongoSchema = new mongoose.Schema({
-  teamLeaderId: {
-    type: String,
-    required: true,
-  },
   name: {
     type: String,
     required: true,
@@ -24,7 +20,14 @@ const mongoSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  memberIds: [String],
+  teamLeaderId: {
+    type: String,
+    required: true,
+  },
+  memberIds: {
+    type: [String],
+    required: true,
+  },
   defaultTeam: {
     type: Boolean,
     default: false,
@@ -32,17 +35,26 @@ const mongoSchema = new mongoose.Schema({
 });
 
 export interface TeamDocument extends mongoose.Document {
-  teamLeaderId: string;
   name: string;
   slug: string;
   avatarUrl: string;
   createdAt: Date;
 
+  teamLeaderId: string;
   memberIds: string[];
+  defaultTeam: boolean;
 }
 
 interface TeamModel extends mongoose.Model<TeamDocument> {
-  add({ name, userId }: { userId: string; name: string; avatarUrl: string }): Promise<TeamDocument>;
+  addTeam({
+    name,
+    userId,
+  }: {
+    userId: string;
+    name: string;
+    avatarUrl: string;
+  }): Promise<TeamDocument>;
+
   updateTeam({
     userId,
     teamId,
@@ -54,8 +66,9 @@ interface TeamModel extends mongoose.Model<TeamDocument> {
     name: string;
     avatarUrl: string;
   }): Promise<TeamDocument>;
-  findBySlug(slug: string): Promise<TeamDocument>;
-  getList(userId: string): Promise<TeamDocument[]>;
+
+  getAllTeamsForUser(userId: string): Promise<TeamDocument[]>;
+
   removeMember({
     teamId,
     teamLeaderId,
@@ -68,7 +81,7 @@ interface TeamModel extends mongoose.Model<TeamDocument> {
 }
 
 class TeamClass extends mongoose.Model {
-  public static async add({ userId, name, avatarUrl }) {
+  public static async addTeam({ userId, name, avatarUrl }) {
     console.log(`Static method: ${name}, ${avatarUrl}`);
 
     if (!userId || !name || !avatarUrl) {
@@ -97,7 +110,7 @@ class TeamClass extends mongoose.Model {
   }
 
   public static async updateTeam({ userId, teamId, name, avatarUrl }) {
-    const team = await this.findById(teamId, 'slug name defaultTeam teamLeaderId');
+    const team = await this.findById(teamId, 'name teamLeaderId');
 
     if (!team) {
       throw new Error('Team not found');
@@ -107,7 +120,7 @@ class TeamClass extends mongoose.Model {
       throw new Error('Permission denied');
     }
 
-    const modifier = { name: team.name, avatarUrl };
+    const modifier = { name: team.name, avatarUrl, slug: team.slug };
 
     if (name !== team.name) {
       modifier.name = name;
@@ -115,21 +128,10 @@ class TeamClass extends mongoose.Model {
 
     await this.updateOne({ _id: teamId }, { $set: modifier }, { runValidators: true });
 
-    if (team.defaultTeam) {
-      await User.findByIdAndUpdate(userId, { $set: { defaultTeamSlug: modifier.slug } });
-    }
-
-    return this.findById(
-      teamId,
-      'name avatarUrl slug defaultTeam isSubscriptionActive stripeSubscription',
-    ).setOptions({ lean: true });
+    return this.findById(teamId, 'name avatarUrl slug defaultTeam').setOptions({ lean: true });
   }
 
-  public static findBySlug(slug: string) {
-    return this.findOne({ slug }).setOptions({ lean: true });
-  }
-
-  public static getList(userId: string) {
+  public static getAllTeamsForUser(userId: string) {
     return this.find({ memberIds: userId }).setOptions({ lean: true });
   }
 

@@ -48,13 +48,13 @@ class MyApp extends App<{ isMobile: boolean }> {
     }
 
     // let initialData = {};
-    // const { teamSlug, discussionSlug } = ctx.query;
+    // const { teamSlug } = ctx.query;
 
     // if (user) {
     //   try {
     //     initialData = await getInitialDataApiMethod({
     //       request: ctx.req,
-    //       data: { teamSlug, discussionSlug },
+    //       data: { teamSlug },
     //     });
     //   } catch (error) {
     //     console.error(error);

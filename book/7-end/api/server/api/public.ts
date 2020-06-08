@@ -26,27 +26,7 @@ router.post('/get-user-by-slug', async (req, res, next) => {
   }
 });
 
-router.post('/user/update-profile', async (req, res, next) => {
-  console.log('Express route: /user/update-profile');
-
-  try {
-    const { name, avatarUrl } = req.body;
-
-    const userId = '5e6427a51c9d440000c9ba6f';
-
-    const updatedUser = await User.updateProfile({
-      userId: userId,
-      name,
-      avatarUrl,
-    });
-
-    res.json({ updatedUser });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.get('/invitations/accept-and-get-team-by-token', async (req: any, res, next) => {
+router.get('/invitations/accept-and-get-team-by-token', async (req, res, next) => {
   try {
     const team = await Invitation.getTeamByToken({
       token: req.query.token,
@@ -62,7 +42,7 @@ router.get('/invitations/accept-and-get-team-by-token', async (req: any, res, ne
   }
 });
 
-router.post('/invitations/remove-invitation-if-member-added', async (req: any, res, next) => {
+router.post('/invitations/remove-invitation-if-member-added', async (req, res, next) => {
   try {
     const team = await Invitation.removeIfMemberAdded({
       token: req.body.token,

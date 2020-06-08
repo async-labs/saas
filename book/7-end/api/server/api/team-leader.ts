@@ -17,13 +17,13 @@ router.use((req, res, next) => {
   next();
 });
 
-router.post('/teams/add', async (req: any, res, next) => {
+router.post('/teams/add', async (req, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
     console.log(`Express route: ${name}, ${avatarUrl}`);
 
-    const team = await Team.add({ userId: req.user.id, name, avatarUrl });
+    const team = await Team.addTeam({ userId: req.user.id, name, avatarUrl });
 
     res.json(team);
   } catch (err) {
@@ -31,7 +31,7 @@ router.post('/teams/add', async (req: any, res, next) => {
   }
 });
 
-router.post('/teams/update', async (req: any, res, next) => {
+router.post('/teams/update', async (req, res, next) => {
   try {
     const { teamId, name, avatarUrl } = req.body;
 
@@ -48,9 +48,9 @@ router.post('/teams/update', async (req: any, res, next) => {
   }
 });
 
-router.get('/teams/get-members', async (req: any, res, next) => {
+router.get('/teams/get-members', async (req, res, next) => {
   try {
-    const users = await User.getTeamMembers({ userId: req.user.id, teamId: req.query.teamId });
+    const users = await User.getMembersForTeam({ userId: req.user.id, teamId: req.query.teamId });
 
     res.json({ users });
   } catch (err) {
@@ -58,7 +58,7 @@ router.get('/teams/get-members', async (req: any, res, next) => {
   }
 });
 
-router.get('/teams/get-invited-users', async (req: any, res, next) => {
+router.get('/teams/get-invited-users', async (req, res, next) => {
   try {
     const users = await Invitation.getTeamInvitedUsers({
       userId: req.user.id,
@@ -71,7 +71,7 @@ router.get('/teams/get-invited-users', async (req: any, res, next) => {
   }
 });
 
-router.post('/teams/invite-member', async (req: any, res, next) => {
+router.post('/teams/invite-member', async (req, res, next) => {
   try {
     const { teamId, email } = req.body;
 
@@ -83,7 +83,7 @@ router.post('/teams/invite-member', async (req: any, res, next) => {
   }
 });
 
-router.post('/teams/remove-member', async (req: any, res, next) => {
+router.post('/teams/remove-member', async (req, res, next) => {
   try {
     const { teamId, userId } = req.body;
 

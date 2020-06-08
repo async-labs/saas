@@ -100,6 +100,14 @@ interface UserModel extends mongoose.Model<UserDocument> {
 
   toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 
+  getMembersForTeam({
+    userId,
+    teamId,
+  }: {
+    userId: string;
+    teamId: string;
+  }): Promise<UserDocument[]>;
+
   checkPermissionAndGetTeam({
     userId,
     teamId,
@@ -107,8 +115,6 @@ interface UserModel extends mongoose.Model<UserDocument> {
     userId: string;
     teamId: string;
   }): Promise<TeamDocument[]>;
-
-  getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<UserDocument[]>;
 }
 
 class UserClass extends mongoose.Model {
@@ -278,7 +284,15 @@ class UserClass extends mongoose.Model {
     return this.updateOne({ _id: userId }, { darkTheme: !!darkTheme });
   }
 
-  public static async checkPermissionAndGetTeam({ userId, teamId }) {
+  public static async getMembersForTeam({ userId, teamId }) {
+    const team = await this.checkPermissionAndGetTeam({ userId, teamId });
+
+    return this.find({ _id: { $in: team.memberIds } })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
+  }
+
+  private static async checkPermissionAndGetTeam({ userId, teamId }) {
     if (!userId || !teamId) {
       throw new Error('Bad data');
     }
@@ -292,14 +306,6 @@ class UserClass extends mongoose.Model {
     }
 
     return team;
-  }
-
-  public static async getTeamMembers({ userId, teamId }) {
-    const team = await this.checkPermissionAndGetTeam({ userId, teamId });
-
-    return this.find({ _id: { $in: team.memberIds } })
-      .select(this.publicFields().join(' '))
-      .setOptions({ lean: true });
   }
 }
 

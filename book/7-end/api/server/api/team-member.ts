@@ -38,7 +38,7 @@ router.post('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) =
   }
 });
 
-router.post('/user/update-profile', async (req: any, res, next) => {
+router.post('/user/update-profile', async (req, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
@@ -54,7 +54,7 @@ router.post('/user/update-profile', async (req: any, res, next) => {
   }
 });
 
-router.post('/user/toggle-theme', async (req: any, res, next) => {
+router.post('/user/toggle-theme', async (req, res, next) => {
   try {
     const { darkTheme } = req.body;
 
@@ -67,7 +67,7 @@ router.post('/user/toggle-theme', async (req: any, res, next) => {
 });
 
 async function loadTeamData(team, userId) {
-  const initialMembers = await User.getTeamMembers({
+  const initialMembers = await User.getMembersForTeam({
     userId,
     teamId: team._id,
   });
@@ -85,9 +85,9 @@ async function loadTeamData(team, userId) {
   return data;
 }
 
-router.post('/get-initial-data', async (req: any, res, next) => {
+router.post('/get-initial-data', async (req, res, next) => {
   try {
-    const teams = await Team.getList(req.user.id);
+    const teams = await Team.getAllTeamsForUser(req.user.id);
 
     let selectedTeamSlug = req.body.teamSlug;
     if (!selectedTeamSlug && teams && teams.length > 0) {
@@ -107,9 +107,9 @@ router.post('/get-initial-data', async (req: any, res, next) => {
   }
 });
 
-router.get('/teams', async (req: any, res, next) => {
+router.get('/teams', async (req, res, next) => {
   try {
-    const teams = await Team.getList(req.user.id);
+    const teams = await Team.getAllTeamsForUser(req.user.id);
 
     res.json({ teams });
   } catch (err) {
