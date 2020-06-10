@@ -21,9 +21,7 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
     public static async getInitialProps(ctx) {
       console.log('WithAuth.getInitialProps');
 
-      const { req, query } = ctx;
-
-      const { teamSlug } = query;
+      const { req } = ctx;
 
       let pageComponentProps = {};
 
@@ -34,7 +32,6 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
       return {
         ...pageComponentProps,
         isServer: !!req,
-        teamSlug,
         teamRequired,
       };
     }

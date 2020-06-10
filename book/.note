@@ -61,3 +61,7 @@ api/.eslintrc.js
 ---
 
 Autocomplete component should be a custom feature
+
+---
+
+discuss having Signup page in addition to Login

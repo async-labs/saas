@@ -40,3 +40,9 @@ export const getTeamListApiMethod = () =>
   sendRequestAndGetResponse(`${BASE_PATH}/teams`, {
     method: 'GET',
   });
+
+export const getTeamMembersApiMethod = (teamId: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/teams/get-members`, {
+    method: 'GET',
+    qs: { teamId },
+  });

@@ -60,7 +60,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     try {
       this.setState({ disabled: true });
 
-      await currentTeam.edit({ name: newName, avatarUrl: newAvatarUrl });
+      await currentTeam.updateTheme({ name: newName, avatarUrl: newAvatarUrl });
 
       notify('You successfully updated Team name.');
     } catch (error) {
@@ -110,7 +110,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
         newAvatarUrl: responseFromApiServerForUpload.url,
       });
 
-      await currentTeam.edit({ name: currentTeam.name, avatarUrl: this.state.newAvatarUrl });
+      await currentTeam.updateTheme({ name: currentTeam.name, avatarUrl: this.state.newAvatarUrl });
 
       notify('You successfully uploaded new Team logo.');
     } catch (error) {
@@ -323,7 +323,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                   ))}
                 </TableBody>
               </Table>
-
+{/* 
               <p />
               <br />
 
@@ -352,7 +352,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                     </TableBody>
                   </Table>
                 </React.Fragment>
-              ) : null}
+              ) : null} */}
               <p />
               <br />
             </Grid>

@@ -1,14 +1,9 @@
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
-import {
-  getTeamInvitedUsersApiMethod,
-  getTeamMembersApiMethod,
-  inviteMemberApiMethod,
-  removeMemberApiMethod,
-  updateTeamApiMethod,
-} from '../api/team-leader';
-
+import { removeMemberApiMethod, updateTeamApiMethod } from '../api/team-leader';
+  // getTeamInvitedUsersApiMethod,
+  // inviteMemberApiMethod,
 import { Store } from './index';
-import { Invitation } from './invitation';
+// import { Invitation } from './invitation';
 import { User } from './user';
 
 class Team {
@@ -21,13 +16,10 @@ class Team {
   public slug: string;
   public avatarUrl: string;
   public memberIds: IObservableArray<string> = observable([]);
-
   public members: Map<string, User> = new Map();
-  public invitedUsers: Map<string, Invitation> = new Map();
+  // public invitedUsers: Map<string, Invitation> = new Map();
 
-  public isLoadingMembers = false;
-  public isInitialMembersLoaded = false;
-  public initialDiscussionSlug = '';
+  // public initialDiscussionSlug = '';
 
   constructor(params) {
     this._id = params._id;
@@ -40,32 +32,17 @@ class Team {
     this.store = params.store;
 
     if (params.initialMembers) {
-      this.setInitialMembers(params.initialMembers, params.initialInvitations);
+      this.setInitialMembers(params.initialMembers);
     }
+    // if (params.initialMembers) {
+    //   this.setInitialMembers(params.initialMembers, params.initialInvitations);
+    // }
   }
 
-  public async edit({ name, avatarUrl }: { name: string; avatarUrl: string }) {
-    try {
-      const { slug } = await updateTeamApiMethod({
-        teamId: this._id,
-        name,
-        avatarUrl,
-      });
-
-      runInAction(() => {
-        this.name = name;
-        this.slug = slug;
-        this.avatarUrl = avatarUrl;
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  public setInitialMembers(users, invitations) {
+  public async setInitialMembers(users) {
+  // public setInitialMembers(users, invitations) {
     this.members.clear();
-    this.invitedUsers.clear();
+    // this.invitedUsers.clear();
 
     for (const user of users) {
       if (this.store.currentUser && this.store.currentUser._id === user._id) {
@@ -75,76 +52,59 @@ class Team {
       }
     }
 
-    for (const invitation of invitations) {
-      this.invitedUsers.set(invitation._id, new Invitation(invitation));
-    }
-
-    this.isInitialMembersLoaded = true;
+    // for (const invitation of invitations) {
+    //   this.invitedUsers.set(invitation._id, new Invitation(invitation));
+    // }
   }
 
-  public async loadInitialMembers() {
-    if (this.isLoadingMembers || this.isInitialMembersLoaded) {
-      return;
-    }
+  // public async inviteMember({ email }: { email: string }) {
+  //   this.isLoadingMembers = true;
+  //   try {
+  //     const { newInvitation } = await inviteMemberApiMethod({ teamId: this._id, email });
 
-    this.isLoadingMembers = true;
+  //     runInAction(() => {
+  //       this.invitedUsers.set(newInvitation._id, new Invitation(newInvitation));
+  //       this.isLoadingMembers = false;
+  //     });
+  //   } catch (error) {
+  //     runInAction(() => {
+  //       this.isLoadingMembers = false;
+  //     });
 
+  //     throw error;
+  //   }
+  // }
+
+  public async updateTheme({ name, avatarUrl }: { name: string; avatarUrl: string }) {
     try {
-      const { users = [] } = await getTeamMembersApiMethod(this._id);
-
-      let invitations = [];
-      if (this.store.currentUser._id === this.teamLeaderId) {
-        invitations = await getTeamInvitedUsersApiMethod(this._id);
-      }
+      const { slug } = await updateTeamApiMethod({
+        teamId: this._id,
+        name,
+        avatarUrl,
+      });
 
       runInAction(() => {
-        for (const user of users) {
-          this.members.set(user._id, new User(user));
-        }
-        for (const invitation of invitations) {
-          this.invitedUsers.set(invitation._id, new Invitation(invitation));
-        }
-
-        this.isLoadingMembers = false;
+        this.name = name;
+        this.avatarUrl = avatarUrl;
+        this.slug = slug;
       });
     } catch (error) {
-      runInAction(() => {
-        this.isLoadingMembers = false;
-      });
-
-      throw error;
-    }
-  }
-
-  public async inviteMember({ email }: { email: string }) {
-    this.isLoadingMembers = true;
-    try {
-      const { newInvitation } = await inviteMemberApiMethod({ teamId: this._id, email });
-
-      runInAction(() => {
-        this.invitedUsers.set(newInvitation._id, new Invitation(newInvitation));
-        this.isLoadingMembers = false;
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.isLoadingMembers = false;
-      });
-
+      console.error(error);
       throw error;
     }
   }
 
   public async removeMember(userId: string) {
+    try {
     await removeMemberApiMethod({ teamId: this._id, userId });
 
     runInAction(() => {
       this.members.delete(userId);
     });
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-
-  public changeLocalCache(data) {
-    this.name = data.name;
-    this.memberIds.replace(data.memberIds || []);
   }
 }
 
@@ -154,14 +114,11 @@ decorate(Team, {
   avatarUrl: observable,
   memberIds: observable,
   members: observable,
-  invitedUsers: observable,
-  isLoadingMembers: observable,
-  isInitialMembersLoaded: observable,
+  // invitedUsers: observable,
 
-  edit: action,
   setInitialMembers: action,
-  loadInitialMembers: action,
-  inviteMember: action,
+  // inviteMember: action,
+  updateTheme: action,
   removeMember: action,
 });
 

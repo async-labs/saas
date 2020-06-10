@@ -74,7 +74,7 @@ class CreateTeam extends React.Component<MyProps> {
 
       const properAvatarUrl = responseFromApiServerForUpload.url;
 
-      await team.edit({ name: team.name, avatarUrl: properAvatarUrl });
+      await team.updateTheme({ name: team.name, avatarUrl: properAvatarUrl });
 
       this.setState({
         newName: '',
