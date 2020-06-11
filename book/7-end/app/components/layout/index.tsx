@@ -1,5 +1,8 @@
 import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+
+import Link from 'next/link';
 import React from 'react';
 
 import MenuWithLinks from '../common/MenuWithLinks';
@@ -23,28 +26,21 @@ const styleGridIsMobile = {
   padding: '0px 0px 0px 10px',
 };
 
-type MyProps = {
-  firstGridItem?: boolean;
+function LayoutWrapper({
+  children,
+  firstGridItem,
+  isMobile,
+  isThemeDark,
+  store,
+}: {
   children: React.ReactNode;
-  isMobile?: boolean;
-  store?: Store;
-};
-
-class Layout extends React.Component<MyProps> {
-  public render() {
-    const { firstGridItem, children, isMobile, store } = this.props;
-
-    const { currentUser } = store;
-
-    const isThemeDark = currentUser && currentUser.darkTheme === true;
-
-    console.log(this.props.store.currentUser.darkTheme);
-
-    // const isThemeDark = false;
-
-    // console.log(isMobile);
-
-    return (
+  firstGridItem: boolean;
+  isMobile: boolean;
+  isThemeDark: boolean;
+  store: Store;
+}) {
+  return (
+    <React.Fragment>
       <Grid
         container
         direction="row"
@@ -94,9 +90,16 @@ class Layout extends React.Component<MyProps> {
               <MenuWithLinks
                 options={[
                   {
-                    text: 'Index page',
-                    href: '/',
-                    highlighterSlug: '/',
+                    text: 'Team Settings',
+                    href: `/team-settings?teamSlug=${store.currentTeam.slug}`,
+                    as: `/team/${store.currentTeam.slug}/team-settings`,
+                    simple: true,
+                  },
+                  {
+                    text: 'Billing',
+                    href: `/billing?teamSlug=${store.currentTeam.slug}`,
+                    as: `/team/${store.currentTeam.slug}/billing`,
+                    simple: true,
                   },
                   {
                     text: 'Your Settings',
@@ -136,6 +139,67 @@ class Layout extends React.Component<MyProps> {
             <p />
           </Grid>
         ) : null}
+
+        {children}
+      </Grid>
+      <Notifier />
+      <Confirmer />
+    </React.Fragment>
+  );
+}
+
+type MyProps = {
+  children: React.ReactNode;
+  isMobile?: boolean;
+  firstGridItem?: boolean;
+  store?: Store;
+  teamRequired?: boolean;
+};
+
+class Layout extends React.Component<MyProps> {
+  public render() {
+    const { children, isMobile, firstGridItem, store, teamRequired } = this.props;
+
+    const { currentUser, currentTeam } = store;
+
+    const isThemeDark = currentUser && currentUser.darkTheme === true;
+
+    // console.log(this.props.store.currentUser.darkTheme);
+
+    // const isThemeDark = false;
+
+    // console.log(isMobile);
+
+    if (!currentTeam) {
+      if (teamRequired) {
+        return (
+          <LayoutWrapper firstGridItem={false} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
+            <Grid item sm={10} xs={12}>
+              <div style={{ padding: '20px' }}>
+                Select existing team or create a new team.
+                <p />
+                <Link href="/create-team">
+                  <Button variant="outlined" color="primary">
+                    Create new team
+                  </Button>
+                </Link>
+              </div>
+            </Grid>
+          </LayoutWrapper>
+        );
+      } else {
+        return (
+          <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
+            <Grid item sm={10} xs={12}>
+              {children}
+            </Grid>
+          </LayoutWrapper>
+        );
+      }
+    }
+
+    return (
+      <LayoutWrapper firstGridItem={false} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
         <Grid item sm={firstGridItem ? 10 : 12} xs={12}>
           <div>
             {isMobile || store.currentUrl.includes('create-team') ? null : (
@@ -162,9 +226,7 @@ class Layout extends React.Component<MyProps> {
           </div>
           {children}
         </Grid>
-        <Notifier />
-        <Confirmer />
-      </Grid>
+      </LayoutWrapper>
     );
   }
 }
