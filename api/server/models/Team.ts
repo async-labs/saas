@@ -1,10 +1,11 @@
 import * as mongoose from 'mongoose';
+import Stripe from 'stripe';
+
 import logger from '../logs';
-
+import { cancelSubscription } from '../stripe';
 import { generateNumberSlug } from '../utils/slugify';
-import User from './User';
 
-import { cancelSubscription, createSubscription } from '../stripe';
+import User from './User';
 
 mongoose.set('useFindAndModify', false);
 
@@ -104,12 +105,12 @@ interface TeamModel extends mongoose.Model<TeamDocument> {
     userId: string;
   }): Promise<void>;
   subscribeTeam({
-    teamLeaderId,
-    teamId,
+    session,
+    team,
   }: {
-    teamLeaderId: string;
-    teamId: string;
-  }): Promise<TeamDocument>;
+    session: Stripe.Checkout.Session;
+    team: TeamDocument;
+  }): Promise<void>;
   cancelSubscription({
     teamLeaderId,
     teamId,
@@ -196,39 +197,31 @@ class TeamClass extends mongoose.Model {
     await this.findByIdAndUpdate(teamId, { $pull: { memberIds: userId } });
   }
 
-  public static async subscribeTeam({ teamLeaderId, teamId }) {
-    const team = await this.findById(teamId).select('teamLeaderId isSubscriptionActive');
+  public static async subscribeTeam({
+    session,
+    team,
+  }: {
+    session: Stripe.Checkout.Session;
+    team: TeamDocument;
+  }) {
+    if (!session.subscription) {
+      throw new Error('Not subscribed');
+    }
 
-    logger.debug(team.teamLeaderId, teamLeaderId);
-
-    if (team.teamLeaderId !== teamLeaderId) {
-      throw new Error('You do not have permission to subscribe Team.');
+    if (!team) {
+      throw new Error('User not found.');
     }
 
     if (team.isSubscriptionActive) {
       throw new Error('Team is already subscribed.');
     }
 
-    const userWithCustomer = await User.findById(teamLeaderId, 'stripeCustomer');
+    const stripeSubscription = session.subscription as Stripe.Subscription;
+    if (stripeSubscription.canceled_at) {
+      throw new Error('Unsubscribed');
+    }
 
-    logger.debug('static method Team', userWithCustomer.stripeCustomer.id);
-
-    const subscriptionObj = await createSubscription({
-      customerId: userWithCustomer.stripeCustomer.id,
-      teamId,
-      teamLeaderId,
-    });
-
-    return this.findByIdAndUpdate(
-      teamId,
-      {
-        stripeSubscription: subscriptionObj,
-        isSubscriptionActive: true,
-      },
-      { new: true, runValidators: true },
-    )
-      .select('isSubscriptionActive stripeSubscription')
-      .setOptions({ lean: true });
+    await this.updateOne({ _id: team._id }, { stripeSubscription, isSubscriptionActive: true });
   }
 
   public static async cancelSubscription({ teamLeaderId, teamId }) {

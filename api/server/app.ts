@@ -14,7 +14,7 @@ import api from './api';
 import { setupGoogle } from './google-auth';
 import { setupPasswordless } from './passwordless-auth';
 import { setup as realtime } from './realtime';
-import { stripeWebHooks } from './stripe';
+import { stripeWebHookAndCheckoutCallback } from './stripe';
 
 import logger from './logs';
 
@@ -44,7 +44,7 @@ server.use(cors({ origin: URL_APP, credentials: true }));
 server.use(helmet());
 server.use(compression());
 
-stripeWebHooks({ server });
+stripeWebHookAndCheckoutCallback({ server });
 
 server.use(express.json());
 

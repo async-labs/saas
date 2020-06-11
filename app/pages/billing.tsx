@@ -2,18 +2,16 @@ import { observer } from 'mobx-react';
 import moment from 'moment';
 import Head from 'next/head';
 import * as React from 'react';
-
-import StripeCheckout from 'react-stripe-checkout';
-
+import { loadStripe } from '@stripe/stripe-js';
 import Grid from '@material-ui/core/Grid';
-
 import Button from '@material-ui/core/Button';
 import NProgress from 'nprogress';
+
 import Layout from '../components/layout';
 import notify from '../lib/notifier';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
-
+import { fetchCheckoutSession } from '../lib/api/team-leader';
 import { STRIPEPUBLISHABLEKEY } from '../lib/consts';
 
 const styleGrid = {
@@ -25,7 +23,16 @@ const styleGrid = {
 //   borderRight: '0.5px #707070 solid',
 // };
 
-type Props = { store: Store; isTL: boolean; teamSlug: string; isMobile: boolean };
+const stripePromise = loadStripe(STRIPEPUBLISHABLEKEY);
+
+type Props = {
+  store: Store;
+  isTL: boolean;
+  teamSlug: string;
+  isMobile: boolean;
+  checkoutCanceled: boolean;
+  error: string;
+};
 type State = { disabled: boolean; showInvoices: boolean };
 
 class YourBilling extends React.Component<Props, State> {
@@ -34,6 +41,22 @@ class YourBilling extends React.Component<Props, State> {
     disabled: false,
     showInvoices: false,
   };
+
+  public static getInitialProps({ query }) {
+    const { checkout_canceled, error } = query;
+
+    return { checkoutCanceled: !!checkout_canceled, error };
+  }
+
+  public async componentDidMount() {
+    if (this.props.checkoutCanceled) {
+      notify('Checkout canceled');
+    }
+
+    if (this.props.error) {
+      notify(this.props.error);
+    }
+  }
 
   public render() {
     const { store, isMobile } = this.props;
@@ -90,22 +113,7 @@ class YourBilling extends React.Component<Props, State> {
               <p />
               <br />
               <h4>Card information</h4>
-              {currentUser && !currentUser.stripeCard ? (
-                <StripeCheckout
-                  stripeKey={STRIPEPUBLISHABLEKEY}
-                  token={this.addCard}
-                  name="Add card information"
-                  email={currentUser.email}
-                  allowRememberMe={false}
-                  panelLabel="Add card"
-                  description={'This is your default payment method.'}
-                >
-                  <p>No card is added.</p>
-                  <Button variant="contained" color="primary">
-                    Add card
-                  </Button>
-                </StripeCheckout>
-              ) : (
+              {currentUser && currentUser.stripeCard ? (
                 <span>
                   {' '}
                   <i
@@ -124,21 +132,15 @@ class YourBilling extends React.Component<Props, State> {
                     Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
                   </li>
                   <p />
-                  <StripeCheckout
-                    stripeKey={STRIPEPUBLISHABLEKEY}
-                    token={this.addNewCardOnClick}
-                    name="Add new card information"
-                    email={currentUser.email}
-                    allowRememberMe={false}
-                    panelLabel="Update card"
-                    description={'New card will be your default card.'}
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => this.handleCheckoutClick('setup')}
                   >
-                    <Button variant="outlined" color="primary">
-                      Update card
-                    </Button>
-                  </StripeCheckout>
+                    Update card
+                  </Button>
                 </span>
-              )}
+              ) : null}
               <p />
               <br />
               <h4>Payment history</h4>
@@ -175,17 +177,13 @@ class YourBilling extends React.Component<Props, State> {
       (!currentUser.hasCardInformation || currentTeam.isPaymentFailed)
     ) {
       return (
-        <StripeCheckout
-          stripeKey={STRIPEPUBLISHABLEKEY}
-          token={this.addCard}
-          name="Buy subscription"
-          email={this.props.store.currentUser.email}
-          allowRememberMe={false}
-          panelLabel="Confirm ($50/month)"
-          description={`Subscription for ${currentTeam.name}`}
-        >
+        <>
           <p>You are not a paying customer.</p>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => this.handleCheckoutClick('subscription')}
+          >
             Buy subscription
           </Button>
           <p />
@@ -195,7 +193,7 @@ class YourBilling extends React.Component<Props, State> {
               update card information if you choose to re-subscribe Team.
             </p>
           ) : null}
-        </StripeCheckout>
+        </>
       );
     } else if (
       currentTeam &&
@@ -211,7 +209,11 @@ class YourBilling extends React.Component<Props, State> {
             Buy subscription using your current card, see below section for current card
             information.
           </p>
-          <Button variant="contained" color="primary" onClick={this.createSubscriptionOnClick}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => this.handleCheckoutClick('subscription')}
+          >
             Buy subscription
           </Button>
         </React.Fragment>
@@ -291,60 +293,22 @@ class YourBilling extends React.Component<Props, State> {
     );
   }
 
-  private addCard = async (token) => {
-    const { currentUser, currentTeam } = this.props.store;
-
-    NProgress.start();
-    this.setState({ disabled: true });
-
+  private handleCheckoutClick = async (mode: 'subscription' | 'setup') => {
     try {
-      await currentUser.createCustomer({ token });
-      await currentTeam.createSubscription({ teamId: currentTeam._id });
-      notify('Success!');
+      const { currentTeam } = this.props.store;
+      const { sessionId } = await fetchCheckoutSession({ mode, teamId: currentTeam._id });
+
+      // When the customer clicks on the button, redirect them to Checkout.
+      const stripe = await stripePromise;
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+
+      if (error) {
+        notify(error);
+        console.error(error);
+      }
     } catch (err) {
       notify(err);
-    } finally {
-      this.setState({ disabled: false });
-      NProgress.done();
-    }
-  };
-
-  private addNewCardOnClick = async (token) => {
-    const { currentUser } = this.props.store;
-
-    NProgress.start();
-    this.setState({ disabled: true });
-
-    try {
-      await currentUser.createNewCardAndUpdateCustomer({ token });
-      notify('You successfully updated card information.');
-    } catch (err) {
-      notify(err);
-    } finally {
-      this.setState({ disabled: false });
-      NProgress.done();
-    }
-  };
-
-  private createSubscriptionOnClick = async () => {
-    const { currentTeam, currentUser } = this.props.store;
-
-    if (!currentUser.hasCardInformation) {
-      notify('You did not add payment information.');
-      return;
-    }
-
-    NProgress.start();
-    this.setState({ disabled: true });
-
-    try {
-      await currentTeam.createSubscription({ teamId: currentTeam._id });
-      notify('Success!');
-    } catch (err) {
-      notify(err);
-    } finally {
-      this.setState({ disabled: false });
-      NProgress.done();
+      console.error(err);
     }
   };
 

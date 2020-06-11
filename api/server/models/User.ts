@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
+import Stripe from 'stripe';
 
 import sendEmail from '../aws-ses';
 import logger from '../logs';
@@ -9,13 +10,7 @@ import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
 import Invitation from './Invitation';
 import Team from './Team';
 
-import {
-  createCustomer,
-  createNewCard,
-  getListOfInvoices,
-  retrieveCard,
-  updateCustomer,
-} from '../stripe';
+import { getListOfInvoices } from '../stripe';
 
 import { EMAIL_SUPPORT_FROM_ADDRESS } from '../consts';
 
@@ -199,22 +194,20 @@ interface UserModel extends mongoose.Model<UserDocument> {
   }): Promise<UserDocument>;
 
   signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<UserDocument>;
-
-  createCustomer({
-    userId,
-    stripeToken,
+  saveStripeCustomerAndCard({
+    user,
+    session,
   }: {
-    userId: string;
-    stripeToken: object;
-  }): Promise<UserDocument>;
-
-  createNewCardUpdateCustomer({
-    userId,
-    stripeToken,
+    session: Stripe.Checkout.Session;
+    user: UserDocument;
+  }): Promise<void>;
+  changeStripeCard({
+    session,
+    user,
   }: {
-    userId: string;
-    stripeToken: object;
-  }): Promise<UserDocument>;
+    session: Stripe.Checkout.Session;
+    user: UserDocument;
+  }): Promise<void>;
   getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<UserDocument>;
   toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 }
@@ -237,51 +230,54 @@ class UserClass extends mongoose.Model {
       .setOptions({ lean: true });
   }
 
-  public static async createCustomer({ userId, stripeToken }) {
-    const user = await this.findById(userId, 'email');
+  public static async saveStripeCustomerAndCard({
+    user,
+    session,
+  }: {
+    session: Stripe.Checkout.Session;
+    user: UserDocument;
+  }) {
+    if (!user) {
+      throw new Error('User not found.');
+    }
 
-    const customerObj = await createCustomer({
-      token: stripeToken.id,
-      teamLeaderEmail: user.email,
-      teamLeaderId: userId,
-    });
+    const stripeSubscription = session.subscription as Stripe.Subscription;
 
-    logger.debug(customerObj.default_source.toString());
+    const stripeCard =
+      (stripeSubscription.default_payment_method &&
+        (stripeSubscription.default_payment_method as Stripe.PaymentMethod).card) ||
+      undefined;
 
-    const cardObj = await retrieveCard({
-      customerId: customerObj.id,
-      cardId: customerObj.default_source.toString(),
-    });
+    const hasCardInformation = !!stripeCard;
 
-    const modifier = { stripeCustomer: customerObj, stripeCard: cardObj, hasCardInformation: true };
-
-    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
-      .select('stripeCustomer stripeCard hasCardInformation')
-      .setOptions({ lean: true });
+    await this.updateOne(
+      { _id: user._id },
+      {
+        stripeCustomer: session.customer,
+        stripeCard,
+        hasCardInformation,
+      },
+    );
   }
 
-  public static async createNewCardUpdateCustomer({ userId, stripeToken }) {
-    const user = await this.findById(userId, 'stripeCustomer');
+  public static async changeStripeCard({
+    session,
+    user,
+  }: {
+    session: Stripe.Checkout.Session;
+    user: UserDocument;
+  }): Promise<void> {
+    if (!user) {
+      throw new Error('User not found.');
+    }
 
-    logger.debug('called static method on User');
+    const si: Stripe.SetupIntent = session.setup_intent as Stripe.SetupIntent;
+    const pm: Stripe.PaymentMethod = si.payment_method as Stripe.PaymentMethod;
 
-    const newCardObj = await createNewCard({
-      customerId: user.stripeCustomer.id,
-      token: stripeToken.id,
-    });
-
-    logger.debug(newCardObj.id);
-
-    const updatedCustomerObj = await updateCustomer({
-      customerId: user.stripeCustomer.id,
-      newCardId: newCardObj.id,
-    });
-
-    const modifier = { stripeCustomer: updatedCustomerObj, stripeCard: newCardObj };
-
-    return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
-      .select('stripeCard')
-      .setOptions({ lean: true });
+    if (!pm.card) {
+      throw new Error('No card found.');
+    }
+    await this.updateOne({ _id: user._id }, { stripeCard: pm.card, hasCardInformation: true });
   }
 
   public static async getListOfInvoicesForCustomer({ userId }) {

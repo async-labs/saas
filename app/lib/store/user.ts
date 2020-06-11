@@ -1,10 +1,6 @@
 import { action, decorate, observable, runInAction } from 'mobx';
 
-import {
-  createCustomerApiMethod,
-  createNewCardAndUpdateCustomerApiMethod,
-  getListOfInvoices,
-} from '../api/team-leader';
+import { getListOfInvoices } from '../api/team-leader';
 import { toggleTheme, updateProfile } from '../api/team-member';
 import { Store } from './index';
 
@@ -75,37 +71,6 @@ class User {
       this.avatarUrl = updatedUser.avatarUrl;
       this.slug = updatedUser.slug;
     });
-  }
-
-  public async createCustomer({ token }: { token: object }) {
-    try {
-      const { hasCardInformation, stripeCard } = await createCustomerApiMethod({
-        token,
-      });
-
-      runInAction(() => {
-        this.hasCardInformation = hasCardInformation;
-        this.stripeCard = stripeCard;
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  public async createNewCardAndUpdateCustomer({ token }: { token: object }) {
-    try {
-      const { stripeCard } = await createNewCardAndUpdateCustomerApiMethod({
-        token,
-      });
-
-      runInAction(() => {
-        this.stripeCard = stripeCard;
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
   }
 
   public async getListOfInvoices() {

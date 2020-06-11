@@ -16,7 +16,7 @@ export default function routesWithSlug({ server, app }) {
 
   server.get('/team/:teamSlug/billing', (req, res) => {
     const { teamSlug } = req.params;
-    app.render(req, res, '/billing', { teamSlug });
+    app.render(req, res, '/billing', { teamSlug, ...(req.query || {}) });
   });
 
   server.get('/invitation/:teamSlug', (req, res) => {
