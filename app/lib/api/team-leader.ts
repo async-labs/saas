@@ -34,24 +34,14 @@ export const removeMember = (data) =>
     body: JSON.stringify(data),
   });
 
-export const createSubscriptionApiMethod = ({ teamId }: { teamId: string }) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/subscribe-team`, {
-    body: JSON.stringify({ teamId }),
+export const fetchCheckoutSession = ({ mode, teamId }: { mode: string; teamId: string }) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/stripe/fetch-checkout-session`, {
+    body: JSON.stringify({ mode, teamId }),
   });
 
 export const cancelSubscriptionApiMethod = ({ teamId }: { teamId: string }) =>
   sendRequestAndGetResponse(`${BASE_PATH}/cancel-subscription`, {
     body: JSON.stringify({ teamId }),
-  });
-
-export const createCustomerApiMethod = ({ token }: { token: object }) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/create-customer`, {
-    body: JSON.stringify({ token }),
-  });
-
-export const createNewCardAndUpdateCustomerApiMethod = ({ token }: { token: object }) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/create-new-card-update-customer`, {
-    body: JSON.stringify({ token }),
   });
 
 export const getListOfInvoices = () =>

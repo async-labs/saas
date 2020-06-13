@@ -61,7 +61,7 @@
     "qs": "6.7.0",
     "request": "2.88.0",
     "socket.io": "^2.2.0",
-    "stripe": "7.10.0",
+    "stripe": "8.60.0",
     "typescript": "3.5.2",
     "winston": "3.2.1"
   },

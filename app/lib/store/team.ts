@@ -3,7 +3,6 @@ import Router from 'next/router';
 
 import {
   cancelSubscriptionApiMethod,
-  createSubscriptionApiMethod,
   getTeamInvitedUsers,
   getTeamMembers,
   inviteMember,
@@ -317,22 +316,6 @@ class Team {
 
   get orderedDiscussions() {
     return this.discussions.slice().sort();
-  }
-
-  public async createSubscription({ teamId }: { teamId: string }) {
-    try {
-      const { isSubscriptionActive, stripeSubscription } = await createSubscriptionApiMethod({
-        teamId,
-      });
-
-      runInAction(() => {
-        this.isSubscriptionActive = isSubscriptionActive;
-        this.stripeSubscription = stripeSubscription;
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
   }
 
   public async cancelSubscription({ teamId }: { teamId: string }) {

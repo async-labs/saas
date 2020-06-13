@@ -4,6 +4,7 @@ import logger from '../logs';
 import Invitation from '../models/Invitation';
 import Team from '../models/Team';
 import User from '../models/User';
+import { createSession } from '../stripe';
 
 const router = express.Router();
 
@@ -98,50 +99,33 @@ router.post('/teams/remove-member', async (req, res, next) => {
   }
 });
 
-router.post('/create-customer', async (req, res, next) => {
-  const { token } = req.body;
-
+router.post('/stripe/fetch-checkout-session', async (req, res, next) => {
   try {
-    const { hasCardInformation, stripeCard } = await User.createCustomer({
-      userId: req.user.id,
-      stripeToken: token,
-    });
+    const { mode, teamId } = req.body;
 
-    res.json({ hasCardInformation, stripeCard });
-  } catch (err) {
-    next(err);
-  }
-});
+    const user = await User.findById(req.user.id)
+      .select(['stripeCustomer', 'email'])
+      .setOptions({ lean: true });
 
-router.post('/create-new-card-update-customer', async (req, res, next) => {
-  const { token } = req.body;
+    const team = await Team.findById(teamId)
+      .select(['stripeSubscription', 'slug', 'teamLeaderId'])
+      .setOptions({ lean: true });
 
-  logger.debug('called express route');
+    if (!user || !team || team.teamLeaderId !== req.user.id) {
+      throw new Error('Permission denied');
+    }
 
-  try {
-    const { stripeCard } = await User.createNewCardUpdateCustomer({
-      userId: req.user.id,
-      stripeToken: token,
-    });
-
-    res.json({ stripeCard });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/subscribe-team', async (req, res, next) => {
-  const { teamId } = req.body;
-
-  try {
-    const { isSubscriptionActive, stripeSubscription } = await Team.subscribeTeam({
-      teamLeaderId: req.user.id,
+    const session = await createSession({
+      mode,
+      userId: user._id.toString(),
+      userEmail: user.email,
       teamId,
+      teamSlug: team.slug,
+      customerId: (user.stripeCustomer && user.stripeCustomer.id) || undefined,
+      subscriptionId: (team.stripeSubscription && team.stripeSubscription.id) || undefined,
     });
 
-    await User.getListOfInvoicesForCustomer({ userId: req.user.id });
-
-    res.json({ isSubscriptionActive, stripeSubscription });
+    res.json({ sessionId: session.id });
   } catch (err) {
     next(err);
   }
