@@ -30,7 +30,7 @@ class User {
       {
         amount_paid: number;
         teamName: string;
-        date: number;
+        created: number;
         hosted_invoice_url: string;
       },
     ];

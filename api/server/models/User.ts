@@ -93,7 +93,7 @@ const mongoSchema = new mongoose.Schema({
         object: String,
         // eslint-disable-next-line
         amount_paid: Number,
-        date: Number,
+        created: Number,
         customer: String,
         subscription: String,
         // eslint-disable-next-line

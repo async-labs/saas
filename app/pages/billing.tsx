@@ -279,8 +279,8 @@ class YourBilling extends React.Component<Props, State> {
                 <p>Your history of payments:</p>
                 <li>
                   ${invoice.amount_paid / 100} was paid on{' '}
-                  {moment(invoice.date * 1000).format('MMM Do YYYY')} for Team '{invoice.teamName}'
-                  -{' '}
+                  {moment(invoice.created * 1000).format('MMM Do YYYY')} for Team '
+                  {invoice.teamName}' -{' '}
                   <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">
                     See invoice
                   </a>
