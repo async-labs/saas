@@ -21,92 +21,13 @@ const styleGrid = {
 
 type MyProps = { store: Store; isTL: boolean; isMobile: boolean };
 
-class CreateTeam extends React.Component<MyProps> {
+type MyState = { newName: string; newAvatarUrl: string | ArrayBuffer; disabled: boolean };
+
+class CreateTeam extends React.Component<MyProps, MyState> {
   public state = {
     newName: '',
     newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
     disabled: false,
-  };
-
-  public onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const { newName } = this.state;
-
-    if (!newName) {
-      notify('Team name is required.');
-      return;
-    }
-
-    const file = (document.getElementById('upload-file') as HTMLFormElement).files[0];
-
-    try {
-      this.setState({ disabled: true });
-
-      const defaultAvatarUrl = 'https://storage.googleapis.com/async-await/default-user.png?v=1';
-      const team = await this.props.store.addTeam({
-        name: newName,
-        avatarUrl: defaultAvatarUrl,
-      });
-
-      console.log(`Returned to client: ${team._id}, ${team.name}, ${team.slug}`);
-
-      if (file == null) {
-        Router.push(`/team/${team.slug}/team-settings`);
-        notify('You successfully created Team.<p />Redirecting...');
-        return;
-      }
-
-      const fileName = file.name;
-      const fileType = file.type;
-      const bucket = process.env.BUCKET_FOR_TEAM_AVATARS;
-      const prefix = team.slug;
-
-      const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({
-        fileName,
-        fileType,
-        prefix,
-        bucket,
-      });
-      await uploadFileUsingSignedPutRequestApiMethod(file, responseFromApiServerForUpload.signedRequest, {
-        'Cache-Control': 'max-age=2592000',
-      });
-
-      const properAvatarUrl = responseFromApiServerForUpload.url;
-
-      await team.updateTheme({ name: team.name, avatarUrl: properAvatarUrl });
-
-      this.setState({
-        newName: '',
-        newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
-      });
-
-      (document.getElementById('upload-file') as HTMLFormElement).value = '';
-
-      Router.push(`/team/${team.slug}/team-settings`);
-
-      notify('You successfully created Team. Redirecting ...');
-    } catch (error) {
-      console.log(error);
-      notify(error);
-    } finally {
-      this.setState({ disabled: false });
-    }
-  };
-
-  public previewAvatar = () => {
-    const file = (document.getElementById('upload-file') as HTMLFormElement).files[0];
-    if (!file) {
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      this.setState({ newAvatarUrl: e.target.result });
-    };
-
-    reader.readAsDataURL(file);
   };
 
   public render() {
@@ -116,7 +37,7 @@ class CreateTeam extends React.Component<MyProps> {
       <Layout {...this.props}>
         <Head>
           <title>Create Team</title>
-          <meta name="description" content="Create a new Team" />
+          <meta name="description" content="Create a new Team at SaaS Boilerplate" />
         </Head>
         <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
           <Grid container style={styleGrid}>
@@ -182,6 +103,89 @@ class CreateTeam extends React.Component<MyProps> {
       </Layout>
     );
   }
+
+  private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const { newName } = this.state;
+
+    const { store } = this.props;
+
+    if (!newName) {
+      notify('Team name is required.');
+      return;
+    }
+
+    const file = (document.getElementById('upload-file') as HTMLFormElement).files[0];
+
+    try {
+      this.setState({ disabled: true });
+
+      const defaultAvatarUrl = 'https://storage.googleapis.com/async-await/default-user.png?v=1';
+      const team = await store.addTeam({
+        name: newName,
+        avatarUrl: defaultAvatarUrl,
+      });
+
+      console.log(`Returned to client: ${team._id}, ${team.name}, ${team.slug}`);
+
+      if (file == null) {
+        Router.push(`/team/${team.slug}/team-settings`);
+        notify('You successfully created Team.<p />Redirecting...');
+        return;
+      }
+
+      const fileName = file.name;
+      const fileType = file.type;
+      const bucket = process.env.BUCKET_FOR_TEAM_AVATARS;
+      const prefix = team.slug;
+
+      const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({
+        fileName,
+        fileType,
+        prefix,
+        bucket,
+      });
+      await uploadFileUsingSignedPutRequestApiMethod(file, responseFromApiServerForUpload.signedRequest, {
+        'Cache-Control': 'max-age=2592000',
+      });
+
+      const properAvatarUrl = responseFromApiServerForUpload.url;
+
+      await team.updateTheme({ name: team.name, avatarUrl: properAvatarUrl });
+
+      this.setState({
+        newName: '',
+        newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
+      });
+
+      (document.getElementById('upload-file') as HTMLFormElement).value = '';
+
+      Router.push(`/team/${team.slug}/team-settings`);
+
+      notify('You successfully created Team. Redirecting ...');
+    } catch (error) {
+      console.log(error);
+      notify(error);
+    } finally {
+      this.setState({ disabled: false });
+    }
+  };
+
+  private previewAvatar = () => {
+    const file = (document.getElementById('upload-file') as HTMLFormElement).files[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      this.setState({ newAvatarUrl: e.target.result });
+    };
+
+    reader.readAsDataURL(file);
+  };
 }
 
-export default withAuth(observer(CreateTeam), { teamRequired: false });
+export default withAuth(observer(CreateTeam));
