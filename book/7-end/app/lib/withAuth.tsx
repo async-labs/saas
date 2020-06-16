@@ -16,7 +16,7 @@ Router.events.on('routeChangeComplete', () => {
 
 Router.events.on('routeChangeError', () => NProgress.done());
 
-export default function withAuth(Component, { loginRequired = true, logoutRequired = false, teamRequired = true } = {}) {
+export default function withAuth(Component, { loginRequired = true, logoutRequired = false } = {}) {
   class WithAuth extends React.Component<{ store: Store }> {
     public static async getInitialProps(ctx) {
       console.log('WithAuth.getInitialProps');
@@ -32,7 +32,6 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
       return {
         ...pageComponentProps,
         isServer: !!req,
-        teamRequired,
       };
     }
 
@@ -50,8 +49,13 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
       let redirectUrl = '/login';
       let asUrl = '/login';
       if (user) {
-        redirectUrl = `/your-settings`;
-        asUrl = `/your-settings`;
+        if (!user.defaultTeamSlug) {
+          redirectUrl = '/create-team';
+          asUrl = '/create-team';
+        } else {
+          redirectUrl = `/your-settings`;
+          asUrl = `/your-settings`;
+        }
       }
 
       if (logoutRequired && user) {

@@ -293,6 +293,8 @@ class UserClass extends mongoose.Model {
   }
 
   private static async checkPermissionAndGetTeam({ userId, teamId }) {
+    console.log(userId, teamId);
+
     if (!userId || !teamId) {
       throw new Error('Bad data');
     }

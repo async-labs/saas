@@ -16,7 +16,7 @@ class MyApp extends App<{ isMobile: boolean }> {
     let firstGridItem = true;
     let teamRequired = false;
 
-    if (ctx.pathname.includes('/login')) {
+    if (ctx.pathname.includes('/login') || ctx.pathname.includes('/create-team')) {
       firstGridItem = false;
     }
 
@@ -70,6 +70,10 @@ class MyApp extends App<{ isMobile: boolean }> {
       }
     }
 
+    // console.log(initialData);
+
+    // console.log(teamSlug);
+
     return {
       ...appProps,
       initialState: { user: userObj, currentUrl: ctx.asPath, teamSlug, ...initialData },
@@ -98,7 +102,7 @@ class MyApp extends App<{ isMobile: boolean }> {
     const { Component, pageProps } = this.props;
     const store = this.store;
 
-    console.log(store.currentUser);
+    // console.log(store.currentUser);
 
     return (
       <ThemeProvider

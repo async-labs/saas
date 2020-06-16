@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import TextField from '@material-ui/core/TextField';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
 import NProgress from 'nprogress';
 import * as React from 'react';
@@ -53,6 +53,8 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     const { currentTeam, currentUser } = store;
     const { newName, newAvatarUrl } = this.state;
     const isTeamLeader = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
+
+    // console.log(currentTeam);
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
@@ -368,4 +370,4 @@ class TeamSettings extends React.Component<MyProps, MyState> {
   // };
 }
 
-export default withAuth(observer(TeamSettings));
+export default withAuth(inject('store')(observer(TeamSettings)));

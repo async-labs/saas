@@ -132,6 +132,8 @@ class Layout extends React.Component<MyProps> {
 
     const isThemeDark = currentUser && currentUser.darkTheme === true;
 
+    // console.log(currentTeam, teamRequired);
+
     if (store.isLoggingIn) {
       return (
         <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile}>

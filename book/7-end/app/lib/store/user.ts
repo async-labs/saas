@@ -14,6 +14,7 @@ class User {
   public isSignedupViaGoogle: boolean;
 
   public darkTheme = false;
+  public defaultTeamSlug: string;
 
   constructor(params) {
     this.store = params.store;
@@ -24,6 +25,7 @@ class User {
     this.avatarUrl = params.avatarUrl;
     this.isSignedupViaGoogle = !!params.isSignedupViaGoogle;
     this.darkTheme = !!params.darkTheme;
+    this.defaultTeamSlug = params.defaultTeamSlug;
   }
 
   public async updateProfile({ name, avatarUrl }: { name: string; avatarUrl: string }) {
@@ -54,6 +56,7 @@ decorate(User, {
   displayName: observable,
   avatarUrl: observable,
   darkTheme: observable,
+  defaultTeamSlug: observable,
 
   updateProfile: action,
   toggleTheme: action,

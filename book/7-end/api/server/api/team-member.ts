@@ -43,7 +43,7 @@ router.post('/user/update-profile', async (req, res, next) => {
     const { name, avatarUrl } = req.body;
 
     const updatedUser = await User.updateProfile({
-      userId: req.user.id,
+      userId: req.user._id,
       name,
       avatarUrl,
     });
@@ -58,7 +58,7 @@ router.post('/user/toggle-theme', async (req, res, next) => {
   try {
     const { darkTheme } = req.body;
 
-    await User.toggleTheme({ userId: req.user.id, darkTheme });
+    await User.toggleTheme({ userId: req.user._id, darkTheme });
 
     res.json({ done: 1 });
   } catch (err) {
@@ -87,7 +87,7 @@ async function loadTeamData(team, userId) {
 
 router.post('/get-initial-data', async (req, res, next) => {
   try {
-    const teams = await Team.getAllTeamsForUser(req.user.id);
+    const teams = await Team.getAllTeamsForUser(req.user._id);
 
     let selectedTeamSlug = req.body.teamSlug;
     if (!selectedTeamSlug && teams && teams.length > 0) {
@@ -96,7 +96,7 @@ router.post('/get-initial-data', async (req, res, next) => {
 
     for (const team of teams) {
       if (team.slug === selectedTeamSlug) {
-        Object.assign(team, await loadTeamData(team, req.user.id));
+        Object.assign(team, await loadTeamData(team, req.user._id));
         break;
       }
     }
@@ -109,7 +109,9 @@ router.post('/get-initial-data', async (req, res, next) => {
 
 router.get('/teams', async (req, res, next) => {
   try {
-    const teams = await Team.getAllTeamsForUser(req.user.id);
+    const teams = await Team.getAllTeamsForUser(req.user._id);
+
+    console.log(teams);
 
     res.json({ teams });
   } catch (err) {
@@ -119,7 +121,7 @@ router.get('/teams', async (req, res, next) => {
 
 router.get('/teams/get-members', async (req, res, next) => {
   try {
-    const users = await User.getMembersForTeam({ userId: req.user.id, teamId: req.query.teamId });
+    const users = await User.getMembersForTeam({ userId: req.user._id, teamId: req.query.teamId });
 
     res.json({ users });
   } catch (err) {

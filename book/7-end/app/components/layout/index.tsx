@@ -170,6 +170,18 @@ class Layout extends React.Component<MyProps> {
 
     // console.log(isMobile);
 
+    // console.log(teamRequired);
+
+    if (!currentUser) {
+      return (
+        <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
+          <Grid item sm={12} xs={12}>
+            {children}
+          </Grid>
+        </LayoutWrapper>
+      );
+    }
+
     if (!currentTeam) {
       if (teamRequired) {
         return (
@@ -178,7 +190,7 @@ class Layout extends React.Component<MyProps> {
               <div style={{ padding: '20px' }}>
                 Select existing team or create a new team.
                 <p />
-                <Link href="/create-team">
+                <Link href="/create-team" as="/create-team">
                   <Button variant="outlined" color="primary">
                     Create new team
                   </Button>
@@ -188,6 +200,7 @@ class Layout extends React.Component<MyProps> {
           </LayoutWrapper>
         );
       } else {
+        console.log('team not required');
         return (
           <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
             <Grid item sm={10} xs={12}>

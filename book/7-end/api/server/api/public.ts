@@ -46,7 +46,7 @@ router.post('/invitations/remove-invitation-if-member-added', async (req, res, n
   try {
     const team = await Invitation.removeIfMemberAdded({
       token: req.body.token,
-      userId: req.user.id,
+      userId: req.user._id,
     });
 
     res.json({ team });

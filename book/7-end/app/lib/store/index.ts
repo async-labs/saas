@@ -33,6 +33,8 @@ class Store {
 
     this.currentUrl = initialState.currentUrl || '';
 
+    // console.log(initialState);
+
     if (initialState.teamSlug) {
       this.setCurrentTeam(initialState.teamSlug);
     }
@@ -67,11 +69,20 @@ class Store {
 
     let found = false;
 
+    console.log(`before`);
+
     const { teams = [] } = await getTeamListApiMethod();
+
+    console.log(`after`);
+
+
+    console.log(`teams:${teams}`);
+    console.log(`test`);
 
     for (const team of teams) {
       if (team.slug === slug) {
         found = true;
+        console.log(`team: ${team}`);
         this.currentTeam = team;
         if (this.currentTeam) {
           const { users = [] } = await getTeamMembersApiMethod(this.currentTeam._id);
@@ -115,7 +126,7 @@ function initializeStore(initialState = {}) {
     store = _store
   }
 
-  console.log(_store);
+  // console.log(_store);
 
   return _store
 }

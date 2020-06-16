@@ -1,4 +1,4 @@
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -10,6 +10,7 @@ import Router from 'next/router';
 
 import { getSignedRequestForUploadApiMethod, uploadFileUsingSignedPutRequestApiMethod } from '../lib/api/team-member';
 import notify from '../lib/notify';
+import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
@@ -19,7 +20,7 @@ const styleGrid = {
   height: '100%',
 };
 
-type MyProps = { store: Store; isTL: boolean; isMobile: boolean };
+type MyProps = { store: Store; isMobile: boolean; teamRequired: boolean };
 
 type MyState = { newName: string; newAvatarUrl: string | ArrayBuffer; disabled: boolean };
 
@@ -32,6 +33,8 @@ class CreateTeam extends React.Component<MyProps, MyState> {
 
   public render() {
     const { newAvatarUrl } = this.state;
+
+    console.log(this.props.store);
 
     return (
       <Layout {...this.props}>
@@ -146,13 +149,18 @@ class CreateTeam extends React.Component<MyProps, MyState> {
         prefix,
         bucket,
       });
-      await uploadFileUsingSignedPutRequestApiMethod(file, responseFromApiServerForUpload.signedRequest, {
+
+      const resizedFile = await resizeImage(file, 128, 128);
+
+      await uploadFileUsingSignedPutRequestApiMethod(resizedFile, responseFromApiServerForUpload.signedRequest, {
         'Cache-Control': 'max-age=2592000',
       });
 
-      const properAvatarUrl = responseFromApiServerForUpload.url;
+      const uploadedAvatarUrl = responseFromApiServerForUpload.url;
 
-      await team.updateTheme({ name: team.name, avatarUrl: properAvatarUrl });
+      console.log (uploadedAvatarUrl);
+
+      await team.updateTheme({ name: team.name, avatarUrl: uploadedAvatarUrl });
 
       this.setState({
         newName: '',
@@ -188,4 +196,4 @@ class CreateTeam extends React.Component<MyProps, MyState> {
   };
 }
 
-export default withAuth(observer(CreateTeam));
+export default withAuth(inject('store')(observer(CreateTeam)));
