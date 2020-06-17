@@ -1,5 +1,7 @@
 import 'isomorphic-unfetch';
 
+import { makeQueryString } from './makeQueryString';
+
 export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   const headers = Object.assign(
     {},
@@ -17,7 +19,7 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
     headers.cookie = request.headers.cookie;
   }
 
-  const qs = opts.qs || '';
+  const qs = (opts.qs && `?${makeQueryString(opts.qs)}`) || '';
 
   // console.log(`before: ${process.env.URL_API}${path}${qs}`);
 
