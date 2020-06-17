@@ -28,7 +28,9 @@ class MyApp extends App<{ isMobile: boolean }> {
       teamRequired = true;
     }
 
-    const pageProps = { isMobile: isMobile({ req: ctx.req }), firstGridItem, teamRequired };
+    const { teamSlug } = ctx.query;
+
+    const pageProps = { isMobile: isMobile({ req: ctx.req }), firstGridItem, teamRequired, teamSlug };
 
     if (Component.getInitialProps) {
       Object.assign(pageProps, await Component.getInitialProps(ctx));
@@ -57,7 +59,6 @@ class MyApp extends App<{ isMobile: boolean }> {
     }
 
     let initialData = {};
-    const { teamSlug } = ctx.query;
 
     if (userObj) {
       try {
@@ -101,8 +102,6 @@ class MyApp extends App<{ isMobile: boolean }> {
   public render() {
     const { Component, pageProps } = this.props;
     const store = this.store;
-
-    // console.log(store.currentUser);
 
     return (
       <ThemeProvider

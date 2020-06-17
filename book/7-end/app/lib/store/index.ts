@@ -36,7 +36,7 @@ class Store {
     // console.log(initialState);
 
     if (initialState.teamSlug) {
-      this.setCurrentTeam(initialState.teamSlug, initialState);
+      this.setCurrentTeam(initialState.teamSlug, initialState.teams);
     }
   }
 
@@ -71,7 +71,7 @@ class Store {
 
     console.log(`before`);
 
-    const { teams = [] } = this.isServer ? initialTeams : await getTeamListApiMethod();
+    const teams = initialTeams || (await getTeamListApiMethod()).teams;
 
     console.log(`after`);
 
@@ -83,13 +83,13 @@ class Store {
       if (team.slug === slug) {
         found = true;
         console.log(`team: ${team}`);
-        this.currentTeam = team;
-        if (this.currentTeam) {
-          const { users = [] } = await getTeamMembersApiMethod(this.currentTeam._id);
-          await this.currentTeam
-            .setInitialMembers(users)
-            .catch((err) => console.error('Error while loading Users', err));
-        }
+        this.currentTeam = new Team({ ...team, store: this });
+
+        const  users = team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
+        this.currentTeam
+          .setInitialMembers(users)
+          .catch((err) => console.error('Error while loading Users', err));
+
         break;
       }
     }
