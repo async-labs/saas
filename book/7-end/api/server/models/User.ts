@@ -303,7 +303,7 @@ class UserClass extends mongoose.Model {
       .select('memberIds')
       .setOptions({ lean: true });
 
-    if (!team || team.memberIds.indexOf(userId) === -1) {
+    if (!team || team.memberIds.indexOf(userId.toString()) === -1) {
       throw new Error('Team not found');
     }
 

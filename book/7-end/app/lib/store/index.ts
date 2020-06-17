@@ -36,7 +36,7 @@ class Store {
     // console.log(initialState);
 
     if (initialState.teamSlug) {
-      this.setCurrentTeam(initialState.teamSlug);
+      this.setCurrentTeam(initialState.teamSlug, initialState);
     }
   }
 
@@ -60,7 +60,7 @@ class Store {
     return team;
   }
 
-  public async setCurrentTeam(slug: string) {
+  public async setCurrentTeam(slug: string, initialTeams: any[]) {
     if (this.currentTeam) {
       if (this.currentTeam.slug === slug) {
         return;
@@ -71,7 +71,7 @@ class Store {
 
     console.log(`before`);
 
-    const { teams = [] } = await getTeamListApiMethod();
+    const { teams = [] } = this.isServer ? initialTeams : await getTeamListApiMethod();
 
     console.log(`after`);
 
