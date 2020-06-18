@@ -33,10 +33,10 @@ class Store {
 
     this.currentUrl = initialState.currentUrl || '';
 
-    // console.log(initialState);
+    console.log(initialState);
 
-    if (initialState.teamSlug) {
-      this.setCurrentTeam(initialState.teamSlug, initialState.teams);
+    if (initialState.teamSlug || initialState.user.defaultTeamSlug) {
+      this.setCurrentTeam(initialState.teamSlug || initialState.user.defaultTeamSlug, initialState.teams);
     }
   }
 
@@ -70,6 +70,8 @@ class Store {
     let found = false;
 
     const teams = initialTeams || (await getTeamListApiMethod()).teams;
+
+    console.log('setCurrentTeam');
 
     for (const team of teams) {
       if (team.slug === slug) {
