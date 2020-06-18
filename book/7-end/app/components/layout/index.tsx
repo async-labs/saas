@@ -28,16 +28,16 @@ const styleGridIsMobile = {
 
 function LayoutWrapper({
   children,
-  firstGridItem,
   isMobile,
-  isThemeDark,
+  firstGridItem,
   store,
+  isThemeDark,
 }: {
   children: React.ReactNode;
-  firstGridItem: boolean;
   isMobile: boolean;
-  isThemeDark: boolean;
+  firstGridItem: boolean;
   store: Store;
+  isThemeDark: boolean;
 }) {
   return (
     <React.Fragment>
@@ -170,7 +170,7 @@ class Layout extends React.Component<MyProps> {
 
     // console.log(isMobile);
 
-    // console.log(teamRequired);
+    console.log(firstGridItem);
 
     if (!currentUser) {
       return (
@@ -185,7 +185,7 @@ class Layout extends React.Component<MyProps> {
     if (!currentTeam) {
       if (teamRequired) {
         return (
-          <LayoutWrapper firstGridItem={false} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
+          <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
             <Grid item sm={10} xs={12}>
               <div style={{ padding: '20px' }}>
                 Select existing team or create a new team.
@@ -212,7 +212,7 @@ class Layout extends React.Component<MyProps> {
     }
 
     return (
-      <LayoutWrapper firstGridItem={false} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
+      <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
         <Grid item sm={firstGridItem ? 10 : 12} xs={12}>
           <div>
             {isMobile || store.currentUrl.includes('create-team') ? null : (

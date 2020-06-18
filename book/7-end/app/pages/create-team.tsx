@@ -85,7 +85,7 @@ class CreateTeam extends React.Component<MyProps, MyState> {
                   id="upload-file"
                   type="file"
                   style={{ display: 'none' }}
-                  onChange={this.previewAvatar}
+                  onChange={this.previewTeamLogo}
                 />
                 <p />
                 <br />
@@ -158,8 +158,6 @@ class CreateTeam extends React.Component<MyProps, MyState> {
 
       const uploadedAvatarUrl = responseFromApiServerForUpload.url;
 
-      console.log (uploadedAvatarUrl);
-
       await team.updateTheme({ name: team.name, avatarUrl: uploadedAvatarUrl });
 
       this.setState({
@@ -180,7 +178,7 @@ class CreateTeam extends React.Component<MyProps, MyState> {
     }
   };
 
-  private previewAvatar = () => {
+  private previewTeamLogo = () => {
     const file = (document.getElementById('upload-file') as HTMLFormElement).files[0];
     if (!file) {
       return;

@@ -30,6 +30,8 @@ class MyApp extends App<{ isMobile: boolean }> {
 
     const { teamSlug } = ctx.query;
 
+    console.log(`ctx.query.teamSlug:${teamSlug}`);
+
     const pageProps = { isMobile: isMobile({ req: ctx.req }), firstGridItem, teamRequired, teamSlug };
 
     if (Component.getInitialProps) {

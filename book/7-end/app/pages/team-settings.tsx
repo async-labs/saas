@@ -1,6 +1,5 @@
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import TextField from '@material-ui/core/TextField';
 import { inject, observer } from 'mobx-react';
@@ -23,11 +22,7 @@ import notify from '../lib/notify';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-const styleGrid = {
-  height: '100%',
-};
-
-type MyProps = { teamSlug: string; store: Store; isMobile: boolean };
+type MyProps = { isMobile: boolean; store: Store; teamSlug: string };
 
 type MyState = {
   newName: string;
@@ -54,7 +49,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     const { newName, newAvatarUrl } = this.state;
     const isTeamLeader = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
 
-    // console.log(currentTeam);
+    // console.log(this.props.firstGridItem);
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
@@ -88,8 +83,6 @@ class TeamSettings extends React.Component<MyProps, MyState> {
           <meta name="description" content={`Edit team settings. Add or edit members for Team ${currentTeam.name}`} />
         </Head>
         <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
-          <Grid container style={styleGrid}>
-            <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
               <h3>Team Settings</h3>
               <p />
               <br />
@@ -226,14 +219,11 @@ class TeamSettings extends React.Component<MyProps, MyState> {
               ) : null} */}
               <p />
               <br />
-            </Grid>
-
             {/* <InviteMember
               open={this.state.inviteMemberOpen}
               onClose={this.handleInviteMemberClose}
               store={this.props.store}
             /> */}
-          </Grid>
           <br />
         </div>
       </Layout>

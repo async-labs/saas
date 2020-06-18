@@ -69,20 +69,11 @@ class Store {
 
     let found = false;
 
-    console.log(`before`);
-
     const teams = initialTeams || (await getTeamListApiMethod()).teams;
-
-    console.log(`after`);
-
-
-    console.log(`teams:${teams}`);
-    console.log(`test`);
 
     for (const team of teams) {
       if (team.slug === slug) {
         found = true;
-        console.log(`team: ${team}`);
         this.currentTeam = new Team({ ...team, store: this });
 
         const  users = team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
