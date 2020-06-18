@@ -170,7 +170,7 @@ class Layout extends React.Component<MyProps> {
 
     // console.log(isMobile);
 
-    console.log(currentTeam);
+    // console.log(currentTeam);
 
     if (!currentUser) {
       return (

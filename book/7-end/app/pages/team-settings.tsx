@@ -19,6 +19,7 @@ import Layout from '../components/layout';
 import { getSignedRequestForUploadApiMethod, uploadFileUsingSignedPutRequestApiMethod } from '../lib/api/team-member';
 // import confirm from '../lib/confirm';
 import notify from '../lib/notify';
+import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
@@ -120,7 +121,12 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                 }}
               />
               <label htmlFor="upload-file">
-                <Button variant="outlined" color="primary" component="span">
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  component="span"
+                  disabled={this.state.disabled}
+                >
                   Update logo
                 </Button>
               </label>
@@ -260,8 +266,8 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     const { store } = this.props;
     const { currentTeam } = store;
 
-    const fileElm = document.getElementById('upload-file') as HTMLFormElement;
-    const file = fileElm.files[0];
+    const fileElement = document.getElementById('upload-file') as HTMLFormElement;
+    const file = fileElement.files[0];
 
     if (file == null) {
       notify('No file selected for upload.');
@@ -270,16 +276,16 @@ class TeamSettings extends React.Component<MyProps, MyState> {
 
     const fileName = file.name;
     const fileType = file.type;
-    const bucket = process.env.BUCKET_FOR_TEAM_AVATARS;
-    const prefix = `${currentTeam.slug}`;
 
     NProgress.start();
+    this.setState({ disabled: true });
 
-    fileElm.value = '';
+    const bucket = process.env.BUCKET_FOR_TEAM_LOGOS;
+    const prefix = `${currentTeam.slug}`
+
+    console.log(bucket);
 
     try {
-      this.setState({ disabled: true });
-
       const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({
         fileName,
         fileType,
@@ -287,15 +293,22 @@ class TeamSettings extends React.Component<MyProps, MyState> {
         bucket,
       });
 
-      await uploadFileUsingSignedPutRequestApiMethod(file, responseFromApiServerForUpload.signedRequest, {
-        'Cache-Control': 'max-age=2592000',
-      });
+      const resizedFile = await resizeImage(file, 128, 128);
+
+      await uploadFileUsingSignedPutRequestApiMethod(
+        resizedFile,
+        responseFromApiServerForUpload.signedRequest,
+        { 'Cache-Control': 'max-age=2592000' },
+      );
 
       this.setState({
         newAvatarUrl: responseFromApiServerForUpload.url,
       });
 
-      await currentTeam.updateTheme({ name: currentTeam.name, avatarUrl: this.state.newAvatarUrl });
+      await currentTeam.updateTheme({
+        name: this.state.newName,
+        avatarUrl: this.state.newAvatarUrl,
+      });
 
       notify('You successfully uploaded new Team logo.');
     } catch (error) {

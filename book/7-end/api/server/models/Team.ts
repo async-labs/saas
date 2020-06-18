@@ -120,7 +120,7 @@ class TeamClass extends mongoose.Model {
       throw new Error('Permission denied');
     }
 
-    const modifier = { name: team.name, avatarUrl, slug: team.slug };
+    const modifier = { name: team.name, avatarUrl };
 
     if (name !== team.name) {
       modifier.name = name;

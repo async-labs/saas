@@ -140,7 +140,7 @@ class CreateTeam extends React.Component<MyProps, MyState> {
 
       const fileName = file.name;
       const fileType = file.type;
-      const bucket = process.env.BUCKET_FOR_TEAM_AVATARS;
+      const bucket = process.env.BUCKET_FOR_TEAM_LOGOS;
       const prefix = team.slug;
 
       const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({
