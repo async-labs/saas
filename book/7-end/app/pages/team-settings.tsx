@@ -15,9 +15,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 import Layout from '../components/layout';
-// import InviteMember from '../components/teams/InviteMember';
+import InviteMember from '../components/teams/InviteMember';
 import { getSignedRequestForUploadApiMethod, uploadFileUsingSignedPutRequestApiMethod } from '../lib/api/team-member';
-// import confirm from '../lib/confirm';
+import confirm from '../lib/confirm';
 import notify from '../lib/notify';
 import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
@@ -29,7 +29,7 @@ type MyState = {
   newName: string;
   newAvatarUrl: string;
   disabled: boolean;
-  // inviteMemberOpen: boolean;
+  inviteMemberOpen: boolean;
 };
 
 class TeamSettings extends React.Component<MyProps, MyState> {
@@ -40,7 +40,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
       newName: this.props.store.currentTeam.name,
       newAvatarUrl: this.props.store.currentTeam.avatarUrl,
       disabled: false,
-      // inviteMemberOpen: false,
+      inviteMemberOpen: false,
     };
   }
 
@@ -144,14 +144,14 @@ class TeamSettings extends React.Component<MyProps, MyState> {
               <h4 style={{ marginRight: 20, display: 'inline' }}>
                 Team Members ( {Array.from(currentTeam.members.values()).length} / 20 )
               </h4>
-              {/* <Button
-                onClick={this.inviteMember}
+              <Button
+                onClick={this.openInviteMember}
                 variant="outlined"
                 color="primary"
                 style={{ float: 'right', marginTop: '-20px' }}
               >
                 Invite member
-              </Button> */}
+              </Button>
               <p />
               <TableContainer component={Paper}>
                 <Table>
@@ -186,20 +186,38 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                         <TableCell>
                           {isTeamLeader && m._id !== currentUser._id ? 'Team Member' : 'Team Leader'}
                         </TableCell>
+                        <TableCell>
+                        {isTeamLeader ? (
+                          <i
+                            color="action"
+                            data-id={m._id}
+                            onClick={this.removeMember}
+                            style={{
+                              marginLeft: '20px',
+                              fontSize: '16px',
+                              opacity: 0.6,
+                              cursor: 'pointer',
+                              verticalAlign: 'middle',
+                            }}
+                            className="material-icons"
+                          >
+                            delete
+                          </i>
+                        ) : null}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
-{/* 
+
               <p />
               <br />
 
               {Array.from(currentTeam.invitedUsers.values()).length > 0 ? (
                 <React.Fragment>
                   <h4>
-                    Invited users ( {Array.from(currentTeam.invitedUsers.values()).length} /{' '}
-                    {20 - Array.from(currentTeam.members.values()).length} )
+                    Invited users
                   </h4>
                   <p />
                   <TableContainer component={Paper}>
@@ -222,14 +240,14 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                     </Table>
                   </TableContainer>
                 </React.Fragment>
-              ) : null} */}
+              ) : null}
               <p />
               <br />
-            {/* <InviteMember
-              open={this.state.inviteMemberOpen}
-              onClose={this.handleInviteMemberClose}
-              store={this.props.store}
-            /> */}
+              <InviteMember
+                open={this.state.inviteMemberOpen}
+                onClose={this.handleInviteMemberClose}
+                store={this.props.store}
+              />
           <br />
         </div>
       </Layout>
@@ -319,58 +337,58 @@ class TeamSettings extends React.Component<MyProps, MyState> {
     }
   };
 
-  // private handleInviteMemberClose = () => {
-  //   this.setState({ inviteMemberOpen: false });
-  // };
+  private openInviteMember = async () => {
+    const { currentTeam } = this.props.store;
+    if (!currentTeam) {
+      notify('You have not selected a Team.');
+      return;
+    }
 
-  // public inviteMember = async () => {
-  //   const { currentTeam } = this.props.store;
-  //   if (!currentTeam) {
-  //     notify('You have not selected a Team.');
-  //     return;
-  //   }
+    // const ifTeamLeaderMustBeCustomer = await currentTeam.checkIfTeamLeaderMustBeCustomer();
+    // if (ifTeamLeaderMustBeCustomer) {
+    //   notify(
+    //     'To add a third team member, you have to become a paid customer.' +
+    //       '<p />' +
+    //       ' To become a paid customer,' +
+    //       ' navigate to Billing page.',
+    //   );
+    //   return;
+    // }
 
-  //   // const ifTeamLeaderMustBeCustomer = await currentTeam.checkIfTeamLeaderMustBeCustomer();
-  //   // if (ifTeamLeaderMustBeCustomer) {
-  //   //   notify(
-  //   //     'To add a third team member, you have to become a paid customer.' +
-  //   //       '<p />' +
-  //   //       ' To become a paid customer,' +
-  //   //       ' navigate to Billing page.',
-  //   //   );
-  //   //   return;
-  //   // }
+    this.setState({ inviteMemberOpen: true });
+  };
 
-  //   this.setState({ inviteMemberOpen: true });
-  // };
+  private handleInviteMemberClose = () => {
+    this.setState({ inviteMemberOpen: false });
+  };
 
-  // private removeMember = (event) => {
-  //   const { currentTeam } = this.props.store;
-  //   if (!currentTeam) {
-  //     notify('You have not selected a Team.');
-  //     return;
-  //   }
+  private removeMember = (event) => {
+    const { currentTeam } = this.props.store;
+    if (!currentTeam) {
+      notify('You have not selected a Team.');
+      return;
+    }
 
-  //   const userId = event.currentTarget.dataset.id;
-  //   if (!userId) {
-  //     notify('Select user.');
-  //     return;
-  //   }
+    const userId = event.currentTarget.dataset.id;
+    if (!userId) {
+      notify('Select user.');
+      return;
+    }
 
-  //   confirm({
-  //     title: 'Are you sure?',
-  //     message: '',
-  //     onAnswer: async (answer) => {
-  //       if (answer) {
-  //         try {
-  //           await currentTeam.removeMember(userId);
-  //         } catch (error) {
-  //           notify(error);
-  //         }
-  //       }
-  //     },
-  //   });
-  // };
+    confirm({
+      title: 'Are you sure?',
+      message: '',
+      onAnswer: async (answer) => {
+        if (answer) {
+          try {
+            await currentTeam.removeMember(userId);
+          } catch (error) {
+            notify(error);
+          }
+        }
+      },
+    });
+  };
 }
 
 export default withAuth(inject('store')(observer(TeamSettings)));

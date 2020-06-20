@@ -30,8 +30,8 @@ class InviteMember extends React.Component<Props, State> {
     const { open } = this.props;
 
     return (
-      <Dialog onClose={this.handleClose} aria-labelledby="invite-memter-dialog-title" open={open}>
-        <DialogTitle id="invite-memter-dialog-title">Invite member</DialogTitle>
+      <Dialog onClose={this.handleClose} aria-labelledby="invite-member-dialog-title" open={open}>
+        <DialogTitle id="invite-member-dialog-title">Invite member</DialogTitle>
         <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
           <TextField
             autoComplete="off"

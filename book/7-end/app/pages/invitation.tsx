@@ -8,7 +8,8 @@ import React from 'react';
 import LoginButton from '../components/common/LoginButton';
 import Layout from '../components/layout';
 import { acceptAndGetInvitedTeamByToken, removeInvitationIfMemberAdded } from '../lib/api/public';
-import { Store, Team } from '../lib/store';
+import { Team } from '../lib/store/team';
+import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
 class Invitation extends React.Component<{ store: Store; team: Team; token: string }> {
@@ -85,4 +86,4 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
   }
 }
 
-export default withAuth(observer(Invitation), { teamRequired: false, loginRequired: false });
+export default withAuth(observer(Invitation), { loginRequired: false });
