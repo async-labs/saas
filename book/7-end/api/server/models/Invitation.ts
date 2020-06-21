@@ -49,7 +49,7 @@ interface InvitationModel extends mongoose.Model<InvitationDocument> {
     email: string;
   }): InvitationDocument;
 
-  getTeamInvitedUsers({ userId, teamId }: { userId: string; teamId: string });
+  getTeamInvitations({ userId, teamId }: { userId: string; teamId: string });
   getTeamByToken({ token }: { token: string });
   removeIfMemberAdded({ token, userId }: { token: string; userId: string });
   addUserToTeam({ token, user }: { token: string; user: UserDocument });
@@ -137,7 +137,7 @@ class InvitationClass extends mongoose.Model {
     return await this.findOne({ teamId, email }).setOptions({ lean: true });
   }
 
-  public static async getTeamInvitedUsers({ userId, teamId }) {
+  public static async getTeamInvitations({ userId, teamId }) {
     const team = await Team.findOne({ _id: teamId })
       .select('teamLeaderId')
       .setOptions({ lean: true });

@@ -74,7 +74,7 @@ async function loadTeamData(team, userId) {
 
   let initialInvitations = [];
   if (userId === team.teamLeaderId) {
-    initialInvitations = await Invitation.getTeamInvitedUsers({
+    initialInvitations = await Invitation.getTeamInvitations({
       userId,
       teamId: team._id,
     });

@@ -12,8 +12,8 @@ export const updateTeamApiMethod = (data) =>
     body: JSON.stringify(data),
   });
 
-export const getTeamInvitedUsersApiMethod = (teamId: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/teams/get-invited-users`, {
+export const getTeamInvitationsApiMethod = (teamId: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/teams/get-invitations-for-team`, {
     method: 'GET',
     qs: { teamId },
   });

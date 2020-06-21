@@ -51,9 +51,9 @@ router.post('/teams/update', async (req, res, next) => {
   }
 });
 
-router.get('/teams/get-invited-users', async (req, res, next) => {
+router.get('/teams/get-invitations-for-team', async (req, res, next) => {
   try {
-    const users = await Invitation.getTeamInvitedUsers({
+    const users = await Invitation.getTeamInvitations({
       userId: req.user.id,
       teamId: req.query.teamId,
     });

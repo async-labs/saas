@@ -7,40 +7,27 @@ import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
 import Layout from '../components/layout';
-import { acceptAndGetInvitedTeamByToken, removeInvitationIfMemberAdded } from '../lib/api/public';
+import { acceptAndGetInvitedTeamByTokenApiMethod, removeInvitationIfMemberAddedApiMethod } from '../lib/api/public';
 import { Team } from '../lib/store/team';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-class Invitation extends React.Component<{ store: Store; team: Team; token: string }> {
-  public static async getInitialProps({ query, req }) {
-    const { token } = query;
+type MyProps = { store: Store; team: Team; token: string };
+
+class Invitation extends React.Component<MyProps> {
+  public static async getInitialProps(ctx) {
+    const { token } = ctx.query;
     if (!token) {
       return {};
     }
 
     try {
-      const { team } = await acceptAndGetInvitedTeamByToken(token, req);
+      const { team } = await acceptAndGetInvitedTeamByTokenApiMethod(token, ctx.req);
 
       return { team, token };
     } catch (error) {
       console.log(error);
       return {};
-    }
-  }
-
-  public componentDidMount() {
-    const { store, team, token } = this.props;
-
-    const user = store.currentUser;
-
-    if (user && team) {
-      if (team.memberIds.includes(user._id)) {
-        removeInvitationIfMemberAdded(token);
-        Router.push(`/discussion?teamSlug=${team.slug}`, `/team/${team.slug}/discussions`);
-      } else {
-        Router.push('/');
-      }
     }
   }
 
@@ -83,6 +70,21 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
         </div>
       </Layout>
     );
+  }
+
+  public componentDidMount() {
+    const { store, team, token } = this.props;
+
+    const user = store.currentUser;
+
+    if (user && team) {
+      if (team.memberIds.includes(user._id)) {
+        removeInvitationIfMemberAddedApiMethod(token);
+        Router.push(`/discussion?teamSlug=${team.slug}`, `/team/${team.slug}/discussions`);
+      } else {
+        Router.push('/');
+      }
+    }
   }
 }
 

@@ -32,14 +32,14 @@ export const emailLoginLinkApiMethod = ({
     body: JSON.stringify({ user: email }),
   });
 
-export const acceptAndGetInvitedTeamByToken = (token: string, request) =>
+export const acceptAndGetInvitedTeamByTokenApiMethod = (token: string, request) =>
   sendRequestAndGetResponse(`${BASE_PATH}/invitations/accept-and-get-team-by-token`, {
     request,
     method: 'GET',
     qs: { token },
   });
 
-export const removeInvitationIfMemberAdded = (token: string) =>
+export const removeInvitationIfMemberAddedApiMethod = (token: string) =>
   sendRequestAndGetResponse(`${BASE_PATH}/invitations/remove-invitation-if-member-added`, {
     body: JSON.stringify({ token }),
   });

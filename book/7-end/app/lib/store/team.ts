@@ -1,9 +1,7 @@
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
-import { removeMemberApiMethod, updateTeamApiMethod } from '../api/team-leader';
-  // getTeamInvitedUsersApiMethod,
-  // inviteMemberApiMethod,
+import { inviteMemberApiMethod, removeMemberApiMethod, updateTeamApiMethod } from '../api/team-leader';
 import { Store } from './index';
-// import { Invitation } from './invitation';
+import { Invitation } from './invitation';
 import { User } from './user';
 
 class Team {
@@ -17,7 +15,7 @@ class Team {
   public avatarUrl: string;
   public memberIds: IObservableArray<string> = observable([]);
   public members: Map<string, User> = new Map();
-  // public invitedUsers: Map<string, Invitation> = new Map();
+  public invitations: Map<string, Invitation> = new Map();
 
   // public initialDiscussionSlug = '';
 
@@ -32,17 +30,13 @@ class Team {
     this.store = params.store;
 
     if (params.initialMembers) {
-      this.setInitialMembers(params.initialMembers);
+      this.setInitialMembersAndInvitations(params.initialMembers, params.initialInvitations);
     }
-    // if (params.initialMembers) {
-    //   this.setInitialMembers(params.initialMembers, params.initialInvitations);
-    // }
   }
 
-  public async setInitialMembers(users) {
-  // public setInitialMembers(users, invitations) {
+  public setInitialMembersAndInvitations(users, invitations) {
     this.members.clear();
-    // this.invitedUsers.clear();
+    this.invitations.clear();
 
     for (const user of users) {
       if (this.store.currentUser && this.store.currentUser._id === user._id) {
@@ -52,28 +46,23 @@ class Team {
       }
     }
 
-    // for (const invitation of invitations) {
-    //   this.invitedUsers.set(invitation._id, new Invitation(invitation));
-    // }
+    for (const invitation of invitations) {
+      this.invitations.set(invitation._id, new Invitation(invitation));
+    }
   }
 
-  // public async inviteMember({ email }: { email: string }) {
-  //   this.isLoadingMembers = true;
-  //   try {
-  //     const { newInvitation } = await inviteMemberApiMethod({ teamId: this._id, email });
+  public async inviteMember(email: string) {
+    try {
+      const { newInvitation } = await inviteMemberApiMethod({ teamId: this._id, email });
 
-  //     runInAction(() => {
-  //       this.invitedUsers.set(newInvitation._id, new Invitation(newInvitation));
-  //       this.isLoadingMembers = false;
-  //     });
-  //   } catch (error) {
-  //     runInAction(() => {
-  //       this.isLoadingMembers = false;
-  //     });
-
-  //     throw error;
-  //   }
-  // }
+      runInAction(() => {
+        this.invitations.set(newInvitation._id, new Invitation(newInvitation));
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
   public async updateTheme({ name, avatarUrl }: { name: string; avatarUrl: string }) {
     try {
@@ -114,11 +103,11 @@ decorate(Team, {
   avatarUrl: observable,
   memberIds: observable,
   members: observable,
-  // invitedUsers: observable,
+  invitations: observable,
 
-  setInitialMembers: action,
-  // inviteMember: action,
+  setInitialMembersAndInvitations: action,
   updateTheme: action,
+  inviteMember: action,
   removeMember: action,
 });
 
