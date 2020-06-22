@@ -1,8 +1,8 @@
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
 import { inviteMemberApiMethod, removeMemberApiMethod, updateTeamApiMethod } from '../api/team-leader';
 import { Store } from './index';
-import { Invitation } from './invitation';
 import { User } from './user';
+import { Invitation } from './invitation';
 
 class Team {
   public store: Store;
@@ -51,19 +51,6 @@ class Team {
     }
   }
 
-  public async inviteMember(email: string) {
-    try {
-      const { newInvitation } = await inviteMemberApiMethod({ teamId: this._id, email });
-
-      runInAction(() => {
-        this.invitations.set(newInvitation._id, new Invitation(newInvitation));
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
   public async updateTheme({ name, avatarUrl }: { name: string; avatarUrl: string }) {
     try {
       const { slug } = await updateTeamApiMethod({
@@ -83,17 +70,30 @@ class Team {
     }
   }
 
+  public async inviteMember(email: string) {
+    try {
+      const { newInvitation } = await inviteMemberApiMethod({ teamId: this._id, email });
+
+      runInAction(() => {
+        this.invitations.set(newInvitation._id, new Invitation(newInvitation));
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   public async removeMember(userId: string) {
     try {
-    await removeMemberApiMethod({ teamId: this._id, userId });
+      await removeMemberApiMethod({ teamId: this._id, userId });
 
-    runInAction(() => {
-      this.members.delete(userId);
-    });
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+      runInAction(() => {
+        this.members.delete(userId);
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
 

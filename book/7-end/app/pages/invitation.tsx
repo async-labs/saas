@@ -8,6 +8,7 @@ import React from 'react';
 import LoginButton from '../components/common/LoginButton';
 import Layout from '../components/layout';
 import { acceptAndGetInvitedTeamByTokenApiMethod, removeInvitationIfMemberAddedApiMethod } from '../lib/api/public';
+import notify from '../lib/notify';
 import { Team } from '../lib/store/team';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
@@ -54,7 +55,7 @@ class Invitation extends React.Component<MyProps> {
           <br />
           <Avatar
             src={`${team.avatarUrl ||
-              'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
+              'https://storage.googleapis.com/async-await/default-user.png?v=1'}`}
             alt="Team logo"
             style={{
               verticalAlign: 'middle',
@@ -80,9 +81,9 @@ class Invitation extends React.Component<MyProps> {
     if (user && team) {
       if (team.memberIds.includes(user._id)) {
         removeInvitationIfMemberAddedApiMethod(token);
-        Router.push(`/discussion?teamSlug=${team.slug}`, `/team/${team.slug}/discussions`);
-      } else {
-        Router.push('/');
+        notify(`You are now a member of ${team.name} team.`);
+        Router.push('/your-settings');
+        // Router.push(`/discussion?teamSlug=${team.slug}`, `/team/${team.slug}/discussions`);
       }
     }
   }

@@ -214,7 +214,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
               <p />
               <br />
 
-              {Array.from(currentTeam.invitedUsers.values()).length > 0 ? (
+              {Array.from(currentTeam.invitations.values()).length > 0 ? (
                 <React.Fragment>
                   <h4>
                     Invited users
@@ -230,7 +230,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                       </TableHead>
 
                       <TableBody>
-                        {Array.from(currentTeam.invitedUsers.values()).map((i) => (
+                        {Array.from(currentTeam.invitations.values()).map((i) => (
                           <TableRow key={i._id}>
                             <TableCell style={{ width: '300px' }}>{i.email}</TableCell>
                             <TableCell>Sent</TableCell>

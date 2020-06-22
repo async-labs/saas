@@ -80,9 +80,7 @@ class Store {
 
         const invitations = team.initialInvitations || (await getTeamInvitationsApiMethod(this.currentTeam._id)).invitations;
 
-        this.currentTeam
-          .setInitialMembersAndInvitations(users, invitations)
-          .catch((err) => console.error('Error while loading Users', err));
+        this.currentTeam.setInitialMembersAndInvitations(users, invitations);
 
         break;
       }
