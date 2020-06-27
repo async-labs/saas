@@ -81,9 +81,8 @@ class Invitation extends React.Component<MyProps> {
     if (user && team) {
       if (team.memberIds.includes(user._id)) {
         await removeInvitationIfMemberAddedApiMethod(token);
-        notify(`You are now a member of ${team.name} team.`);
         Router.push('/your-settings');
-        // Router.push(`/discussion?teamSlug=${team.slug}`, `/team/${team.slug}/discussions`);
+        notify(`You are now a member of ${team.name} team.`);
       }
     }
   }

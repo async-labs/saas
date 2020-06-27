@@ -5,7 +5,6 @@ import sendEmail from '../aws-ses';
 import { addToMailchimp } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
 import getEmailTemplate from './EmailTemplate';
-import Invitation from './Invitation';
 import Team, { TeamDocument } from './Team';
 
 mongoose.set('useFindAndModify', false);
@@ -207,19 +206,15 @@ class UserClass extends mongoose.Model {
       throw new Error('Welcome email template not found');
     }
 
-    const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
-
-    if (!hasInvitation) {
-      try {
-        await sendEmail({
-          from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
-          to: [email],
-          subject: emailTemplate.subject,
-          body: emailTemplate.message,
-        });
-      } catch (err) {
-        console.error('Email sending error:', err);
-      }
+    try {
+      await sendEmail({
+        from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: emailTemplate.subject,
+        body: emailTemplate.message,
+      });
+    } catch (err) {
+      console.error('Email sending error:', err);
     }
 
     try {
@@ -256,19 +251,15 @@ class UserClass extends mongoose.Model {
       throw new Error('Email template "welcome" not found in database.');
     }
 
-    const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
-
-    if (!hasInvitation) {
-      try {
-        await sendEmail({
-          from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
-          to: [email],
-          subject: emailTemplate.subject,
-          body: emailTemplate.message,
-        });
-      } catch (err) {
-        console.error('Email sending error:', err);
-      }
+    try {
+      await sendEmail({
+        from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: emailTemplate.subject,
+        body: emailTemplate.message,
+      });
+    } catch (err) {
+      console.error('Email sending error:', err);
     }
 
     try {

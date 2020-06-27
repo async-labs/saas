@@ -16,7 +16,11 @@ class MyApp extends App<{ isMobile: boolean }> {
     let firstGridItem = true;
     let teamRequired = false;
 
-    if (ctx.pathname.includes('/login') || ctx.pathname.includes('/create-team')) {
+    if (
+      ctx.pathname.includes('/login') ||
+      ctx.pathname.includes('/create-team') ||
+      ctx.pathname.includes('/invitation') 
+    ) {
       firstGridItem = false;
     }
 

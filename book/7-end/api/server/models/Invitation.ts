@@ -118,7 +118,7 @@ class InvitationClass extends mongoose.Model {
 
     const emailTemplate = await getEmailTemplate('invitation', {
       teamName: team.name,
-      invitationURL: `${process.env.URL_API}/invitation?token=${token}`,
+      invitationURL: `${process.env.URL_APP}/invitation?token=${token}`,
     });
 
     if (!emailTemplate) {
@@ -188,6 +188,10 @@ class InvitationClass extends mongoose.Model {
       .select('name slug avatarUrl memberIds')
       .setOptions({ lean: true });
 
+    if (!team) {
+      throw new Error('Team does not exist');
+    }
+
     if (team && team.memberIds.includes(userId)) {
       this.deleteOne({ token }).exec();
     }
@@ -209,6 +213,10 @@ class InvitationClass extends mongoose.Model {
     const team = await Team.findById(invitation.teamId)
       .select('memberIds slug teamLeaderId')
       .setOptions({ lean: true });
+
+    if (!team) {
+      throw new Error('Team does not exist');
+    }
 
     if (team && !team.memberIds.includes(user._id)) {
       await Team.updateOne({ _id: team._id }, { $addToSet: { memberIds: user._id } });

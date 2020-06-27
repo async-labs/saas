@@ -139,6 +139,10 @@ class TeamClass extends mongoose.Model {
   public static async removeMember({ teamId, teamLeaderId, userId }) {
     const team = await this.findById(teamId).select('memberIds teamLeaderId');
 
+    if (!team) {
+      throw new Error('Team does not exist');
+    }
+
     if (team.teamLeaderId !== teamLeaderId || teamLeaderId === userId) {
       throw new Error('Permission denied');
     }
