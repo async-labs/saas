@@ -4,6 +4,7 @@ import sendEmail from './aws-ses';
 import getEmailTemplate from './models/EmailTemplate';
 import User from './models/User';
 import PasswordlessMongoStore from './passwordless-token-mongostore';
+import Invitation from './models/Invitation';
 
 function setupPasswordless({ server }) {
   const mongoStore = new PasswordlessMongoStore();
@@ -63,7 +64,13 @@ function setupPasswordless({ server }) {
         callback(error, null);
       }
     }),
-    (_, res) => {
+    (req, res) => {
+      if (req.query && req.query.invitationToken) {
+        req.session.invitationToken = req.query.invitationToken;
+      } else {
+        req.session.invitationToken = null;
+      }
+
       res.json({ done: 1 });
     },
   );
@@ -82,6 +89,15 @@ function setupPasswordless({ server }) {
       }
     },
     (req, res) => {
+      if (req.user && req.session.invitationToken) {
+        Invitation.addUserToTeam({
+          token: req.session.invitationToken,
+          user: req.user,
+        }).catch((err) => console.error(err));
+
+        req.session.invitationToken = null;
+      }
+
       let redirectUrlAfterLogin;
 
       if (req.user && !req.user.defaultTeamSlug) {

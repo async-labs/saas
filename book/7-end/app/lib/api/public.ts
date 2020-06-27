@@ -20,15 +20,13 @@ export const getUserBySlugApiMethod = (slug) =>
 
 export const emailLoginLinkApiMethod = ({
   email,
-  next,
   invitationToken,
 }: {
   email: string;
-  next?: string;
   invitationToken?: string;
 }) =>
   sendRequestAndGetResponse('/auth/email-login-link', {
-    qs: { next, invitationToken },
+    qs: { invitationToken },
     body: JSON.stringify({ user: email }),
   });
 
