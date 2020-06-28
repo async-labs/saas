@@ -89,6 +89,7 @@ class Team {
 
       runInAction(() => {
         this.members.delete(userId);
+        this.memberIds.remove(userId);
       });
     } catch (error) {
       console.error(error);

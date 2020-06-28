@@ -163,7 +163,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                   </TableHead>
 
                   <TableBody>
-                    {Array.from(currentTeam.members.values()).map((m) => (
+                    {currentTeam.memberIds.map(userId => currentTeam.members.get(userId)).map((m) => (
                       <TableRow key={m._id}>
                         <TableCell style={{ width: '300px' }}>
                           <Hidden smDown>
