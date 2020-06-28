@@ -149,6 +149,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                 variant="outlined"
                 color="primary"
                 style={{ float: 'right', marginTop: '-20px' }}
+                disabled={this.state.disabled}
               >
                 Invite member
               </Button>
@@ -187,7 +188,7 @@ class TeamSettings extends React.Component<MyProps, MyState> {
                           {isTeamLeader && m._id !== currentUser._id ? 'Team Member' : 'Team Leader'}
                         </TableCell>
                         <TableCell>
-                        {isTeamLeader ? (
+                        {isTeamLeader && m._id !== currentUser._id ? (
                           <i
                             color="action"
                             data-id={m._id}

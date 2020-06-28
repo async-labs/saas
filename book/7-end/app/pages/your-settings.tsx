@@ -18,7 +18,7 @@ import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-type MyProps = { isMobile: boolean; store: Store };
+type MyProps = { isMobile: boolean; store: Store; redirectMessage?: string };
 
 type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
 
@@ -124,6 +124,16 @@ class YourSettings extends React.Component<MyProps, MyState> {
       </Layout>
     );
   }
+
+  public componentDidMount() {
+    const { redirectMessage } = this.props;
+
+    console.log(redirectMessage);
+
+    if (redirectMessage) {
+      notify(redirectMessage);
+    }
+  };
 
   private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

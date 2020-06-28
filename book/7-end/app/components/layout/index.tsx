@@ -118,7 +118,7 @@ function LayoutWrapper({
                 ]}
               >
                 <Avatar
-                  src={'https://storage.googleapis.com/async-await/default-user.png'}
+                  src={store.currentUser.avatarUrl}
                   alt="Add username here later in the book"
                   style={{
                     margin: '20px auto',
