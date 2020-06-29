@@ -86,6 +86,18 @@
     "upgrade-8-latest": "cd 8-begin && yarn upgrade --latest && cd .. && cd 8-end && yarn upgrade --latest && cd .."
   },
   "devDependencies": {
+    "@types/he": "^1.1.1",
+    "@types/marked": "^1.1.0",
+    "@types/socket.io-client": "^1.4.33",
     "cross-env": "5.2.0"
+  },
+  "dependencies": {
+    "downshift": "^5.4.5",
+    "he": "^1.2.0",
+    "keycode": "^2.2.0",
+    "marked": "^1.1.0",
+    "moment": "^2.27.0",
+    "react-mentions": "^4.0.0",
+    "socket.io-client": "^2.3.0"
   }
 }
