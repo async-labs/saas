@@ -9,7 +9,7 @@ import * as mongoose from 'mongoose';
 import api from './api';
 import { setupGoogle } from './google-auth';
 import { setupPasswordless } from './passwordless-auth';
-import { setup as realtime } from './realtime';
+import { setup as sockets } from './sockets';
 
 const options = {
   useNewUrlParser: true,
@@ -55,7 +55,7 @@ setupPasswordless({ server });
 api(server);
 
 const http = new httpModule.Server(server);
-realtime({ http, origin: process.env.URL_APP, sessionMiddleware });
+sockets({ http, origin: process.env.URL_APP, sessionMiddleware });
 
 server.get('*', (_, res) => {
   res.sendStatus(403);

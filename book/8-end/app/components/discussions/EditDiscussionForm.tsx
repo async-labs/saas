@@ -4,11 +4,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import { inject } from 'mobx-react';
 import NProgress from 'nprogress';
@@ -32,7 +27,6 @@ type State = {
   memberIds: string[];
   disabled: boolean;
   discussionId: string;
-  notificationType: string;
 };
 
 class EditDiscussionForm extends React.Component<Props, State> {
@@ -47,7 +41,6 @@ class EditDiscussionForm extends React.Component<Props, State> {
       name: (discussion && discussion.name) || '',
       memberIds: (discussion && discussion.memberIds) || [],
       discussionId: discussion._id,
-      notificationType: discussion.notificationType || 'default',
     };
   }
 
@@ -56,7 +49,6 @@ class EditDiscussionForm extends React.Component<Props, State> {
     memberIds: [],
     disabled: false,
     discussionId: '',
-    notificationType: 'default',
   };
 
   public render() {
@@ -82,27 +74,6 @@ class EditDiscussionForm extends React.Component<Props, State> {
             {this.renderMemberChooser()}
             <p />
             <br />
-            <FormControl>
-              <InputLabel>Notification type</InputLabel>
-              <Select
-                value={this.state.notificationType}
-                onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                  this.setState({ notificationType: event.target.value });
-                }}
-                required
-              >
-                <MenuItem value="default">Default: notification in browser tab.</MenuItem>
-                <MenuItem value="email">
-                  Default + Email: notification in browser tab and via email.
-                </MenuItem>
-              </Select>
-              <FormHelperText>
-                Choose how to notify members about new Posts inside Discussion.
-              </FormHelperText>
-            </FormControl>
-            <p />
-            <br />
-
             <DialogActions>
               <Button
                 color="primary"
@@ -147,7 +118,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
       return;
     }
 
-    const { name, memberIds, notificationType } = this.state;
+    const { name, memberIds } = this.state;
 
     if (!name) {
       notify('Please name this Discussion.');
@@ -163,16 +134,11 @@ class EditDiscussionForm extends React.Component<Props, State> {
     //   return;
     // }
 
-    if (!notificationType) {
-      notify('Please select notification type.');
-      return;
-    }
-
     NProgress.start();
     try {
-      await discussion.edit({ name, memberIds, notificationType });
+      await discussion.edit({ name, memberIds });
 
-      this.setState({ name: '', memberIds: [], disabled: false, notificationType: 'default' });
+      this.setState({ name: '', memberIds: [], disabled: false });
       notify('You successfully edited Discussion.');
     } catch (error) {
       console.log(error);

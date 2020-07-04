@@ -142,14 +142,13 @@ router.get('/teams/get-members', async (req, res, next) => {
 
 router.post('/discussions/add', async (req, res, next) => {
   try {
-    const { name, teamId, memberIds = [], notificationType, socketId } = req.body;
+    const { name, teamId, memberIds = [], socketId } = req.body;
 
     const discussion = await Discussion.add({
       userId: req.user.id,
       name,
       teamId,
       memberIds,
-      notificationType,
     });
 
     discussionAdded({ socketId, discussion });
@@ -162,14 +161,13 @@ router.post('/discussions/add', async (req, res, next) => {
 
 router.post('/discussions/edit', async (req, res, next) => {
   try {
-    const { name, id, memberIds = [], notificationType, socketId } = req.body;
+    const { name, id, memberIds = [], socketId } = req.body;
 
     const updatedDiscussion = await Discussion.edit({
       userId: req.user.id,
       name,
       id,
       memberIds,
-      notificationType,
     });
 
     discussionEdited({ socketId, discussion: updatedDiscussion });

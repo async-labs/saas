@@ -1,10 +1,5 @@
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { inject } from 'mobx-react';
@@ -38,7 +33,6 @@ type State = {
   memberIds: string[];
   disabled: boolean;
   content: string;
-  notificationType: string;
 };
 
 class CreateDiscussionForm extends React.Component<Props, State> {
@@ -47,7 +41,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     content: '',
     memberIds: [],
     disabled: false,
-    notificationType: 'default',
   };
 
   public handleClose = () => {
@@ -93,27 +86,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
               />
               <p />
               {this.renderMemberChooser()}
-              <p />
-              <br />
-
-              <FormControl>
-                <InputLabel>Notification type</InputLabel>
-                <Select
-                  value={this.state.notificationType}
-                  onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                    this.setState({ notificationType: event.target.value });
-                  }}
-                  required
-                >
-                  <MenuItem value="default">Default: notification in browser tab.</MenuItem>
-                  <MenuItem value="email">
-                    Default + Email: notification in browser tab and via email.
-                  </MenuItem>
-                </Select>
-                <FormHelperText>
-                  Choose how to notify members about new Posts inside Discussion.
-                </FormHelperText>
-              </FormControl>
               <p />
               <br />
               <div>
@@ -185,7 +157,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       return;
     }
 
-    const { name, memberIds, content, notificationType } = this.state;
+    const { name, memberIds, content } = this.state;
 
     if (!name) {
       notify('Name is required');
@@ -194,11 +166,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
     if (!content) {
       notify('Content is required');
-      return;
-    }
-
-    if (!notificationType) {
-      notify('Please select notification type.');
       return;
     }
 
@@ -213,22 +180,9 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       const discussion = await currentTeam.addDiscussion({
         name,
         memberIds,
-        notificationType,
       });
 
       const post = await discussion.addPost(content);
-
-      if (discussion.notificationType === 'email') {
-        const userIdsForLambda = discussion.memberIds.filter((m) => m !== discussion.createdUserId);
-        console.log(discussion.notificationType, userIdsForLambda);
-        await discussion.sendDataToLambdaApiMethod({
-          discussionName: discussion.name,
-          discussionLink: `${process.env.URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
-          postContent: post.content,
-          authorName: post.user.displayName,
-          userIds: userIdsForLambda,
-        });
-      }
 
       this.setState({ name: '', memberIds: [], content: '' });
       notify('You successfully added new Discussion.');

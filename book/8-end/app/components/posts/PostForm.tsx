@@ -186,16 +186,6 @@ class PostForm extends React.Component<MyProps, MyState> {
     try {
       const newPost = await discussion.addPost(content);
 
-      if (discussion.notificationType === 'email') {
-        const userIdsForLambda = discussion.memberIds.filter((m) => m !== discussion.createdUserId);
-        await discussion.sendDataToLambdaApiMethod({
-          discussionName: discussion.name,
-          discussionLink: `${process.env.URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
-          postContent: newPost.content,
-          authorName: newPost.user.displayName,
-          userIds: userIdsForLambda,
-        });
-      }
       this.setState({ content: '' });
       notify('You successfully published new Post.');
     } catch (error) {
