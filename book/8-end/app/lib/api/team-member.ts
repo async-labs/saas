@@ -91,8 +91,8 @@ export const deletePostApiMethod = (data) =>
     body: JSON.stringify(data),
   });
 
-export const sendDataToLambdaApiMethod = (data) =>
-  sendRequestAndGetResponse(`${process.env.LAMBDA_API_ENDPOINT}/`, {
-    externalServer: true,
-    body: JSON.stringify(data),
-  });
+// export const sendDataToLambdaApiMethod = (data) =>
+//   sendRequestAndGetResponse(`${process.env.LAMBDA_API_ENDPOINT}/`, {
+//     externalServer: true,
+//     body: JSON.stringify(data),
+//   });

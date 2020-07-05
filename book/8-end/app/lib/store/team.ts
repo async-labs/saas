@@ -34,14 +34,14 @@ class Team {
     this.name = params.name;
     this.avatarUrl = params.avatarUrl;
     this.memberIds.replace(params.memberIds || []);
+    this.currentDiscussionSlug = params.currentDiscussionSlug || null;
+
 
     this.store = params.store;
 
     if (params.initialMembers) {
       this.setInitialMembersAndInvitations(params.initialMembers, params.initialInvitations);
     }
-
-    this.currentDiscussionSlug = params.currentDiscussionSlug || null;
 
     if (params.initialDiscussions) {
       this.setInitialDiscussions(params.initialDiscussions);
@@ -253,30 +253,20 @@ class Team {
     this.memberIds.replace(data.memberIds || []);
   }
 
-  public leaveSocketRoom() {
-    if (this.store.socket) {
-      console.log('leaving socket team room', this.name);
-      this.store.socket.emit('leaveTeam', this._id);
+  get orderedDiscussions() {
+    return this.discussions.slice().sort();
+  }
 
-      if (this.discussion) {
-        this.discussion.leaveSocketRoom();
-      }
+  public leaveSocketRoom() {
+    if (this.discussion) {
+      this.discussion.leaveSocketRoom();
     }
   }
 
   public joinSocketRoom() {
-    if (this.store.socket) {
-      console.log('joining socket team room', this.name);
-      this.store.socket.emit('joinTeam', this._id);
-
-      if (this.discussion) {
-        this.discussion.joinSocketRoom();
-      }
+    if (this.discussion) {
+      this.discussion.joinSocketRoom();
     }
-  }
-
-  get orderedDiscussions() {
-    return this.discussions.slice().sort();
   }
 }
 
@@ -287,11 +277,25 @@ decorate(Team, {
   memberIds: observable,
   members: observable,
   invitations: observable,
+  currentDiscussion: observable,
+  currentDiscussionSlug: observable,
+  isLoadingDiscussions: observable,
+  discussion: observable,
+  discussions: observable,
 
   setInitialMembersAndInvitations: action,
   updateTheme: action,
   inviteMember: action,
   removeMember: action,
+  setInitialDiscussions: action,
+  setCurrentDiscussion: action,
+  setInitialDiscussionSlug: action,
+  loadDiscussions: action,
+  addDiscussionToLocalCache: action,
+  editDiscussionFromLocalCache: action,
+  removeDiscussionFromLocalCache: action,
+  addDiscussion: action,
+  deleteDiscussion: action,
 
   orderedDiscussions: computed,
 });

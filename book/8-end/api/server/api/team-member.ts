@@ -15,7 +15,7 @@ import {
   postAdded,
   postDeleted,
   postEdited,
-} from '../realtime';
+} from '../sockets';
 
 const router = express.Router();
 
@@ -77,7 +77,35 @@ router.post('/user/toggle-theme', async (req, res, next) => {
   }
 });
 
-async function loadTeamData(team, userId) {
+async function loadDiscussionsData(team, userId, body) {
+  const { discussionSlug } = body;
+
+  if (!discussionSlug) {
+    return [];
+  }
+
+  const { discussions } = await Discussion.getList({
+    userId,
+    teamId: team._id,
+  });
+
+  for (const discussion of discussions) {
+    if (discussion.slug === discussionSlug) {
+      Object.assign(discussion, {
+        initialPosts: await Post.getList({
+          userId,
+          discussionId: discussion._id,
+        }),
+      });
+
+      break;
+    }
+  }
+
+  return discussions;
+}
+
+async function loadTeamData(team, userId, body) {
   const initialMembers = await User.getMembersForTeam({
     userId,
     teamId: team._id,
@@ -91,7 +119,9 @@ async function loadTeamData(team, userId) {
     });
   }
 
-  const data: any = { initialMembers, initialInvitations };
+  const initialDiscussions = await loadDiscussionsData(team, userId, body);
+
+  const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
   return data;
 }
@@ -107,7 +137,7 @@ router.post('/get-initial-data', async (req, res, next) => {
 
     for (const team of teams) {
       if (team.slug === selectedTeamSlug) {
-        Object.assign(team, await loadTeamData(team, req.user.id));
+        Object.assign(team, await loadTeamData(team, req.user.id, req.body));
         break;
       }
     }

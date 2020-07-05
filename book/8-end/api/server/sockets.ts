@@ -50,16 +50,6 @@ function setup({ http, origin, sessionMiddleware }) {
 
         socket.join(`user-${userId}`);
 
-        socket.on('joinTeam', (teamId) => {
-          console.log(`    joinTeam ${teamId}`);
-          socket.join(`team-${teamId}`);
-        });
-
-        socket.on('leaveTeam', (teamId) => {
-          console.log(`** leaveTeam ${teamId}`);
-          socket.leave(`team-${teamId}`);
-        });
-
         socket.on('joinDiscussion', (discussionId) => {
           console.log(`    joinDiscussion ${discussionId}`);
           socket.join(`discussion-${discussionId}`);

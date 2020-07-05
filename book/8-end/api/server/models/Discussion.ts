@@ -3,7 +3,7 @@ import * as mongoose from 'mongoose';
 
 import { generateNumberSlug } from '../utils/slugify';
 import Post, { deletePostFiles } from './Post';
-import Team from './Team';
+import Team, { TeamDocument } from './Team';
 
 mongoose.set('useFindAndModify', false);
 
@@ -32,7 +32,7 @@ const mongoSchema = new mongoose.Schema({
   },
 });
 
-interface DiscussionDocument extends mongoose.Document {
+export interface DiscussionDocument extends mongoose.Document {
   createdUserId: string;
   teamId: string;
   name: string;
@@ -75,34 +75,21 @@ interface DiscussionModel extends mongoose.Model<DiscussionDocument> {
   }): Promise<DiscussionDocument>;
 
   delete({ userId, id }: { userId: string; id: string }): Promise<{ teamId: string }>;
+
+  checkPermissionAndGetTeam({
+    userId,
+    teamId,
+    memberIds,
+  }: {
+    userId: string;
+    teamId: string;
+    memberIds: string[];
+  }): Promise<TeamDocument[]>;
 }
 
 class DiscussionClass extends mongoose.Model {
-  public static async checkPermission({ userId, teamId, memberIds = [] }) {
-    if (!userId || !teamId) {
-      throw new Error('Bad data');
-    }
-
-    const team = await Team.findById(teamId)
-      .select('memberIds teamLeaderId')
-      .setOptions({ lean: true });
-
-    if (!team || team.memberIds.indexOf(userId) === -1) {
-      throw new Error('Team not found');
-    }
-
-    // all members must be member of Team.
-    for (const id of memberIds) {
-      if (team.memberIds.indexOf(id) === -1) {
-        throw new Error('Permission denied');
-      }
-    }
-
-    return { team };
-  }
-
   public static async getList({ userId, teamId }) {
-    await this.checkPermission({ userId, teamId });
+    await this.checkPermissionAndGetTeam({ userId, teamId });
 
     // eslint-disable-next-line
     const filter: any = { teamId, memberIds: userId };
@@ -118,7 +105,7 @@ class DiscussionClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    await this.checkPermission({ userId, teamId, memberIds });
+    await this.checkPermissionAndGetTeam({ userId, teamId, memberIds });
 
     const slug = await generateNumberSlug(this, { teamId });
 
@@ -141,7 +128,7 @@ class DiscussionClass extends mongoose.Model {
       .select('teamId createdUserId')
       .setOptions({ lean: true });
 
-    const { team } = await this.checkPermission({
+    const { team } = await this.checkPermissionAndGetTeam({
       userId,
       teamId: discussion.teamId,
       memberIds,
@@ -172,7 +159,7 @@ class DiscussionClass extends mongoose.Model {
       .select('teamId')
       .setOptions({ lean: true });
 
-    await this.checkPermission({ userId, teamId: discussion.teamId });
+    await this.checkPermissionAndGetTeam({ userId, teamId: discussion.teamId });
 
     deletePostFiles(
       await Post.find({ discussionId: id })
@@ -187,8 +174,26 @@ class DiscussionClass extends mongoose.Model {
     return { teamId: discussion.teamId };
   }
 
-  public static findBySlug(teamId: string, slug: string) {
-    return this.findOne({ teamId, slug }).setOptions({ lean: true });
+  public static async checkPermissionAndGetTeam({ userId, teamId, memberIds = [] }) {
+    if (!userId || !teamId) {
+      throw new Error('Bad data');
+    }
+
+    const team = await Team.findById(teamId)
+      .select('memberIds teamLeaderId')
+      .setOptions({ lean: true });
+
+    if (!team || team.memberIds.indexOf(userId) === -1) {
+      throw new Error('Team not found');
+    }
+
+    for (const id of memberIds) {
+      if (team.memberIds.indexOf(id) === -1) {
+        throw new Error('Permission denied');
+      }
+    }
+
+    return { team };
   }
 }
 
@@ -197,4 +202,3 @@ mongoSchema.loadClass(DiscussionClass);
 const Discussion = mongoose.model<DiscussionDocument, DiscussionModel>('Discussion', mongoSchema);
 
 export default Discussion;
-export { DiscussionDocument };
