@@ -4,47 +4,10 @@ import * as he from 'he';
 import * as hljs from 'highlight.js';
 import * as marked from 'marked';
 
-import { chunk } from 'lodash';
-import * as qs from 'querystring';
-import * as url from 'url';
-
-import { deleteFiles } from '../aws-s3';
-import logger from '../logs';
 import Discussion from './Discussion';
 import Team from './Team';
 
 mongoose.set('useFindAndModify', false);
-
-function deletePostFiles(posts: PostDocument[]) {
-  const imgRegEx = /\<img.+data-src=[\"|\'](.+?)[\"|\']/g;
-  const files: { [key: string]: string[] } = {};
-
-  posts.forEach((post) => {
-    let res = imgRegEx.exec(post.content);
-
-    while (res) {
-      const { bucket, path } = qs.parse(url.parse(res[1]).query);
-
-      if (typeof bucket !== 'string' || typeof path !== 'string') {
-        continue;
-      }
-
-      if (!files[bucket]) {
-        files[bucket] = [];
-      }
-
-      files[bucket].push(path);
-
-      res = imgRegEx.exec(post.content);
-    }
-  });
-
-  Object.keys(files).forEach((bucket) => {
-    chunk(files[bucket], 1000).forEach((fileList) =>
-      deleteFiles(bucket, fileList).catch((err) => logger.error(err)),
-    );
-  });
-}
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
@@ -226,8 +189,6 @@ class PostClass extends mongoose.Model {
 
     await this.checkPermission({ userId, discussionId: post.discussionId, post });
 
-    deletePostFiles([post]);
-
     await this.deleteOne({ _id: id });
   }
 
@@ -269,4 +230,4 @@ mongoSchema.loadClass(PostClass);
 const Post = mongoose.model<PostDocument, PostModel>('Post', mongoSchema);
 
 export default Post;
-export { PostDocument, deletePostFiles };
+export { PostDocument };

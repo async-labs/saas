@@ -2,8 +2,8 @@ import { uniq } from 'lodash';
 import * as mongoose from 'mongoose';
 
 import { generateNumberSlug } from '../utils/slugify';
-import Post, { deletePostFiles } from './Post';
 import Team, { TeamDocument } from './Team';
+import Post from './Post';
 
 mongoose.set('useFindAndModify', false);
 
@@ -91,10 +91,8 @@ class DiscussionClass extends mongoose.Model {
   public static async getList({ userId, teamId }) {
     await this.checkPermissionAndGetTeam({ userId, teamId });
 
-    // eslint-disable-next-line
     const filter: any = { teamId, memberIds: userId };
 
-    // eslint-disable-next-line
     const discussions: any[] = await this.find(filter).setOptions({ lean: true });
 
     return { discussions };
@@ -128,7 +126,7 @@ class DiscussionClass extends mongoose.Model {
       .select('teamId createdUserId')
       .setOptions({ lean: true });
 
-    const { team } = await this.checkPermissionAndGetTeam({
+    const team = await this.checkPermissionAndGetTeam({
       userId,
       teamId: discussion.teamId,
       memberIds,
@@ -161,12 +159,6 @@ class DiscussionClass extends mongoose.Model {
 
     await this.checkPermissionAndGetTeam({ userId, teamId: discussion.teamId });
 
-    deletePostFiles(
-      await Post.find({ discussionId: id })
-        .select('content')
-        .setOptions({ lean: true }),
-    );
-
     await Post.deleteMany({ discussionId: id });
 
     await this.deleteOne({ _id: id });
@@ -174,7 +166,7 @@ class DiscussionClass extends mongoose.Model {
     return { teamId: discussion.teamId };
   }
 
-  public static async checkPermissionAndGetTeam({ userId, teamId, memberIds = [] }) {
+  private static async checkPermissionAndGetTeam({ userId, teamId, memberIds = [] }) {
     if (!userId || !teamId) {
       throw new Error('Bad data');
     }
@@ -193,7 +185,7 @@ class DiscussionClass extends mongoose.Model {
       }
     }
 
-    return { team };
+    return team;
   }
 }
 
