@@ -32,9 +32,7 @@ class MyApp extends App<{ isMobile: boolean }> {
       teamRequired = true;
     }
 
-    const { teamSlug, redirectMessage } = ctx.query;
-
-    // console.log(`ctx.query.teamSlug:${teamSlug}`);
+    const { teamSlug, redirectMessage, discussionSlug } = ctx.query;
 
     const pageProps = { 
       isMobile: isMobile({ req: ctx.req }), 
@@ -42,6 +40,7 @@ class MyApp extends App<{ isMobile: boolean }> {
       teamRequired, 
       teamSlug,
       redirectMessage,
+      discussionSlug,
     };
 
     if (Component.getInitialProps) {

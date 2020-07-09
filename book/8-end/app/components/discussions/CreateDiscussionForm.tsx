@@ -11,7 +11,7 @@ import React from 'react';
 import notify from '../../lib/notify';
 import { Store } from '../../lib/store';
 import PostEditor from '../posts/PostEditor';
-import DiscussionMemberChooser from './DiscussionMemberChooser';
+import MemberChooser from '../common/MemberChooser';
 
 const styles = {
   paper: {
@@ -210,7 +210,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     );
 
     return (
-      <DiscussionMemberChooser
+      <MemberChooser
         helperText="These members will see all posts and be notified about unread posts in this Discussion."
         onChange={this.handleMemberChange}
         members={members}

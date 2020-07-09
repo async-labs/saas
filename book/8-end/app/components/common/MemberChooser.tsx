@@ -11,7 +11,7 @@ type Props = {
   helperText?: string;
 };
 
-class DiscussionMemberChooser extends React.Component<Props> {
+class MemberChooser extends React.Component<Props> {
   public render() {
     const suggestions = this.props.members.map((user) => ({
       label: user.displayName || user.email,
@@ -38,4 +38,4 @@ class DiscussionMemberChooser extends React.Component<Props> {
   };
 }
 
-export default DiscussionMemberChooser;
+export default MemberChooser;

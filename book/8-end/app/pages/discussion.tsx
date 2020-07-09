@@ -6,15 +6,16 @@ import * as React from 'react';
 
 import { observer } from 'mobx-react';
 
-import Loading from '../components/common/Loading';
 import Layout from '../components/layout';
-import PostDetail from '../components/posts/PostDetail';
-import PostForm from '../components/posts/PostForm';
-import notify from '../lib/notifier';
-import { Discussion, Store } from '../lib/store';
+// import PostDetail from '../components/posts/PostDetail';
+// import PostForm from '../components/posts/PostForm';
+// import notify from '../lib/notify';
+import { Store } from '../lib/store';
+import { Discussion } from '../lib/store/discussion';
 import withAuth from '../lib/withAuth';
+// import { Post } from 'lib/store/post';
 
-type Props = {
+type MyProps = {
   store: Store;
   teamSlug: string;
   discussionSlug: string;
@@ -22,122 +23,28 @@ type Props = {
   isMobile: boolean;
 };
 
-class DiscussionComp extends React.Component<Props> {
+type MyState = {
+  // showMarkdownClicked: boolean;
+  // selectedPost: Post;
+};
+
+class DiscussionPageComp extends React.Component<MyProps, MyState> {
   public state = {
-    disabled: false,
-    showMarkdownClicked: false,
-    selectedPost: null,
-    isDeletingNotification: false,
-  };
-
-  public componentDidMount() {
-    const { store, isServer, discussionSlug } = this.props;
-
-    if (store.currentTeam && (!isServer || !discussionSlug)) {
-      store.currentTeam.loadDiscussions().catch((err) => notify(err));
-    }
-
-    this.props.store.socket.on('discussionEvent', this.handleDiscussionEvent);
-    this.props.store.socket.on('postEvent', this.handlePostEvent);
-    this.props.store.socket.on('reconnect', this.handleSocketReconnect);
-
-    this.changeDiscussion();
-
-    const discussion = this.getDiscussion(this.props.discussionSlug);
-    if (discussion) {
-      discussion.joinSocketRoom();
-    }
-  }
-
-  public componentDidUpdate(prevProps: Props) {
-    const discussion = this.getDiscussion(this.props.discussionSlug);
-
-    if (prevProps.discussionSlug !== this.props.discussionSlug) {
-      if (prevProps.discussionSlug) {
-        const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
-        if (prevDiscussion) {
-          prevDiscussion.leaveSocketRoom();
-        }
-      }
-
-      this.changeDiscussion();
-
-      if (discussion) {
-        discussion.joinSocketRoom();
-      }
-    }
-  }
-
-  public componentWillUnmount() {
-    const discussion = this.getDiscussion(this.props.discussionSlug);
-    if (discussion) {
-      discussion.leaveSocketRoom();
-    }
-
-    this.props.store.socket.off('discussionEvent', this.handleDiscussionEvent);
-    this.props.store.socket.off('postEvent', this.handlePostEvent);
-    this.props.store.socket.off('reconnect', this.handleSocketReconnect);
-  }
-
-  public getDiscussion(slug: string): Discussion {
-    const { store, teamSlug } = this.props;
-    const { currentTeam } = store;
-
-    if (!currentTeam) {
-      return;
-    }
-
-    if (!slug && currentTeam.discussions.length > 0) {
-      Router.replace(
-        `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
-        `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
-      );
-      return;
-    }
-
-    if (slug && store.currentTeam) {
-      return store.currentTeam.getDiscussionBySlug(slug);
-    }
-
-    return null;
-  }
-
-  public changeDiscussion() {
-    const { teamSlug, discussionSlug, store, isServer } = this.props;
-    const { currentTeam } = store;
-
-    if (!currentTeam || currentTeam.slug !== teamSlug) {
-      return;
-    }
-
-    if (!store.isServer && !discussionSlug && currentTeam.discussions.length > 0) {
-      Router.replace(
-        `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
-        `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
-      );
-
-      return;
-    }
-
-    const discussion = this.getDiscussion(discussionSlug);
-
-    if (!isServer && discussion) {
-      discussion.loadPosts().catch((err) => notify(err));
-    }
-  }
-
-  public showFormToAddNewPost = () => {
-    this.setState({ drawerState: true, selectedPost: null });
+    // showMarkdownClicked: false,
+    // selectedPost: null,
   };
 
   public render() {
-    const { store, discussionSlug, isMobile } = this.props;
+    const { store, isMobile, discussionSlug } = this.props;
     const { currentTeam } = store;
-    const { selectedPost } = this.state;
+    // const { selectedPost } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
         <Layout {...this.props}>
+          <Head>
+            <title>No Team is found.</title>
+          </Head>
           <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>No Team is found.</div>
         </Layout>
       );
@@ -149,8 +56,11 @@ class DiscussionComp extends React.Component<Props> {
       if (currentTeam.isLoadingDiscussions) {
         return (
           <Layout {...this.props}>
+            <Head>
+              <title>Loading...</title>
+            </Head>
             <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
-              <Loading text="loading Discussions ..." />
+              <p>Loading Discussions...</p>
             </div>
           </Layout>
         );
@@ -158,10 +68,10 @@ class DiscussionComp extends React.Component<Props> {
         return (
           <Layout {...this.props}>
             <Head>
-              <title>No discussion is found.</title>
+              <title>No Discussion is found.</title>
             </Head>
             <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
-              <p>No discussion is found.</p>
+              <p>No Discussion is found.</p>
             </div>
           </Layout>
         );
@@ -190,7 +100,7 @@ class DiscussionComp extends React.Component<Props> {
           </h4>{' '}
           Visible to :{' '}
           {discussion
-            ? discussion.members.map((m) => (
+            ? discussion.members().map((m) => (
                 <Tooltip
                   title={m.displayName}
                   placement="right"
@@ -215,20 +125,21 @@ class DiscussionComp extends React.Component<Props> {
               ))
             : null}
           <p />
-          {this.renderPosts()}
+          {/* {this.renderPosts()}
           {discussion && !discussion.isLoadingPosts ? (
             <React.Fragment>
               {selectedPost ? null : (
                 <PostForm
                   post={null}
                   discussion={discussion}
-                  members={discussion.members}
+                  members={discussion.members()}
                   isMobile={this.props.isMobile}
                 />
               )}
             </React.Fragment>
-          ) : null}
-          <p />
+          ) : null} */}
+
+          <p>List of Posts</p>
           <p />
           <br />
         </div>
@@ -236,92 +147,188 @@ class DiscussionComp extends React.Component<Props> {
     );
   }
 
-  private renderPosts() {
-    const { isServer } = this.props;
-    const { selectedPost, showMarkdownClicked } = this.state;
-    const discussion = this.getDiscussion(this.props.discussionSlug);
+  public getDiscussion(slug: string): Discussion {
+    const { store, teamSlug } = this.props;
+    const { currentTeam } = store;
 
-    if (!discussion.isLoadingPosts && discussion.posts.length === 0) {
-      return <p>Empty Discussion.</p>;
+    if (!currentTeam) {
+      return;
     }
 
-    let loading = 'loading Posts ...';
-    if (discussion.posts.length > 0) {
-      loading = 'checking for newer Posts ...';
+    if (!slug && currentTeam.discussions.length > 0) {
+      Router.replace(
+        `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions()[0].slug}`,
+        `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions()[0].slug}`,
+      );
+      return;
     }
 
-    return (
-      <React.Fragment>
-        {discussion
-          ? discussion.posts.map((p) =>
-              selectedPost && selectedPost._id === p._id ? (
-                <PostForm
-                  key={p._id}
-                  post={p}
-                  readOnly={showMarkdownClicked}
-                  discussion={discussion}
-                  members={discussion.members}
-                  onFinished={() => {
-                    setTimeout(() => {
-                      this.setState({
-                        selectedPost: null,
-                        showMarkdownClicked: false,
-                      });
-                    }, 0);
-                  }}
-                />
-              ) : (
-                <PostDetail
-                  key={p._id}
-                  post={p}
-                  onEditClick={this.onEditClickCallback}
-                  onShowMarkdownClick={this.onSnowMarkdownClickCallback}
-                  isMobile={this.props.isMobile}
-                />
-              ),
-            )
-          : null}
+    if (slug && store.currentTeam) {
+      return store.currentTeam.getDiscussionBySlug(slug);
+    }
 
-        {discussion && discussion.isLoadingPosts && !isServer ? <Loading text={loading} /> : null}
-      </React.Fragment>
-    );
+    return null;
   }
 
-  private onEditClickCallback = (post) => {
-    this.setState({ selectedPost: post, showMarkdownClicked: false });
-  };
+    // public componentDidMount() {
+  //   const { store, isServer, discussionSlug } = this.props;
 
-  private onSnowMarkdownClickCallback = (post) => {
-    this.setState({ selectedPost: post, showMarkdownClicked: true });
-  };
+  //   if (store.currentTeam && (!isServer || !discussionSlug)) {
+  //     store.currentTeam.loadDiscussions().catch((err) => notify(err));
+  //   }
 
-  private handleDiscussionEvent = (data) => {
-    console.log('discussion realtime event', data);
+  //   // this.props.store.socket.on('discussionEvent', this.handleDiscussionEvent);
+  //   // this.props.store.socket.on('postEvent', this.handlePostEvent);
+  //   // this.props.store.socket.on('reconnect', this.handleSocketReconnect);
 
-    const discussion = this.getDiscussion(this.props.discussionSlug);
-    if (discussion) {
-      discussion.handleDiscussionRealtimeEvent(data);
-    }
-  };
+  //   this.changeDiscussion();
 
-  private handlePostEvent = (data) => {
-    console.log('post realtime event', data);
+  //   // const discussion = this.getDiscussion(this.props.discussionSlug);
+  //   // if (discussion) {
+  //   //   discussion.joinSocketRoom();
+  //   // }
+  // }
 
-    const discussion = this.getDiscussion(this.props.discussionSlug);
-    if (discussion) {
-      discussion.handlePostRealtimeEvent(data);
-    }
-  };
+  // public componentDidUpdate(prevProps: MyProps) {
+  //   // const discussion = this.getDiscussion(this.props.discussionSlug);
 
-  private handleSocketReconnect = () => {
-    console.log('pages/discussion.tsx: socket re-connected');
+  //   if (prevProps.discussionSlug !== this.props.discussionSlug) {
+  //     // if (prevProps.discussionSlug) {
+  //     //   const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
+  //     //   if (prevDiscussion) {
+  //     //     prevDiscussion.leaveSocketRoom();
+  //     //   }
+  //     // }
 
-    const discussion = this.getDiscussion(this.props.discussionSlug);
-    if (discussion) {
-      discussion.loadPosts().catch((err) => notify(err));
-      discussion.joinSocketRoom();
-    }
-  };
+  //     this.changeDiscussion();
+
+  //     // if (discussion) {
+  //     //   discussion.joinSocketRoom();
+  //     // }
+  //   }
+  // }
+
+  // public changeDiscussion() {
+  //   const { teamSlug, discussionSlug, store, isServer } = this.props;
+  //   const { currentTeam } = store;
+
+  //   if (!currentTeam || currentTeam.slug !== teamSlug) {
+  //     return;
+  //   }
+
+  //   if (!isServer && !discussionSlug && currentTeam.discussions.length > 0) {
+  //     Router.replace(
+  //       `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions()[0].slug}`,
+  //       `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions()[0].slug}`,
+  //     );
+
+  //     return;
+  //   }
+
+  //   // const discussion = this.getDiscussion(discussionSlug);
+
+  //   // if (!isServer && discussion) {
+  //   //   discussion.loadPosts().catch((err) => notify(err));
+  //   // }
+  // }
+
+  // public componentWillUnmount() {
+  //   const discussion = this.getDiscussion(this.props.discussionSlug);
+  //   if (discussion) {
+  //     discussion.leaveSocketRoom();
+  //   }
+
+  //   this.props.store.socket.off('discussionEvent', this.handleDiscussionEvent);
+  //   this.props.store.socket.off('postEvent', this.handlePostEvent);
+  //   this.props.store.socket.off('reconnect', this.handleSocketReconnect);
+  // }
+
+  // private renderPosts() {
+  //   const { isServer } = this.props;
+  //   const { selectedPost, showMarkdownClicked } = this.state;
+  //   const discussion = this.getDiscussion(this.props.discussionSlug);
+
+  //   if (!discussion.isLoadingPosts && discussion.posts.length === 0) {
+  //     return <p>Empty Discussion.</p>;
+  //   }
+
+  //   let loading = 'loading Posts ...';
+  //   if (discussion.posts.length > 0) {
+  //     loading = 'checking for newer Posts ...';
+  //   }
+
+  //   return (
+  //     <React.Fragment>
+  //       {discussion
+  //         ? discussion.posts.map((p) =>
+  //             selectedPost && selectedPost._id === p._id ? (
+  //               <PostForm
+  //                 key={p._id}
+  //                 post={p}
+  //                 readOnly={showMarkdownClicked}
+  //                 discussion={discussion}
+  //                 members={discussion.members()}
+  //                 onFinished={() => {
+  //                   setTimeout(() => {
+  //                     this.setState({
+  //                       selectedPost: null,
+  //                       showMarkdownClicked: false,
+  //                     });
+  //                   }, 0);
+  //                 }}
+  //               />
+  //             ) : (
+  //               <PostDetail
+  //                 key={p._id}
+  //                 post={p}
+  //                 onEditClick={this.onEditClickCallback}
+  //                 onShowMarkdownClick={this.onSnowMarkdownClickCallback}
+  //                 isMobile={this.props.isMobile}
+  //               />
+  //             ),
+  //           )
+  //         : null}
+
+  //       {discussion && discussion.isLoadingPosts && !isServer ? <Loading text={loading} /> : null}
+  //     </React.Fragment>
+  //   );
+  // }
+
+  // private onEditClickCallback = (post) => {
+  //   this.setState({ selectedPost: post, showMarkdownClicked: false });
+  // };
+
+  // private onSnowMarkdownClickCallback = (post) => {
+  //   this.setState({ selectedPost: post, showMarkdownClicked: true });
+  // };
+
+  // private handleDiscussionEvent = (data) => {
+  //   console.log('discussion realtime event', data);
+
+  //   const discussion = this.getDiscussion(this.props.discussionSlug);
+  //   if (discussion) {
+  //     discussion.handleDiscussionRealtimeEvent(data);
+  //   }
+  // };
+
+  // private handlePostEvent = (data) => {
+  //   console.log('post realtime event', data);
+
+  //   const discussion = this.getDiscussion(this.props.discussionSlug);
+  //   if (discussion) {
+  //     discussion.handlePostRealtimeEvent(data);
+  //   }
+  // };
+
+  // private handleSocketReconnect = () => {
+  //   console.log('pages/discussion.tsx: socket re-connected');
+
+  //   const discussion = this.getDiscussion(this.props.discussionSlug);
+  //   if (discussion) {
+  //     discussion.loadPosts().catch((err) => notify(err));
+  //     discussion.joinSocketRoom();
+  //   }
+  // };
 }
 
-export default withAuth(observer(DiscussionComp));
+export default withAuth(observer(DiscussionPageComp));

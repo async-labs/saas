@@ -12,7 +12,7 @@ import React from 'react';
 import notify from '../../lib/notify';
 import { Store } from '../../lib/store';
 import { Discussion } from '../../lib/store/discussion';
-import DiscussionMemberChooser from './DiscussionMemberChooser';
+import MemberChooser from '../common/MemberChooser';
 
 type Props = {
   store?: Store;
@@ -136,7 +136,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
 
     NProgress.start();
     try {
-      await discussion.edit({ name, memberIds });
+      await discussion.editDiscussion({ name, memberIds });
 
       this.setState({ name: '', memberIds: [], disabled: false });
       notify('You successfully edited Discussion.');
@@ -160,7 +160,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
     );
 
     return (
-      <DiscussionMemberChooser
+      <MemberChooser
         helperText="These members will see all posts and be notified about unread posts in this discussion."
         onChange={this.handleMembersChange}
         members={members}

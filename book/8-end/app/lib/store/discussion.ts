@@ -1,4 +1,4 @@
-import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
+import { action, decorate, IObservableArray, observable, runInAction, computed } from 'mobx';
 // import NProgress from 'nprogress';
 
 import {
@@ -34,23 +34,35 @@ class Discussion {
     this.slug = params.slug;
     this.memberIds.replace(params.memberIds || []);
 
-    if (params.initialDiscussions) {
-      this.setInitialDiscussions(params.initialDiscussions);
-    }
-
     // if (params.initialPosts) {
     //   this.setInitialPosts(params.initialPosts);
     // }
   }
 
-  public setInitialDiscussions(discussions) {
-    const discussionObjs = discussions.map(
-      (d) => new Discussion({ team: this.team, store: this.store, ...d }),
-    );
+  public async editDiscussion(data) {
+    try {
+      await editDiscussionApiMethod({
+        id: this._id,
+        ...data,
+        // socketId: (this.store.socket && this.store.socket.id) || null,
+      });
 
-    this.team.discussions.replace(
-      discussionObjs.filter((d) => !d.isDraft || d.createdUserId === this.store.currentUser._id),
-    );
+      runInAction(() => {
+        this.changeLocalCache(data);
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  public changeLocalCache(data) {
+    this.name = data.name;
+    this.memberIds.replace(data.memberIds || []);
+  }
+
+  public members() {
+    return this.memberIds.map((id) => this.team.members.get(id)).filter((u) => !!u);
   }
 
   // public setInitialPosts(posts) {
@@ -79,53 +91,6 @@ class Discussion {
   //       NProgress.done();
   //     });
   //   }
-  // }
-
-  public changeLocalCache(data) {
-    this.name = data.name;
-    this.memberIds.replace(data.memberIds || []);
-  }
-
-  public async edit(data) {
-    try {
-      await editDiscussionApiMethod({
-        id: this._id,
-        socketId: (this.store.socket && this.store.socket.id) || null,
-        ...data,
-      });
-
-      runInAction(() => {
-        this.changeLocalCache(data);
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  // public addPostToLocalCache(data) {
-  //   const oldPost = this.posts.find((t) => t._id === data._id);
-  //   if (oldPost) {
-  //     this.posts.remove(oldPost);
-  //   }
-
-  //   const postObj = new Post({ discussion: this, store: this.store, ...data });
-
-  //   this.posts.push(postObj);
-
-  //   return postObj;
-  // }
-
-  // public editPostFromLocalCache(data) {
-  //   const post = this.posts.find((t) => t._id === data._id);
-  //   if (post) {
-  //     post.changeLocalCache(data);
-  //   }
-  // }
-
-  // public removePostFromLocalCache(postId) {
-  //   const post = this.posts.find((t) => t._id === postId);
-  //   this.posts.remove(post);
   // }
 
   // public async addPost(content: string): Promise<Post> {
@@ -158,46 +123,46 @@ class Discussion {
   //   });
   // }
 
-  public addDiscussionToLocalCache(data): Discussion {
-    const obj = new Discussion({ team: this.team, store: this.store, ...data });
+  // public handleDiscussionRealtimeEvent = (data) => {
+  //   console.log('discussion realtime event', data);
+  //   const { action: actionName } = data;
 
-    if (obj.memberIds.includes(this.store.currentUser._id)) {
-      this.team.discussions.push(obj);
-    }
+  //   if (actionName === 'added') {
+  //     this.addDiscussionToLocalCache(data.discussion);
+  //   } else if (actionName === 'edited') {
+  //     this.editDiscussionFromLocalCache(data.discussion);
+  //   } else if (actionName === 'deleted') {
+  //     this.removeDiscussionFromLocalCache(data.id);
+  //   }
+  // };
 
-    return obj;
-  }
+  //   public addDiscussionToLocalCache(data): Discussion {
+  //   const obj = new Discussion({ team: this.team, store: this.store, ...data });
 
-  public editDiscussionFromLocalCache(data) {
-    const discussion = this.team.discussions.find((item) => item._id === data._id);
-    if (discussion) {
-      if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
-        discussion.changeLocalCache(data);
-      } else {
-        this.removeDiscussionFromLocalCache(data._id);
-      }
-    } else if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
-      this.addDiscussionToLocalCache(data);
-    }
-  }
+  //   if (obj.memberIds.includes(this.store.currentUser._id)) {
+  //     this.team.discussions.push(obj);
+  //   }
 
-  public removeDiscussionFromLocalCache(discussionId: string) {
-    const discussion = this.team.discussions.find((item) => item._id === discussionId);
-    this.team.discussions.remove(discussion);
-  }
+  //   return obj;
+  // }
 
-  public handleDiscussionRealtimeEvent = (data) => {
-    console.log('discussion realtime event', data);
-    const { action: actionName } = data;
+  // public editDiscussionFromLocalCache(data) {
+  //   const discussion = this.team.discussions.find((item) => item._id === data._id);
+  //   if (discussion) {
+  //     if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
+  //       discussion.changeLocalCache(data);
+  //     } else {
+  //       this.removeDiscussionFromLocalCache(data._id);
+  //     }
+  //   } else if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
+  //     this.addDiscussionToLocalCache(data);
+  //   }
+  // }
 
-    if (actionName === 'added') {
-      this.addDiscussionToLocalCache(data.discussion);
-    } else if (actionName === 'edited') {
-      this.editDiscussionFromLocalCache(data.discussion);
-    } else if (actionName === 'deleted') {
-      this.removeDiscussionFromLocalCache(data.id);
-    }
-  };
+  // public removeDiscussionFromLocalCache(discussionId: string) {
+  //   const discussion = this.team.discussions.find((item) => item._id === discussionId);
+  //   this.team.discussions.remove(discussion);
+  // }
 
   // public handlePostRealtimeEvent(data) {
   //   const { action: actionName } = data;
@@ -211,23 +176,44 @@ class Discussion {
   //   }
   // }
 
-  get members() {
-    return this.memberIds.map((id) => this.team.members.get(id)).filter((u) => !!u);
-  }
+  //   public addPostToLocalCache(data) {
+  //   const oldPost = this.posts.find((t) => t._id === data._id);
+  //   if (oldPost) {
+  //     this.posts.remove(oldPost);
+  //   }
 
-  public joinSocketRoom() {
-    if (this.store.socket) {
-      console.log('joining socket discussion room', this.name);
-      this.store.socket.emit('joinDiscussion', this._id);
-    }
-  }
+  //   const postObj = new Post({ discussion: this, store: this.store, ...data });
 
-  public leaveSocketRoom() {
-    if (this.store.socket) {
-      console.log('leaving socket discussion room', this.name);
-      this.store.socket.emit('leaveDiscussion', this._id);
-    }
-  }
+  //   this.posts.push(postObj);
+
+  //   return postObj;
+  // }
+
+  // public editPostFromLocalCache(data) {
+  //   const post = this.posts.find((t) => t._id === data._id);
+  //   if (post) {
+  //     post.changeLocalCache(data);
+  //   }
+  // }
+
+  // public removePostFromLocalCache(postId) {
+  //   const post = this.posts.find((t) => t._id === postId);
+  //   this.posts.remove(post);
+  // }
+
+  // public joinSocketRoom() {
+  //   if (this.store.socket) {
+  //     console.log('joining socket discussion room', this.name);
+  //     this.store.socket.emit('joinDiscussion', this._id);
+  //   }
+  // }
+
+  // public leaveSocketRoom() {
+  //   if (this.store.socket) {
+  //     console.log('leaving socket discussion room', this.name);
+  //     this.store.socket.emit('leaveDiscussion', this._id);
+  //   }
+  // }
 }
 
 decorate(Discussion, {
@@ -237,19 +223,21 @@ decorate(Discussion, {
   // posts: observable,
   // isLoadingPosts: observable,
   
-  addDiscussionToLocalCache: action,
-  editDiscussionFromLocalCache: action,
-  removeDiscussionFromLocalCache: action,
+  editDiscussion: action,
   changeLocalCache: action,
-  edit: action,
+  // addDiscussionToLocalCache: action,
+  // editDiscussionFromLocalCache: action,
+  // removeDiscussionFromLocalCache: action,
 
   // setInitialPosts: action,
   // loadPosts: action,
+  // addPost: action,
+  // deletePost: action,
   // addPostToLocalCache: action,
   // editPostFromLocalCache: action,
   // removePostFromLocalCache: action,
-  // addPost: action,
-  // deletePost: action,
+
+  members: computed,
 });
 
 export { Discussion };

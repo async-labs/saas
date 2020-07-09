@@ -51,7 +51,7 @@ class DiscussionList extends React.Component<Props> {
         <p />
         <ul style={{ listStyle: 'none', padding: '0px' }}>
           {team &&
-            team.orderedDiscussions.map((d) => {
+            team.orderedDiscussions().map((d) => {
               return (
                 <DiscussionListItem
                   key={d._id}
