@@ -15,12 +15,12 @@ Router.events.on('routeChangeComplete', () => {
 
 Router.events.on('routeChangeError', () => NProgress.done());
 
-type MyProps = {
+type Props = {
   user: { email: string; displayName: string; slug: string; avatarUrl: string };
 };
 
 export default function withAuth(Component, { loginRequired = true, logoutRequired = false } = {}) {
-  class WithAuth extends React.Component<MyProps> {
+  class WithAuth extends React.Component<Props> {
     public static async getInitialProps(ctx) {
       const { req, res } = ctx;
 

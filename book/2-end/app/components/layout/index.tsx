@@ -19,13 +19,13 @@ const styleGridIsMobile = {
   padding: '0px 0px 0px 10px',
 };
 
-type MyProps = {
+type Props = {
   firstGridItem?: boolean;
   children: React.ReactNode;
   isMobile?: boolean;
 };
 
-class Layout extends React.Component<MyProps> {
+class Layout extends React.Component<Props> {
   public render() {
     const { firstGridItem, children, isMobile } = this.props;
 

@@ -23,16 +23,16 @@ import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-type MyProps = { isMobile: boolean; store: Store; teamSlug: string };
+type Props = { isMobile: boolean; store: Store; teamSlug: string };
 
-type MyState = {
+type State = {
   newName: string;
   newAvatarUrl: string;
   disabled: boolean;
   inviteMemberOpen: boolean;
 };
 
-class TeamSettings extends React.Component<MyProps, MyState> {
+class TeamSettings extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 

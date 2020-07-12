@@ -12,9 +12,9 @@ import { Team } from '../lib/store/team';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-type MyProps = { store: Store; team: Team; token: string };
+type Props = { store: Store; team: Team; token: string };
 
-class Invitation extends React.Component<MyProps> {
+class Invitation extends React.Component<Props> {
   public static async getInitialProps(ctx) {
     const { token } = ctx.query;
     if (!token) {

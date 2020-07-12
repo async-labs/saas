@@ -14,14 +14,14 @@
 // import notify from '../lib/notify';
 // import { resizeImage } from '../lib/resizeImage';
 
-// type MyProps = {
+// type Props = {
 //   isMobile: boolean;
 //   user: { email: string; displayName: string; slug: string; avatarUrl: string };
 // };
 
-// type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
+// type State = { newName: string; newAvatarUrl: string; disabled: boolean };
 
-// class YourSettings extends React.Component<MyProps, MyState> {
+// class YourSettings extends React.Component<Props, State> {
 //   public static async getInitialProps() {
 //     const slug = 'team-builder-book';
 
@@ -222,12 +222,12 @@
 
 // import { getUserBySlugApiMethod } from '../lib/api/public';
 
-// type MyProps = {
+// type Props = {
 //   isMobile: boolean;
 //   user: { email: string; displayName: string; slug: string; avatarUrl: string };
 // };
 
-// class YourSettings extends React.Component<MyProps> {
+// class YourSettings extends React.Component<Props> {
 //   public static async getInitialProps() {
 //     const slug = 'team-builder-book';
 
@@ -284,14 +284,14 @@
 
 // import { getUserBySlugApiMethod } from '../lib/api/public';
 
-// type MyProps = {
+// type Props = {
 //   isMobile: boolean;
 //   user: { email: string; displayName: string; slug: string; avatarUrl: string };
 // };
 
-// type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
+// type State = { newName: string; newAvatarUrl: string; disabled: boolean };
 
-// class YourSettings extends React.Component<MyProps, MyState> {
+// class YourSettings extends React.Component<Props, State> {
 //   public static async getInitialProps({ query }) {
 //     const { error } = query;
 
@@ -378,14 +378,14 @@ import notify from '../lib/notify';
 
 import withAuth from '../lib/withAuth';
 
-type MyProps = {
+type Props = {
   isMobile: boolean;
   user: { email: string; displayName: string; slug: string; avatarUrl: string };
 };
 
-type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
+type State = { newName: string; newAvatarUrl: string; disabled: boolean };
 
-class YourSettings extends React.Component<MyProps, MyState> {
+class YourSettings extends React.Component<Props, State> {
   // public static async getInitialProps(ctx) {
   //   const headers: any = {};
 

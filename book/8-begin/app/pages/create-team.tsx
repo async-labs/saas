@@ -20,11 +20,11 @@ const styleGrid = {
   height: '100%',
 };
 
-type MyProps = { store: Store; isMobile: boolean; teamRequired: boolean };
+type Props = { store: Store; isMobile: boolean; teamRequired: boolean };
 
-type MyState = { newName: string; newAvatarUrl: string | ArrayBuffer; disabled: boolean };
+type State = { newName: string; newAvatarUrl: string | ArrayBuffer; disabled: boolean };
 
-class CreateTeam extends React.Component<MyProps, MyState> {
+class CreateTeam extends React.Component<Props, State> {
   public state = {
     newName: '',
     newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',

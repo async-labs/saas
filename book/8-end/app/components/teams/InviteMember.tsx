@@ -10,18 +10,18 @@ import React from 'react';
 import notify from '../../lib/notify';
 import { Store } from '../../lib/store';
 
-type MyProps = {
+type Props = {
   store: Store;
   onClose: () => void;
   open: boolean;
 };
 
-type MyState = {
+type State = {
   email: string;
   disabled: boolean;
 };
 
-class InviteMember extends React.Component<MyProps, MyState> {
+class InviteMember extends React.Component<Props, State> {
   public state = {
     email: '',
     disabled: false,

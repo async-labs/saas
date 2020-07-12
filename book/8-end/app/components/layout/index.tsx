@@ -10,7 +10,7 @@ import Confirmer from '../common/Confirmer';
 import Notifier from '../common/Notifier';
 
 import { Store } from '../../lib/store';
-
+import DiscussionList from '../discussions/DiscussionList';
 
 const styleGrid = {
   width: '100vw',
@@ -137,6 +137,7 @@ function LayoutWrapper({
             <hr />
             <p />
             <p />
+            <DiscussionList store={store} team={store.currentTeam} isMobile={isMobile} />
           </Grid>
         ) : null}
 
@@ -148,7 +149,7 @@ function LayoutWrapper({
   );
 }
 
-type MyProps = {
+type Props = {
   children: React.ReactNode;
   isMobile?: boolean;
   firstGridItem?: boolean;
@@ -156,7 +157,7 @@ type MyProps = {
   teamRequired?: boolean;
 };
 
-class Layout extends React.Component<MyProps> {
+class Layout extends React.Component<Props> {
   public render() {
     const { children, isMobile, firstGridItem, store, teamRequired } = this.props;
 

@@ -10,7 +10,7 @@ import { Team } from '../../lib/store/team';
 import DiscussionActionMenu from './DiscussionActionMenu';
 
 type Props = {
-  store?: Store;
+  store: Store;
   discussion: Discussion;
   team: Team;
   isMobile: boolean;
@@ -58,7 +58,7 @@ class DiscussionListItem extends React.Component<Props> {
               marginRight: '-12px',
             }}
           >
-            <DiscussionActionMenu discussion={discussion} isMobile={isMobile} />
+            <DiscussionActionMenu discussion={discussion} isMobile={isMobile} store={store} />
           </div>
         </li>
       </Paper>

@@ -21,7 +21,7 @@ const styles = {
   },
 };
 
-type MyProps = {
+type Props = {
   store?: Store;
   members: User[];
   post?: Post;
@@ -33,14 +33,14 @@ type MyProps = {
   isMobile?: boolean;
 };
 
-type MyState = {
+type State = {
   postId: string | null;
   content: string;
   disabled: boolean;
 };
 
-class PostForm extends React.Component<MyProps, MyState> {
-  public static getDerivedStateFromProps(props: MyProps, state) {
+class PostForm extends React.Component<Props, State> {
+  public static getDerivedStateFromProps(props: Props, state) {
     const { post } = props;
 
     if (!post && !state.postId) {

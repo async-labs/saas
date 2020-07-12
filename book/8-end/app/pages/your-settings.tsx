@@ -18,11 +18,11 @@ import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-type MyProps = { isMobile: boolean; store: Store; redirectMessage?: string };
+type Props = { isMobile: boolean; store: Store; redirectMessage?: string };
 
-type MyState = { newName: string; newAvatarUrl: string; disabled: boolean };
+type State = { newName: string; newAvatarUrl: string; disabled: boolean };
 
-class YourSettings extends React.Component<MyProps, MyState> {
+class YourSettings extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 

@@ -41,17 +41,15 @@ const getMenuItemOptions = (discussion, component) => [
   },
 ];
 
-class DiscussionActionMenu extends React.Component<{
+type Props = {
   discussion: Discussion;
-  store?: Store;
+  store: Store;
   isMobile: boolean;
-}> {
+};
+
+class DiscussionActionMenu extends React.Component<Props> {
   public state = {
     discussionFormOpen: false,
-  };
-
-  public handleDiscussionFormClose = () => {
-    this.setState({ discussionFormOpen: false, selectedDiscussion: null });
   };
 
   public render() {
@@ -77,11 +75,13 @@ class DiscussionActionMenu extends React.Component<{
             onClose={this.handleDiscussionFormClose}
             discussion={discussion}
             isMobile={this.props.isMobile}
+            store={store}
           />
         ) : null}
       </React.Fragment>
     );
   }
+
   public handleCopyUrl = async (event) => {
     const { store } = this.props;
     const { currentTeam } = store;
@@ -154,6 +154,10 @@ class DiscussionActionMenu extends React.Component<{
         }
       },
     });
+  };
+
+  public handleDiscussionFormClose = () => {
+    this.setState({ discussionFormOpen: false, selectedDiscussion: null });
   };
 }
 

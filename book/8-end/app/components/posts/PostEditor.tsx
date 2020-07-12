@@ -35,7 +35,7 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
   });
 }
 
-type MyProps = {
+type Props = {
   store?: Store;
   onChanged: (content) => void;
   content: string;
@@ -45,11 +45,11 @@ type MyProps = {
   placeholder?: string;
 };
 
-type MyState = {
+type State = {
   htmlContent: string;
 };
 
-class PostEditor extends React.Component<MyProps, MyState> {
+class PostEditor extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 

@@ -81,7 +81,7 @@ function getSuggestions(suggestions, inputValue, selectedItems) {
   });
 }
 
-class DownshiftMultiple extends React.Component<{
+class AutoComplete extends React.Component<{
   classes: any;
   onChange: (selectedItems) => void;
   suggestions: Array<{ label: string; value: string }>;
@@ -237,4 +237,4 @@ const styles = (theme) => ({
   },
 });
 
-export default withStyles(styles)(DownshiftMultiple);
+export default withStyles(styles)(AutoComplete);

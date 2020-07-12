@@ -5,7 +5,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import { inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 
@@ -15,7 +15,7 @@ import { Discussion } from '../../lib/store/discussion';
 import MemberChooser from '../common/MemberChooser';
 
 type Props = {
-  store?: Store;
+  store: Store;
   onClose: () => void;
   open: boolean;
   discussion: Discussion;
@@ -44,15 +44,13 @@ class EditDiscussionForm extends React.Component<Props, State> {
     };
   }
 
-  public state = {
-    name: '',
-    memberIds: [],
-    disabled: false,
-    discussionId: '',
-  };
-
   public render() {
-    const { open } = this.props;
+    const { open, store } = this.props;
+    const { currentUser } = store;
+
+    const members = Array.from(store.currentTeam.members.values()).filter(
+      (user) => user._id !== currentUser._id,
+    );
 
     return (
       <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open}>
@@ -71,7 +69,12 @@ class EditDiscussionForm extends React.Component<Props, State> {
             />
             <br />
             <p />
-            {this.renderMemberChooser()}
+            <MemberChooser
+              helperText="These members will see all posts and be notified about unread posts in this discussion."
+              onChange={this.handleMembersChange}
+              members={members}
+              selectedMemberIds={this.state.memberIds}
+            />
             <p />
             <br />
             <DialogActions>
@@ -98,16 +101,16 @@ class EditDiscussionForm extends React.Component<Props, State> {
     );
   }
 
+  public handleMembersChange = (memberIds) => {
+    this.setState({ memberIds });
+  };
+
   public handleClose = () => {
     this.setState({ name: '', memberIds: [], disabled: false });
     this.props.onClose();
   };
 
-  public handleMembersChange = (memberIds) => {
-    this.setState({ memberIds });
-  };
-
-  public onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { discussion, store } = this.props;
@@ -129,10 +132,10 @@ class EditDiscussionForm extends React.Component<Props, State> {
       memberIds.push(discussion.store.currentUser._id);
     }
 
-    // if (!memberIds || memberIds.length < 1) {
-    //   notify('Please assign at least one person to this Issue.');
-    //   return;
-    // }
+    if (!memberIds || memberIds.length < 1) {
+      notify('Please assign at least one person to this Issue.');
+      return;
+    }
 
     NProgress.start();
     try {
@@ -150,24 +153,6 @@ class EditDiscussionForm extends React.Component<Props, State> {
       this.props.onClose();
     }
   };
-
-  public renderMemberChooser() {
-    const { store } = this.props;
-    const { currentUser } = store;
-
-    const members = Array.from(store.currentTeam.members.values()).filter(
-      (user) => user._id !== currentUser._id,
-    );
-
-    return (
-      <MemberChooser
-        helperText="These members will see all posts and be notified about unread posts in this discussion."
-        onChange={this.handleMembersChange}
-        members={members}
-        selectedMemberIds={this.state.memberIds}
-      />
-    );
-  }
 }
 
-export default inject('store')(EditDiscussionForm);
+export default inject('store')(observer(EditDiscussionForm));

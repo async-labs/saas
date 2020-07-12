@@ -15,7 +15,7 @@ import { Discussion } from '../lib/store/discussion';
 import withAuth from '../lib/withAuth';
 // import { Post } from 'lib/store/post';
 
-type MyProps = {
+type Props = {
   store: Store;
   teamSlug: string;
   discussionSlug: string;
@@ -23,12 +23,12 @@ type MyProps = {
   isMobile: boolean;
 };
 
-type MyState = {
+type State = {
   // showMarkdownClicked: boolean;
   // selectedPost: Post;
 };
 
-class DiscussionPageComp extends React.Component<MyProps, MyState> {
+class DiscussionPageComp extends React.Component<Props, State> {
   public state = {
     // showMarkdownClicked: false,
     // selectedPost: null,
@@ -189,7 +189,7 @@ class DiscussionPageComp extends React.Component<MyProps, MyState> {
   //   // }
   // }
 
-  // public componentDidUpdate(prevProps: MyProps) {
+  // public componentDidUpdate(prevProps: Props) {
   //   // const discussion = this.getDiscussion(this.props.discussionSlug);
 
   //   if (prevProps.discussionSlug !== this.props.discussionSlug) {

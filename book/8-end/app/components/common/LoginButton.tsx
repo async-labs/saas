@@ -7,10 +7,10 @@ import notify from '../../lib/notify';
 import { styleLoginButton } from '../../lib/sharedStyles';
 import { makeQueryString } from '../../lib/api/makeQueryString';
 
-type MyProps = { invitationToken?: string };
-type MyState = { email: string };
+type Props = { invitationToken?: string };
+type State = { email: string };
 
-class LoginButton extends React.PureComponent <MyProps, MyState> {
+class LoginButton extends React.PureComponent <Props, State> {
 
   public state = { email: '' };
 

@@ -1,8 +1,7 @@
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
-import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
 import Router from 'next/router';
 import NProgress from 'nprogress';
@@ -10,51 +9,43 @@ import React from 'react';
 
 import notify from '../../lib/notify';
 import { Store } from '../../lib/store';
-import PostEditor from '../posts/PostEditor';
+// import PostEditor from '../posts/PostEditor';
 import MemberChooser from '../common/MemberChooser';
 
-const styles = {
-  paper: {
-    width: '100%',
-    padding: '0px 20px 20px 20px',
-  },
-};
-
 type Props = {
-  store?: Store;
-  onClose: () => void;
-  open: boolean;
-  classes: { paper: string };
   isMobile: boolean;
+  store: Store;
+  open: boolean;
+  onClose: () => void;
 };
 
-type State = {
-  name: string;
-  memberIds: string[];
-  disabled: boolean;
-  content: string;
-};
+// type State = {
+//   name: string;
+//   memberIds: string[];
+//   disabled: boolean;
+//   content: string;
+// };
+
+type State = { name: string; memberIds: string[]; disabled: boolean };
 
 class CreateDiscussionForm extends React.Component<Props, State> {
-  public state = {
-    name: '',
-    content: '',
-    memberIds: [],
-    disabled: false,
-  };
+  // public state = {
+  //   name: '',
+  //   memberIds: [],
+  //   disabled: false,
+  //   content: '',
+  // };
 
-  public handleClose = () => {
-    this.setState({ name: '', content: '', memberIds: [], disabled: false });
-    this.props.onClose();
-  };
+  public state = { name: '', memberIds: [], disabled: false };
 
   public render() {
-    const {
-      open,
-      classes: { paper },
-      store,
-      isMobile,
-    } = this.props;
+    // const { open, isMobile, store } = this.props;
+    const { open, isMobile, store } = this.props;
+    const { currentUser } = store;
+
+    const members = Array.from(store.currentTeam.members.values()).filter(
+      (user) => user._id !== currentUser._id,
+    );
 
     return (
       <React.Fragment>
@@ -67,7 +58,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
         <Drawer
           anchor="right"
           open={open}
-          classes={{ paper }}
           transitionDuration={{ enter: 500, exit: 500 }}
         >
           <div style={{ width: '100%', height: '100%', padding: '20px' }}>
@@ -85,7 +75,12 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                 }}
               />
               <p />
-              {this.renderMemberChooser()}
+              <MemberChooser
+                helperText="These members will see all posts and be notified about unread posts in this Discussion."
+                onChange={this.handleMemberChange}
+                members={members}
+                selectedMemberIds={this.state.memberIds}
+              />
               <p />
               <br />
               <div>
@@ -107,12 +102,13 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                   Cancel
                 </Button>{' '}
               </div>
-              <p />
+              {/* <p />
               <PostEditor
                 content={this.state.content}
                 onChanged={(content) => this.setState({ content })}
                 members={Array.from(store.currentTeam.members.values())}
-              />
+              /> */}
+              <p>PostEditor component goes here</p>
               <p />
               <div>
                 <Button
@@ -147,32 +143,41 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     this.setState({ memberIds });
   };
 
-  public onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  public handleClose = () => {
+    // this.setState({ name: '', memberIds: [], disabled: false, content: '' });
+    this.setState({ name: '', memberIds: [], disabled: false });
+    this.props.onClose();
+  };
+
+  private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { store } = this.props;
     const { currentTeam } = store;
+
     if (!currentTeam) {
       notify('Team have not selected');
       return;
     }
 
-    const { name, memberIds, content } = this.state;
+    // const { name, memberIds, content } = this.state;
+    const { name, memberIds } = this.state;
 
     if (!name) {
       notify('Name is required');
       return;
     }
 
-    if (!content) {
-      notify('Content is required');
+    // if (!content) {
+    //   notify('Content is required');
+    //   return;
+    // }
+
+    if (!memberIds || memberIds.length < 1) {
+      notify('Please assign at least one person to this Discussion.');
       return;
     }
 
-    // if (!memberIds || memberIds.length < 1) {
-    //   notify('Please assign at least one person to this Discussion.');
-    //   return;
-    // }
     this.setState({ disabled: true });
     NProgress.start();
 
@@ -182,9 +187,11 @@ class CreateDiscussionForm extends React.Component<Props, State> {
         memberIds,
       });
 
-      const post = await discussion.addPost(content);
+      // const post = await discussion.addPost(content);
 
-      this.setState({ name: '', memberIds: [], content: '' });
+      // this.setState({ name: '', memberIds: [], content: '' });
+      this.setState({ name: '', memberIds: [] });
+
       notify('You successfully added new Discussion.');
 
       Router.push(
@@ -200,24 +207,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       this.props.onClose();
     }
   };
-
-  public renderMemberChooser() {
-    const { store } = this.props;
-    const { currentUser } = store;
-
-    const members = Array.from(store.currentTeam.members.values()).filter(
-      (user) => user._id !== currentUser._id,
-    );
-
-    return (
-      <MemberChooser
-        helperText="These members will see all posts and be notified about unread posts in this Discussion."
-        onChange={this.handleMemberChange}
-        members={members}
-        selectedMemberIds={this.state.memberIds}
-      />
-    );
-  }
 }
 
-export default withStyles(styles)(inject('store')(CreateDiscussionForm));
+export default inject('store')(observer(CreateDiscussionForm));

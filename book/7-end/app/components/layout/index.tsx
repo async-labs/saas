@@ -148,7 +148,7 @@ function LayoutWrapper({
   );
 }
 
-type MyProps = {
+type Props = {
   children: React.ReactNode;
   isMobile?: boolean;
   firstGridItem?: boolean;
@@ -156,7 +156,7 @@ type MyProps = {
   teamRequired?: boolean;
 };
 
-class Layout extends React.Component<MyProps> {
+class Layout extends React.Component<Props> {
   public render() {
     const { children, isMobile, firstGridItem, store, teamRequired } = this.props;
 
