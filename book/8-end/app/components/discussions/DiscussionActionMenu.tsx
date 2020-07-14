@@ -47,9 +47,15 @@ type Props = {
   isMobile: boolean;
 };
 
-class DiscussionActionMenu extends React.Component<Props> {
+type State = {
+  discussionFormOpen: boolean;
+  selectedDiscussion: Discussion;
+};
+
+class DiscussionActionMenu extends React.Component<Props, State> {
   public state = {
     discussionFormOpen: false,
+    selectedDiscussion: null,
   };
 
   public render() {

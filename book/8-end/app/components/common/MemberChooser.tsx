@@ -1,7 +1,9 @@
 import React from 'react';
 
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+
 import { User } from '../../lib/store/user';
-import AutoComplete from '../common/AutoComplete';
 
 type Props = {
   onChange: (item) => void;
@@ -23,12 +25,21 @@ class MemberChooser extends React.Component<Props> {
     );
 
     return (
-      <AutoComplete
-        label={this.props.label || 'Find team member by name'}
-        helperText={this.props.helperText}
+      <Autocomplete
+        multiple
+        id="tags-standard"
+        options={suggestions}
+        getOptionLabel={(option) => option.label}
+        defaultValue={selectedItems}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="standard"
+            label="Find team member by name"
+            placeholder="Select participants"
+          />
+        )}
         onChange={this.handleAutoCompleteChange}
-        suggestions={suggestions}
-        selectedItems={selectedItems}
       />
     );
   }

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.10.2",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/styles": "^4.10.0",
     "dotenv": "^8.2.0",
     "downshift": "^5.4.5",

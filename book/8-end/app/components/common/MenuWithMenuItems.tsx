@@ -17,7 +17,7 @@ class MenuWithMenuItems extends React.PureComponent<{
     return (
       <div style={{ verticalAlign: 'middle' }}>
         <i
-          aria-owns={menuElm ? menuOptions.id : null}
+          aria-controls={menuElm ? menuOptions.id : null}
           data-id={menuOptions.dataId}
           aria-haspopup="true"
           style={{ fontSize: '14px', opacity: 0.7, cursor: 'pointer' }}
