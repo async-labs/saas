@@ -77,6 +77,8 @@ class TeamSettings extends React.Component<Props, State> {
       );
     }
 
+    console.log(`page:${currentTeam.memberIds}`);
+
     return (
       <Layout {...this.props}>
         <Head>

@@ -30,6 +30,8 @@ class DiscussionList extends React.Component<Props> {
   public render() {
     const { team } = this.props;
 
+    console.log(`DiscussionList:${this.props.store.currentTeam.memberIds}`);
+
     return (
       <div>
         Discussions
@@ -43,7 +45,7 @@ class DiscussionList extends React.Component<Props> {
         <p />
         <ul style={{ listStyle: 'none', padding: '0px' }}>
           {team &&
-            team.orderedDiscussions().map((d) => {
+            team.orderedDiscussions.map((d) => {
               return (
                 <DiscussionListItem
                   key={d._id}

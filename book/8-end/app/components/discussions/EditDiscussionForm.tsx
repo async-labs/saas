@@ -53,11 +53,13 @@ class EditDiscussionForm extends React.Component<Props, State> {
 
   public render() {
     const { open, store } = this.props;
-    const { currentUser } = store;
+    const { currentTeam, currentUser } = store;
 
-    const members = Array.from(store.currentTeam.members.values()).filter(
+    const membersMinusCreator = Array.from(currentTeam.members.values()).filter(
       (user) => user._id !== currentUser._id,
     );
+
+    // console.log(currentTeam.members);
 
     return (
       <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open}>
@@ -79,7 +81,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
             <MemberChooser
               helperText="These members will see all posts and be notified about unread posts in this discussion."
               onChange={this.handleMembersChange}
-              members={members}
+              members={membersMinusCreator}
               selectedMemberIds={this.state.memberIds}
             />
             <p />

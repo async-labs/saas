@@ -77,6 +77,10 @@ class TeamSettings extends React.Component<Props, State> {
       );
     }
 
+    console.log(Array.from(currentTeam.members.values()).filter(
+      (user) => user._id !== currentUser._id,
+    ));
+
     return (
       <Layout {...this.props}>
         <Head>

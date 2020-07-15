@@ -212,6 +212,8 @@ class Layout extends React.Component<Props> {
       }
     }
 
+    console.log(`Layout:${currentTeam.memberIds}`);
+
     return (
       <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
         <Grid item sm={firstGridItem ? 10 : 12} xs={12}>

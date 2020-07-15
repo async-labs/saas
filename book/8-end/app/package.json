@@ -26,6 +26,7 @@
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-mentions": "^4.0.0",
+    "socket.io-client": "^2.3.0",
     "typescript": "3.6.4"
   },
   "devDependencies": {
@@ -36,6 +37,7 @@
     "@types/node": "12.12.3",
     "@types/react": "16.9.11",
     "@types/react-dom": "16.9.3",
+    "@types/socket.io-client": "^1.4.33",
     "@typescript-eslint/eslint-plugin": "^2.6.0",
     "@typescript-eslint/parser": "^2.6.0",
     "eslint": "^6.6.0",

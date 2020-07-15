@@ -119,6 +119,8 @@ async function loadTeamData(team, userId, body) {
     });
   }
 
+  console.log(`initialMembers:${initialMembers}`);
+
   const initialDiscussions = await loadDiscussionsData(team, userId, body);
 
   const data: any = { initialMembers, initialInvitations, initialDiscussions };

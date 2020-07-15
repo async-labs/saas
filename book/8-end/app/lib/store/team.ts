@@ -63,6 +63,8 @@ class Team {
     for (const invitation of invitations) {
       this.invitations.set(invitation._id, new Invitation(invitation));
     }
+
+    // console.log(this.members);
   }
 
   public async updateTheme({ name, avatarUrl }: { name: string; avatarUrl: string }) {
@@ -116,10 +118,12 @@ class Team {
       (d) => new Discussion({ team: this, store: this.store, ...d }),
     );
 
+    console.log(discussions);
+
     this.discussions.replace(discussionObjs);
 
     if (!this.currentDiscussionSlug && this.discussions.length > 0) {
-      this.currentDiscussionSlug = this.orderedDiscussions()[0].slug;
+      this.currentDiscussionSlug = this.orderedDiscussions[0].slug;
     }
   }
 
@@ -231,8 +235,8 @@ class Team {
     return this.discussions.find((d) => d.slug === slug);
   }
 
-  public orderedDiscussions() {
-    return this.discussions.slice().sort();
+  get orderedDiscussions() {
+    return [].slice().sort();
   }
 }
 

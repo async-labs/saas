@@ -10,7 +10,7 @@ import React from 'react';
 import notify from '../../lib/notify';
 import { Store } from '../../lib/store';
 // import PostEditor from '../posts/PostEditor';
-import MemberChooser from '../common/MemberChooser';
+// import MemberChooser from '../common/MemberChooser';
 
 type Props = {
   isMobile: boolean;
@@ -39,13 +39,18 @@ class CreateDiscussionForm extends React.Component<Props, State> {
   public state = { name: '', memberIds: [], disabled: false };
 
   public render() {
-    // const { open, isMobile, store } = this.props;
     const { open, isMobile, store } = this.props;
-    const { currentUser } = store;
+    const { currentTeam } = store;
 
-    const members = Array.from(store.currentTeam.members.values()).filter(
-      (user) => user._id !== currentUser._id,
-    );
+    console.log(`CreateDiscussionForm:${currentTeam.memberIds}`);
+
+    // console.log(currentTeam.members.values());
+
+    // const membersMinusCreator = Array.from(currentTeam.members.values()).filter(
+    //   (user) => user._id !== currentUser._id,
+    // );
+
+
 
     return (
       <React.Fragment>
@@ -74,13 +79,13 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                   this.setState({ name: event.target.value });
                 }}
               />
-              <p />
+              {/* <p />
               <MemberChooser
                 helperText="These members will see all posts and be notified about unread posts in this Discussion."
                 onChange={this.handleMemberChange}
-                members={members}
+                members={membersMinusCreator}
                 selectedMemberIds={this.state.memberIds}
-              />
+              /> */}
               <p />
               <br />
               <div>

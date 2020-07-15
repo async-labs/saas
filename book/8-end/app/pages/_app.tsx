@@ -27,12 +27,12 @@ class MyApp extends App<{ isMobile: boolean }> {
     if (
       ctx.pathname.includes('/team-settings') ||
       ctx.pathname.includes('/discussion') ||
-      ctx.pathname.includes('/billing') 
+      ctx.pathname.includes('/billing')
     ) {
       teamRequired = true;
     }
 
-    const { teamSlug, redirectMessage, discussionSlug } = ctx.query;
+    const { teamSlug, redirectMessage } = ctx.query;
 
     const pageProps = { 
       isMobile: isMobile({ req: ctx.req }), 
@@ -40,7 +40,7 @@ class MyApp extends App<{ isMobile: boolean }> {
       teamRequired, 
       teamSlug,
       redirectMessage,
-      discussionSlug,
+      // discussionSlug,
     };
 
     if (Component.getInitialProps) {
