@@ -1,0 +1,10 @@
+{
+  "presets": [
+    [
+      "next/babel",
+      {
+        "class-properties": { "loose": true }
+      }
+    ]
+  ]
+}
