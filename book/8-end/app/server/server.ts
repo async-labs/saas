@@ -32,10 +32,10 @@ app.prepare().then(() => {
     app.render(req, res, '/discussion', { teamSlug, discussionSlug });
   });
 
-  // server.get('/team/:teamSlug/discussions', (req, res) => {
-  //   const { teamSlug } = req.params;
-  //   app.render(req, res, '/discussion', { teamSlug });
-  // });
+  server.get('/team/:teamSlug/discussions', (req, res) => {
+    const { teamSlug } = req.params;
+    app.render(req, res, '/discussion', { teamSlug });
+  });
 
   server.all('*', (req, res) => {
     handle(req, res);

@@ -1,5 +1,5 @@
 import Tooltip from '@material-ui/core/Tooltip';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import React from 'react';
 
 import { Store } from '../../lib/store';
@@ -78,4 +78,4 @@ class DiscussionList extends React.Component<Props> {
   };
 }
 
-export default inject('store')(observer(DiscussionList));
+export default observer(DiscussionList);

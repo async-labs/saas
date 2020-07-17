@@ -1,5 +1,5 @@
 import Paper from '@material-ui/core/Paper';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -66,4 +66,4 @@ class DiscussionListItem extends React.Component<Props> {
   }
 }
 
-export default inject('store')(observer(DiscussionListItem));
+export default observer(DiscussionListItem);

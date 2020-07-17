@@ -1,7 +1,9 @@
 import Button from '@material-ui/core/Button';
-import Drawer from '@material-ui/core/Drawer';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import Head from 'next/head';
 import Router from 'next/router';
 import NProgress from 'nprogress';
@@ -60,86 +62,84 @@ class CreateDiscussionForm extends React.Component<Props, State> {
             <meta name="description" content="Create new discussion" />
           </Head>
         ) : null}
-        <Drawer
-          anchor="right"
-          open={open}
-          transitionDuration={{ enter: 500, exit: 500 }}
-        >
-          <div style={{ width: '100%', height: '100%', padding: '20px' }}>
-            <h3>Create new Discussion</h3>
-            <form style={{ width: '100%', height: '60%' }} onSubmit={this.onSubmit}>
+        <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open}>
+        <DialogTitle id="simple-dialog-title">Create new Discussion</DialogTitle>
+        <DialogContent>
+          <br />
+          <form style={{ width: '100%', height: '60%' }} onSubmit={this.onSubmit}>
+            <p />
+            <br />
+            <TextField
+              autoFocus
+              label="Type name of Discussion"
+              helperText="Give a short and informative name to new Discussion"
+              value={this.state.name}
+              onChange={(event) => {
+                this.setState({ name: event.target.value });
+              }}
+            />
+            {/* <p />
+            <MemberChooser
+              helperText="These members will see all posts and be notified about unread posts in this Discussion."
+              onChange={this.handleMemberChange}
+              members={membersMinusCreator}
+              selecte      </React.Fragment>
+dMemberIds={this.state.memberIds}
+            /> */}
+            <p />
+            <br />
+            <div>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={this.state.disabled}
+              >
+                Create Discussion
+              </Button>
+              {isMobile ? <p /> : null}
+              <Button
+                variant="outlined"
+                onClick={this.handleClose}
+                disabled={this.state.disabled}
+                style={{ marginLeft: isMobile ? '0px' : '20px' }}
+              >
+                Cancel
+              </Button>{' '}
+            </div>
+            {/* <p />
+            <PostEditor
+              content={this.state.content}
+              onChanged={(content) => this.setState({ content })}
+              members={Array.from(store.currentTeam.members.values())}
+            /> */}
+            <p>PostEditor component goes here</p>
+            <p />
+            <div>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={this.state.disabled}
+              >
+                Create Discussion
+              </Button>
+              {isMobile ? <p /> : null}
+              <Button
+                variant="outlined"
+                onClick={this.handleClose}
+                disabled={this.state.disabled}
+                style={{ marginLeft: isMobile ? '0px' : '20px' }}
+              >
+                Cancel
+              </Button>{' '}
               <p />
               <br />
-              <TextField
-                autoFocus
-                label="Type name of Discussion"
-                helperText="Give a short and informative name to new Discussion"
-                value={this.state.name}
-                onChange={(event) => {
-                  this.setState({ name: event.target.value });
-                }}
-              />
-              {/* <p />
-              <MemberChooser
-                helperText="These members will see all posts and be notified about unread posts in this Discussion."
-                onChange={this.handleMemberChange}
-                members={membersMinusCreator}
-                selectedMemberIds={this.state.memberIds}
-              /> */}
-              <p />
               <br />
-              <div>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={this.state.disabled}
-                >
-                  Create Discussion
-                </Button>
-                {isMobile ? <p /> : null}
-                <Button
-                  variant="outlined"
-                  onClick={this.handleClose}
-                  disabled={this.state.disabled}
-                  style={{ marginLeft: isMobile ? '0px' : '20px' }}
-                >
-                  Cancel
-                </Button>{' '}
-              </div>
-              {/* <p />
-              <PostEditor
-                content={this.state.content}
-                onChanged={(content) => this.setState({ content })}
-                members={Array.from(store.currentTeam.members.values())}
-              /> */}
-              <p>PostEditor component goes here</p>
-              <p />
-              <div>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={this.state.disabled}
-                >
-                  Create Discussion
-                </Button>
-                {isMobile ? <p /> : null}
-                <Button
-                  variant="outlined"
-                  onClick={this.handleClose}
-                  disabled={this.state.disabled}
-                  style={{ marginLeft: isMobile ? '0px' : '20px' }}
-                >
-                  Cancel
-                </Button>{' '}
-                <p />
-                <br />
-                <br />
-              </div>
-            </form>
-          </div>
-        </Drawer>
+            </div>
+          </form>
+        </DialogContent>
+        </Dialog>
       </React.Fragment>
     );
   }
@@ -214,4 +214,4 @@ class CreateDiscussionForm extends React.Component<Props, State> {
   };
 }
 
-export default inject('store')(observer(CreateDiscussionForm));
+export default observer(CreateDiscussionForm);

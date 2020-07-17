@@ -1,4 +1,4 @@
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 
@@ -167,4 +167,4 @@ class DiscussionActionMenu extends React.Component<Props, State> {
   };
 }
 
-export default inject('store')(observer(DiscussionActionMenu));
+export default observer(DiscussionActionMenu);

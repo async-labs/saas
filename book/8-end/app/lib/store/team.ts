@@ -236,7 +236,7 @@ class Team {
   }
 
   get orderedDiscussions() {
-    return [].slice().sort();
+    return this.discussions.slice().sort();
   }
 }
 

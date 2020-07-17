@@ -5,7 +5,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 
@@ -65,7 +65,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
       <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open}>
         <DialogTitle id="simple-dialog-title">Edit Discussion</DialogTitle>
         <DialogContent>
-          <DialogContentText>Explain discussion</DialogContentText>
+          <DialogContentText>Edit discussion</DialogContentText>
           <br />
           <form onSubmit={this.onSubmit}>
             <TextField
@@ -164,4 +164,4 @@ class EditDiscussionForm extends React.Component<Props, State> {
   };
 }
 
-export default inject('store')(observer(EditDiscussionForm));
+export default observer(EditDiscussionForm);
