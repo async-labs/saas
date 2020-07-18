@@ -61,7 +61,7 @@ class Discussion {
     this.memberIds.replace(data.memberIds || []);
   }
 
-  public members() {
+  get members() {
     return this.memberIds.map((id) => this.team.members.get(id)).filter((u) => !!u);
   }
 

@@ -30,8 +30,6 @@ class DiscussionList extends React.Component<Props> {
   public render() {
     const { team } = this.props;
 
-    console.log(`DiscussionList:${this.props.store.currentTeam.memberIds}`);
-
     return (
       <div>
         Discussions

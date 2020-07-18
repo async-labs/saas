@@ -11,8 +11,8 @@ import React from 'react';
 
 import notify from '../../lib/notify';
 import { Store } from '../../lib/store';
+import MemberChooser from '../common/MemberChooser';
 // import PostEditor from '../posts/PostEditor';
-// import MemberChooser from '../common/MemberChooser';
 
 type Props = {
   isMobile: boolean;
@@ -42,17 +42,11 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
   public render() {
     const { open, isMobile, store } = this.props;
-    const { currentTeam } = store;
+    const { currentTeam, currentUser } = store;
 
-    console.log(`CreateDiscussionForm:${currentTeam.memberIds}`);
-
-    // console.log(currentTeam.members.values());
-
-    // const membersMinusCreator = Array.from(currentTeam.members.values()).filter(
-    //   (user) => user._id !== currentUser._id,
-    // );
-
-
+    const membersMinusCreator = Array.from(currentTeam.members.values()).filter(
+      (user) => user._id !== currentUser._id,
+    );
 
     return (
       <React.Fragment>
@@ -62,7 +56,12 @@ class CreateDiscussionForm extends React.Component<Props, State> {
             <meta name="description" content="Create new discussion" />
           </Head>
         ) : null}
-        <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open}>
+        <Dialog 
+          onClose={this.handleClose}
+          aria-labelledby="simple-dialog-title"
+          open={open}
+          fullScreen={true}
+        >
         <DialogTitle id="simple-dialog-title">Create new Discussion</DialogTitle>
         <DialogContent>
           <br />
@@ -78,14 +77,14 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                 this.setState({ name: event.target.value });
               }}
             />
-            {/* <p />
+            <br />
+            <p />
             <MemberChooser
-              helperText="These members will see all posts and be notified about unread posts in this Discussion."
-              onChange={this.handleMemberChange}
+              helperText="These members will see all posts and be notified about unread posts in this discussion."
+              onChange={this.handleMembersChange}
               members={membersMinusCreator}
-              selecte      </React.Fragment>
-dMemberIds={this.state.memberIds}
-            /> */}
+              selectedMemberIds={this.state.memberIds}
+            />
             <p />
             <br />
             <div>
@@ -144,7 +143,7 @@ dMemberIds={this.state.memberIds}
     );
   }
 
-  public handleMemberChange = (memberIds) => {
+  public handleMembersChange = (memberIds) => {
     this.setState({ memberIds });
   };
 
@@ -177,6 +176,8 @@ dMemberIds={this.state.memberIds}
     //   notify('Content is required');
     //   return;
     // }
+
+    console.log(`memberIds: ${memberIds}`);
 
     if (!memberIds || memberIds.length < 1) {
       notify('Please assign at least one person to this Discussion.');

@@ -118,8 +118,6 @@ class Team {
       (d) => new Discussion({ team: this, store: this.store, ...d }),
     );
 
-    console.log(discussions);
-
     this.discussions.replace(discussionObjs);
 
     if (!this.currentDiscussionSlug && this.discussions.length > 0) {

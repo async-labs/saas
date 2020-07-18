@@ -100,7 +100,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
           </h4>{' '}
           Visible to :{' '}
           {discussion
-            ? discussion.members().map((m) => (
+            ? discussion.members.map((m) => (
                 <Tooltip
                   title={m.displayName}
                   placement="right"
