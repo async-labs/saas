@@ -4,13 +4,18 @@ import React from 'react';
 
 import * as NProgress from 'nprogress';
 
-import { Store } from './store';
+import { Store, getStore } from './store';
 
 Router.events.on('routeChangeStart', () => {
   NProgress.start();
 });
 
-Router.events.on('routeChangeComplete', () => {
+Router.events.on('routeChangeComplete', (url) => {
+  const store = getStore();
+  if (store) {
+    store.changeCurrentUrl(url);
+  }
+
   NProgress.done();
 });
 
