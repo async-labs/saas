@@ -177,8 +177,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     //   return;
     // }
 
-    console.log(`memberIds: ${memberIds}`);
-
     if (!memberIds || memberIds.length < 1) {
       notify('Please assign at least one person to this Discussion.');
       return;

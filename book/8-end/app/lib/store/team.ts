@@ -1,5 +1,5 @@
 import { action, computed, decorate, IObservableArray, observable, runInAction } from 'mobx';
-// import Router from 'next/router';
+import Router from 'next/router';
 import { inviteMemberApiMethod, removeMemberApiMethod, updateTeamApiMethod } from '../api/team-leader';
 import { addDiscussionApiMethod, deleteDiscussionApiMethod, getDiscussionListApiMethod } from '../api/team-member';
 import { Store } from './index';
@@ -198,29 +198,29 @@ class Team {
   public async deleteDiscussion(id: string) {
     await deleteDiscussionApiMethod({
       id,
-      socketId: (this.store.socket && this.store.socket.id) || null,
+      // socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
       this.deleteDiscussionFromLocalCache(id);
 
-      // const discussion = this.discussions.find((d) => d._id === id);
+      const discussion = this.discussions.find((d) => d._id === id);
 
-      // if (this.currentDiscussion === discussion) {
-      //   this.currentDiscussion = null;
-      //   this.currentDiscussionSlug = null;
+      if (this.currentDiscussion === discussion) {
+        this.currentDiscussion = null;
+        this.currentDiscussionSlug = null;
 
-      //   if (this.discussions.length > 0) {
-      //     const d = this.discussions[0];
+        if (this.discussions.length > 0) {
+          const d = this.discussions[0];
 
-      //     Router.push(
-      //       `/discussion?teamSlug=${this.slug}&discussionSlug=${d.slug}`,
-      //       `/team/${this.slug}/discussions/${d.slug}`,
-      //     );
-      //   } else {
-      //     Router.push(`/discussion?teamSlug=${this.slug}`, `/team/${this.slug}/discussions`);
-      //   }
-      // }
+          Router.push(
+            `/discussion?teamSlug=${this.slug}&discussionSlug=${d.slug}`,
+            `/team/${this.slug}/discussions/${d.slug}`,
+          );
+        } else {
+          Router.push(`/discussion?teamSlug=${this.slug}`, `/team/${this.slug}/discussions`);
+        }
+      }
     });
   }
 

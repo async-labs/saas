@@ -152,10 +152,10 @@ class DiscussionActionMenu extends React.Component<Props, State> {
           await currentTeam.deleteDiscussion(id);
 
           notify('You successfully deleted Discussion.');
-          NProgress.done();
         } catch (error) {
           console.error(error);
           notify(error);
+        } finally {
           NProgress.done();
         }
       },

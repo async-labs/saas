@@ -26,8 +26,6 @@ class MemberChooser extends React.Component<Props> {
       id: user._id,
     }));
 
-    console.log(`suggestions:${suggestions}`);
-
     const selectedItems = suggestions.filter(
       (s) => this.props.selectedMemberIds.indexOf(s.id) !== -1,
     );
@@ -42,8 +40,6 @@ class MemberChooser extends React.Component<Props> {
       label: user.displayName || user.email,
       id: user._id,
     }));
-
-    // console.log(this.state.selectedItems);
 
     return (
       <Autocomplete
@@ -73,7 +69,7 @@ class MemberChooser extends React.Component<Props> {
 
     const selectedItems = value;
 
-    console.log(`selectedItems:${selectedItems}`);
+    this.setState({ selectedItems });
 
     this.props.onChange(selectedItems.map((i) => i.id));
   };

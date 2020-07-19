@@ -25,6 +25,10 @@ class MyDocument extends Document {
   public render() {
     // console.log('rendered on the server');
 
+    const isThemeDark =
+    this.props.__NEXT_DATA__.props.initialState.user &&
+    this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
+
     return (
       <Html lang="en">
         <Head>
@@ -48,7 +52,11 @@ class MyDocument extends Document {
 
           <link
             rel="stylesheet"
-            href="https://storage.googleapis.com/async-await/nprogress-light.min.css"
+            href={
+              isThemeDark
+                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
+                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
+            }
           />
 
           <style>
