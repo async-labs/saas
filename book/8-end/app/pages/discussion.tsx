@@ -7,13 +7,13 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 
 import Layout from '../components/layout';
-// import PostDetail from '../components/posts/PostDetail';
-// import PostForm from '../components/posts/PostForm';
+import PostDetail from '../components/posts/PostDetail';
+import PostForm from '../components/posts/PostForm';
 // import notify from '../lib/notify';
 import { Store } from '../lib/store';
 import { Discussion } from '../lib/store/discussion';
 import withAuth from '../lib/withAuth';
-// import { Post } from 'lib/store/post';
+import { Post } from 'lib/store/post';
 
 type Props = {
   store: Store;
@@ -24,20 +24,20 @@ type Props = {
 };
 
 type State = {
-  // showMarkdownClicked: boolean;
-  // selectedPost: Post;
+  showMarkdownClicked: boolean;
+  selectedPost: Post;
 };
 
 class DiscussionPageComp extends React.Component<Props, State> {
   public state = {
-    // showMarkdownClicked: false,
-    // selectedPost: null,
+    showMarkdownClicked: false,
+    selectedPost: null,
   };
 
   public render() {
     const { store, isMobile, discussionSlug } = this.props;
     const { currentTeam } = store;
-    // const { selectedPost } = this.state;
+    const { selectedPost } = this.state;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
@@ -125,21 +125,20 @@ class DiscussionPageComp extends React.Component<Props, State> {
               ))
             : null}
           <p />
-          {/* {this.renderPosts()}
+          {this.renderPosts()}
           {discussion && !discussion.isLoadingPosts ? (
             <React.Fragment>
               {selectedPost ? null : (
                 <PostForm
                   post={null}
                   discussion={discussion}
-                  members={discussion.members()}
+                  members={discussion.members}
                   isMobile={this.props.isMobile}
+                  store={store}
                 />
               )}
             </React.Fragment>
-          ) : null} */}
-
-          <p>List of Posts</p>
+          ) : null}
           <p />
           <br />
         </div>
@@ -243,64 +242,66 @@ class DiscussionPageComp extends React.Component<Props, State> {
   //   this.props.store.socket.off('reconnect', this.handleSocketReconnect);
   // }
 
-  // private renderPosts() {
-  //   const { isServer } = this.props;
-  //   const { selectedPost, showMarkdownClicked } = this.state;
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
+  public renderPosts() {
+    const { isServer, store } = this.props;
+    const { selectedPost, showMarkdownClicked } = this.state;
+    const discussion = this.getDiscussion(this.props.discussionSlug);
 
-  //   if (!discussion.isLoadingPosts && discussion.posts.length === 0) {
-  //     return <p>Empty Discussion.</p>;
-  //   }
+    if (!discussion.isLoadingPosts && discussion.posts.length === 0) {
+      return <p>Empty Discussion.</p>;
+    }
 
-  //   let loading = 'loading Posts ...';
-  //   if (discussion.posts.length > 0) {
-  //     loading = 'checking for newer Posts ...';
-  //   }
+    let loading = 'loading Posts ...';
+    if (discussion.posts.length > 0) {
+      loading = 'checking for newer Posts ...';
+    }
 
-  //   return (
-  //     <React.Fragment>
-  //       {discussion
-  //         ? discussion.posts.map((p) =>
-  //             selectedPost && selectedPost._id === p._id ? (
-  //               <PostForm
-  //                 key={p._id}
-  //                 post={p}
-  //                 readOnly={showMarkdownClicked}
-  //                 discussion={discussion}
-  //                 members={discussion.members()}
-  //                 onFinished={() => {
-  //                   setTimeout(() => {
-  //                     this.setState({
-  //                       selectedPost: null,
-  //                       showMarkdownClicked: false,
-  //                     });
-  //                   }, 0);
-  //                 }}
-  //               />
-  //             ) : (
-  //               <PostDetail
-  //                 key={p._id}
-  //                 post={p}
-  //                 onEditClick={this.onEditClickCallback}
-  //                 onShowMarkdownClick={this.onSnowMarkdownClickCallback}
-  //                 isMobile={this.props.isMobile}
-  //               />
-  //             ),
-  //           )
-  //         : null}
+    return (
+      <React.Fragment>
+        {discussion
+          ? discussion.posts.map((p) =>
+              selectedPost && selectedPost._id === p._id ? (
+                <PostForm
+                  store={store}
+                  key={p._id}
+                  post={p}
+                  readOnly={showMarkdownClicked}
+                  discussion={discussion}
+                  members={discussion.members}
+                  onFinished={() => {
+                    setTimeout(() => {
+                      this.setState({
+                        selectedPost: null,
+                        showMarkdownClicked: false,
+                      });
+                    }, 0);
+                  }}
+                />
+              ) : (
+                <PostDetail
+                  key={p._id}
+                  post={p}
+                  onEditClick={this.onEditClickCallback}
+                  onShowMarkdownClick={this.onSnowMarkdownClickCallback}
+                  isMobile={this.props.isMobile}
+                  store={store}
+                />
+              ),
+            )
+          : null}
 
-  //       {discussion && discussion.isLoadingPosts && !isServer ? <Loading text={loading} /> : null}
-  //     </React.Fragment>
-  //   );
-  // }
+        {discussion && discussion.isLoadingPosts && !isServer ? <p>${loading}</p> : null}
+      </React.Fragment>
+    );
+  }
 
-  // private onEditClickCallback = (post) => {
-  //   this.setState({ selectedPost: post, showMarkdownClicked: false });
-  // };
+  private onEditClickCallback = (post) => {
+    this.setState({ selectedPost: post, showMarkdownClicked: false });
+  };
 
-  // private onSnowMarkdownClickCallback = (post) => {
-  //   this.setState({ selectedPost: post, showMarkdownClicked: true });
-  // };
+  private onSnowMarkdownClickCallback = (post) => {
+    this.setState({ selectedPost: post, showMarkdownClicked: true });
+  };
 
   // private handleDiscussionEvent = (data) => {
   //   console.log('discussion realtime event', data);

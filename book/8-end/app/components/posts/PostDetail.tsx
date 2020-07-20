@@ -1,7 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import moment from 'moment';
 import React from 'react';
 
@@ -67,7 +67,7 @@ const getMenuItemOptions = (post: Post, currentUser: User, component) => {
 
 class PostDetail extends React.Component<{
   post: Post;
-  store?: Store;
+  store: Store;
   onEditClick: (post) => void;
   onShowMarkdownClick: (post) => void;
   isMobile: boolean;
@@ -188,4 +188,4 @@ class PostDetail extends React.Component<{
   }
 }
 
-export default inject('store')(observer(PostDetail));
+export default observer(PostDetail);

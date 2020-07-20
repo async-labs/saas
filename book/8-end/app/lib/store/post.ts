@@ -25,20 +25,7 @@ export class Post {
     Object.assign(this, params);
   }
 
-  get user(): User {
-    return this.discussion.team.members.get(this.createdUserId) || null;
-  }
-
-  public changeLocalCache(data) {
-    this.content = data.content;
-    this.htmlContent = data.htmlContent;
-    this.isEdited = true;
-    this.lastUpdatedAt = data.lastUpdatedAt;
-  }
-
   public async edit(data) {
-    console.log(this.store.socket.id);
-
     try {
       await editPostApiMethod({
         id: this._id,
@@ -54,6 +41,17 @@ export class Post {
       throw error;
     }
   }
+
+  public changeLocalCache(data) {
+    this.content = data.content;
+    this.htmlContent = data.htmlContent;
+    this.isEdited = true;
+    this.lastUpdatedAt = data.lastUpdatedAt;
+  }
+
+  get user(): User {
+    return this.discussion.team.members.get(this.createdUserId) || null;
+  }
 }
 
 decorate(Post, {
@@ -62,7 +60,8 @@ decorate(Post, {
   htmlContent: observable,
   lastUpdatedAt: observable,
 
-  user: computed,
   changeLocalCache: action,
   edit: action,
+
+  user: computed,
 });

@@ -2,7 +2,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import he from 'he';
 import marked from 'marked';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 import { Mention, MentionsInput } from 'react-mentions';
@@ -36,7 +36,7 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
 }
 
 type Props = {
-  store?: Store;
+  store: Store;
   onChanged: (content) => void;
   content: string;
   members: User[];
@@ -305,9 +305,10 @@ class PostEditor extends React.Component<Props, State> {
     } catch (error) {
       console.log(error);
       notify(error);
+    } finally {
       NProgress.done();
     }
   };
 }
 
-export default inject('store')(observer(PostEditor));
+export default observer(PostEditor);

@@ -72,7 +72,7 @@ function markdownToHtml(content) {
   return marked(he.decode(content));
 }
 
-interface PostDocument extends mongoose.Document {
+export interface PostDocument extends mongoose.Document {
   createdUserId: string;
   discussionId: string;
   content: string;
@@ -129,8 +129,6 @@ class PostClass extends mongoose.Model {
   public static async getList({ userId, discussionId }) {
     await this.checkPermission({ userId, discussionId });
 
-    // eslint-disable-next-line
-    // eslint-disable-next-line
     const filter: any = { discussionId };
 
     return this.find(filter).sort({ createdAt: 1 });
@@ -158,8 +156,6 @@ class PostClass extends mongoose.Model {
     if (!content || !id) {
       throw new Error('Bad data');
     }
-
-    // TODO: old uploaded file deleted, delete it from S3
 
     const post = await this.findById(id)
       .select('createdUserId discussionId')
@@ -230,4 +226,3 @@ mongoSchema.loadClass(PostClass);
 const Post = mongoose.model<PostDocument, PostModel>('Post', mongoSchema);
 
 export default Post;
-export { PostDocument };

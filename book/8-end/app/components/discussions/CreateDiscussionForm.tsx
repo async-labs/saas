@@ -111,6 +111,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
               content={this.state.content}
               onChanged={(content) => this.setState({ content })}
               members={Array.from(store.currentTeam.members.values())}
+              store={store}
             /> */}
             <p>PostEditor component goes here</p>
             <p />

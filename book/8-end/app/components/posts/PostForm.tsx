@@ -1,8 +1,7 @@
 import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
 import he from 'he';
 import marked from 'marked';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 
@@ -14,20 +13,12 @@ import { User } from '../../lib/store/user';
 
 import PostEditor from './PostEditor';
 
-const styles = {
-  paper: {
-    width: '100%', // TODO: should 100% when isMobile is true
-    padding: '0px 20px 20px 20px',
-  },
-};
-
 type Props = {
-  store?: Store;
+  store: Store;
   members: User[];
   post?: Post;
   onFinished?: () => void;
   open?: boolean;
-  classes: { paper: string };
   discussion: Discussion;
   readOnly?: boolean;
   isMobile?: boolean;
@@ -64,7 +55,7 @@ class PostForm extends React.Component<Props, State> {
   };
 
   public render() {
-    const { members, post, isMobile, readOnly } = this.props;
+    const { members, post, isMobile, readOnly, store } = this.props;
     const isEditing = !!post;
 
     let title = 'Add Post';
@@ -115,6 +106,7 @@ class PostForm extends React.Component<Props, State> {
             onChanged={this.onContentChanged}
             members={members}
             textareaHeight="100%"
+            store={store}
           />
           <p />
           <div style={{ margin: '20px 0px' }}>
@@ -184,7 +176,7 @@ class PostForm extends React.Component<Props, State> {
     this.setState({ disabled: true });
 
     try {
-      const newPost = await discussion.addPost(content);
+      await discussion.addPost(content);
 
       this.setState({ content: '' });
       notify('You successfully published new Post.');
@@ -211,4 +203,4 @@ class PostForm extends React.Component<Props, State> {
   };
 }
 
-export default withStyles(styles)(inject('store')(observer(PostForm)));
+export default observer(PostForm);
