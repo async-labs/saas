@@ -48,7 +48,7 @@ class MemberChooser extends React.Component<Props> {
         options={suggestions}
         getOptionLabel={(option) => option.label}
         getOptionSelected={(option, value) => option.id === value.id}
-        defaultValue={this.state.selectedItems}
+        value={this.state.selectedItems}
         renderInput={(params) => (
           <TextField
             {...params}
