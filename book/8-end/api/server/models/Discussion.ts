@@ -84,7 +84,7 @@ interface DiscussionModel extends mongoose.Model<DiscussionDocument> {
     userId: string;
     teamId: string;
     memberIds: string[];
-  }): Promise<TeamDocument[]>;
+  }): Promise<TeamDocument>;
 }
 
 class DiscussionClass extends mongoose.Model {

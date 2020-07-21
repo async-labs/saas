@@ -241,6 +241,19 @@ router.get('/discussions/list', async (req, res, next) => {
   }
 });
 
+router.get('/posts/list', async (req, res, next) => {
+  try {
+    const posts = await Post.getList({
+      userId: req.user.id,
+      discussionId: req.query.discussionId,
+    });
+
+    res.json({ posts });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post('/posts/add', async (req, res, next) => {
   try {
     const { content, discussionId, socketId } = req.body;
@@ -278,19 +291,6 @@ router.post('/posts/delete', async (req, res, next) => {
     postDeleted({ socketId, id, discussionId });
 
     res.json({ done: 1 });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.get('/posts/list', async (req, res, next) => {
-  try {
-    const posts = await Post.getList({
-      userId: req.user.id,
-      discussionId: req.query.discussionId,
-    });
-
-    res.json({ posts });
   } catch (err) {
     next(err);
   }

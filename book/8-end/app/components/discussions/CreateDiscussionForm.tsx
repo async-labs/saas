@@ -12,7 +12,7 @@ import React from 'react';
 import notify from '../../lib/notify';
 import { Store } from '../../lib/store';
 import MemberChooser from '../common/MemberChooser';
-// import PostEditor from '../posts/PostEditor';
+import PostEditor from '../posts/PostEditor';
 
 type Props = {
   isMobile: boolean;
@@ -21,22 +21,22 @@ type Props = {
   onClose: () => void;
 };
 
-// type State = {
-//   name: string;
-//   memberIds: string[];
-//   disabled: boolean;
-//   content: string;
-// };
+type State = {
+  name: string;
+  memberIds: string[];
+  disabled: boolean;
+  content: string;
+};
 
 type State = { name: string; memberIds: string[]; disabled: boolean };
 
 class CreateDiscussionForm extends React.Component<Props, State> {
-  // public state = {
-  //   name: '',
-  //   memberIds: [],
-  //   disabled: false,
-  //   content: '',
-  // };
+  public state = {
+    name: '',
+    memberIds: [],
+    disabled: false,
+    content: '',
+  };
 
   public state = { name: '', memberIds: [], disabled: false };
 
@@ -106,14 +106,13 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                 Cancel
               </Button>{' '}
             </div>
-            {/* <p />
+            <p />
             <PostEditor
               content={this.state.content}
               onChanged={(content) => this.setState({ content })}
               members={Array.from(store.currentTeam.members.values())}
               store={store}
-            /> */}
-            <p>PostEditor component goes here</p>
+            />
             <p />
             <div>
               <Button
@@ -149,8 +148,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
   };
 
   public handleClose = () => {
-    // this.setState({ name: '', memberIds: [], disabled: false, content: '' });
-    this.setState({ name: '', memberIds: [], disabled: false });
+    this.setState({ name: '', memberIds: [], disabled: false, content: '' });
     this.props.onClose();
   };
 
@@ -165,18 +163,17 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       return;
     }
 
-    // const { name, memberIds, content } = this.state;
-    const { name, memberIds } = this.state;
+    const { name, memberIds, content } = this.state;
 
     if (!name) {
       notify('Name is required');
       return;
     }
 
-    // if (!content) {
-    //   notify('Content is required');
-    //   return;
-    // }
+    if (!content) {
+      notify('Content is required');
+      return;
+    }
 
     if (!memberIds || memberIds.length < 1) {
       notify('Please assign at least one person to this Discussion.');
@@ -192,10 +189,9 @@ class CreateDiscussionForm extends React.Component<Props, State> {
         memberIds,
       });
 
-      // const post = await discussion.addPost(content);
+      await discussion.addPost(content);
 
-      // this.setState({ name: '', memberIds: [], content: '' });
-      this.setState({ name: '', memberIds: [] });
+      this.setState({ name: '', memberIds: [], content: '' });
 
       notify('You successfully added new Discussion.');
 

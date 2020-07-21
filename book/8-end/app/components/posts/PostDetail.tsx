@@ -127,7 +127,7 @@ class PostDetail extends React.Component<{
     const createdDate = moment(post.createdAt)
       .local()
       .format('MMM Do YYYY');
-    const lastEditedDate = moment(post.lastUpdatedAt).fromNow();
+    const lastUpdatedDate = moment(post.lastUpdatedAt).fromNow();
     return (
       <React.Fragment>
         <div
@@ -175,7 +175,7 @@ class PostDetail extends React.Component<{
               {post.isEdited ? (
                 <React.Fragment>
                   <span style={styleLineSeparator}>|</span>
-                  Last edited: {lastEditedDate}
+                  Last edited: {lastUpdatedDate}
                 </React.Fragment>
               ) : null}
             </span>

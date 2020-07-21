@@ -30,11 +30,11 @@ const mongoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  lastUpdatedAt: Date,
   createdAt: {
     type: Date,
     required: true,
   },
-  lastUpdatedAt: Date,
 });
 
 function markdownToHtml(content) {
@@ -77,8 +77,8 @@ export interface PostDocument extends mongoose.Document {
   discussionId: string;
   content: string;
   isEdited: boolean;
-  createdAt: Date;
   lastUpdatedAt: Date;
+  createdAt: Date;
 }
 
 interface PostModel extends mongoose.Model<PostDocument> {
@@ -110,24 +110,22 @@ interface PostModel extends mongoose.Model<PostDocument> {
     id: string;
   }): Promise<PostDocument>;
 
-  uploadFile({
+  delete({ userId, id }: { userId: string; id: string }): Promise<void>;
+
+  checkPermissionAndGetTeamAndDiscussion({
     userId,
-    id,
-    fileName,
-    file,
+    discussionId,
+    post,
   }: {
     userId: string;
-    id: string;
-    fileName: string;
-    file: string;
-  }): Promise<void>;
-
-  delete({ userId, id }: { userId: string; id: string }): Promise<void>;
+    discussionId: string;
+    post: PostDocument;
+  }): Promise<{ TeamDocument; DiscussionDocument }>;
 }
 
 class PostClass extends mongoose.Model {
   public static async getList({ userId, discussionId }) {
-    await this.checkPermission({ userId, discussionId });
+    await this.checkPermissionAndGetTeamAndDiscussion({ userId, discussionId });
 
     const filter: any = { discussionId };
 
@@ -138,6 +136,8 @@ class PostClass extends mongoose.Model {
     if (!content) {
       throw new Error('Bad data');
     }
+
+    await this.checkPermissionAndGetTeamAndDiscussion({ userId, discussionId });
 
     const htmlContent = markdownToHtml(content);
 
@@ -161,7 +161,11 @@ class PostClass extends mongoose.Model {
       .select('createdUserId discussionId')
       .setOptions({ lean: true });
 
-    await this.checkPermission({ userId, discussionId: post.discussionId, post });
+    await this.checkPermissionAndGetTeamAndDiscussion({
+      userId,
+      discussionId: post.discussionId,
+      post,
+    });
 
     const htmlContent = markdownToHtml(content);
 
@@ -183,12 +187,20 @@ class PostClass extends mongoose.Model {
       .select('createdUserId discussionId content')
       .setOptions({ lean: true });
 
-    await this.checkPermission({ userId, discussionId: post.discussionId, post });
+    await this.checkPermissionAndGetTeamAndDiscussion({
+      userId,
+      discussionId: post.discussionId,
+      post,
+    });
 
     await this.deleteOne({ _id: id });
   }
 
-  public static async checkPermission({ userId, discussionId, post = null }) {
+  private static async checkPermissionAndGetTeamAndDiscussion({
+    userId,
+    discussionId,
+    post = null,
+  }) {
     if (!userId || !discussionId) {
       throw new Error('Bad data');
     }

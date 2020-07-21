@@ -113,7 +113,7 @@ interface UserModel extends mongoose.Model<UserDocument> {
   }: {
     userId: string;
     teamId: string;
-  }): Promise<TeamDocument[]>;
+  }): Promise<TeamDocument>;
 }
 
 class UserClass extends mongoose.Model {
