@@ -30,8 +30,8 @@ type State = {
 
 class DiscussionPageComp extends React.Component<Props, State> {
   public state = {
-    showMarkdownClicked: false,
     selectedPost: null,
+    showMarkdownClicked: false,
   };
 
   public render() {
@@ -243,7 +243,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
   // }
 
   public renderPosts() {
-    const { isServer, store } = this.props;
+    const { isServer, store, isMobile } = this.props;
     const { selectedPost, showMarkdownClicked } = this.state;
     const discussion = this.getDiscussion(this.props.discussionSlug);
 
@@ -263,18 +263,17 @@ class DiscussionPageComp extends React.Component<Props, State> {
               selectedPost && selectedPost._id === p._id ? (
                 <PostForm
                   store={store}
+                  isMobile={isMobile}
                   key={p._id}
                   post={p}
-                  readOnly={showMarkdownClicked}
+                  showMarkdownToNonCreator={showMarkdownClicked}
                   discussion={discussion}
                   members={discussion.members}
                   onFinished={() => {
-                    setTimeout(() => {
-                      this.setState({
-                        selectedPost: null,
-                        showMarkdownClicked: false,
-                      });
-                    }, 0);
+                    this.setState({
+                      selectedPost: null,
+                      showMarkdownClicked: false,
+                    });
                   }}
                 />
               ) : (
@@ -295,11 +294,11 @@ class DiscussionPageComp extends React.Component<Props, State> {
     );
   }
 
-  private onEditClickCallback = (post) => {
+  public onEditClickCallback = (post) => {
     this.setState({ selectedPost: post, showMarkdownClicked: false });
   };
 
-  private onSnowMarkdownClickCallback = (post) => {
+  public onSnowMarkdownClickCallback = (post) => {
     this.setState({ selectedPost: post, showMarkdownClicked: true });
   };
 

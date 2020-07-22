@@ -15,22 +15,27 @@ import PostEditor from './PostEditor';
 
 type Props = {
   store: Store;
+  isMobile: boolean;
   members: User[];
-  post?: Post;
-  onFinished?: () => void;
-  open?: boolean;
+  post: Post;
   discussion: Discussion;
-  readOnly?: boolean;
-  isMobile?: boolean;
+  showMarkdownToNonCreator?: boolean;
+  onFinished?: () => void;
 };
 
 type State = {
-  postId: string | null;
+  postId: string;
   content: string;
   disabled: boolean;
 };
 
 class PostForm extends React.Component<Props, State> {
+  public state = {
+    postId: null,
+    content: '',
+    disabled: false,
+  };
+  
   public static getDerivedStateFromProps(props: Props, state) {
     const { post } = props;
 
@@ -48,20 +53,14 @@ class PostForm extends React.Component<Props, State> {
     };
   }
 
-  public state = {
-    postId: null,
-    content: '',
-    disabled: false,
-  };
-
   public render() {
-    const { members, post, isMobile, readOnly, store } = this.props;
-    const isEditing = !!post;
+    const { store, members, post, isMobile, showMarkdownToNonCreator } = this.props;
+    const isEditingPost = !!post;
 
     let title = 'Add Post';
-    if (readOnly) {
-      title = 'Show Markdown';
-    } else if (isEditing) {
+    if (showMarkdownToNonCreator) {
+      title = 'Showing Markdown';
+    } else if (isEditingPost) {
       title = 'Edit Post';
     }
 
@@ -74,7 +73,7 @@ class PostForm extends React.Component<Props, State> {
           <p />
           <br />
           <div>
-            {readOnly ? null : (
+            {showMarkdownToNonCreator ? null : (
               <React.Fragment>
                 <Button
                   type="submit"
@@ -82,26 +81,25 @@ class PostForm extends React.Component<Props, State> {
                   color="primary"
                   disabled={this.state.disabled}
                 >
-                  {isEditing ? 'Save changes' : 'Publish Post'}
+                  {isEditingPost ? 'Save changes' : 'Publish Post'}
                 </Button>
                 {isMobile ? <p /> : null}
               </React.Fragment>
             )}
-            {post ? (
+            {isEditingPost ? (
               <Button
                 variant="outlined"
                 onClick={this.closeForm}
                 disabled={this.state.disabled}
                 style={{ marginLeft: '10px' }}
               >
-                {readOnly ? 'Go back' : 'Cancel'}
+                {showMarkdownToNonCreator ? 'Go back' : 'Cancel'}
               </Button>
             ) : null}
           </div>
           <p />
           <br />
           <PostEditor
-            readOnly={readOnly}
             content={this.state.content}
             onChanged={this.onContentChanged}
             members={members}
@@ -110,14 +108,14 @@ class PostForm extends React.Component<Props, State> {
           />
           <p />
           <div style={{ margin: '20px 0px' }}>
-            {post ? (
+            {isEditingPost ? (
               <Button
                 variant="outlined"
                 onClick={this.closeForm}
                 disabled={this.state.disabled}
                 style={{ marginLeft: '10px' }}
               >
-                {readOnly ? 'Go back' : 'Cancel'}
+                {showMarkdownToNonCreator ? 'Go back' : 'Cancel'}
               </Button>
             ) : null}
           </div>
@@ -128,28 +126,24 @@ class PostForm extends React.Component<Props, State> {
     );
   }
 
-  private onContentChanged = (content: string) => {
-    this.setState({ content });
-  };
-
   private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { content } = this.state;
     const htmlContent = marked(he.decode(content));
     const { post, onFinished, store, discussion } = this.props;
-    const isEditing = !!post;
+    const isEditingPost = !!post;
 
     if (!content) {
       notify('Add content to your Post');
       return;
     }
 
-    if (isEditing) {
+    if (isEditingPost) {
       this.setState({ disabled: true });
       NProgress.start();
       try {
-        await post.edit({ content, htmlContent });
+        await post.editPost({ content, htmlContent });
         notify('You successfully edited Post');
       } catch (error) {
         console.log(error);
@@ -191,6 +185,10 @@ class PostForm extends React.Component<Props, State> {
     if (onFinished) {
       onFinished();
     }
+  };
+
+  private onContentChanged = (content: string) => {
+    this.setState({ content });
   };
 
   private closeForm = () => {

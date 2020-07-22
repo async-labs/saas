@@ -65,62 +65,19 @@ const getMenuItemOptions = (post: Post, currentUser: User, component) => {
   return items;
 };
 
-class PostDetail extends React.Component<{
+type Props = {
   post: Post;
   store: Store;
+  isMobile: boolean;
   onEditClick: (post) => void;
   onShowMarkdownClick: (post) => void;
-  isMobile: boolean;
-}> {
-  public editPost = () => {
-    const { post, onEditClick } = this.props;
-    if (onEditClick) {
-      onEditClick(post);
-    }
-    console.log(`PostDetail: ${post._id}`);
-  };
+};
 
-  public deletePost = () => {
-    confirm({
-      title: 'Are you sure?',
-      message: '',
-      onAnswer: async (answer) => {
-        if (answer) {
-          const { post } = this.props;
-          await post.discussion.deletePost(post);
-          notify('You successfully deleted Post');
-        }
-      },
-    });
-  };
-
-  public showMarkdown = () => {
-    const { post, onShowMarkdownClick } = this.props;
-    if (onShowMarkdownClick) {
-      onShowMarkdownClick(post);
-    }
-  };
-
+class PostDetail extends React.Component<Props> {
   public render() {
     const { post, isMobile } = this.props;
 
     return <Paper style={stylePaper}>{this.renderPostDetail(post, isMobile)}</Paper>;
-  }
-
-  public renderMenu() {
-    const { post, store } = this.props;
-    const { currentUser } = store;
-
-    if (!post.user || !currentUser || currentUser._id !== post.user._id) {
-      return null;
-    }
-
-    return (
-      <MenuWithMenuItems
-        menuOptions={getMenuOptions(post)}
-        itemOptions={getMenuItemOptions(post, store.currentUser, this)}
-      />
-    );
   }
 
   public renderPostDetail(post: Post, isMobile) {
@@ -128,6 +85,7 @@ class PostDetail extends React.Component<{
       .local()
       .format('MMM Do YYYY');
     const lastUpdatedDate = moment(post.lastUpdatedAt).fromNow();
+
     return (
       <React.Fragment>
         <div
@@ -186,6 +144,51 @@ class PostDetail extends React.Component<{
       </React.Fragment>
     );
   }
+
+  public renderMenu() {
+    const { post, store } = this.props;
+    const { currentUser } = store;
+
+    if (!post.user || !currentUser || currentUser._id !== post.user._id) {
+      return null;
+    }
+
+    return (
+      <MenuWithMenuItems
+        menuOptions={getMenuOptions(post)}
+        itemOptions={getMenuItemOptions(post, store.currentUser, this)}
+      />
+    );
+  }
+
+  public showMarkdown = () => {
+    const { post, onShowMarkdownClick } = this.props;
+    if (onShowMarkdownClick) {
+      onShowMarkdownClick(post);
+    }
+  };
+
+  public editPost = () => {
+    const { post, onEditClick } = this.props;
+    if (onEditClick) {
+      onEditClick(post);
+    }
+    console.log(`PostDetail: ${post._id}`);
+  };
+
+  public deletePost = () => {
+    confirm({
+      title: 'Are you sure?',
+      message: '',
+      onAnswer: async (answer) => {
+        if (answer) {
+          const { post } = this.props;
+          await post.discussion.deletePost(post);
+          notify('You successfully deleted Post.');
+        }
+      },
+    });
+  };
 }
 
 export default observer(PostDetail);

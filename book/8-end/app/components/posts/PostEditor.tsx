@@ -41,13 +41,10 @@ type Props = {
   content: string;
   members: User[];
   textareaHeight?: string;
-  readOnly?: boolean;
   placeholder?: string;
 };
 
-type State = {
-  htmlContent: string;
-};
+type State = { htmlContent: string };
 
 class PostEditor extends React.Component<Props, State> {
   constructor(props) {
