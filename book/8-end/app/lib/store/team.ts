@@ -37,10 +37,6 @@ class Team {
 
     this.store = params.store;
 
-    if (params.initialMembers) {
-      this.setInitialMembersAndInvitations(params.initialMembers, params.initialInvitations);
-    }
-
     if (params.initialDiscussions) {
       this.setInitialDiscussions(params.initialDiscussions);
     } else {

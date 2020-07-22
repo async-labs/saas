@@ -129,7 +129,11 @@ class PostClass extends mongoose.Model {
 
     const filter: any = { discussionId };
 
-    return this.find(filter).sort({ createdAt: 1 });
+    const posts: any[] = await this.find(filter)
+      .sort({ createdAt: 1 })
+      .setOptions({ lean: true });
+
+    return { posts };
   }
 
   public static async add({ content, userId, discussionId }) {

@@ -284,7 +284,7 @@ router.post('/posts/edit', async (req, res, next) => {
 
 router.post('/posts/delete', async (req, res, next) => {
   try {
-    const { id, socketId, discussionId } = req.body;
+    const { id, discussionId, socketId } = req.body;
 
     await Post.delete({ userId: req.user.id, id });
 

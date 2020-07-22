@@ -70,6 +70,12 @@ export const deleteDiscussionApiMethod = (data) =>
     body: JSON.stringify(data),
   });
 
+export const getPostListApiMethod = (discussionId: string) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/posts/list`, {
+    method: 'GET',
+    qs: { discussionId },
+  });
+
 export const addPostApiMethod = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/posts/add`, {
     body: JSON.stringify(data),
@@ -85,11 +91,7 @@ export const deletePostApiMethod = (data) =>
     body: JSON.stringify(data),
   });
 
-export const getPostListApiMethod = (discussionId: string) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/posts/list`, {
-    method: 'GET',
-    qs: { discussionId },
-  });
+
 
 // export const sendDataToLambdaApiMethod = (data) =>
 //   sendRequestAndGetResponse(`${process.env.LAMBDA_API_ENDPOINT}/`, {

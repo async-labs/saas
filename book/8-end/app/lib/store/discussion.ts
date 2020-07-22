@@ -1,5 +1,4 @@
 import { action, decorate, IObservableArray, observable, runInAction, computed } from 'mobx';
-import NProgress from 'nprogress';
 
 import {
   addPostApiMethod,
@@ -35,6 +34,8 @@ class Discussion {
 
     if (params.initialPosts) {
       this.setInitialPosts(params.initialPosts);
+    } else {
+      this.loadPosts();
     }
   }
 
@@ -70,11 +71,10 @@ class Discussion {
   }
 
   public async loadPosts() {
-    if (this.isLoadingPosts || this.store.isServer) {
+    if (this.store.isServer || this.isLoadingPosts) {
       return;
     }
 
-    NProgress.start();
     this.isLoadingPosts = true;
 
     try {
@@ -87,7 +87,6 @@ class Discussion {
     } finally {
       runInAction(() => {
         this.isLoadingPosts = false;
-        NProgress.done();
       });
     }
   }
@@ -107,18 +106,6 @@ class Discussion {
     });
   }
 
-  public async deletePost(post: Post) {
-    await deletePostApiMethod({
-      id: post._id,
-      discussionId: this._id,
-      // socketId: (this.store.socket && this.store.socket.id) || null,
-    });
-
-    runInAction(() => {
-      this.posts.remove(post);
-    });
-  }
-
   public addPostToLocalCache(data) {
     const oldPost = this.posts.find((t) => t._id === data._id);
 
@@ -131,6 +118,18 @@ class Discussion {
     this.posts.push(postObj);
 
     return postObj;
+  }
+
+  public async deletePost(post: Post) {
+    await deletePostApiMethod({
+      id: post._id,
+      discussionId: this._id,
+      // socketId: (this.store.socket && this.store.socket.id) || null,
+    });
+
+    runInAction(() => {
+      this.posts.remove(post);
+    });
   }
 
   // public handleDiscussionRealtimeEvent = (data) => {

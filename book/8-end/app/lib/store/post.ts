@@ -15,17 +15,30 @@ export class Post {
   public discussion: Discussion;
   public store: Store;
 
-  public isEdited: boolean;
   public content: string;
   public htmlContent: string;
 
+  public isEdited: boolean;
   public lastUpdatedAt: Date;
 
   constructor(params) {
-    Object.assign(this, params);
+    this._id = params._id;
+    this.createdUserId = params.createdUserId;
+    this.createdAt = params.createdAt;
+    this.discussionId = params.discussionId;
+
+
+    this.content = params.content;
+    this.htmlContent = params.htmlContent;
+
+    this.discussion = params.discussion;
+    this.store = params.store;
+
+    this.isEdited = params.isEdited;
+    this.lastUpdatedAt = params.lastUpdatedAt;
   }
 
-  public async edit(data) {
+  public async editPost(data) {
     try {
       await editPostApiMethod({
         id: this._id,
@@ -55,13 +68,13 @@ export class Post {
 }
 
 decorate(Post, {
-  isEdited: observable,
   content: observable,
   htmlContent: observable,
+  isEdited: observable,
   lastUpdatedAt: observable,
 
+  editPost: action,
   changeLocalCache: action,
-  edit: action,
 
   user: computed,
 });
