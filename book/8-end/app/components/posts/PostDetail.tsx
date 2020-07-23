@@ -149,7 +149,7 @@ class PostDetail extends React.Component<Props> {
     const { post, store } = this.props;
     const { currentUser } = store;
 
-    if (!post.user || !currentUser || currentUser._id !== post.user._id) {
+    if (!post.user || !currentUser) {
       return null;
     }
 

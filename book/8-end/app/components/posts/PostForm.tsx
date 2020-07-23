@@ -48,8 +48,8 @@ class PostForm extends React.Component<Props, State> {
     }
 
     return {
-      content: (post && post.content) || '',
       postId: (post && post._id) || null,
+      content: (post && post.content) || '',
     };
   }
 
@@ -68,7 +68,7 @@ class PostForm extends React.Component<Props, State> {
       <div style={{ height: '100%', margin: '0px 20px' }}>
         <p />
         <br />
-        <h3>{title} </h3>
+        <h3>{title}</h3>
         <form style={{ width: '100%', height: '100%' }} onSubmit={this.onSubmit} autoComplete="off">
           <p />
           <br />
