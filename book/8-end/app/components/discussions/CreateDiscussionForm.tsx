@@ -28,8 +28,6 @@ type State = {
   content: string;
 };
 
-type State = { name: string; memberIds: string[]; disabled: boolean };
-
 class CreateDiscussionForm extends React.Component<Props, State> {
   public state = {
     name: '',
@@ -37,8 +35,6 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     disabled: false,
     content: '',
   };
-
-  public state = { name: '', memberIds: [], disabled: false };
 
   public render() {
     const { open, isMobile, store } = this.props;

@@ -47,13 +47,10 @@ type Props = {
 type State = { htmlContent: string };
 
 class PostEditor extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-
-    this.state = {
+  public state = {
       htmlContent: '',
     };
-  }
+  
 
   public render() {
     const { htmlContent } = this.state;
@@ -87,6 +84,13 @@ class PostEditor extends React.Component<Props, State> {
         </div>
 
         <div style={{ display: 'inline', float: 'left' }}>
+          <label htmlFor="upload-file">
+            <Button color="primary" component="span">
+              <i className="material-icons" style={{ fontSize: '22px' }}>
+                insert_photo
+              </i>
+            </Button>
+          </label>
           <input
             accept="image/*"
             name="upload-file"
@@ -99,19 +103,12 @@ class PostEditor extends React.Component<Props, State> {
               this.uploadFile(file);
             }}
           />
-          <label htmlFor="upload-file">
-            <Button color="primary" component="span">
-              <i className="material-icons" style={{ fontSize: '22px' }}>
-                insert_photo
-              </i>
-            </Button>
-          </label>
         </div>
         <br />
         <div
           style={{
             width: '100%',
-            height: '100%',
+            height: '100vh',
             padding: '10px 15px',
             border: isThemeDark
               ? '1px solid rgba(255, 255, 255, 0.5)'
@@ -129,7 +126,7 @@ class PostEditor extends React.Component<Props, State> {
                   font: '16px Roboto',
                   color: isThemeDark ? '#fff' : '#000',
                   fontWeight: 300,
-                  height: '100vh', // TODO: check on Mobile
+                  height: '100vh',
                   lineHeight: '1.5em',
                   backgroundColor: content ? textareaBackgroundColor : 'transparent',
                 },
@@ -161,7 +158,7 @@ class PostEditor extends React.Component<Props, State> {
                 data={membersMinusCurrentUser.map((u) => ({
                   id: u.avatarUrl,
                   display: u.displayName,
-                  you: u._id === currentUser._id ? true : false,
+                  // you: u._id === currentUser._id ? true : false,
                 }))}
                 markup={'[`@#__display__`](__id__)'}
                 displayTransform={(_, display) => {
@@ -204,10 +201,6 @@ class PostEditor extends React.Component<Props, State> {
 
       renderer.link = (href, title, text) => {
         const t = title ? ` title="${title}"` : '';
-
-        if (text.startsWith('<code>@#')) {
-          return `${text.replace('<code>@#', '<code>@')} `;
-        }
 
         if (text.startsWith('<code>@#')) {
           return `${text.replace('<code>@#', '<code>@')} `;
@@ -264,7 +257,7 @@ class PostEditor extends React.Component<Props, State> {
         bucket,
       });
 
-      let markdown;
+      let imageMarkdown;
       let fileUrl;
 
       if (file.type.startsWith('image/')) {
@@ -282,7 +275,7 @@ class PostEditor extends React.Component<Props, State> {
 
         const finalWidth = width > 768 ? '100%' : `${width}px`;
 
-        markdown = `
+        imageMarkdown = `
           <div>
             <img style="max-width: ${finalWidth}; width:100%" src="${fileUrl}" alt="Async" class="s3-image" />
           </div>`;
@@ -290,10 +283,10 @@ class PostEditor extends React.Component<Props, State> {
         await uploadFileUsingSignedPutRequestApiMethod(file, responseFromApiServerForUpload.signedRequest);
 
         fileUrl = responseFromApiServerForUpload.url;
-        markdown = `[${file.name}](${fileUrl})`;
+        imageMarkdown = `[${file.name}](${fileUrl})`;
       }
 
-      const content = `${this.props.content}\n${markdown.replace(/\s+/g, ' ')}`;
+      const content = `${this.props.content}\n${imageMarkdown.replace(/\s+/g, ' ')}`;
 
       this.props.onChanged(content);
 

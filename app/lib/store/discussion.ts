@@ -41,6 +41,7 @@ class Discussion {
 
     if (params.initialPosts) {
       this.setInitialPosts(params.initialPosts);
+      console.log(`store:${params.initialPosts}`);
     }
   }
 

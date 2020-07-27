@@ -10,8 +10,8 @@ function addPlaceholder(elm) {
   image.style.display = 'none';
   const div = window.document.createElement('div');
   div.className = 'image-placeholder';
-  div.style.width = `${image.dataset.width || 200}px`;
-  div.style.height = `${image.dataset.height || 200}px`;
+  div.style.width = `${image.dataset.width}px`;
+  div.style.height = `${image.dataset.height}px`;
   div.innerHTML = '<p class="image-placeholder-text">loading ...</p>';
   body.appendChild(div);
 }

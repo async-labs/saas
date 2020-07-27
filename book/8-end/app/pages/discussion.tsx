@@ -24,8 +24,8 @@ type Props = {
 };
 
 type State = {
-  showMarkdownClicked: boolean;
   selectedPost: Post;
+  showMarkdownClicked: boolean;
 };
 
 class DiscussionPageComp extends React.Component<Props, State> {
@@ -169,7 +169,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
     return null;
   }
 
-    // public componentDidMount() {
+  // public componentDidMount() {
   //   const { store, isServer, discussionSlug } = this.props;
 
   //   if (store.currentTeam && (!isServer || !discussionSlug)) {
@@ -224,11 +224,11 @@ class DiscussionPageComp extends React.Component<Props, State> {
   //     return;
   //   }
 
-  //   // const discussion = this.getDiscussion(discussionSlug);
+  //   const discussion = this.getDiscussion(discussionSlug);
 
-  //   // if (!isServer && discussion) {
-  //   //   discussion.loadPosts().catch((err) => notify(err));
-  //   // }
+  //   if (!isServer && discussion) {
+  //     discussion.loadPosts().catch((err) => notify(err));
+  //   }
   // }
 
   // public componentWillUnmount() {
@@ -289,7 +289,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
             )
           : null}
 
-        {discussion && discussion.isLoadingPosts && !isServer ? <p>${loading}</p> : null}
+        {discussion && discussion.isLoadingPosts && !isServer ? <p>{loading}</p> : null}
       </React.Fragment>
     );
   }

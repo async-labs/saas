@@ -133,7 +133,7 @@ class PostClass extends mongoose.Model {
       .sort({ createdAt: 1 })
       .setOptions({ lean: true });
 
-    return { posts };
+    return posts;
   }
 
   public static async add({ content, userId, discussionId }) {

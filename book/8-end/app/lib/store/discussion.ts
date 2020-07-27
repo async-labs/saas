@@ -34,6 +34,7 @@ class Discussion {
 
     if (params.initialPosts) {
       this.setInitialPosts(params.initialPosts);
+      console.log(params.initialPosts[0]);
     } else {
       this.loadPosts();
     }
@@ -66,7 +67,7 @@ class Discussion {
   }
 
   public setInitialPosts(posts) {
-    const postObjs = posts.map((t) => new Post({ discussion: this, store: this.store, ...t }));
+    const postObjs = posts.map((p) => new Post({ discussion: this, store: this.store, ...p }));
     this.posts.replace(postObjs);
   }
 
@@ -216,20 +217,22 @@ decorate(Discussion, {
   name: observable,
   slug: observable,
   memberIds: observable,
-  // posts: observable,
-  // isLoadingPosts: observable,
+  posts: observable,
+  isLoadingPosts: observable,
   
   editDiscussion: action,
   changeLocalCache: action,
+  
+  setInitialPosts: action,
+  loadPosts: action,
+  addPost: action,
+  addPostToLocalCache: action,
+  deletePost: action,
   // addDiscussionToLocalCache: action,
   // editDiscussionFromLocalCache: action,
   // removeDiscussionFromLocalCache: action,
 
-  // setInitialPosts: action,
-  // loadPosts: action,
-  // addPost: action,
-  // deletePost: action,
-  // addPostToLocalCache: action,
+
   // editPostFromLocalCache: action,
   // removePostFromLocalCache: action,
 

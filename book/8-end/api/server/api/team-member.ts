@@ -125,6 +125,8 @@ async function loadTeamData(team, userId, body) {
 
   const data: any = { initialMembers, initialInvitations, initialDiscussions };
 
+  // console.log(`Express route:${data.initialPosts}`);
+
   return data;
 }
 
@@ -232,8 +234,6 @@ router.get('/discussions/list', async (req, res, next) => {
       userId: req.user.id,
       teamId,
     });
-
-    console.log(`Express route: ${discussions.length}`);
 
     res.json({ discussions });
   } catch (err) {

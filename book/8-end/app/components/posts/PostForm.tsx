@@ -36,7 +36,7 @@ class PostForm extends React.Component<Props, State> {
     disabled: false,
   };
   
-  public static getDerivedStateFromProps(props: Props, state) {
+  public static getDerivedStateFromProps(props: Props, state: State) {
     const { post } = props;
 
     if (!post && !state.postId) {
@@ -103,8 +103,8 @@ class PostForm extends React.Component<Props, State> {
             content={this.state.content}
             onChanged={this.onContentChanged}
             members={members}
-            textareaHeight="100%"
             store={store}
+            textareaHeight="100%"
           />
           <p />
           <div style={{ margin: '20px 0px' }}>
@@ -192,7 +192,7 @@ class PostForm extends React.Component<Props, State> {
   };
 
   private closeForm = () => {
-    this.setState({ content: '', postId: null });
+    this.setState({ postId: null, content: '' });
 
     const { onFinished } = this.props;
     if (onFinished) {
