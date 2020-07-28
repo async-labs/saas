@@ -21,18 +21,18 @@ class Store {
 
   public currentTeam?: Team;
 
-  public socket: SocketIOClient.Socket;
-  // check if needed
   public teams: IObservableArray<Team> = observable([]);
+
+  public socket: SocketIOClient.Socket;
 
   constructor({
     initialState = {},
     isServer,
-    // socket = null,
+    socket = null,
   }: {
     initialState?: any;
     isServer: boolean;
-    // socket?: SocketIOClient.Socket;
+    socket?: SocketIOClient.Socket;
   }) {
     this.isServer = !!isServer;
 
@@ -46,27 +46,17 @@ class Store {
       this.setCurrentTeam(initialState.teamSlug || initialState.user.defaultTeamSlug, initialState.teams);
     }
 
-    // this.socket = socket;
+    this.socket = socket;
 
-    // if (socket) {
-    //   socket.on('teamEvent', this.handleTeamRealtimeEvent);
+    if (socket) {
+      socket.on('disconnect', () => {
+        console.log('socket: ## disconnected');
+      });
 
-    //   socket.on('disconnect', () => {
-    //     console.log('socket: ## disconnected');
-    //   });
-
-    //   socket.on('reconnect', (attemptNumber) => {
-    //     console.log('socket: $$ reconnected', attemptNumber);
-
-    //     if (this.currentTeam) {
-    //       this.currentTeam.leaveSocketRoom();
-
-    //       setTimeout(() => {
-    //         this.currentTeam.joinSocketRoom();
-    //       }, 500);
-    //     }
-    //   });
-    // }
+      socket.on('reconnect', (attemptNumber) => {
+        console.log('socket: $$ reconnected', attemptNumber);
+      });
+    }
   }
 
   public changeCurrentUrl(url: string) {
@@ -146,19 +136,6 @@ class Store {
 
     this.teams.remove(team);
   }
-
-  // public handleTeamRealtimeEvent = (data) => {
-  //   console.log('team realtime event', data);
-  //   const { action: actionName } = data;
-
-  //   if (actionName === 'added') {
-  //     this.addTeamToLocalCache(data.team);
-  //   } else if (actionName === 'edited') {
-  //     this.editTeamFromLocalCache(data.team);
-  //   } else if (actionName === 'deleted') {
-  //     this.removeTeamFromLocalCache(data.id);
-  //   }
-  // };
 }
 
 decorate(Store, {
@@ -176,11 +153,9 @@ let store: Store = null;
 function initializeStore(initialState = {}) {
   const isServer = typeof window === 'undefined';
 
-  // const socket = io(process.env.URL_API);
+  const socket = io(process.env.URL_API);
 
-  const _store = (store !== null && store !== undefined) ? store : new Store({ initialState, isServer });
-
-  // const _store = (store !== null && store !== undefined) ? store : new Store({ initialState, isServer, socket });
+  const _store = (store !== null && store !== undefined) ? store : new Store({ initialState, isServer, socket });
 
   // For SSG and SSR always create a new store
   if (typeof window === 'undefined') {

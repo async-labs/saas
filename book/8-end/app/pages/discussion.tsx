@@ -169,79 +169,6 @@ class DiscussionPageComp extends React.Component<Props, State> {
     return null;
   }
 
-  // public componentDidMount() {
-  //   const { store, isServer, discussionSlug } = this.props;
-
-  //   if (store.currentTeam && (!isServer || !discussionSlug)) {
-  //     store.currentTeam.loadDiscussions().catch((err) => notify(err));
-  //   }
-
-  //   // this.props.store.socket.on('discussionEvent', this.handleDiscussionEvent);
-  //   // this.props.store.socket.on('postEvent', this.handlePostEvent);
-  //   // this.props.store.socket.on('reconnect', this.handleSocketReconnect);
-
-  //   this.changeDiscussion();
-
-  //   // const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   // if (discussion) {
-  //   //   discussion.joinSocketRoom();
-  //   // }
-  // }
-
-  // public componentDidUpdate(prevProps: Props) {
-  //   // const discussion = this.getDiscussion(this.props.discussionSlug);
-
-  //   if (prevProps.discussionSlug !== this.props.discussionSlug) {
-  //     // if (prevProps.discussionSlug) {
-  //     //   const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
-  //     //   if (prevDiscussion) {
-  //     //     prevDiscussion.leaveSocketRoom();
-  //     //   }
-  //     // }
-
-  //     this.changeDiscussion();
-
-  //     // if (discussion) {
-  //     //   discussion.joinSocketRoom();
-  //     // }
-  //   }
-  // }
-
-  // public changeDiscussion() {
-  //   const { teamSlug, discussionSlug, store, isServer } = this.props;
-  //   const { currentTeam } = store;
-
-  //   if (!currentTeam || currentTeam.slug !== teamSlug) {
-  //     return;
-  //   }
-
-  //   if (!isServer && !discussionSlug && currentTeam.discussions.length > 0) {
-  //     Router.replace(
-  //       `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
-  //       `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
-  //     );
-
-  //     return;
-  //   }
-
-  //   const discussion = this.getDiscussion(discussionSlug);
-
-  //   if (!isServer && discussion) {
-  //     discussion.loadPosts().catch((err) => notify(err));
-  //   }
-  // }
-
-  // public componentWillUnmount() {
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   if (discussion) {
-  //     discussion.leaveSocketRoom();
-  //   }
-
-  //   this.props.store.socket.off('discussionEvent', this.handleDiscussionEvent);
-  //   this.props.store.socket.off('postEvent', this.handlePostEvent);
-  //   this.props.store.socket.off('reconnect', this.handleSocketReconnect);
-  // }
-
   public renderPosts() {
     const { isServer, store, isMobile } = this.props;
     const { selectedPost, showMarkdownClicked } = this.state;
@@ -302,6 +229,79 @@ class DiscussionPageComp extends React.Component<Props, State> {
     this.setState({ selectedPost: post, showMarkdownClicked: true });
   };
 
+    // public componentDidMount() {
+  //   const { store, isServer, discussionSlug } = this.props;
+
+  //   if (store.currentTeam && (!isServer || !discussionSlug)) {
+  //     store.currentTeam.loadDiscussions().catch((err) => notify(err));
+  //   }
+
+  //   // this.props.store.socket.on('discussionEvent', this.handleDiscussionEvent);
+  //   // this.props.store.socket.on('postEvent', this.handlePostEvent);
+  //   // this.props.store.socket.on('reconnect', this.handleSocketReconnect);
+
+  //   this.changeDiscussion();
+
+  //   // const discussion = this.getDiscussion(this.props.discussionSlug);
+  //   // if (discussion) {
+  //   //   discussion.joinSocketRooms();
+  //   // }
+  // }
+
+  // public componentDidUpdate(prevProps: Props) {
+  //   // const discussion = this.getDiscussion(this.props.discussionSlug);
+
+  //   if (prevProps.discussionSlug !== this.props.discussionSlug) {
+  //     // if (prevProps.discussionSlug) {
+  //     //   const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
+  //     //   if (prevDiscussion) {
+  //     //     prevDiscussion.leaveSocketRoom();
+  //     //   }
+  //     // }
+
+  //     this.changeDiscussion();
+
+  //     // if (discussion) {
+  //     //   discussion.joinSocketRooms();
+  //     // }
+  //   }
+  // }
+
+  // public changeDiscussion() {
+  //   const { teamSlug, discussionSlug, store, isServer } = this.props;
+  //   const { currentTeam } = store;
+
+  //   if (!currentTeam || currentTeam.slug !== teamSlug) {
+  //     return;
+  //   }
+
+  //   if (!isServer && !discussionSlug && currentTeam.discussions.length > 0) {
+  //     Router.replace(
+  //       `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
+  //       `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
+  //     );
+
+  //     return;
+  //   }
+
+  //   const discussion = this.getDiscussion(discussionSlug);
+
+  //   if (!isServer && discussion) {
+  //     discussion.loadPosts().catch((err) => notify(err));
+  //   }
+  // }
+
+  // public componentWillUnmount() {
+  //   const discussion = this.getDiscussion(this.props.discussionSlug);
+  //   if (discussion) {
+  //     discussion.leaveSocketRoom();
+  //   }
+
+  //   this.props.store.socket.off('discussionEvent', this.handleDiscussionEvent);
+  //   this.props.store.socket.off('postEvent', this.handlePostEvent);
+  //   this.props.store.socket.off('reconnect', this.handleSocketReconnect);
+  // }
+  
   // private handleDiscussionEvent = (data) => {
   //   console.log('discussion realtime event', data);
 
@@ -326,7 +326,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
   //   const discussion = this.getDiscussion(this.props.discussionSlug);
   //   if (discussion) {
   //     discussion.loadPosts().catch((err) => notify(err));
-  //     discussion.joinSocketRoom();
+  //     discussion.joinSocketRooms();
   //   }
   // };
 }

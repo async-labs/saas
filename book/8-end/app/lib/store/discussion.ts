@@ -45,7 +45,7 @@ class Discussion {
       await editDiscussionApiMethod({
         id: this._id,
         ...data,
-        // socketId: (this.store.socket && this.store.socket.id) || null,
+        socketId: (this.store.socket && this.store.socket.id) || null,
       });
 
       runInAction(() => {
@@ -96,7 +96,7 @@ class Discussion {
     const { post } = await addPostApiMethod({
       discussionId: this._id,
       content,
-      // socketId: (this.store.socket && this.store.socket.id) || null,
+      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     return new Promise<Post>((resolve) => {
@@ -108,12 +108,6 @@ class Discussion {
   }
 
   public addPostToLocalCache(data) {
-    const oldPost = this.posts.find((t) => t._id === data._id);
-
-    if (oldPost) {
-      this.posts.remove(oldPost);
-    }
-
     const postObj = new Post({ discussion: this, store: this.store, ...data });
 
     this.posts.push(postObj);
@@ -125,7 +119,7 @@ class Discussion {
     await deletePostApiMethod({
       id: post._id,
       discussionId: this._id,
-      // socketId: (this.store.socket && this.store.socket.id) || null,
+      socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
@@ -198,9 +192,10 @@ class Discussion {
   //   this.posts.remove(post);
   // }
 
-  // public joinSocketRoom() {
+  // public joinSocketRooms() {
   //   if (this.store.socket) {
   //     console.log('joining socket discussion room', this.name);
+  //     this.store.socket.emit('joinTeam', this.team._id);
   //     this.store.socket.emit('joinDiscussion', this._id);
   //   }
   // }
@@ -208,6 +203,7 @@ class Discussion {
   // public leaveSocketRoom() {
   //   if (this.store.socket) {
   //     console.log('leaving socket discussion room', this.name);
+  //     this.store.socket.emit('leaveTeam', this.team._id);
   //     this.store.socket.emit('leaveDiscussion', this._id);
   //   }
   // }

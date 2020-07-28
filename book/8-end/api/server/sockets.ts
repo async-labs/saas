@@ -33,7 +33,7 @@ function setup({ http, origin, sessionMiddleware }) {
         console.log(`Socket middleware - ID: ${socket.id}`);
         next();
       })
-      .on('connection', (socket) => {
+      .on('connect', (socket) => {
         if (
           !socket.request.session ||
           !socket.request.session.passport ||
@@ -49,6 +49,16 @@ function setup({ http, origin, sessionMiddleware }) {
         console.log(`Connected to socket => Your User ID is: ${userId}`);
 
         socket.join(`user-${userId}`);
+
+        socket.on('joinTeam', (teamId) => {
+          console.log(`    joinTeam ${teamId}`);
+          socket.join(`team-${teamId}`);
+        });
+
+        socket.on('leaveTeam', (teamId) => {
+          console.log(`** leaveTeam ${teamId}`);
+          socket.leave(`team-${teamId}`);
+        });
 
         socket.on('joinDiscussion', (discussionId) => {
           console.log(`    joinDiscussion ${discussionId}`);
