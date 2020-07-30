@@ -1,7 +1,7 @@
 import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable } from 'mobx';
 import { useStaticRendering } from 'mobx-react'
-// import io from 'socket.io-client';
+import io from 'socket.io-client';
 
 import { addTeamApiMethod, getTeamInvitationsApiMethod } from '../api/team-leader';
 import { getTeamListApiMethod, getTeamMembersApiMethod } from '../api/team-member';
@@ -47,16 +47,6 @@ class Store {
     }
 
     this.socket = socket;
-
-    if (socket) {
-      socket.on('disconnect', () => {
-        console.log('socket: ## disconnected');
-      });
-
-      socket.on('reconnect', (attemptNumber) => {
-        console.log('socket: $$ reconnected', attemptNumber);
-      });
-    }
   }
 
   public changeCurrentUrl(url: string) {

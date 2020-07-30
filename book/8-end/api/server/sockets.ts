@@ -7,20 +7,6 @@ import { PostDocument } from './models/Post';
 
 let io: socketio.Server = null;
 
-function getSocket(socketId?: string) {
-  if (!io) {
-    return null;
-  }
-
-  if (socketId && io.sockets.connected[socketId]) {
-    // if client connected to socket broadcast to other connected sockets
-    return io.sockets.connected[socketId].broadcast;
-  } else {
-    // if client NOT connected to socket sent to all sockets
-    return io;
-  }
-}
-
 function setup({ http, origin, sessionMiddleware }) {
   if (io === null) {
     io = socketio(http, {
@@ -28,52 +14,55 @@ function setup({ http, origin, sessionMiddleware }) {
       serveClient: false,
     });
 
-    io.use((socket, next) => sessionMiddleware(socket.request, {} as Response, next))
-      .use((socket, next) => {
-        console.log(`Socket middleware - ID: ${socket.id}`);
-        next();
-      })
-      .on('connect', (socket) => {
-        if (
-          !socket.request.session ||
-          !socket.request.session.passport ||
-          !socket.request.session.passport.user
-        ) {
-          // user is not logged in so disconnect socket
-          socket.disconnect();
-          return;
-        }
+    io.use((socket, next) => sessionMiddleware(socket.request, {} as Response, next));
 
-        const userId = socket.request.session.passport.user;
+    io.on('connect', (socket) => {
+      if (
+        !socket.request.session ||
+        !socket.request.session.passport ||
+        !socket.request.session.passport.user ||
+        !socket.request.session.passwordless
+      ) {
+        socket.disconnect();
+        return;
+      }
 
-        console.log(`Connected to socket => Your User ID is: ${userId}`);
-
-        socket.join(`user-${userId}`);
-
-        socket.on('joinTeam', (teamId) => {
-          console.log(`    joinTeam ${teamId}`);
-          socket.join(`team-${teamId}`);
-        });
-
-        socket.on('leaveTeam', (teamId) => {
-          console.log(`** leaveTeam ${teamId}`);
-          socket.leave(`team-${teamId}`);
-        });
-
-        socket.on('joinDiscussion', (discussionId) => {
-          console.log(`    joinDiscussion ${discussionId}`);
-          socket.join(`discussion-${discussionId}`);
-        });
-
-        socket.on('leaveDiscussion', (discussionId) => {
-          console.log(`** leaveDiscussion ${discussionId}`);
-          socket.leave(`discussion-${discussionId}`);
-        });
-
-        socket.on('disconnect', () => {
-          console.log(`disconnected => Your User ID is: ${userId}`);
-        });
+      socket.on('joinTeamRoom', (teamId) => {
+        console.log(`    joinTeamRoom ${teamId}`);
+        socket.join(`teamRoom-${teamId}`);
       });
+
+      socket.on('leaveTeam', (teamId) => {
+        console.log(`** leaveTeam ${teamId}`);
+        socket.leave(`teamRoom-${teamId}`);
+      });
+
+      socket.on('joinDiscussionRoom', (discussionId) => {
+        console.log(`    joinDiscussionRoom ${discussionId}`);
+        socket.join(`discussionRoom-${discussionId}`);
+      });
+
+      socket.on('leaveDiscussionRoom', (discussionId) => {
+        console.log(`** leaveDiscussionRoom ${discussionId}`);
+        socket.leave(`discussionRoom-${discussionId}`);
+      });
+
+      socket.on('disconnect', () => {
+        console.log(`disconnected'`);
+      });
+    });
+  }
+}
+
+function getSockets(socketId?: string) {
+  if (!io) {
+    return null;
+  }
+
+  if (socketId && io.sockets.connected[socketId]) {
+    return io.sockets.connected[socketId].broadcast;
+  } else {
+    return io.sockets;
   }
 }
 
@@ -84,11 +73,11 @@ function discussionAdded({
   socketId?: string;
   discussion: DiscussionDocument;
 }) {
-  const roomName = `team-${discussion.teamId}`;
+  const roomName = `teamRoom-${discussion.teamId}`;
 
-  const socket = getSocket(socketId);
-  if (socket) {
-    socket.to(roomName).emit('discussionEvent', { action: 'added', discussion });
+  const sockets = getSockets(socketId);
+  if (sockets) {
+    sockets.to(roomName).emit('discussionEvent', { action: 'added', discussion });
   }
 }
 
@@ -99,11 +88,11 @@ function discussionEdited({
   socketId?: string;
   discussion: DiscussionDocument;
 }) {
-  const roomName = `team-${discussion.teamId}`;
-  const socket = getSocket(socketId);
+  const roomName = `teamRoom-${discussion.teamId}`;
+  const sockets = getSockets(socketId);
 
-  if (socket) {
-    socket.to(roomName).emit('discussionEvent', {
+  if (sockets) {
+    sockets.to(roomName).emit('discussionEvent', {
       action: 'edited',
       discussion,
     });
@@ -119,31 +108,29 @@ function discussionDeleted({
   teamId: string;
   id: string;
 }) {
-  const roomName = `team-${teamId}`;
-  const socket = getSocket(socketId);
+  const roomName = `teamRoom-${teamId}`;
+  const sockets = getSockets(socketId);
 
-  if (socket) {
-    socket.to(roomName).emit('discussionEvent', { action: 'deleted', id });
+  if (sockets) {
+    sockets.to(roomName).emit('discussionEvent', { action: 'deleted', id });
   }
 }
 
 function postAdded({ socketId, post }: { socketId?: string; post: PostDocument }) {
-  // Emit "postEvent" event to discussion's room
-  const roomName = `discussion-${post.discussionId}`;
+  const roomName = `discussionRoom-${post.discussionId}`;
 
-  const socket = getSocket(socketId);
-  if (socket) {
-    socket.to(roomName).emit('postEvent', { action: 'added', post });
+  const sockets = getSockets(socketId);
+  if (sockets) {
+    sockets.to(roomName).emit('postEvent', { action: 'added', post });
   }
 }
 
 function postEdited({ socketId, post }: { socketId?: string; post: PostDocument }) {
-  // Emit "postEvent" event to discussion's room
-  const roomName = `discussion-${post.discussionId}`;
+  const roomName = `discussionRoom-${post.discussionId}`;
 
-  const socket = getSocket(socketId);
-  if (socket) {
-    socket.to(roomName).emit('postEvent', { action: 'edited', post });
+  const sockets = getSockets(socketId);
+  if (sockets) {
+    sockets.to(roomName).emit('postEvent', { action: 'edited', post });
   }
 }
 
@@ -156,12 +143,11 @@ function postDeleted({
   id: string;
   discussionId: string;
 }) {
-  // Emit "postEvent" event to discussion's room
-  const roomName = `discussion-${discussionId}`;
+  const roomName = `discussionRoom-${discussionId}`;
 
-  const socket = getSocket(socketId);
-  if (socket) {
-    socket.to(roomName).emit('postEvent', { action: 'deleted', id });
+  const sockets = getSockets(socketId);
+  if (sockets) {
+    sockets.to(roomName).emit('postEvent', { action: 'deleted', id });
   }
 }
 
