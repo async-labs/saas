@@ -9,7 +9,7 @@ import { observer } from 'mobx-react';
 import Layout from '../components/layout';
 import PostDetail from '../components/posts/PostDetail';
 import PostForm from '../components/posts/PostForm';
-// import notify from '../lib/notify';
+import notify from '../lib/notify';
 import { Store } from '../lib/store';
 import { Discussion } from '../lib/store/discussion';
 import withAuth from '../lib/withAuth';
@@ -162,8 +162,10 @@ class DiscussionPageComp extends React.Component<Props, State> {
       return;
     }
 
-    if (slug && store.currentTeam) {
-      return store.currentTeam.getDiscussionBySlug(slug);
+    console.log(currentTeam.getDiscussionBySlug(slug));
+
+    if (slug && currentTeam) {
+      return currentTeam.getDiscussionBySlug(slug);
     }
 
     return null;
@@ -229,106 +231,90 @@ class DiscussionPageComp extends React.Component<Props, State> {
     this.setState({ selectedPost: post, showMarkdownClicked: true });
   };
 
-    // public componentDidMount() {
-  //   const { store, isServer, discussionSlug } = this.props;
+  public componentDidMount() {
+    const { discussionSlug, store, isServer } = this.props;
 
-  //   if (store.currentTeam && (!isServer || !discussionSlug)) {
-  //     store.currentTeam.loadDiscussions().catch((err) => notify(err));
-  //   }
+    if (store.currentTeam && (!isServer || !discussionSlug)) {
+      store.currentTeam.loadDiscussions().catch((err) => notify(err));
+    }
 
-  //   // this.props.store.socket.on('discussionEvent', this.handleDiscussionEvent);
-  //   // this.props.store.socket.on('postEvent', this.handlePostEvent);
-  //   // this.props.store.socket.on('reconnect', this.handleSocketReconnect);
+    const discussion = this.getDiscussion(discussionSlug);
 
-  //   this.changeDiscussion();
+    console.log(store.socket);
 
-  //   // const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   // if (discussion) {
-  //   //   discussion.joinSocketRooms();
-  //   // }
-  // }
+    if (discussion) {
+      discussion.joinSocketRooms();
+    }
 
-  // public componentDidUpdate(prevProps: Props) {
-  //   // const discussion = this.getDiscussion(this.props.discussionSlug);
+    store.socket.on('discussionEvent', this.handleDiscussionEvent);
+    store.socket.on('postEvent', this.handlePostEvent);
+    store.socket.on('reconnect', this.handleSocketReconnect);
+  }
 
-  //   if (prevProps.discussionSlug !== this.props.discussionSlug) {
-  //     // if (prevProps.discussionSlug) {
-  //     //   const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
-  //     //   if (prevDiscussion) {
-  //     //     prevDiscussion.leaveSocketRoom();
-  //     //   }
-  //     // }
+  public componentWillUnmount() {
+    const { discussionSlug, store } = this.props;
 
-  //     this.changeDiscussion();
+    const discussion = this.getDiscussion(discussionSlug);
 
-  //     // if (discussion) {
-  //     //   discussion.joinSocketRooms();
-  //     // }
-  //   }
-  // }
+    if (discussion) {
+      discussion.leaveSocketRooms();
+    }
 
-  // public changeDiscussion() {
-  //   const { teamSlug, discussionSlug, store, isServer } = this.props;
-  //   const { currentTeam } = store;
+    store.socket.off('discussionEvent',this.handleDiscussionEvent);
+    store.socket.off('postEvent', this.handlePostEvent);
+    store.socket.off('reconnect', this.handleSocketReconnect);
+  }
 
-  //   if (!currentTeam || currentTeam.slug !== teamSlug) {
-  //     return;
-  //   }
+  public componentDidUpdate(prevProps: Props) {
+    const { discussionSlug, isServer } = this.props;
 
-  //   if (!isServer && !discussionSlug && currentTeam.discussions.length > 0) {
-  //     Router.replace(
-  //       `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
-  //       `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
-  //     );
+    if (prevProps.discussionSlug !== discussionSlug) {
+      if (prevProps.discussionSlug) {
+        const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
+        if (prevDiscussion) {
+          prevDiscussion.leaveSocketRooms();
+        }
+      }
 
-  //     return;
-  //   }
+    const discussion = this.getDiscussion(discussionSlug);
 
-  //   const discussion = this.getDiscussion(discussionSlug);
+    if (!isServer && discussion) {
+       discussion.loadPosts().catch((err) => notify(err));
+     }
 
-  //   if (!isServer && discussion) {
-  //     discussion.loadPosts().catch((err) => notify(err));
-  //   }
-  // }
+      if (discussion) {
+        discussion.joinSocketRooms();
+      }
+    }
+  }
 
-  // public componentWillUnmount() {
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   if (discussion) {
-  //     discussion.leaveSocketRoom();
-  //   }
+  private handleDiscussionEvent = (data) => {
+    console.log('discussion realtime event', data);
 
-  //   this.props.store.socket.off('discussionEvent', this.handleDiscussionEvent);
-  //   this.props.store.socket.off('postEvent', this.handlePostEvent);
-  //   this.props.store.socket.off('reconnect', this.handleSocketReconnect);
-  // }
-  
-  // private handleDiscussionEvent = (data) => {
-  //   console.log('discussion realtime event', data);
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.handleDiscussionRealtimeEvent(data);
+    }
+  };
 
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   if (discussion) {
-  //     discussion.handleDiscussionRealtimeEvent(data);
-  //   }
-  // };
+  private handlePostEvent = (data) => {
+    console.log('post realtime event', data);
 
-  // private handlePostEvent = (data) => {
-  //   console.log('post realtime event', data);
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.handlePostRealtimeEvent(data);
+    }
+  };
 
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   if (discussion) {
-  //     discussion.handlePostRealtimeEvent(data);
-  //   }
-  // };
+  private handleSocketReconnect = () => {
+    console.log('pages/discussion.tsx: socket re-connected');
 
-  // private handleSocketReconnect = () => {
-  //   console.log('pages/discussion.tsx: socket re-connected');
-
-  //   const discussion = this.getDiscussion(this.props.discussionSlug);
-  //   if (discussion) {
-  //     discussion.loadPosts().catch((err) => notify(err));
-  //     discussion.joinSocketRooms();
-  //   }
-  // };
+    const discussion = this.getDiscussion(this.props.discussionSlug);
+    if (discussion) {
+      discussion.loadPosts().catch((err) => notify(err));
+      discussion.joinSocketRooms();
+    }
+  };
 }
 
 export default withAuth(observer(DiscussionPageComp));

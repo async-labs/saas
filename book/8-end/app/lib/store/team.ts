@@ -109,6 +109,16 @@ class Team {
     }
   }
 
+  public setCurrentDiscussion({ slug }: { slug: string }) {
+    this.currentDiscussionSlug = slug;
+    for (const discussion of this.discussions) {
+      if (discussion && discussion.slug === slug) {
+        this.currentDiscussion = discussion;
+        break;
+      }
+    }
+  }
+
   public setInitialDiscussions(discussions) {
     const discussionObjs = discussions.map(
       (d) => new Discussion({ team: this, store: this.store, ...d }),
@@ -118,6 +128,10 @@ class Team {
 
     if (!this.currentDiscussionSlug && this.discussions.length > 0) {
       this.currentDiscussionSlug = this.orderedDiscussions[0].slug;
+    }
+
+    if (this.currentDiscussionSlug) {
+      this.setCurrentDiscussion({ slug: this.currentDiscussionSlug });
     }
   }
 
@@ -218,7 +232,8 @@ class Team {
     this.discussions.remove(discussion);
   }
 
-  public getDiscussionBySlug(slug): Discussion {
+  public getDiscussionBySlug(slug: string): Discussion {
+    // console.log(this.discussions.find((d) => d.slug === slug));
     return this.discussions.find((d) => d.slug === slug);
   }
 

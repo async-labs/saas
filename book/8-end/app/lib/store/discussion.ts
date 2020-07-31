@@ -127,86 +127,86 @@ class Discussion {
     });
   }
 
-  // public handleDiscussionRealtimeEvent = (data) => {
-  //   console.log('discussion realtime event', data);
-  //   const { action: actionName } = data;
+  public joinSocketRooms() {
+    if (this.store.socket) {
+      console.log('joining socket discussion room', this.name);
+      this.store.socket.emit('joinTeamRoom', this.team._id);
+      this.store.socket.emit('joinDiscussionRoom', this._id);
+    }
+  }
 
-  //   if (actionName === 'added') {
-  //     this.addDiscussionToLocalCache(data.discussion);
-  //   } else if (actionName === 'edited') {
-  //     this.editDiscussionFromLocalCache(data.discussion);
-  //   } else if (actionName === 'deleted') {
-  //     this.removeDiscussionFromLocalCache(data.id);
-  //   }
-  // };
+  public leaveSocketRooms() {
+    if (this.store.socket) {
+      console.log('leaving socket discussion room', this.name);
+      this.store.socket.emit('leaveTeamRoom', this.team._id);
+      this.store.socket.emit('leaveDiscussionRoom', this._id);
+    }
+  }
 
-  //   public addDiscussionToLocalCache(data): Discussion {
-  //   const obj = new Discussion({ team: this.team, store: this.store, ...data });
+  public handleDiscussionRealtimeEvent = (data) => {
+    console.log('discussion realtime event', data);
+    const { action: actionName } = data;
 
-  //   if (obj.memberIds.includes(this.store.currentUser._id)) {
-  //     this.team.discussions.push(obj);
-  //   }
+    if (actionName === 'added') {
+      this.addDiscussionToLocalCache(data.discussion);
+    } else if (actionName === 'edited') {
+      this.editDiscussionFromLocalCache(data.discussion);
+    } else if (actionName === 'deleted') {
+      this.removeDiscussionFromLocalCache(data.id);
+    }
+  };
 
-  //   return obj;
-  // }
+  public addDiscussionToLocalCache(data): Discussion {
+    const obj = new Discussion({ team: this.team, store: this.store, ...data });
 
-  // public editDiscussionFromLocalCache(data) {
-  //   const discussion = this.team.discussions.find((item) => item._id === data._id);
-  //   if (discussion) {
-  //     if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
-  //       discussion.changeLocalCache(data);
-  //     } else {
-  //       this.removeDiscussionFromLocalCache(data._id);
-  //     }
-  //   } else if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
-  //     this.addDiscussionToLocalCache(data);
-  //   }
-  // }
+    if (obj.memberIds.includes(this.store.currentUser._id)) {
+      this.team.discussions.push(obj);
+    }
 
-  // public removeDiscussionFromLocalCache(discussionId: string) {
-  //   const discussion = this.team.discussions.find((item) => item._id === discussionId);
-  //   this.team.discussions.remove(discussion);
-  // }
+    return obj;
+  }
 
-  // public handlePostRealtimeEvent(data) {
-  //   const { action: actionName } = data;
+  public editDiscussionFromLocalCache(data) {
+    const discussion = this.team.discussions.find((item) => item._id === data._id);
+    if (discussion) {
+      if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
+        discussion.changeLocalCache(data);
+      } else {
+        this.removeDiscussionFromLocalCache(data._id);
+      }
+    } else if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
+      this.addDiscussionToLocalCache(data);
+    }
+  }
 
-  //   if (actionName === 'added') {
-  //     this.addPostToLocalCache(data.post);
-  //   } else if (actionName === 'edited') {
-  //     this.editPostFromLocalCache(data.post);
-  //   } else if (actionName === 'deleted') {
-  //     this.removePostFromLocalCache(data.id);
-  //   }
-  // }
+  public removeDiscussionFromLocalCache(discussionId: string) {
+    const discussion = this.team.discussions.find((item) => item._id === discussionId);
+    this.team.discussions.remove(discussion);
+  }
 
-  // public editPostFromLocalCache(data) {
-  //   const post = this.posts.find((t) => t._id === data._id);
-  //   if (post) {
-  //     post.changeLocalCache(data);
-  //   }
-  // }
+  public handlePostRealtimeEvent(data) {
+    const { action: actionName } = data;
 
-  // public deletePostFromLocalCache(postId) {
-  //   const post = this.posts.find((t) => t._id === postId);
-  //   this.posts.remove(post);
-  // }
+    if (actionName === 'added') {
+      this.addPostToLocalCache(data.post);
+    } else if (actionName === 'edited') {
+      this.editPostFromLocalCache(data.post);
+    } else if (actionName === 'deleted') {
+      this.deletePostFromLocalCache(data.id);
+    }
+  }
 
-  // public joinSocketRooms() {
-  //   if (this.store.socket) {
-  //     console.log('joining socket discussion room', this.name);
-  //     this.store.socket.emit('joinTeam', this.team._id);
-  //     this.store.socket.emit('joinDiscussion', this._id);
-  //   }
-  // }
+  public editPostFromLocalCache(data) {
+    const post = this.posts.find((t) => t._id === data._id);
+    if (post) {
+      post.changeLocalCache(data);
+    }
+  }
 
-  // public leaveSocketRoom() {
-  //   if (this.store.socket) {
-  //     console.log('leaving socket discussion room', this.name);
-  //     this.store.socket.emit('leaveTeam', this.team._id);
-  //     this.store.socket.emit('leaveDiscussion', this._id);
-  //   }
-  // }
+  public deletePostFromLocalCache(postId) {
+    const post = this.posts.find((t) => t._id === postId);
+    this.posts.remove(post);
+  }
 }
 
 decorate(Discussion, {
@@ -227,8 +227,6 @@ decorate(Discussion, {
   // addDiscussionToLocalCache: action,
   // editDiscussionFromLocalCache: action,
   // removeDiscussionFromLocalCache: action,
-
-
   // editPostFromLocalCache: action,
   // removePostFromLocalCache: action,
 

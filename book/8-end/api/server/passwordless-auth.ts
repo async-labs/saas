@@ -103,7 +103,7 @@ function setupPasswordless({ server }) {
       if (req.user && !req.user.defaultTeamSlug) {
         redirectUrlAfterLogin = '/create-team';
       } else {
-        redirectUrlAfterLogin = `/your-settings`;
+        redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
       }
 
       res.redirect(`${process.env.URL_APP}${redirectUrlAfterLogin}`);

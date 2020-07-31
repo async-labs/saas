@@ -47,6 +47,19 @@ class Store {
     }
 
     this.socket = socket;
+
+    if (socket) {
+      socket.on('disconnect', () => {
+        console.log('socket: ## disconnected');
+      });
+
+      socket.on('reconnect', (attemptNumber) => {
+        console.log('socket: $$ reconnected', attemptNumber);
+
+        this.socket.emit('joinTeamRoom', this.currentTeam._id);
+        this.socket.emit('joinDiscussionRoom', this.currentTeam.currentDiscussion._id);
+      });
+    }
   }
 
   public changeCurrentUrl(url: string) {
@@ -143,7 +156,7 @@ let store: Store = null;
 function initializeStore(initialState = {}) {
   const isServer = typeof window === 'undefined';
 
-  const socket = io(process.env.URL_API);
+  const socket = isServer ? null : io(process.env.URL_API);
 
   const _store = (store !== null && store !== undefined) ? store : new Store({ initialState, isServer, socket });
 

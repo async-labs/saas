@@ -6,13 +6,17 @@ import { DiscussionDocument } from './models/Discussion';
 import { PostDocument } from './models/Post';
 
 let io: socketio.Server = null;
+// const dev = process.env.NODE_ENV !== 'production';
 
 function setup({ http, origin, sessionMiddleware }) {
   if (io === null) {
-    io = socketio(http, {
-      origins: `${origin}:443`,
-      serveClient: false,
-    });
+    io = socketio(http, { origins: origin, serveClient: false });
+
+    // if (dev) {
+    //   io.origins(origin);
+    // } else {
+    //   io.origins(`${origin}:443`);
+    // }
 
     io.use((socket, next) => sessionMiddleware(socket.request, {} as Response, next));
 
@@ -32,8 +36,8 @@ function setup({ http, origin, sessionMiddleware }) {
         socket.join(`teamRoom-${teamId}`);
       });
 
-      socket.on('leaveTeam', (teamId) => {
-        console.log(`** leaveTeam ${teamId}`);
+      socket.on('leaveTeamRoom', (teamId) => {
+        console.log(`** leaveTeamRoom ${teamId}`);
         socket.leave(`teamRoom-${teamId}`);
       });
 
@@ -62,7 +66,7 @@ function getSockets(socketId?: string) {
   if (socketId && io.sockets.connected[socketId]) {
     return io.sockets.connected[socketId].broadcast;
   } else {
-    return io.sockets;
+    return io;
   }
 }
 
