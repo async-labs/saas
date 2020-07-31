@@ -145,14 +145,14 @@ class Discussion {
 
   public handleDiscussionRealtimeEvent = (data) => {
     console.log('discussion realtime event', data);
-    const { action: actionName } = data;
+    const { actionType } = data;
 
-    if (actionName === 'added') {
+    if (actionType === 'added') {
       this.addDiscussionToLocalCache(data.discussion);
-    } else if (actionName === 'edited') {
+    } else if (actionType === 'edited') {
       this.editDiscussionFromLocalCache(data.discussion);
-    } else if (actionName === 'deleted') {
-      this.removeDiscussionFromLocalCache(data.id);
+    } else if (actionType === 'deleted') {
+      this.deleteDiscussionFromLocalCache(data.id);
     }
   };
 
@@ -172,26 +172,26 @@ class Discussion {
       if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
         discussion.changeLocalCache(data);
       } else {
-        this.removeDiscussionFromLocalCache(data._id);
+        this.deleteDiscussionFromLocalCache(data._id);
       }
     } else if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
       this.addDiscussionToLocalCache(data);
     }
   }
 
-  public removeDiscussionFromLocalCache(discussionId: string) {
+  public deleteDiscussionFromLocalCache(discussionId: string) {
     const discussion = this.team.discussions.find((item) => item._id === discussionId);
     this.team.discussions.remove(discussion);
   }
 
   public handlePostRealtimeEvent(data) {
-    const { action: actionName } = data;
+    const { actionType } = data;
 
-    if (actionName === 'added') {
+    if (actionType === 'added') {
       this.addPostToLocalCache(data.post);
-    } else if (actionName === 'edited') {
+    } else if (actionType === 'edited') {
       this.editPostFromLocalCache(data.post);
-    } else if (actionName === 'deleted') {
+    } else if (actionType === 'deleted') {
       this.deletePostFromLocalCache(data.id);
     }
   }
@@ -224,11 +224,12 @@ decorate(Discussion, {
   addPost: action,
   addPostToLocalCache: action,
   deletePost: action,
-  // addDiscussionToLocalCache: action,
-  // editDiscussionFromLocalCache: action,
-  // removeDiscussionFromLocalCache: action,
-  // editPostFromLocalCache: action,
-  // removePostFromLocalCache: action,
+  
+  addDiscussionToLocalCache: action,
+  editDiscussionFromLocalCache: action,
+  deleteDiscussionFromLocalCache: action,
+  editPostFromLocalCache: action,
+  deletePostFromLocalCache: action,
 
   members: computed,
 });

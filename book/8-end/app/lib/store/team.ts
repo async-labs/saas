@@ -233,7 +233,6 @@ class Team {
   }
 
   public getDiscussionBySlug(slug: string): Discussion {
-    // console.log(this.discussions.find((d) => d.slug === slug));
     return this.discussions.find((d) => d.slug === slug);
   }
 

@@ -75,7 +75,7 @@ class MyApp extends App<{ isMobile: boolean }> {
       try {
         initialData = await getInitialDataApiMethod({
           request: ctx.req,
-          data: { teamSlug },
+          data: { teamSlug, discussionSlug },
         });
       } catch (error) {
         console.error(error);

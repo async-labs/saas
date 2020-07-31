@@ -162,8 +162,6 @@ class DiscussionPageComp extends React.Component<Props, State> {
       return;
     }
 
-    console.log(currentTeam.getDiscussionBySlug(slug));
-
     if (slug && currentTeam) {
       return currentTeam.getDiscussionBySlug(slug);
     }
@@ -240,11 +238,11 @@ class DiscussionPageComp extends React.Component<Props, State> {
 
     const discussion = this.getDiscussion(discussionSlug);
 
-    console.log(store.socket);
-
     if (discussion) {
       discussion.joinSocketRooms();
     }
+
+    console.log(store.socket);
 
     store.socket.on('discussionEvent', this.handleDiscussionEvent);
     store.socket.on('postEvent', this.handlePostEvent);

@@ -55,9 +55,6 @@ class Store {
 
       socket.on('reconnect', (attemptNumber) => {
         console.log('socket: $$ reconnected', attemptNumber);
-
-        this.socket.emit('joinTeamRoom', this.currentTeam._id);
-        this.socket.emit('joinDiscussionRoom', this.currentTeam.currentDiscussion._id);
       });
     }
   }

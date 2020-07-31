@@ -20,12 +20,11 @@ function setup({ http, origin, sessionMiddleware }) {
 
     io.use((socket, next) => sessionMiddleware(socket.request, {} as Response, next));
 
-    io.on('connect', (socket) => {
+    io.on('connection', (socket) => {
       if (
         !socket.request.session ||
-        !socket.request.session.passport ||
-        !socket.request.session.passport.user ||
-        !socket.request.session.passwordless
+        ((!socket.request.session.passport || !socket.request.session.passport.user) &&
+          !socket.request.session.passwordless)
       ) {
         socket.disconnect();
         return;
@@ -58,7 +57,7 @@ function setup({ http, origin, sessionMiddleware }) {
   }
 }
 
-function getSockets(socketId?: string) {
+function getSocket(socketId?: string) {
   if (!io) {
     return null;
   }
@@ -79,9 +78,9 @@ function discussionAdded({
 }) {
   const roomName = `teamRoom-${discussion.teamId}`;
 
-  const sockets = getSockets(socketId);
-  if (sockets) {
-    sockets.to(roomName).emit('discussionEvent', { action: 'added', discussion });
+  const socket = getSocket(socketId);
+  if (socket) {
+    socket.to(roomName).emit('discussionEvent', { actionType: 'added', discussion });
   }
 }
 
@@ -93,11 +92,11 @@ function discussionEdited({
   discussion: DiscussionDocument;
 }) {
   const roomName = `teamRoom-${discussion.teamId}`;
-  const sockets = getSockets(socketId);
+  const socket = getSocket(socketId);
 
-  if (sockets) {
-    sockets.to(roomName).emit('discussionEvent', {
-      action: 'edited',
+  if (socket) {
+    socket.to(roomName).emit('discussionEvent', {
+      actionType: 'edited',
       discussion,
     });
   }
@@ -113,28 +112,28 @@ function discussionDeleted({
   id: string;
 }) {
   const roomName = `teamRoom-${teamId}`;
-  const sockets = getSockets(socketId);
+  const socket = getSocket(socketId);
 
-  if (sockets) {
-    sockets.to(roomName).emit('discussionEvent', { action: 'deleted', id });
+  if (socket) {
+    socket.to(roomName).emit('discussionEvent', { actionType: 'deleted', id });
   }
 }
 
 function postAdded({ socketId, post }: { socketId?: string; post: PostDocument }) {
   const roomName = `discussionRoom-${post.discussionId}`;
 
-  const sockets = getSockets(socketId);
-  if (sockets) {
-    sockets.to(roomName).emit('postEvent', { action: 'added', post });
+  const socket = getSocket(socketId);
+  if (socket) {
+    socket.to(roomName).emit('postEvent', { actionType: 'added', post });
   }
 }
 
 function postEdited({ socketId, post }: { socketId?: string; post: PostDocument }) {
   const roomName = `discussionRoom-${post.discussionId}`;
 
-  const sockets = getSockets(socketId);
-  if (sockets) {
-    sockets.to(roomName).emit('postEvent', { action: 'edited', post });
+  const socket = getSocket(socketId);
+  if (socket) {
+    socket.to(roomName).emit('postEvent', { actionType: 'edited', post });
   }
 }
 
@@ -149,9 +148,9 @@ function postDeleted({
 }) {
   const roomName = `discussionRoom-${discussionId}`;
 
-  const sockets = getSockets(socketId);
-  if (sockets) {
-    sockets.to(roomName).emit('postEvent', { action: 'deleted', id });
+  const socket = getSocket(socketId);
+  if (socket) {
+    socket.to(roomName).emit('postEvent', { actionType: 'deleted', id });
   }
 }
 
