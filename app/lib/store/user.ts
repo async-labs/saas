@@ -16,7 +16,6 @@ class User {
   public defaultTeamSlug: string;
   public isSignedupViaGoogle: boolean;
 
-  public hasCardInformation: boolean;
   public stripeCard: {
     brand: string;
     funding: string;
@@ -24,6 +23,7 @@ class User {
     exp_month: number;
     exp_year: number;
   };
+  public hasCardInformation: boolean;
   public stripeListOfInvoices: {
     object: string;
     data: [
