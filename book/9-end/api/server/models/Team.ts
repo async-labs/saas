@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/camelcase */
+
 import * as mongoose from 'mongoose';
 import Stripe from 'stripe';
 
@@ -34,23 +36,19 @@ const mongoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  isSubscriptionActive: {
-    type: Boolean,
-    default: false,
-  },
   stripeSubscription: {
     id: String,
     object: String,
-    // eslint-disable-next-line
     application_fee_percent: Number,
     billing: String,
-    // eslint-disable-next-line
     cancel_at_period_end: Boolean,
-    // eslint-disable-next-line
     billing_cycle_anchor: Number,
-    // eslint-disable-next-line
     canceled_at: Number,
     created: Number,
+  },
+  isSubscriptionActive: {
+    type: Boolean,
+    default: false,
   },
   isPaymentFailed: {
     type: Boolean,
@@ -68,7 +66,6 @@ export interface TeamDocument extends mongoose.Document {
   memberIds: string[];
   defaultTeam: boolean;
 
-  isSubscriptionActive: boolean;
   stripeSubscription: {
     id: string;
     object: string;
@@ -79,6 +76,7 @@ export interface TeamDocument extends mongoose.Document {
     canceled_at: number;
     created: number;
   };
+  isSubscriptionActive: boolean;
   isPaymentFailed: boolean;
 }
 
@@ -266,7 +264,6 @@ class TeamClass extends mongoose.Model {
   }
 
   public static async cancelSubscriptionAfterFailedPayment({ subscriptionId }) {
-    // eslint-disable-next-line
     const team: any = await this.find({ 'stripeSubscription.id': subscriptionId })
       .select('teamLeaderId isSubscriptionActive stripeSubscription isPaymentFailed')
       .setOptions({ lean: true });

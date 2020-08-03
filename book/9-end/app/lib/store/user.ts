@@ -48,6 +48,7 @@ class User {
     this.isSignedupViaGoogle = !!params.isSignedupViaGoogle;
     this.darkTheme = !!params.darkTheme;
     this.defaultTeamSlug = params.defaultTeamSlug;
+    
     this.stripeCard = params.stripeCard;
     this.hasCardInformation = params.hasCardInformation;
     this.stripeListOfInvoices = params.stripeListOfInvoices;

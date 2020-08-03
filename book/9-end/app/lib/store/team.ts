@@ -34,8 +34,6 @@ class Team {
   public discussions: IObservableArray<Discussion> = observable([]);
   public isLoadingDiscussions = false;
 
-  public isSubscriptionActive: boolean;
-  public isPaymentFailed: boolean;
   public stripeSubscription: {
     id: string;
     object: string;
@@ -46,6 +44,8 @@ class Team {
     canceled_at: number;
     created: number;
   };
+  public isSubscriptionActive: boolean;
+  public isPaymentFailed: boolean;
 
   constructor(params) {
     this._id = params._id;
@@ -55,9 +55,10 @@ class Team {
     this.avatarUrl = params.avatarUrl;
     this.memberIds.replace(params.memberIds || []);
     this.currentDiscussionSlug = params.currentDiscussionSlug || null;
+
+    this.stripeSubscription = params.stripeSubscription;
     this.isSubscriptionActive = params.isSubscriptionActive;
     this.isPaymentFailed = params.isPaymentFailed;
-    this.stripeSubscription = params.stripeSubscription;
 
     this.store = params.store;
 

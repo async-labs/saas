@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/camelcase */
+
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 import Stripe from 'stripe';
@@ -53,7 +55,6 @@ const mongoSchema = new mongoose.Schema({
     object: String,
     created: Number,
     currency: String,
-    // eslint-disable-next-line
     default_source: String,
     description: String,
   },
@@ -64,9 +65,7 @@ const mongoSchema = new mongoose.Schema({
     funding: String,
     country: String,
     last4: String,
-    // eslint-disable-next-line
     exp_month: Number,
-    // eslint-disable-next-line
     exp_year: Number,
   },
   hasCardInformation: {
@@ -75,18 +74,15 @@ const mongoSchema = new mongoose.Schema({
   },
   stripeListOfInvoices: {
     object: String,
-    // eslint-disable-next-line
     has_more: Boolean,
     data: [
       {
         id: String,
         object: String,
-        // eslint-disable-next-line
         amount_paid: Number,
         created: Number,
         customer: String,
         subscription: String,
-        // eslint-disable-next-line
         hosted_invoice_url: String,
         billing: String,
         paid: Boolean,

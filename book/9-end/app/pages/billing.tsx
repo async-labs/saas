@@ -3,7 +3,6 @@ import moment from 'moment';
 import Head from 'next/head';
 import * as React from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import NProgress from 'nprogress';
 
@@ -13,15 +12,6 @@ import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 import { fetchCheckoutSessionApiMethod } from '../lib/api/team-leader';
 
-const styleGrid = {
-  height: '100%',
-};
-
-// const styleGridItem = {
-//   padding: '0px 20px',
-//   borderRight: '0.5px #707070 solid',
-// };
-
 const stripePromise = loadStripe(process.env.STRIPEPUBLISHABLEKEY);
 
 type Props = {
@@ -29,7 +19,7 @@ type Props = {
   isTL: boolean;
   teamSlug: string;
   isMobile: boolean;
-  checkoutCanceled: boolean;
+  redirectMessage?: string;
   error: string;
 };
 type State = { disabled: boolean; showInvoices: boolean };
@@ -41,22 +31,6 @@ class YourBilling extends React.Component<Props, State> {
     showInvoices: false,
   };
 
-  public static getInitialProps({ query }) {
-    const { checkout_canceled, error } = query;
-
-    return { checkoutCanceled: !!checkout_canceled, error };
-  }
-
-  public async componentDidMount() {
-    if (this.props.checkoutCanceled) {
-      notify('Checkout canceled');
-    }
-
-    if (this.props.error) {
-      notify(this.props.error);
-    }
-  }
-
   public render() {
     const { store, isMobile } = this.props;
     const { currentTeam, currentUser } = store;
@@ -65,7 +39,11 @@ class YourBilling extends React.Component<Props, State> {
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
+          <Head>
+            <title>Your Billing</title>
+            <meta name="some name" content="some content" />
+          </Head>
+          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
             <p>You did not select any team.</p>
             <p>
               To access this page, please select existing team or create new team if you have no
@@ -81,16 +59,12 @@ class YourBilling extends React.Component<Props, State> {
         <Layout {...this.props}>
           <Head>
             <title>Your Billing</title>
-            <meta name="description" content="description" />
+            <meta name="some name" content="some content" />
           </Head>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
-            <Grid container style={styleGrid}>
-              <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
-                <h3>Your Billing</h3>
-                <p>Only Team Leader can access this page.</p>
-                <p>Create your own team to become Team Leader.</p>
-              </Grid>
-            </Grid>
+          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+            <h3>Your Billing</h3>
+            <p>Only Team Leader can access this page.</p>
+            <p>Create your own team to become Team Leader.</p>
           </div>
         </Layout>
       );
@@ -100,61 +74,66 @@ class YourBilling extends React.Component<Props, State> {
       <Layout {...this.props}>
         <Head>
           <title>Your Billing</title>
-          <meta name="description" content="description" />
+          <meta name="some name" content="some content" />
         </Head>
-        <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
-          <Grid container style={styleGrid}>
-            <Grid item sm={12} xs={12} style={{ padding: '0px 20px' }}>
-              <h3>Your Billing</h3>
+        <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+          <h3>Your Billing</h3>
+          <p />
+          <h4 style={{ marginTop: '40px' }}>Paid plan</h4>
+          {this.renderSubscriptionButton()}
+          <p />
+          <br />
+          <h4>Card information</h4>
+          {currentUser && currentUser.stripeCard ? (
+            <span>
+              {' '}
+              <i
+                className="material-icons"
+                color="action"
+                style={{ verticalAlign: 'text-bottom' }}
+              >
+                done
+              </i>{' '}
+              Your default payment method:
+              <li>
+                {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
+              </li>
+              <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
+              <li>
+                Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
+              </li>
               <p />
-              <h4 style={{ marginTop: '40px' }}>Paid plan</h4>
-              {this.renderSubscriptionButton()}
-              <p />
-              <br />
-              <h4>Card information</h4>
-              {currentUser && currentUser.stripeCard ? (
-                <span>
-                  {' '}
-                  <i
-                    className="material-icons"
-                    color="action"
-                    style={{ verticalAlign: 'text-bottom' }}
-                  >
-                    done
-                  </i>{' '}
-                  Your default payment method:
-                  <li>
-                    {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
-                  </li>
-                  <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
-                  <li>
-                    Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
-                  </li>
-                  <p />
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => this.handleCheckoutClick('setup')}
-                  >
-                    Update card
-                  </Button>
-                </span>
-              ) : null}
-              <p />
-              <br />
-              <h4>Payment history</h4>
-              <Button variant="outlined" color="primary" onClick={this.showListOfInvoicesOnClick}>
-                Show payment history
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => this.handleCheckoutClick('setup')}
+              >
+                Update card
               </Button>
-              {this.renderInvoices()}
-              <p />
-              <br />
-            </Grid>
-          </Grid>
+            </span>
+          ) : 'You have not added a card.'}
+          <p />
+          <br />
+          <h4>Payment history</h4>
+          <Button variant="outlined" color="primary" onClick={this.showListOfInvoicesOnClick}>
+            Show payment history
+          </Button>
+          {this.renderInvoices()}
+          <p />
           <br />
         </div>
       </Layout>
     );
+  }
+
+  public async componentDidMount() {
+    if (this.props.redirectMessage) {
+      notify(this.props.redirectMessage);
+    }
+
+    if (this.props.error) {
+      notify(this.props.error);
+    }
   }
 
   private renderSubscriptionButton() {
