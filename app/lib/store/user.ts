@@ -116,6 +116,7 @@ decorate(User, {
   toggleTheme: action,
   login: action,
   logout: action,
+  getListOfInvoices: action,
 });
 
 export { User };

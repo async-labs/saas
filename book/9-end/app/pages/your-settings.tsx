@@ -41,7 +41,6 @@ class YourSettings extends React.Component<Props, State> {
       <Layout {...this.props}>
         <Head>
           <title>Your Settings at Async</title>
-          <meta name="description" content="description" />
         </Head>
         <div
           style={{

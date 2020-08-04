@@ -6,7 +6,12 @@ import Stripe from 'stripe';
 import Team from './models/Team';
 import User from './models/User';
 
-const stripeInstance = new Stripe(process.env.STRIPE_SECRETKEY, { apiVersion: '2020-03-02' });
+const dev = process.env.NODE_ENV !== 'production';
+
+const stripeInstance = new Stripe(
+  dev ? process.env.STRIPE_TEST_SECRETKEY : process.env.STRIPE_LIVE_SECRETKEY,
+  { apiVersion: '2020-03-02' },
+);
 
 function createSession({ userId, teamId, teamSlug, customerId, subscriptionId, userEmail, mode }) {
   const params: Stripe.Checkout.SessionCreateParams = {
@@ -20,7 +25,9 @@ function createSession({ userId, teamId, teamSlug, customerId, subscriptionId, u
   };
 
   if (mode === 'subscription') {
-    params.line_items = [{ price: process.env.STRIPE_PLANID, quantity: 1 }];
+    params.line_items = [
+      { price: dev ? process.env.STRIPE_TEST_PLANID : process.env.STRIPE_LIVE_PLANID, quantity: 1 },
+    ];
   } else if (mode === 'setup') {
     if (!customerId || !subscriptionId) {
       throw new Error('customerId and subscriptionId required');
@@ -66,16 +73,7 @@ function getListOfInvoices({ customerId }) {
   return stripeInstance.invoices.list({ customer: customerId, limit: 100 });
 }
 
-function verifyWebHook(request) {
-  const event = stripeInstance.webhooks.constructEvent(
-    request.body,
-    request.headers['stripe-signature'],
-    process.env.STRIPE_LIVE_ENDPOINTSECRET,
-  );
-  return event;
-}
-
-function stripeWebHookAndCheckoutCallback({ server }) {
+function stripeWebhookAndCheckoutCallback({ server }) {
   server.post(
     '/api/v1/public/stripe-invoice-payment-failed',
     bodyParser.raw({ type: 'application/json' }),
@@ -83,7 +81,12 @@ function stripeWebHookAndCheckoutCallback({ server }) {
       console.log('express route is called');
 
       try {
-        const event = await verifyWebHook(req);
+        const event = stripeInstance.webhooks.constructEvent(
+          req.body,
+          req.headers['stripe-signature'],
+          dev ? process.env.STRIPE_TEST_ENDPOINTSECRET : process.env.STRIPE_LIVE_ENDPOINTSECRET,
+        );
+
         console.log(`${event.id}, ${event.type}`);
 
         // invoice.payment_failed
@@ -102,6 +105,7 @@ function stripeWebHookAndCheckoutCallback({ server }) {
 
         res.sendStatus(200);
       } catch (err) {
+        console.log(`Webhook error: ${err.message}`);
         next(err);
       }
     },
@@ -173,4 +177,4 @@ function stripeWebHookAndCheckoutCallback({ server }) {
   });
 }
 
-export { createSession, cancelSubscription, getListOfInvoices, stripeWebHookAndCheckoutCallback };
+export { createSession, cancelSubscription, getListOfInvoices, stripeWebhookAndCheckoutCallback };

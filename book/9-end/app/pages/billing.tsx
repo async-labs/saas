@@ -12,7 +12,8 @@ import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 import { fetchCheckoutSessionApiMethod } from '../lib/api/team-leader';
 
-const stripePromise = loadStripe(process.env.STRIPEPUBLISHABLEKEY);
+const dev = process.env.NODE_ENV && process.env.NODE_ENV !== 'production';
+const stripePromise = loadStripe(dev ? process.env.STRIPE_TEST_PUBLISHABLEKEY : process.env.STRIPE_LIVE_PUBLISHABLEKEY);
 
 type Props = {
   store: Store;
@@ -24,7 +25,7 @@ type Props = {
 };
 type State = { disabled: boolean; showInvoices: boolean };
 
-class YourBilling extends React.Component<Props, State> {
+class Billing extends React.Component<Props, State> {
   public state = {
     newName: '',
     disabled: false,
@@ -41,7 +42,6 @@ class YourBilling extends React.Component<Props, State> {
         <Layout {...this.props}>
           <Head>
             <title>Your Billing</title>
-            <meta name="some name" content="some content" />
           </Head>
           <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
             <p>You did not select any team.</p>
@@ -59,7 +59,6 @@ class YourBilling extends React.Component<Props, State> {
         <Layout {...this.props}>
           <Head>
             <title>Your Billing</title>
-            <meta name="some name" content="some content" />
           </Head>
           <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
             <h3>Your Billing</h3>
@@ -74,7 +73,6 @@ class YourBilling extends React.Component<Props, State> {
       <Layout {...this.props}>
         <Head>
           <title>Your Billing</title>
-          <meta name="some name" content="some content" />
         </Head>
         <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
           <h3>Your Billing</h3>
@@ -313,4 +311,4 @@ class YourBilling extends React.Component<Props, State> {
   };
 }
 
-export default withAuth(observer(YourBilling));
+export default withAuth(observer(Billing));

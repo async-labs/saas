@@ -84,14 +84,6 @@ class DiscussionPageComp extends React.Component<Props, State> {
       <Layout {...this.props}>
         <Head>
           <title>{title}</title>
-          <meta
-            name="description"
-            content={
-              discussion
-                ? `Discussion ${discussion.name} by Team ${currentTeam.name}`
-                : 'Discussions'
-            }
-          />
         </Head>
         <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
           <h4>

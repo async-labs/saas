@@ -10,7 +10,7 @@ import api from './api';
 import { setupGoogle } from './google-auth';
 import { setupPasswordless } from './passwordless-auth';
 import { setup as setupSockets } from './sockets';
-import { stripeWebHookAndCheckoutCallback } from './stripe';
+import { stripeWebhookAndCheckoutCallback } from './stripe';
 
 const options = {
   useNewUrlParser: true,
@@ -25,7 +25,7 @@ const server = express();
 
 server.use(cors({ origin: process.env.URL_APP, credentials: true }));
 
-stripeWebHookAndCheckoutCallback({ server });
+stripeWebhookAndCheckoutCallback({ server });
 
 server.use(express.json());
 

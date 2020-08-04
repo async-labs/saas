@@ -81,7 +81,6 @@ class TeamSettings extends React.Component<Props, State> {
       <Layout {...this.props}>
         <Head>
           <title>Team Settings</title>
-          <meta name="description" content={`Edit team settings. Add or edit members for Team ${currentTeam.name}`} />
         </Head>
         <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
               <h3>Team Settings</h3>
