@@ -26,7 +26,10 @@ function createSession({ userId, teamId, teamSlug, customerId, subscriptionId, u
 
   if (mode === 'subscription') {
     params.line_items = [
-      { price: dev ? process.env.STRIPE_TEST_PLANID : process.env.STRIPE_LIVE_PLANID, quantity: 1 },
+      {
+        price: dev ? process.env.STRIPE_TEST_PRICEID : process.env.STRIPE_LIVE_PRICEID,
+        quantity: 1,
+      },
     ];
   } else if (mode === 'setup') {
     if (!customerId || !subscriptionId) {

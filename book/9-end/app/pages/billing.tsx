@@ -13,36 +13,31 @@ import withAuth from '../lib/withAuth';
 import { fetchCheckoutSessionApiMethod } from '../lib/api/team-leader';
 
 const dev = process.env.NODE_ENV && process.env.NODE_ENV !== 'production';
-const stripePromise = loadStripe(dev ? process.env.STRIPE_TEST_PUBLISHABLEKEY : process.env.STRIPE_LIVE_PUBLISHABLEKEY);
+
+const stripePromise = await loadStripe(
+  dev ? process.env.STRIPE_TEST_PUBLISHABLEKEY : process.env.STRIPE_LIVE_PUBLISHABLEKEY,
+);
 
 type Props = {
   store: Store;
-  isTL: boolean;
-  teamSlug: string;
   isMobile: boolean;
+  teamSlug: string;
   redirectMessage?: string;
-  error: string;
 };
+
 type State = { disabled: boolean; showInvoices: boolean };
 
 class Billing extends React.Component<Props, State> {
-  public state = {
-    newName: '',
-    disabled: false,
-    showInvoices: false,
-  };
+  public state = { disabled: false, showInvoices: false };
 
   public render() {
     const { store, isMobile } = this.props;
     const { currentTeam, currentUser } = store;
-    const isTL = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
+    const isTeamLeader = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
 
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
         <Layout {...this.props}>
-          <Head>
-            <title>Your Billing</title>
-          </Head>
           <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
             <p>You did not select any team.</p>
             <p>
@@ -54,16 +49,12 @@ class Billing extends React.Component<Props, State> {
       );
     }
 
-    if (!isTL) {
+    if (!isTeamLeader) {
       return (
         <Layout {...this.props}>
-          <Head>
-            <title>Your Billing</title>
-          </Head>
           <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
-            <h3>Your Billing</h3>
-            <p>Only Team Leader can access this page.</p>
-            <p>Create your own team to become Team Leader.</p>
+            <p>Only the Team Leader can access this page.</p>
+            <p>Create your own team to become a Team Leader.</p>
           </div>
         </Layout>
       );
@@ -82,34 +73,7 @@ class Billing extends React.Component<Props, State> {
           <p />
           <br />
           <h4>Card information</h4>
-          {currentUser && currentUser.stripeCard ? (
-            <span>
-              {' '}
-              <i
-                className="material-icons"
-                color="action"
-                style={{ verticalAlign: 'text-bottom' }}
-              >
-                done
-              </i>{' '}
-              Your default payment method:
-              <li>
-                {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
-              </li>
-              <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
-              <li>
-                Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
-              </li>
-              <p />
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => this.handleCheckoutClick('setup')}
-              >
-                Update card
-              </Button>
-            </span>
-          ) : 'You have not added a card.'}
+          {this.renderCardInfo()}
           <p />
           <br />
           <h4>Payment history</h4>
@@ -128,14 +92,10 @@ class Billing extends React.Component<Props, State> {
     if (this.props.redirectMessage) {
       notify(this.props.redirectMessage);
     }
-
-    if (this.props.error) {
-      notify(this.props.error);
-    }
   }
 
   private renderSubscriptionButton() {
-    const { currentTeam, currentUser } = this.props.store;
+    const { currentTeam } = this.props.store;
 
     let subscriptionDate;
     let billingDay;
@@ -146,12 +106,7 @@ class Billing extends React.Component<Props, State> {
       billingDay = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format('Do');
     }
 
-    if (
-      currentTeam &&
-      !currentTeam.isSubscriptionActive &&
-      currentUser &&
-      (!currentUser.hasCardInformation || currentTeam.isPaymentFailed)
-    ) {
+    if (currentTeam && !currentTeam.isSubscriptionActive && currentTeam.isPaymentFailed) {
       return (
         <>
           <p>You are not a paying customer.</p>
@@ -163,21 +118,13 @@ class Billing extends React.Component<Props, State> {
             Buy subscription
           </Button>
           <p />
-          {currentTeam.isPaymentFailed ? (
-            <p>
-              Team was automatically unsubscribed due to failed payment. You will be prompt to
-              update card information if you choose to re-subscribe Team.
-            </p>
-          ) : null}
+          <p>
+            Team was automatically unsubscribed due to failed payment. You will be prompt to update
+            card information if you choose to re-subscribe Team.
+          </p>
         </>
       );
-    } else if (
-      currentTeam &&
-      !currentTeam.isSubscriptionActive &&
-      currentUser &&
-      currentUser.hasCardInformation &&
-      !currentTeam.isPaymentFailed
-    ) {
+    } else if (currentTeam && !currentTeam.isSubscriptionActive && !currentTeam.isPaymentFailed) {
       return (
         <React.Fragment>
           <p>You are not a paying customer.</p>
@@ -221,62 +168,13 @@ class Billing extends React.Component<Props, State> {
     }
   }
 
-  private showListOfInvoicesOnClick = async () => {
-    const { currentUser } = this.props.store;
-    NProgress.start();
-    this.setState({ disabled: true });
-    try {
-      await currentUser.getListOfInvoices();
-      this.setState({ showInvoices: true });
-    } catch (err) {
-      notify(err);
-    } finally {
-      this.setState({ disabled: false });
-      NProgress.done();
-    }
-  };
-
-  private renderInvoices() {
-    const { currentUser } = this.props.store;
-    const { showInvoices } = this.state;
-    if (!showInvoices) {
-      return null;
-    }
-    return (
-      <React.Fragment>
-        {currentUser && !currentUser.stripeListOfInvoices ? (
-          <React.Fragment>
-            <p>You have no history of payments.</p>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            {currentUser.stripeListOfInvoices.data.map((invoice, i) => (
-              <React.Fragment key={i}>
-                <p>Your history of payments:</p>
-                <li>
-                  ${invoice.amount_paid / 100} was paid on{' '}
-                  {moment(invoice.created * 1000).format('MMM Do YYYY')} for Team '
-                  {invoice.teamName}' -{' '}
-                  <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">
-                    See invoice
-                  </a>
-                </li>
-              </React.Fragment>
-            ))}
-          </React.Fragment>
-        )}
-      </React.Fragment>
-    );
-  }
-
   private handleCheckoutClick = async (mode: 'subscription' | 'setup') => {
     try {
       const { currentTeam } = this.props.store;
       const { sessionId } = await fetchCheckoutSessionApiMethod({ mode, teamId: currentTeam._id });
 
       // When the customer clicks on the button, redirect them to Checkout.
-      const stripe = await stripePromise;
-      const { error } = await stripe.redirectToCheckout({ sessionId });
+      const { error } = await stripePromise.redirectToCheckout({ sessionId });
 
       if (error) {
         notify(error);
@@ -289,12 +187,7 @@ class Billing extends React.Component<Props, State> {
   };
 
   private cancelSubscriptionOnClick = async () => {
-    const { currentTeam, currentUser } = this.props.store;
-
-    if (!currentUser.hasCardInformation) {
-      notify('You did not add payment information.');
-      return;
-    }
+    const { currentTeam } = this.props.store;
 
     NProgress.start();
     this.setState({ disabled: true });
@@ -302,6 +195,85 @@ class Billing extends React.Component<Props, State> {
     try {
       await currentTeam.cancelSubscription({ teamId: currentTeam._id });
       notify('Success!');
+    } catch (err) {
+      notify(err);
+    } finally {
+      this.setState({ disabled: false });
+      NProgress.done();
+    }
+  };
+
+  private renderCardInfo() {
+    const { currentUser } = this.props.store;
+
+    if (currentUser && currentUser.stripeCard) {
+      return (
+        <span>
+          {' '}
+          <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
+            done
+          </i>{' '}
+          Your default payment method:
+          <li>
+            {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
+          </li>
+          <li>Last 4 digits: *{currentUser.stripeCard.last4}</li>
+          <li>
+            Expiration: {currentUser.stripeCard.exp_month}/{currentUser.stripeCard.exp_year}
+          </li>
+          <p />
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => this.handleCheckoutClick('setup')}
+          >
+            Update card
+          </Button>
+        </span>
+      );
+    } else {
+      return 'You have not added a card.';
+    }
+  }
+
+  private renderInvoices() {
+    const { currentUser } = this.props.store;
+    const { showInvoices } = this.state;
+
+    if (!showInvoices) {
+      return null;
+    }
+
+    if (currentUser && currentUser.stripeCard) {
+      return (
+        <React.Fragment>
+          {currentUser.stripeListOfInvoices.data.map((invoice, i) => (
+            <React.Fragment key={i}>
+              <p>Your history of payments:</p>
+              <li>
+                ${invoice.amount_paid / 100} was paid on{' '}
+                {moment(invoice.created * 1000).format('MMM Do YYYY')} for Team '{invoice.teamName}'
+                -{' '}
+                <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">
+                  See invoice
+                </a>
+              </li>
+            </React.Fragment>
+          ))}
+        </React.Fragment>
+      );
+    } else {
+      return 'You have no history of payments.';
+    }
+  }
+
+  private showListOfInvoicesOnClick = async () => {
+    const { currentUser } = this.props.store;
+    NProgress.start();
+    this.setState({ disabled: true });
+    try {
+      await currentUser.getListOfInvoices();
+      this.setState({ showInvoices: true });
     } catch (err) {
       notify(err);
     } finally {
