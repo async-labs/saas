@@ -256,6 +256,9 @@ class UserClass extends mongoose.Model {
       'isSignedupViaGoogle',
       'darkTheme',
       'defaultTeamSlug',
+      'stripeCard',
+      'hasCardInformation',
+      'stripeListOfInvoices',
     ];
   }
 

@@ -14,7 +14,7 @@ import { fetchCheckoutSessionApiMethod } from '../lib/api/team-leader';
 
 const dev = process.env.NODE_ENV && process.env.NODE_ENV !== 'production';
 
-const stripePromise = await loadStripe(
+const stripePromise = loadStripe(
   dev ? process.env.STRIPE_TEST_PUBLISHABLEKEY : process.env.STRIPE_LIVE_PUBLISHABLEKEY,
 );
 
@@ -77,9 +77,15 @@ class Billing extends React.Component<Props, State> {
           <p />
           <br />
           <h4>Payment history</h4>
-          <Button variant="outlined" color="primary" onClick={this.showListOfInvoicesOnClick}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={this.showListOfInvoicesOnClick}
+            disabled={this.state.disabled}
+          >
             Show payment history
           </Button>
+          <p />
           {this.renderInvoices()}
           <p />
           <br />
@@ -114,6 +120,7 @@ class Billing extends React.Component<Props, State> {
             variant="contained"
             color="primary"
             onClick={() => this.handleCheckoutClick('subscription')}
+            disabled={this.state.disabled}
           >
             Buy subscription
           </Button>
@@ -136,6 +143,7 @@ class Billing extends React.Component<Props, State> {
             variant="contained"
             color="primary"
             onClick={() => this.handleCheckoutClick('subscription')}
+            disabled={this.state.disabled}
           >
             Buy subscription
           </Button>
@@ -159,7 +167,12 @@ class Billing extends React.Component<Props, State> {
             </p>
           </span>
           <p />
-          <Button variant="outlined" color="primary" onClick={this.cancelSubscriptionOnClick}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={this.cancelSubscriptionOnClick}
+            disabled={this.state.disabled}
+          >
             Unsubscribe Team
           </Button>
           <br />
@@ -171,10 +184,15 @@ class Billing extends React.Component<Props, State> {
   private handleCheckoutClick = async (mode: 'subscription' | 'setup') => {
     try {
       const { currentTeam } = this.props.store;
+
+      NProgress.start();
+      this.setState({ disabled: true });
+
       const { sessionId } = await fetchCheckoutSessionApiMethod({ mode, teamId: currentTeam._id });
 
       // When the customer clicks on the button, redirect them to Checkout.
-      const { error } = await stripePromise.redirectToCheckout({ sessionId });
+      const stripe = await stripePromise;
+      const { error } = await stripe.redirectToCheckout({ sessionId });
 
       if (error) {
         notify(error);
@@ -183,6 +201,9 @@ class Billing extends React.Component<Props, State> {
     } catch (err) {
       notify(err);
       console.error(err);
+    } finally {
+      this.setState({ disabled: false });
+      NProgress.done();
     }
   };
 
@@ -206,7 +227,7 @@ class Billing extends React.Component<Props, State> {
   private renderCardInfo() {
     const { currentUser } = this.props.store;
 
-    if (currentUser && currentUser.stripeCard) {
+    if (currentUser && currentUser.hasCardInformation) {
       return (
         <span>
           {' '}
@@ -226,6 +247,7 @@ class Billing extends React.Component<Props, State> {
             variant="outlined"
             color="primary"
             onClick={() => this.handleCheckoutClick('setup')}
+            disabled={this.state.disabled}
           >
             Update card
           </Button>
