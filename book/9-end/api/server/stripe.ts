@@ -81,8 +81,6 @@ function stripeWebhookAndCheckoutCallback({ server }) {
     '/api/v1/public/stripe-invoice-payment-failed',
     bodyParser.raw({ type: 'application/json' }),
     async (req, res, next) => {
-      console.log('express route is called');
-
       try {
         const event = stripeInstance.webhooks.constructEvent(
           req.body,

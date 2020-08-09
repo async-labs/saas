@@ -45,6 +45,7 @@ export interface DiscussionDocument extends mongoose.Document {
   slug: string;
   memberIds: string[];
   createdAt: Date;
+  notificationType: string;
 }
 
 interface DiscussionModel extends mongoose.Model<DiscussionDocument> {
