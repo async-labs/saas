@@ -173,7 +173,7 @@ class PostForm extends React.Component<Props, State> {
       const post = await discussion.addPost(content);
 
       if (discussion.notificationType === 'email') {
-        const userIdsForLambda = discussion.memberIds.filter((m) => m !== discussion.createdUserId);
+        const userIdsForLambda = discussion.memberIds.filter((m) => m !== store.currentUser._id);
 
         await discussion.sendDataToLambda({
           discussionName: discussion.name,

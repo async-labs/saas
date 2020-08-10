@@ -47,8 +47,6 @@
     "eslint-plugin-prettier": "^3.1.2",
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
-    "serverless-dotenv-plugin": "^3.0.0",
-    "serverless-plugin-typescript": "^1.1.9",
     "ts-jest": "^25.2.1",
     "ts-node-dev": "^1.0.0-pre.44"
   }
