@@ -26,7 +26,7 @@
     "nprogress": "0.2.0",
     "react": "16.11.0",
     "react-dom": "16.11.0",
-    "react-mentions": "^4.0.0",
+    "react-mentions": "3.0.2",
     "socket.io-client": "^2.3.0",
     "typescript": "3.6.4"
   },
