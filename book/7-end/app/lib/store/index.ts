@@ -1,6 +1,6 @@
 import * as mobx from 'mobx';
 import { action, decorate, observable } from 'mobx';
-import { useStaticRendering } from 'mobx-react'
+import { useStaticRendering } from 'mobx-react';
 
 import { addTeamApiMethod, getTeamInvitationsApiMethod } from '../api/team-leader';
 import { getTeamListApiMethod, getTeamMembersApiMethod } from '../api/team-member';
@@ -20,13 +20,7 @@ class Store {
 
   public currentTeam?: Team;
 
-  constructor({
-    initialState = {},
-    isServer,
-  }: {
-    initialState?: any;
-    isServer: boolean;
-  }) {
+  constructor({ initialState = {}, isServer }: { initialState?: any; isServer: boolean }) {
     this.isServer = !!isServer;
 
     this.setCurrentUser(initialState.user);
@@ -36,7 +30,10 @@ class Store {
     // console.log(initialState.user);
 
     if (initialState.teamSlug || (initialState.user && initialState.user.defaultTeamSlug)) {
-      this.setCurrentTeam(initialState.teamSlug || initialState.user.defaultTeamSlug, initialState.teams);
+      this.setCurrentTeam(
+        initialState.teamSlug || initialState.user.defaultTeamSlug,
+        initialState.teams,
+      );
     }
   }
 
@@ -47,7 +44,6 @@ class Store {
   public async setCurrentUser(user) {
     if (user) {
       this.currentUser = new User({ store: this, ...user });
-
     } else {
       this.currentUser = null;
     }
@@ -76,9 +72,12 @@ class Store {
         found = true;
         this.currentTeam = new Team({ ...team, store: this });
 
-        const users = team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
+        const users =
+          team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
 
-        const invitations = team.initialInvitations || (await getTeamInvitationsApiMethod(this.currentTeam._id)).invitations;
+        const invitations =
+          team.initialInvitations ||
+          (await getTeamInvitationsApiMethod(this.currentTeam._id)).invitations;
 
         this.currentTeam.setInitialMembersAndInvitations(users, invitations);
 
@@ -107,20 +106,21 @@ let store: Store = null;
 function initializeStore(initialState = {}) {
   const isServer = typeof window === 'undefined';
 
-  const _store = (store !== null && store !== undefined) ? store : new Store({ initialState, isServer });
+  const _store =
+    store !== null && store !== undefined ? store : new Store({ initialState, isServer });
 
   // For SSG and SSR always create a new store
   if (typeof window === 'undefined') {
-    return _store
+    return _store;
   }
   // Create the store once in the client
   if (!store) {
-    store = _store
+    store = _store;
   }
 
   // console.log(_store);
 
-  return _store
+  return _store;
 }
 
 function getStore() {

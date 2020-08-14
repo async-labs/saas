@@ -34,8 +34,7 @@
     "passwordless-tokenstore": "^0.0.10",
     "socket.io": "^2.3.0",
     "stripe": "^8.81.0",
-    "typescript": "^3.8.2",
-    "winston": "^3.3.3"
+    "typescript": "^3.8.2"
   },
   "devDependencies": {
     "@types/connect-mongo": "^3.1.3",

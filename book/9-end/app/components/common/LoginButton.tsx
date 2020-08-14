@@ -10,8 +10,7 @@ import { makeQueryString } from '../../lib/api/makeQueryString';
 type Props = { invitationToken?: string };
 type State = { email: string };
 
-class LoginButton extends React.PureComponent <Props, State> {
-
+class LoginButton extends React.PureComponent<Props, State> {
   public state = { email: '' };
 
   public render() {

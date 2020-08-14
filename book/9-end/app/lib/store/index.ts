@@ -1,6 +1,6 @@
 import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable } from 'mobx';
-import { useStaticRendering } from 'mobx-react'
+import { useStaticRendering } from 'mobx-react';
 import io from 'socket.io-client';
 
 import { addTeamApiMethod, getTeamInvitationsApiMethod } from '../api/team-leader';
@@ -43,7 +43,10 @@ class Store {
     // console.log(initialState.user);
 
     if (initialState.teamSlug || (initialState.user && initialState.user.defaultTeamSlug)) {
-      this.setCurrentTeam(initialState.teamSlug || initialState.user.defaultTeamSlug, initialState.teams);
+      this.setCurrentTeam(
+        initialState.teamSlug || initialState.user.defaultTeamSlug,
+        initialState.teams,
+      );
     }
 
     this.socket = socket;
@@ -66,7 +69,6 @@ class Store {
   public async setCurrentUser(user) {
     if (user) {
       this.currentUser = new User({ store: this, ...user });
-
     } else {
       this.currentUser = null;
     }
@@ -95,9 +97,12 @@ class Store {
         found = true;
         this.currentTeam = new Team({ ...team, store: this });
 
-        const users = team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
+        const users =
+          team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
 
-        const invitations = team.initialInvitations || (await getTeamInvitationsApiMethod(this.currentTeam._id)).invitations;
+        const invitations =
+          team.initialInvitations ||
+          (await getTeamInvitationsApiMethod(this.currentTeam._id)).invitations;
 
         this.currentTeam.setInitialMembersAndInvitations(users, invitations);
 
@@ -155,20 +160,21 @@ function initializeStore(initialState = {}) {
 
   const socket = isServer ? null : io(process.env.URL_API);
 
-  const _store = (store !== null && store !== undefined) ? store : new Store({ initialState, isServer, socket });
+  const _store =
+    store !== null && store !== undefined ? store : new Store({ initialState, isServer, socket });
 
   // For SSG and SSR always create a new store
   if (typeof window === 'undefined') {
-    return _store
+    return _store;
   }
   // Create the store once in the client
   if (!store) {
-    store = _store
+    store = _store;
   }
 
   // console.log(_store);
 
-  return _store
+  return _store;
 }
 
 function getStore() {

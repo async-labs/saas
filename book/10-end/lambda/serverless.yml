@@ -1,0 +1,27 @@
+service: saas-boilerplate 
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: production
+  region: us-east-1
+  memorySize: 2048 # optional, in MB, default is 1024
+  timeout: 30 # optional, in seconds, default is 6
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-dotenv-plugin
+
+custom:
+  dotenv:
+    include:
+      - NODE_ENV
+      - MONGO_URL
+      - Amazon_accessKeyId
+      - Amazon_secretAccessKey
+      - EMAIL_SUPPORT_FROM_ADDRESS
+      - MONGO_URL_TEST
+
+functions:
+  sendEmailForNewPost:
+    handler: handler.sendEmailForNewPost
