@@ -14,7 +14,7 @@
     "express": "^4.16.4",
     "he": "^1.2.0",
     "highlight.js": "^9.15.6",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "mailparser": "^2.6.0",
     "marked": "^0.6.2",
     "moment": "^2.24.0",
