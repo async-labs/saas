@@ -11,8 +11,8 @@
     "lint": "eslint . --ext .ts,.tsx",
     "test": "jest",
     "postinstall": "rm -rf production-server/",
-    "build": "rm -rf production-server/ && tsc --project tsconfig.server.json",
-    "start": "node production-server/server/server.js"
+    "build": "tsc --project tsconfig.server.json",
+    "start": "node production-server/server.js"
   },
   "jest": {
     "preset": "ts-jest",
