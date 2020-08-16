@@ -18,6 +18,7 @@ import * as compression from 'compression';
 import * as helmet from 'helmet';
 
 const dev = process.env.NODE_ENV !== 'production';
+const port = process.env.PORT || 8000;
 
 const options = {
   useNewUrlParser: true,
@@ -85,6 +86,6 @@ server.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
-http.listen(process.env.PORT_API, () => {
+http.listen(port, () => {
   logger.info(`> Ready on ${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}`);
 });
