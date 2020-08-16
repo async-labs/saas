@@ -85,10 +85,7 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(port, (err: Error) => {
-    if (err) {
-      throw err;
-    }
+  server.listen(port, () => {
     console.log(`> Ready on ${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}`);
   });
 });
