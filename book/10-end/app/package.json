@@ -1,6 +1,6 @@
 {
   "name": "10-end-app",
-  "version": "1",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpileOnly --project tsconfig.server.json --ignore-watch .next --ignore-watch components --ignore-watch lib --ignore-watch pages -- server/server.ts",

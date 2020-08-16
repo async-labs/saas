@@ -1,6 +1,6 @@
 {
   "name": "10-end-api",
-  "version": "1",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpileOnly --project tsconfig.server.json server/server.ts",
