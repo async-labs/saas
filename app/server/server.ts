@@ -84,7 +84,7 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(process.env.PORT_APP, (err: Error) => {
+  server.listen(process.env.PORT, (err: Error) => {
     if (err) {
       throw err;
     }
