@@ -1,18 +1,14 @@
 import 'isomorphic-unfetch';
 
-import { getStore } from '../store';
-
 import { makeQueryString } from './makeQueryString';
 
-import { URL_API } from '../consts';
+const dev = process.env.NODE_ENV !== 'production';
 
 export default async function sendRequestAndGetResponse(path, opts: any = {}) {
-  const { externalServer } = opts;
-
   const headers = Object.assign(
     {},
     opts.headers || {},
-    externalServer
+    opts.externalServer
       ? {}
       : {
           'Content-type': 'application/json; charset=UTF-8',
@@ -20,40 +16,38 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   );
 
   const { request } = opts;
+
   if (request && request.headers && request.headers.cookie) {
     headers.cookie = request.headers.cookie;
   }
 
+  // const qs = opts.qs || '';
+
   const qs = (opts.qs && `?${makeQueryString(opts.qs)}`) || '';
 
+  // console.log(`before: ${process.env.URL_API}${path}${qs}`);
+
   const response = await fetch(
-    externalServer ? `${path}${qs}` : `${URL_API}${path}${qs}`,
+    opts.externalServer
+      ? `${path}${qs}`
+      : `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}${path}${qs}`,
     Object.assign({ method: 'POST', credentials: 'include' }, opts, { headers }),
   );
 
+  // console.log(`after: ${process.env.URL_API}${path}${qs}`);
+
+  // console.log(response.status);
+  // console.log(response.statusText);
+
   const text = await response.text();
+
   if (response.status >= 400) {
     console.error(text);
-    throw new Error(response.statusText);
+    throw new Error(response.status.toString());
   }
 
   try {
     const data = JSON.parse(text);
-    const store = getStore();
-
-    if (data.error) {
-      if (response.status === 201 && data.error === 'You need to log in.' && !externalServer) {
-        if (store && store.currentUser && store.currentUser.isLoggedIn && !store.isServer) {
-          store.currentUser.logout();
-        }
-      }
-
-      throw new Error(data.error);
-    }
-
-    if (store && store.currentUser && !store.currentUser.isLoggedIn && !store.isServer) {
-      store.currentUser.login();
-    }
 
     return data;
   } catch (err) {

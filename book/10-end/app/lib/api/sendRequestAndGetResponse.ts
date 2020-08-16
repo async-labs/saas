@@ -2,6 +2,8 @@ import 'isomorphic-unfetch';
 
 import { makeQueryString } from './makeQueryString';
 
+const dev = process.env.NODE_ENV !== 'production';
+
 export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   const headers = Object.assign(
     {},
@@ -26,7 +28,9 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   // console.log(`before: ${process.env.URL_API}${path}${qs}`);
 
   const response = await fetch(
-    opts.externalServer ? `${path}${qs}` : `${process.env.URL_API}${path}${qs}`,
+    opts.externalServer
+      ? `${path}${qs}`
+      : `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}${path}${qs}`,
     Object.assign({ method: 'POST', credentials: 'include' }, opts, { headers }),
   );
 
@@ -54,4 +58,3 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
     throw err;
   }
 }
-

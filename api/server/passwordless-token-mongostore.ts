@@ -1,5 +1,3 @@
-// https://www.npmjs.com/package/passwordless-mongostore-bcrypt-node
-
 import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose';
 import * as TokenStore from 'passwordless-tokenstore';
@@ -48,22 +46,22 @@ function MongoStore(options = {}) {
 
 util.inherits(MongoStore, TokenStore);
 
-MongoStore.prototype.authenticate = async function authenticate(token, uid, callback) {
+MongoStore.prototype.authenticate = async function(token, uid, callback) {
   if (!token || !uid || !callback) {
     throw new Error('TokenStore:authenticate called with invalid parameters');
   }
 
   try {
-    const item = await PasswordlessToken.findOne({ uid, ttl: { $gt: new Date() } });
+    const tokenDoc = await PasswordlessToken.findOne({ uid, ttl: { $gt: new Date() } });
 
-    if (item) {
-      const res = await bcrypt.compare(token, item.hashedToken);
-      if (res) {
-        if (item.email) {
-          await User.signUpByEmail({ uid, email: item.email });
+    if (tokenDoc) {
+      const isMatch = await bcrypt.compare(token, tokenDoc.hashedToken);
+      if (isMatch) {
+        if (tokenDoc.email) {
+          await User.signInOrSignUpByPasswordless({ uid, email: tokenDoc.email });
         }
 
-        callback(null, true, item.originUrl);
+        callback(null, true, tokenDoc.originUrl);
       } else {
         callback(null, false, null);
       }
@@ -75,13 +73,7 @@ MongoStore.prototype.authenticate = async function authenticate(token, uid, call
   }
 };
 
-MongoStore.prototype.storeOrUpdate = async function storeOrUpdate(
-  token,
-  uid,
-  msToLive,
-  originUrl,
-  callback,
-) {
+MongoStore.prototype.storeOrUpdate = async function(token, uid, msToLive, originUrl, callback) {
   if (!token || !uid || !msToLive || !callback) {
     throw new Error('TokenStore:storeOrUpdate called with invalid parameters');
   }
@@ -103,6 +95,36 @@ MongoStore.prototype.storeOrUpdate = async function storeOrUpdate(
   }
 };
 
+MongoStore.prototype.invalidateUser = async function(uid, callback) {
+  if (!uid || !callback) {
+    throw new Error('TokenStore:invalidateUser called with invalid parameters');
+  }
+
+  try {
+    await PasswordlessToken.deleteOne({ uid });
+    callback();
+  } catch (error) {
+    callback(error);
+  }
+};
+
+MongoStore.prototype.clear = async function(callback) {
+  if (!callback) {
+    throw new Error('TokenStore:clear called with invalid parameters');
+  }
+
+  try {
+    await PasswordlessToken.deleteMany({});
+    callback();
+  } catch (error) {
+    callback(error);
+  }
+};
+
+MongoStore.prototype.length = function(callback) {
+  PasswordlessToken.countDocuments(callback);
+};
+
 MongoStore.prototype.storeOrUpdateByEmail = async function addEmail(email: string) {
   if (!email) {
     throw new Error('TokenStore:addEmail called with invalid parameters');
@@ -120,36 +142,6 @@ MongoStore.prototype.storeOrUpdateByEmail = async function addEmail(email: strin
   await PasswordlessToken.updateOne({ uid }, { email }, { upsert: true });
 
   return uid;
-};
-
-MongoStore.prototype.invalidateUser = async function invalidateUser(uid, callback) {
-  if (!uid || !callback) {
-    throw new Error('TokenStore:invalidateUser called with invalid parameters');
-  }
-
-  try {
-    await PasswordlessToken.deleteOne({ uid });
-    callback();
-  } catch (error) {
-    callback(error);
-  }
-};
-
-MongoStore.prototype.clear = async function clear(callback) {
-  if (!callback) {
-    throw new Error('TokenStore:clear called with invalid parameters');
-  }
-
-  try {
-    await PasswordlessToken.deleteMany({});
-    callback();
-  } catch (error) {
-    callback(error);
-  }
-};
-
-MongoStore.prototype.length = function length(callback) {
-  PasswordlessToken.countDocuments(callback);
 };
 
 export default MongoStore;

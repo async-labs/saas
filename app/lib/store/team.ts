@@ -1,21 +1,20 @@
 import { action, computed, decorate, IObservableArray, observable, runInAction } from 'mobx';
 import Router from 'next/router';
-
 import {
   cancelSubscriptionApiMethod,
-  getTeamInvitedUsers,
-  getTeamMembers,
-  inviteMember,
-  removeMember,
-  updateTeam,
+  inviteMemberApiMethod,
+  removeMemberApiMethod,
+  updateTeamApiMethod
 } from '../api/team-leader';
-
-import { addDiscussion, deleteDiscussion, getDiscussionList } from '../api/team-member';
-
-import { Discussion } from './discussion';
+import {
+  addDiscussionApiMethod,
+  deleteDiscussionApiMethod,
+  getDiscussionListApiMethod
+} from '../api/team-member';
 import { Store } from './index';
-import { Invitation } from './invitation';
 import { User } from './user';
+import { Invitation } from './invitation';
+import { Discussion } from './discussion';
 
 class Team {
   public store: Store;
@@ -27,18 +26,13 @@ class Team {
   public slug: string;
   public avatarUrl: string;
   public memberIds: IObservableArray<string> = observable([]);
-
-  public isSubscriptionActive: boolean;
-  public isPaymentFailed: boolean;
-
   public members: Map<string, User> = new Map();
-  public invitedUsers: Map<string, Invitation> = new Map();
+  public invitations: Map<string, Invitation> = new Map();
 
   public currentDiscussion?: Discussion;
   public currentDiscussionSlug?: string;
   public discussions: IObservableArray<Discussion> = observable([]);
   public isLoadingDiscussions = false;
-  public discussion: Discussion;
 
   public stripeSubscription: {
     id: string;
@@ -50,10 +44,8 @@ class Team {
     canceled_at: number;
     created: number;
   };
-
-  public isLoadingMembers = false;
-  public isInitialMembersLoaded = false;
-  public initialDiscussionSlug = '';
+  public isSubscriptionActive: boolean;
+  public isPaymentFailed: boolean;
 
   constructor(params) {
     this._id = params._id;
@@ -64,15 +56,11 @@ class Team {
     this.memberIds.replace(params.memberIds || []);
     this.currentDiscussionSlug = params.currentDiscussionSlug || null;
 
-    this.isSubscriptionActive = params.isSubscriptionActive;
     this.stripeSubscription = params.stripeSubscription;
+    this.isSubscriptionActive = params.isSubscriptionActive;
     this.isPaymentFailed = params.isPaymentFailed;
 
     this.store = params.store;
-
-    if (params.initialMembers) {
-      this.setInitialMembers(params.initialMembers, params.initialInvitations);
-    }
 
     if (params.initialDiscussions) {
       this.setInitialDiscussions(params.initialDiscussions);
@@ -81,9 +69,28 @@ class Team {
     }
   }
 
-  public async edit({ name, avatarUrl }: { name: string; avatarUrl: string }) {
+  public setInitialMembersAndInvitations(users, invitations) {
+    this.members.clear();
+    this.invitations.clear();
+
+    for (const user of users) {
+      if (this.store.currentUser && this.store.currentUser._id === user._id) {
+        this.members.set(user._id, this.store.currentUser);
+      } else {
+        this.members.set(user._id, new User(user));
+      }
+    }
+
+    for (const invitation of invitations) {
+      this.invitations.set(invitation._id, new Invitation(invitation));
+    }
+
+    // console.log(this.members);
+  }
+
+  public async updateTheme({ name, avatarUrl }: { name: string; avatarUrl: string }) {
     try {
-      const { slug } = await updateTeam({
+      const { slug } = await updateTeamApiMethod({
         teamId: this._id,
         name,
         avatarUrl,
@@ -91,8 +98,35 @@ class Team {
 
       runInAction(() => {
         this.name = name;
-        this.slug = slug;
         this.avatarUrl = avatarUrl;
+        this.slug = slug;
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  public async inviteMember(email: string) {
+    try {
+      const { newInvitation } = await inviteMemberApiMethod({ teamId: this._id, email });
+
+      runInAction(() => {
+        this.invitations.set(newInvitation._id, new Invitation(newInvitation));
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  public async removeMember(userId: string) {
+    try {
+      await removeMemberApiMethod({ teamId: this._id, userId });
+
+      runInAction(() => {
+        this.members.delete(userId);
+        this.memberIds.remove(userId);
       });
     } catch (error) {
       console.error(error);
@@ -110,19 +144,9 @@ class Team {
     }
   }
 
-  public getDiscussionBySlug(slug): Discussion {
-    return this.discussions.find((d) => d.slug === slug);
-  }
-
-  public setInitialDiscussionSlug(slug: string) {
-    if (!this.initialDiscussionSlug) {
-      this.initialDiscussionSlug = slug;
-    }
-  }
-
   public setInitialDiscussions(discussions) {
     const discussionObjs = discussions.map(
-      (t) => new Discussion({ team: this, store: this.store, ...t }),
+      (d) => new Discussion({ team: this, store: this.store, ...d }),
     );
 
     this.discussions.replace(discussionObjs);
@@ -144,7 +168,7 @@ class Team {
     this.isLoadingDiscussions = true;
 
     try {
-      const { discussions = [] } = await getDiscussionList({
+      const { discussions = [] } = await getDiscussionListApiMethod({
         teamId: this._id,
       });
       const newList: Discussion[] = [];
@@ -169,30 +193,13 @@ class Team {
     }
   }
 
-  public addDiscussionToLocalCache(data): Discussion {
-    const obj = new Discussion({ team: this, store: this.store, ...data });
-
-    if (obj.memberIds.includes(this.store.currentUser._id)) {
-      this.discussions.push(obj);
-    }
-
-    return obj;
-  }
-
-  public editDiscussionFromLocalCache(data) {
-    const discussion = this.discussions.find((item) => item._id === data.id);
-    if (discussion) {
-      discussion.changeLocalCache(data);
-    }
-  }
-
-  public removeDiscussionFromLocalCache(discussionId: string) {
-    const discussion = this.discussions.find((item) => item._id === discussionId);
-    this.discussions.remove(discussion);
+  public changeLocalCache(data) {
+    this.name = data.name;
+    this.memberIds.replace(data.memberIds || []);
   }
 
   public async addDiscussion(data): Promise<Discussion> {
-    const { discussion } = await addDiscussion({
+    const { discussion } = await addDiscussionApiMethod({
       teamId: this._id,
       socketId: (this.store.socket && this.store.socket.id) || null,
       ...data,
@@ -206,16 +213,26 @@ class Team {
     });
   }
 
+  public addDiscussionToLocalCache(data): Discussion {
+    const obj = new Discussion({ team: this, store: this.store, ...data });
+
+    if (obj.memberIds.includes(this.store.currentUser._id)) {
+      this.discussions.push(obj);
+    }
+
+    return obj;
+  }
+
   public async deleteDiscussion(id: string) {
-    await deleteDiscussion({
+    await deleteDiscussionApiMethod({
       id,
       socketId: (this.store.socket && this.store.socket.id) || null,
     });
 
     runInAction(() => {
-      const discussion = this.discussions.find((d) => d._id === id);
+      this.deleteDiscussionFromLocalCache(id);
 
-      this.removeDiscussionFromLocalCache(id);
+      const discussion = this.discussions.find((d) => d._id === id);
 
       if (this.currentDiscussion === discussion) {
         this.currentDiscussion = null;
@@ -235,87 +252,13 @@ class Team {
     });
   }
 
-  public setInitialMembers(users, invitations) {
-    this.members.clear();
-    this.invitedUsers.clear();
-
-    for (const user of users) {
-      if (this.store.currentUser && this.store.currentUser._id === user._id) {
-        this.members.set(user._id, this.store.currentUser);
-      } else {
-        this.members.set(user._id, new User(user));
-      }
-    }
-
-    for (const invitation of invitations) {
-      this.invitedUsers.set(invitation._id, new Invitation(invitation));
-    }
-
-    this.isInitialMembersLoaded = true;
+  public deleteDiscussionFromLocalCache(discussionId: string) {
+    const discussion = this.discussions.find((item) => item._id === discussionId);
+    this.discussions.remove(discussion);
   }
 
-  public async loadInitialMembers() {
-    if (this.isLoadingMembers || this.isInitialMembersLoaded) {
-      return;
-    }
-
-    this.isLoadingMembers = true;
-
-    try {
-      const { users = [] } = await getTeamMembers(this._id);
-
-      let invitations = [];
-      if (this.store.currentUser._id === this.teamLeaderId) {
-        invitations = await getTeamInvitedUsers(this._id);
-      }
-
-      runInAction(() => {
-        for (const user of users) {
-          this.members.set(user._id, new User(user));
-        }
-        for (const invitation of invitations) {
-          this.invitedUsers.set(invitation._id, new Invitation(invitation));
-        }
-
-        this.isLoadingMembers = false;
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.isLoadingMembers = false;
-      });
-
-      throw error;
-    }
-  }
-
-  public async inviteMember({ email }: { email: string }) {
-    this.isLoadingMembers = true;
-    try {
-      const { newInvitation } = await inviteMember({ teamId: this._id, email });
-
-      runInAction(() => {
-        this.invitedUsers.set(newInvitation._id, new Invitation(newInvitation));
-        this.isLoadingMembers = false;
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.isLoadingMembers = false;
-      });
-
-      throw error;
-    }
-  }
-
-  public async removeMember(userId: string) {
-    await removeMember({ teamId: this._id, userId });
-
-    runInAction(() => {
-      this.members.delete(userId);
-    });
-  }
-
-  get orderedDiscussions() {
-    return this.discussions.slice().sort();
+  public getDiscussionBySlug(slug: string): Discussion {
+    return this.discussions.find((d) => d.slug === slug);
   }
 
   public async cancelSubscription({ teamId }: { teamId: string }) {
@@ -345,31 +288,8 @@ class Team {
     return ifTeamLeaderMustBeCustomerOnClient;
   }
 
-  public leaveSocketRoom() {
-    if (this.store.socket) {
-      console.log('leaving socket team room', this.name);
-      this.store.socket.emit('leaveTeam', this._id);
-
-      if (this.discussion) {
-        this.discussion.leaveSocketRoom();
-      }
-    }
-  }
-
-  public joinSocketRoom() {
-    if (this.store.socket) {
-      console.log('joining socket team room', this.name);
-      this.store.socket.emit('joinTeam', this._id);
-
-      if (this.discussion) {
-        this.discussion.joinSocketRoom();
-      }
-    }
-  }
-
-  public changeLocalCache(data) {
-    this.name = data.name;
-    this.memberIds.replace(data.memberIds || []);
+  get orderedDiscussions() {
+    return this.discussions.slice().sort();
   }
 }
 
@@ -379,34 +299,25 @@ decorate(Team, {
   avatarUrl: observable,
   memberIds: observable,
   members: observable,
-  invitedUsers: observable,
-  isLoadingMembers: observable,
-  isInitialMembersLoaded: observable,
-  isSubscriptionActive: observable,
-  stripeSubscription: observable,
-  isPaymentFailed: observable,
+  invitations: observable,
   currentDiscussion: observable,
   currentDiscussionSlug: observable,
   isLoadingDiscussions: observable,
-  discussion: observable,
   discussions: observable,
 
-  orderedDiscussions: computed,
-
-  edit: action,
-  setInitialMembers: action,
-  loadInitialMembers: action,
+  setInitialMembersAndInvitations: action,
+  updateTheme: action,
   inviteMember: action,
   removeMember: action,
   setInitialDiscussions: action,
-  setCurrentDiscussion: action,
-  setInitialDiscussionSlug: action,
   loadDiscussions: action,
-  addDiscussionToLocalCache: action,
-  editDiscussionFromLocalCache: action,
-  removeDiscussionFromLocalCache: action,
   addDiscussion: action,
+  addDiscussionToLocalCache: action,
   deleteDiscussion: action,
+  deleteDiscussionFromLocalCache: action,
+  getDiscussionBySlug: action,
+
+  orderedDiscussions: computed,
 });
 
 export { Team };

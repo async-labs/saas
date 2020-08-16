@@ -12,8 +12,12 @@ import { setupPasswordless } from './passwordless-auth';
 import { setup as setupSockets } from './sockets';
 import { stripeWebhookAndCheckoutCallback } from './stripe';
 
-import logger from './logs';
-import setupSitemapAndRobots from './setupSitemapAndRobots';
+import logger from './logger';
+
+import * as compression from 'compression';
+import * as helmet from 'helmet';
+
+const dev = process.env.NODE_ENV !== 'production';
 
 const options = {
   useNewUrlParser: true,
@@ -22,8 +26,6 @@ const options = {
   useUnifiedTopology: true,
 };
 
-const dev = process.env.NODE_ENV !== 'production';
-
 mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL, options);
 
 const server = express();
@@ -31,6 +33,9 @@ const server = express();
 server.use(
   cors({ origin: dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP, credentials: true }),
 );
+
+server.use(helmet());
+server.use(compression());
 
 stripeWebhookAndCheckoutCallback({ server });
 
@@ -56,6 +61,11 @@ const sessionOptions = {
   },
 };
 
+if (!dev) {
+  server.set('trust proxy', 1); // sets req.hostname, req.ip
+  sessionOptions.cookie.secure = true; // sets cookie over HTTPS only
+}
+
 const sessionMiddleware = session(sessionOptions);
 server.use(sessionMiddleware);
 
@@ -70,8 +80,6 @@ setupSockets({
   origin: dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
   sessionMiddleware,
 });
-
-setupSitemapAndRobots({ server });
 
 server.get('*', (_, res) => {
   res.sendStatus(403);

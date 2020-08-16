@@ -16,6 +16,12 @@ Router.events.on('routeChangeComplete', (url) => {
     store.changeCurrentUrl(url);
   }
 
+  if (window && process.env.GA_MEASUREMENT_ID) {
+    (window as any).gtag('config', process.env.GA_MEASUREMENT_ID, {
+      page_path: url,
+    });
+  }
+
   NProgress.done();
 });
 

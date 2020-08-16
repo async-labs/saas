@@ -1,6 +1,6 @@
 import { SitemapStream, streamToPromise } from 'sitemap';
 import path from 'path';
-import { createGzip } from 'zlib';
+import zlib from 'zlib';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -11,7 +11,6 @@ export default function setupSitemapAndRobots({ server }) {
     res.header('Content-Type', 'application/xml');
     res.header('Content-Encoding', 'gzip');
 
-    // if we have a cached entry send it
     if (sitemap) {
       res.send(sitemap);
       return;
@@ -21,7 +20,7 @@ export default function setupSitemapAndRobots({ server }) {
       const smStream = new SitemapStream({
         hostname: dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
       });
-      const pipeline = smStream.pipe(createGzip());
+      const gzip = zlib.createGzip();
 
       smStream.write({
         url: '/login',
@@ -29,21 +28,16 @@ export default function setupSitemapAndRobots({ server }) {
         priority: 1,
       });
 
-      smStream.write({
-        url: '/signup',
-        changefreq: 'daily',
-        priority: 1,
-      });
+      streamToPromise(smStream.pipe(gzip)).then((sm) => (sitemap = sm));
 
       smStream.end();
 
-      // cache the response
-      // eslint-disable-next-line
-      streamToPromise(pipeline).then((sm) => (sitemap = sm));
-      // stream the response
-      pipeline.pipe(res).on('error', (err) => {
-        throw err;
-      });
+      smStream
+        .pipe(gzip)
+        .pipe(res)
+        .on('error', (err) => {
+          throw err;
+        });
     } catch (err) {
       console.error(err);
       res.status(500).end();

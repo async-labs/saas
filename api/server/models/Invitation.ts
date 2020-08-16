@@ -1,12 +1,9 @@
 import * as mongoose from 'mongoose';
 
 import sendEmail from '../aws-ses';
-import logger from '../logs';
-import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
+import getEmailTemplate from './EmailTemplate';
 import Team from './Team';
 import User, { UserDocument } from './User';
-
-import { EMAIL_SUPPORT_FROM_ADDRESS, URL_APP as ROOT_URL } from '../consts';
 
 mongoose.set('useFindAndModify', false);
 
@@ -52,7 +49,7 @@ interface InvitationModel extends mongoose.Model<InvitationDocument> {
     email: string;
   }): InvitationDocument;
 
-  getTeamInvitedUsers({ userId, teamId }: { userId: string; teamId: string });
+  getTeamInvitations({ userId, teamId }: { userId: string; teamId: string });
   getTeamByToken({ token }: { token: string });
   removeIfMemberAdded({ token, userId }: { token: string; userId: string });
   addUserToTeam({ token, user }: { token: string; user: UserDocument });
@@ -119,41 +116,32 @@ class InvitationClass extends mongoose.Model {
       });
     }
 
-    try {
-      const emailTemplate = await EmailTemplate.findOne({ name: 'invitation' }).setOptions({
-        lean: true,
-      });
+    const dev = process.env.NODE_ENV !== 'production';
 
-      if (!emailTemplate) {
-        throw new Error('invitation Email template not found');
-      }
+    const emailTemplate = await getEmailTemplate('invitation', {
+      teamName: team.name,
+      invitationURL: `${
+        dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP
+      }/invitation?token=${token}`,
+    });
 
-      const template = await getEmailTemplate(
-        'invitation',
-        {
-          teamName: team.name,
-          invitationURL: `${ROOT_URL}/invitation?token=${token}`,
-        },
-        emailTemplate,
-      );
-
-      await sendEmail({
-        from: `Kelly from saas-app.builderbook.org <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
-        to: [email],
-        subject: template.subject,
-        body: template.message,
-      });
-    } catch (error) {
-      logger.error(error);
-      await this.deleteOne({ teamId, email });
-
-      throw error;
+    if (!emailTemplate) {
+      throw new Error('Invitation email template not found');
     }
+
+    await sendEmail({
+      from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+      to: [email],
+      subject: emailTemplate.subject,
+      body: emailTemplate.message,
+    }).catch((err) => {
+      console.log('Email sending error:', err);
+    });
 
     return await this.findOne({ teamId, email }).setOptions({ lean: true });
   }
 
-  public static async getTeamInvitedUsers({ userId, teamId }) {
+  public static async getTeamInvitations({ userId, teamId }) {
     const team = await Team.findOne({ _id: teamId })
       .select('teamLeaderId')
       .setOptions({ lean: true });
@@ -204,6 +192,10 @@ class InvitationClass extends mongoose.Model {
       .select('name slug avatarUrl memberIds')
       .setOptions({ lean: true });
 
+    if (!team) {
+      throw new Error('Team does not exist');
+    }
+
     if (team && team.memberIds.includes(userId)) {
       this.deleteOne({ token }).exec();
     }
@@ -225,6 +217,10 @@ class InvitationClass extends mongoose.Model {
     const team = await Team.findById(invitation.teamId)
       .select('memberIds slug teamLeaderId')
       .setOptions({ lean: true });
+
+    if (!team) {
+      throw new Error('Team does not exist');
+    }
 
     if (team && !team.memberIds.includes(user._id)) {
       await Team.updateOne({ _id: team._id }, { $addToSet: { memberIds: user._id } });

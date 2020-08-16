@@ -26,8 +26,8 @@ class MyDocument extends Document {
     // console.log('rendered on the server');
 
     const isThemeDark =
-    this.props.__NEXT_DATA__.props.initialState.user &&
-    this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
+      this.props.__NEXT_DATA__.props.initialState.user &&
+      this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
 
     return (
       <Html lang="en">
@@ -132,12 +132,40 @@ class MyDocument extends Document {
               }
             `}
           </style>
+          {this.gtag()}
         </Head>
         <body>
           <Main />
           <NextScript />
         </body>
       </Html>
+    );
+  }
+
+  public gtag() {
+    if (!process.env.GA_MEASUREMENT_ID) {
+      return;
+    }
+
+    return (
+      <div>
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GA_MEASUREMENT_ID}`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env.GA_MEASUREMENT_ID}', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+      </div>
     );
   }
 }

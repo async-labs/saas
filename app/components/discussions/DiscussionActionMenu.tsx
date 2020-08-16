@@ -1,15 +1,16 @@
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 
 import confirm from '../../lib/confirm';
-import notify from '../../lib/notifier';
-import { Discussion, Store } from '../../lib/store';
+import notify from '../../lib/notify';
+import { Store } from '../../lib/store';
+import { Discussion } from '../../lib/store/discussion';
 
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 import EditDiscussionForm from './EditDiscussionForm';
 
-import { URL_APP } from '../../lib/consts';
+const dev = process.env.NODE_ENV !== 'production';
 
 const getMenuOptions = (discussion) => ({
   dataId: discussion._id,
@@ -42,17 +43,21 @@ const getMenuItemOptions = (discussion, component) => [
   },
 ];
 
-class DiscussionActionMenu extends React.Component<{
+type Props = {
   discussion: Discussion;
-  store?: Store;
+  store: Store;
   isMobile: boolean;
-}> {
+};
+
+type State = {
+  discussionFormOpen: boolean;
+  selectedDiscussion: Discussion;
+};
+
+class DiscussionActionMenu extends React.Component<Props, State> {
   public state = {
     discussionFormOpen: false,
-  };
-
-  public handleDiscussionFormClose = () => {
-    this.setState({ discussionFormOpen: false, selectedDiscussion: null });
+    selectedDiscussion: null,
   };
 
   public render() {
@@ -78,11 +83,13 @@ class DiscussionActionMenu extends React.Component<{
             onClose={this.handleDiscussionFormClose}
             discussion={discussion}
             isMobile={this.props.isMobile}
+            store={store}
           />
         ) : null}
       </React.Fragment>
     );
   }
+
   public handleCopyUrl = async (event) => {
     const { store } = this.props;
     const { currentTeam } = store;
@@ -93,7 +100,10 @@ class DiscussionActionMenu extends React.Component<{
     }
 
     const selectedDiscussion = currentTeam.discussions.find((d) => d._id === id);
-    const discussionUrl = `${URL_APP}/team/${currentTeam.slug}/discussions/${selectedDiscussion.slug}`;
+
+    const discussionUrl = `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${
+      currentTeam.slug
+    }/discussions/${selectedDiscussion.slug}`;
 
     try {
       if (window.navigator) {
@@ -147,15 +157,19 @@ class DiscussionActionMenu extends React.Component<{
           await currentTeam.deleteDiscussion(id);
 
           notify('You successfully deleted Discussion.');
-          NProgress.done();
         } catch (error) {
           console.error(error);
           notify(error);
+        } finally {
           NProgress.done();
         }
       },
     });
   };
+
+  public handleDiscussionFormClose = () => {
+    this.setState({ discussionFormOpen: false, selectedDiscussion: null });
+  };
 }
 
-export default inject('store')(observer(DiscussionActionMenu));
+export default observer(DiscussionActionMenu);

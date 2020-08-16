@@ -1,10 +1,10 @@
 import * as winston from 'winston';
 
-import { IS_DEV } from './consts';
+const dev = process.env.NODE_ENV !== 'production';
 
 const logger = winston.createLogger({
   format: winston.format.simple(),
-  level: !IS_DEV ? 'info' : 'debug',
+  level: !dev ? 'info' : 'debug',
   transports: [new winston.transports.Console()],
 });
 

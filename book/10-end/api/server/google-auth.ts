@@ -37,12 +37,14 @@ function setupGoogle({ server }) {
     }
   };
 
+  const dev = process.env.NODE_ENV !== 'production';
+
   passport.use(
     new Strategy(
       {
         clientID: process.env.GOOGLE_CLIENTID,
         clientSecret: process.env.GOOGLE_CLIENTSECRET,
-        callbackURL: `${process.env.URL_API}/oauth2callback`,
+        callbackURL: `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/oauth2callback`,
       },
       verify,
     ),
@@ -99,7 +101,9 @@ function setupGoogle({ server }) {
         redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
       }
 
-      res.redirect(`${process.env.URL_APP}${redirectUrlAfterLogin}`);
+      res.redirect(
+        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_API}${redirectUrlAfterLogin}`,
+      );
     },
   );
 }

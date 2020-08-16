@@ -1,36 +1,37 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 
-const mongoSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  subject: {
-    type: String,
-    required: true,
-  },
-  message: {
-    type: String,
-    required: true,
-  },
-});
-
-export interface EmailTemplateDocument extends mongoose.Document {
+interface EmailTemplateDocument extends mongoose.Document {
   name: string;
   subject: string;
   message: string;
 }
 
-export const EmailTemplate = mongoose.model<EmailTemplateDocument>('EmailTemplate', mongoSchema);
+const EmailTemplate = mongoose.model<EmailTemplateDocument>(
+  'EmailTemplate',
+  new mongoose.Schema({
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    subject: {
+      type: String,
+      required: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
+  }),
+);
 
 async function insertTemplates() {
   const templates = [
     {
       name: 'welcome',
-      subject: 'Welcome to SaaS by Async',
-      message: `<%= userName %>,
+      subject: 'Welcome to SaaS boilerplate by Async',
+      message: `Welcome <%= userName %>,
         <p>
           Thanks for signing up on our <a href="https://github.com/async-labs/saas" target="blank">SaaS boilerplate</a>!
         </p>
@@ -49,6 +50,12 @@ async function insertTemplates() {
       `,
     },
     {
+      name: 'login',
+      subject: 'Login link for saas-app.builderbook.org',
+      message: `
+        <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
+    },
+    {
       name: 'invitation',
       subject: 'You are invited to join a Team at saas-app.builderbook.org',
       message: `You've been invited to join <b><%= teamName%></b>.
@@ -63,12 +70,6 @@ async function insertTemplates() {
         <p>---</p>
         <p>View it at <a href="<%= discussionLink %>"><%= discussionLink %></a>.</p>
       `,
-    },
-    {
-      name: 'login',
-      subject: 'Login link for saas-app.builderbook.org',
-      message: `
-        <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
     },
   ];
 
@@ -89,24 +90,17 @@ async function insertTemplates() {
 
 insertTemplates();
 
-export default async function getEmailTemplate(
-  name: string,
-  // eslint-disable-next-line
-  params: any,
-  template?: EmailTemplateDocument,
-) {
-  const source =
-    template ||
-    (await EmailTemplate.findOne({ name }).setOptions({
-      lean: true,
-    }));
+export default async function getEmailTemplate(name: string, params: any) {
+  const et = await EmailTemplate.findOne({ name }).setOptions({
+    lean: true,
+  });
 
-  if (!source) {
-    throw new Error('Email Template is not found.');
+  if (!et) {
+    throw new Error('Email Template is not found in database.');
   }
 
   return {
-    message: _.template(source.message)(params),
-    subject: _.template(source.subject)(params),
+    message: _.template(et.message)(params),
+    subject: _.template(et.subject)(params),
   };
 }

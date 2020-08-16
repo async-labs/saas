@@ -116,9 +116,13 @@ class InvitationClass extends mongoose.Model {
       });
     }
 
+    const dev = process.env.NODE_ENV !== 'production';
+
     const emailTemplate = await getEmailTemplate('invitation', {
       teamName: team.name,
-      invitationURL: `${process.env.URL_APP}/invitation?token=${token}`,
+      invitationURL: `${
+        dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP
+      }/invitation?token=${token}`,
     });
 
     if (!emailTemplate) {

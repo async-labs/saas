@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpileOnly --project tsconfig.server.json server/server.ts",
     "lint": "eslint . --ext .ts,.tsx",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "rm -rf production-server/",
+    "build": "rm -rf production-server/ && tsc --project tsconfig.server.json",
+    "start": "node production-server/server/server.js"
   },
   "jest": {
     "preset": "ts-jest",
@@ -17,12 +20,14 @@
   "dependencies": {
     "aws-sdk": "^2.642.0",
     "bcrypt": "^4.0.1",
+    "compression": "^1.7.4",
     "connect-mongo": "^3.2.0",
     "cors": "^2.8.5",
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "express-session": "^1.17.0",
     "he": "^1.2.0",
+    "helmet": "4.1.0-rc.2",
     "highlight.js": "^10.1.1",
     "lodash": "^4.17.15",
     "marked": "^1.1.0",
@@ -32,7 +37,6 @@
     "passport-google-oauth": "^2.0.0",
     "passwordless": "^1.1.3",
     "passwordless-tokenstore": "^0.0.10",
-    "sitemap": "^6.2.0",
     "socket.io": "^2.3.0",
     "stripe": "^8.81.0",
     "typescript": "^3.8.2",

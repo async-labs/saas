@@ -1,36 +1,20 @@
+/* eslint-disable @typescript-eslint/camelcase */
+
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 import Stripe from 'stripe';
 
 import sendEmail from '../aws-ses';
-import logger from '../logs';
-import { subscribe } from '../mailchimp';
+import { addToMailchimp } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
-import getEmailTemplate, { EmailTemplate } from './EmailTemplate';
-import Invitation from './Invitation';
-import Team from './Team';
+import getEmailTemplate from './EmailTemplate';
+import Team, { TeamDocument } from './Team';
 
 import { getListOfInvoices } from '../stripe';
-
-import { EMAIL_SUPPORT_FROM_ADDRESS } from '../consts';
 
 mongoose.set('useFindAndModify', false);
 
 const mongoSchema = new mongoose.Schema({
-  googleId: {
-    type: String,
-    unique: true,
-    sparse: true,
-  },
-  googleToken: {
-    accessToken: String,
-    refreshToken: String,
-  },
-  isSignedupViaGoogle: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
   slug: {
     type: String,
     required: true,
@@ -45,25 +29,32 @@ const mongoSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-
+  displayName: String,
+  avatarUrl: String,
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  googleToken: {
+    accessToken: String,
+    refreshToken: String,
+  },
+  isSignedupViaGoogle: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  darkTheme: Boolean,
   defaultTeamSlug: {
     type: String,
     default: '',
   },
-
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
-  displayName: String,
-  avatarUrl: String,
-
   stripeCustomer: {
     id: String,
     object: String,
     created: Number,
     currency: String,
-    // eslint-disable-next-line
     default_source: String,
     description: String,
   },
@@ -74,9 +65,7 @@ const mongoSchema = new mongoose.Schema({
     funding: String,
     country: String,
     last4: String,
-    // eslint-disable-next-line
     exp_month: Number,
-    // eslint-disable-next-line
     exp_year: Number,
   },
   hasCardInformation: {
@@ -85,18 +74,15 @@ const mongoSchema = new mongoose.Schema({
   },
   stripeListOfInvoices: {
     object: String,
-    // eslint-disable-next-line
     has_more: Boolean,
     data: [
       {
         id: String,
         object: String,
-        // eslint-disable-next-line
         amount_paid: Number,
         created: Number,
         customer: String,
         subscription: String,
-        // eslint-disable-next-line
         hosted_invoice_url: String,
         billing: String,
         paid: Boolean,
@@ -106,24 +92,19 @@ const mongoSchema = new mongoose.Schema({
       },
     ],
   },
-  darkTheme: Boolean,
 });
 
 export interface UserDocument extends mongoose.Document {
+  slug: string;
+  createdAt: Date;
+  email: string;
+  displayName: string;
+  avatarUrl: string;
   googleId: string;
   googleToken: { accessToken: string; refreshToken: string };
   isSignedupViaGoogle: boolean;
-  slug: string;
-  createdAt: Date;
-
-  email: string;
-  isAdmin: boolean;
-  displayName: string;
-  avatarUrl: string;
-
+  darkTheme: boolean;
   defaultTeamSlug: string;
-
-  hasCardInformation: boolean;
   stripeCustomer: {
     id: string;
     default_source: string;
@@ -141,6 +122,7 @@ export interface UserDocument extends mongoose.Document {
     exp_year: number;
     funding: string;
   };
+  hasCardInformation: boolean;
   stripeListOfInvoices: {
     object: string;
     has_more: boolean;
@@ -161,11 +143,10 @@ export interface UserDocument extends mongoose.Document {
       },
     ];
   };
-  darkTheme: boolean;
 }
 
 interface UserModel extends mongoose.Model<UserDocument> {
-  publicFields(): string[];
+  getUserBySlug({ slug }: { slug: string }): Promise<UserDocument>;
 
   updateProfile({
     userId,
@@ -177,23 +158,48 @@ interface UserModel extends mongoose.Model<UserDocument> {
     avatarUrl: string;
   }): Promise<UserDocument[]>;
 
-  getTeamMembers({ userId, teamId }: { userId: string; teamId: string }): Promise<UserDocument[]>;
+  publicFields(): string[];
 
   signInOrSignUpViaGoogle({
     googleId,
     email,
-    googleToken,
     displayName,
     avatarUrl,
+    googleToken,
   }: {
     googleId: string;
     email: string;
     displayName: string;
     avatarUrl: string;
-    googleToken: { refreshToken?: string; accessToken?: string };
+    googleToken: { accessToken?: string; refreshToken?: string };
   }): Promise<UserDocument>;
 
-  signUpByEmail({ uid, email }: { uid: string; email: string }): Promise<UserDocument>;
+  signInOrSignUpByPasswordless({
+    uid,
+    email,
+  }: {
+    uid: string;
+    email: string;
+  }): Promise<UserDocument>;
+
+  toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
+
+  getMembersForTeam({
+    userId,
+    teamId,
+  }: {
+    userId: string;
+    teamId: string;
+  }): Promise<UserDocument[]>;
+
+  checkPermissionAndGetTeam({
+    userId,
+    teamId,
+  }: {
+    userId: string;
+    teamId: string;
+  }): Promise<TeamDocument>;
+
   saveStripeCustomerAndCard({
     user,
     session,
@@ -201,6 +207,7 @@ interface UserModel extends mongoose.Model<UserDocument> {
     session: Stripe.Checkout.Session;
     user: UserDocument;
   }): Promise<void>;
+
   changeStripeCard({
     session,
     user,
@@ -208,17 +215,25 @@ interface UserModel extends mongoose.Model<UserDocument> {
     session: Stripe.Checkout.Session;
     user: UserDocument;
   }): Promise<void>;
+
   getListOfInvoicesForCustomer({ userId }: { userId: string }): Promise<UserDocument>;
-  toggleTheme({ userId, darkTheme }: { userId: string; darkTheme: boolean }): Promise<void>;
 }
 
 class UserClass extends mongoose.Model {
+  public static async getUserBySlug({ slug }) {
+    console.log('Static method: getUserBySlug');
+
+    return this.findOne({ slug }, 'email displayName avatarUrl', { lean: true });
+  }
+
   public static async updateProfile({ userId, name, avatarUrl }) {
-    // TODO: If avatarUrl is changed and old is uploaded to our S3, delete it from S3
+    console.log('Static method: updateProfile');
 
     const user = await this.findById(userId, 'slug displayName');
 
     const modifier = { displayName: user.displayName, avatarUrl, slug: user.slug };
+
+    console.log(user.slug);
 
     if (name !== user.displayName) {
       modifier.displayName = name;
@@ -227,6 +242,150 @@ class UserClass extends mongoose.Model {
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('displayName avatarUrl slug')
+      .setOptions({ lean: true });
+  }
+
+  public static publicFields(): string[] {
+    return [
+      '_id',
+      'id',
+      'displayName',
+      'email',
+      'avatarUrl',
+      'slug',
+      'isSignedupViaGoogle',
+      'darkTheme',
+      'defaultTeamSlug',
+      'stripeCard',
+      'hasCardInformation',
+      'stripeListOfInvoices',
+    ];
+  }
+
+  public static async signInOrSignUpViaGoogle({
+    googleId,
+    email,
+    displayName,
+    avatarUrl,
+    googleToken,
+  }) {
+    const user = await this.findOne({ email })
+      .select([...this.publicFields(), 'googleId'].join(' '))
+      .setOptions({ lean: true });
+
+    if (user) {
+      if (_.isEmpty(googleToken) && user.googleId) {
+        return user;
+      }
+
+      const modifier = { googleId };
+      if (googleToken.accessToken) {
+        modifier['googleToken.accessToken'] = googleToken.accessToken;
+      }
+
+      if (googleToken.refreshToken) {
+        modifier['googleToken.refreshToken'] = googleToken.refreshToken;
+      }
+
+      await this.updateOne({ email }, { $set: modifier });
+
+      return user;
+    }
+
+    const slug = await generateSlug(this, displayName);
+
+    const newUser = await this.create({
+      createdAt: new Date(),
+      googleId,
+      email,
+      googleToken,
+      displayName,
+      avatarUrl,
+      slug,
+      isSignedupViaGoogle: true,
+      defaultTeamSlug: '',
+    });
+
+    const emailTemplate = await getEmailTemplate('welcome', { userName: displayName });
+
+    if (!emailTemplate) {
+      throw new Error('Welcome email template not found');
+    }
+
+    try {
+      await sendEmail({
+        from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: emailTemplate.subject,
+        body: emailTemplate.message,
+      });
+    } catch (err) {
+      console.error('Email sending error:', err);
+    }
+
+    try {
+      await addToMailchimp({ email, listName: 'signups' });
+    } catch (error) {
+      console.error('Mailchimp error:', error);
+    }
+
+    return _.pick(newUser, this.publicFields());
+  }
+
+  public static async signInOrSignUpByPasswordless({ uid, email }) {
+    const user = await this.findOne({ email })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
+
+    if (user) {
+      throw Error('User already exists');
+    }
+
+    const slug = await generateSlug(this, email);
+
+    const newUser = await this.create({
+      _id: uid,
+      createdAt: new Date(),
+      email,
+      slug,
+      defaultTeamSlug: '',
+    });
+
+    const emailTemplate = await getEmailTemplate('welcome', { userName: email });
+
+    if (!emailTemplate) {
+      throw new Error('Email template "welcome" not found in database.');
+    }
+
+    try {
+      await sendEmail({
+        from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: emailTemplate.subject,
+        body: emailTemplate.message,
+      });
+    } catch (err) {
+      console.error('Email sending error:', err);
+    }
+
+    try {
+      await addToMailchimp({ email, listName: 'signups' });
+    } catch (error) {
+      console.error('Mailchimp error:', error);
+    }
+
+    return _.pick(newUser, this.publicFields());
+  }
+
+  public static toggleTheme({ userId, darkTheme }) {
+    return this.updateOne({ _id: userId }, { darkTheme: !!darkTheme });
+  }
+
+  public static async getMembersForTeam({ userId, teamId }) {
+    const team = await this.checkPermissionAndGetTeam({ userId, teamId });
+
+    return this.find({ _id: { $in: team.memberIds } })
+      .select(this.publicFields().join(' '))
       .setOptions({ lean: true });
   }
 
@@ -283,10 +442,6 @@ class UserClass extends mongoose.Model {
   public static async getListOfInvoicesForCustomer({ userId }) {
     const user = await this.findById(userId, 'stripeCustomer');
 
-    logger.debug('called static method on User');
-
-    logger.debug(user.stripeCustomer.id);
-
     if (!user.stripeCustomer.id) {
       throw new Error('You are not a customer and you have no payment history.');
     }
@@ -308,164 +463,9 @@ class UserClass extends mongoose.Model {
       .setOptions({ lean: true });
   }
 
-  public static async getTeamMembers({ userId, teamId }) {
-    const team = await this.checkPermissionAndGetTeam({ userId, teamId });
+  private static async checkPermissionAndGetTeam({ userId, teamId }) {
+    console.log(userId, teamId);
 
-    return this.find({ _id: { $in: team.memberIds } })
-      .select(this.publicFields().join(' '))
-      .setOptions({ lean: true });
-  }
-
-  public static async signInOrSignUpViaGoogle({
-    googleId,
-    email,
-    googleToken,
-    displayName,
-    avatarUrl,
-  }) {
-    const user = await this.findOne({ email })
-      .select([...this.publicFields(), 'googleId'].join(' '))
-      .setOptions({ lean: true });
-
-    if (user) {
-      if (_.isEmpty(googleToken) && user.googleId) {
-        return user;
-      }
-
-      const modifier = { googleId };
-      if (googleToken.accessToken) {
-        modifier['googleToken.accessToken'] = googleToken.accessToken;
-      }
-
-      if (googleToken.refreshToken) {
-        modifier['googleToken.refreshToken'] = googleToken.refreshToken;
-      }
-
-      await this.updateOne({ email }, { $set: modifier });
-
-      return user;
-    }
-
-    const slug = await generateSlug(this, displayName);
-
-    const newUser = await this.create({
-      createdAt: new Date(),
-      googleId,
-      email,
-      googleToken,
-      displayName,
-      avatarUrl,
-      slug,
-      defaultTeamSlug: '',
-      isSignedupViaGoogle: true,
-    });
-
-    const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
-
-    const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
-      lean: true,
-    });
-
-    if (!emailTemplate) {
-      throw new Error('welcome Email template not found');
-    }
-
-    const template = await getEmailTemplate('welcome', { userName: displayName }, emailTemplate);
-
-    if (!hasInvitation) {
-      try {
-        await sendEmail({
-          from: `Kelly from saas-app.builderbook.org <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
-          to: [email],
-          subject: template.subject,
-          body: template.message,
-        });
-      } catch (err) {
-        logger.error('Email sending error:', err);
-      }
-    }
-
-    try {
-      await subscribe({ email, listName: 'signups' });
-    } catch (error) {
-      logger.error('Mailchimp error:', error);
-    }
-
-    return _.pick(newUser, this.publicFields());
-  }
-
-  public static async signUpByEmail({ uid, email }) {
-    const user = await this.findOne({ email })
-      .select(this.publicFields().join(' '))
-      .setOptions({ lean: true });
-
-    if (user) {
-      throw Error('User already exists');
-    }
-
-    const slug = await generateSlug(this, email);
-
-    const newUser = await this.create({
-      _id: uid,
-      createdAt: new Date(),
-      email,
-      slug,
-      defaultTeamSlug: '',
-    });
-
-    const hasInvitation = (await Invitation.countDocuments({ email })) > 0;
-
-    const emailTemplate = await EmailTemplate.findOne({ name: 'welcome' }).setOptions({
-      lean: true,
-    });
-
-    if (!emailTemplate) {
-      throw new Error('welcome Email template not found');
-    }
-
-    const template = await getEmailTemplate('welcome', { userName: email }, emailTemplate);
-
-    if (!hasInvitation) {
-      try {
-        await sendEmail({
-          from: `Kelly from saas-app.builderbook.org <${EMAIL_SUPPORT_FROM_ADDRESS}>`,
-          to: [email],
-          subject: template.subject,
-          body: template.message,
-        });
-      } catch (err) {
-        logger.error('Email sending error:', err);
-      }
-    }
-
-    try {
-      await subscribe({ email, listName: 'signups' });
-    } catch (error) {
-      logger.error('Mailchimp error:', error);
-    }
-
-    return _.pick(newUser, this.publicFields());
-  }
-
-  public static publicFields(): string[] {
-    return [
-      '_id',
-      'id',
-      'displayName',
-      'email',
-      'avatarUrl',
-      'slug',
-      'isSignedupViaGoogle',
-      'defaultTeamSlug',
-      'hasCardInformation',
-      'stripeCustomer',
-      'stripeCard',
-      'stripeListOfInvoices',
-      'darkTheme',
-    ];
-  }
-
-  public static async checkPermissionAndGetTeam({ userId, teamId }) {
     if (!userId || !teamId) {
       throw new Error('Bad data');
     }
@@ -480,19 +480,10 @@ class UserClass extends mongoose.Model {
 
     return team;
   }
-
-  public static toggleTheme({ userId, darkTheme }) {
-    return this.updateOne({ _id: userId }, { darkTheme: !!darkTheme });
-  }
 }
 
 mongoSchema.loadClass(UserClass);
 
 const User = mongoose.model<UserDocument, UserModel>('User', mongoSchema);
-User.ensureIndexes((err) => {
-  if (err) {
-    logger.error(`User.ensureIndexes: ${err.stack}`);
-  }
-});
 
 export default User;

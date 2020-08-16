@@ -7,6 +7,8 @@ import notify from '../../lib/notify';
 import { styleLoginButton } from '../../lib/sharedStyles';
 import { makeQueryString } from '../../lib/api/makeQueryString';
 
+const dev = process.env.NODE_ENV !== 'production';
+
 type Props = { invitationToken?: string };
 type State = { email: string };
 
@@ -16,7 +18,7 @@ class LoginButton extends React.PureComponent<Props, State> {
   public render() {
     const { invitationToken } = this.props;
 
-    let url = `${process.env.URL_API}/auth/google`;
+    let url = `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/auth/google`;
     const qs = makeQueryString({ invitationToken });
 
     if (qs) {

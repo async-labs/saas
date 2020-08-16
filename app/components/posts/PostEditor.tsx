@@ -2,22 +2,21 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import he from 'he';
 import marked from 'marked';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 import { Mention, MentionsInput } from 'react-mentions';
 
 import {
-  getSignedRequestForUpload,
-  uploadFileUsingSignedPutRequest,
+  getSignedRequestForUploadApiMethod,
+  uploadFileUsingSignedPutRequestApiMethod,
 } from '../../lib/api/team-member';
-import notify from '../../lib/notifier';
+import notify from '../../lib/notify';
 import { resizeImage } from '../../lib/resizeImage';
-import { Store, User } from '../../lib/store';
+import { Store } from '../../lib/store';
+import { User } from '../../lib/store/user';
 
 import PostContent from './PostContent';
-
-import { BUCKET_FOR_POSTS } from '../../lib/consts';
 
 function getImageDimension(file): Promise<{ width: number; height: number }> {
   const reader = new FileReader();
@@ -36,28 +35,22 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
   });
 }
 
-type MyProps = {
-  store?: Store;
+type Props = {
+  store: Store;
   onChanged: (content) => void;
   content: string;
   members: User[];
   textareaHeight?: string;
-  readOnly?: boolean;
   placeholder?: string;
 };
 
-type MyState = {
-  htmlContent: string;
-};
+type State = { htmlContent: string };
 
-class PostEditor extends React.Component<MyProps, MyState> {
-  constructor(props) {
-    super(props);
-
-    this.state = {
+class PostEditor extends React.Component<Props, State> {
+  public state = {
       htmlContent: '',
     };
-  }
+  
 
   public render() {
     const { htmlContent } = this.state;
@@ -91,6 +84,13 @@ class PostEditor extends React.Component<MyProps, MyState> {
         </div>
 
         <div style={{ display: 'inline', float: 'left' }}>
+          <label htmlFor="upload-file">
+            <Button color="primary" component="span">
+              <i className="material-icons" style={{ fontSize: '22px' }}>
+                insert_photo
+              </i>
+            </Button>
+          </label>
           <input
             accept="image/*"
             name="upload-file"
@@ -103,19 +103,12 @@ class PostEditor extends React.Component<MyProps, MyState> {
               this.uploadFile(file);
             }}
           />
-          <label htmlFor="upload-file">
-            <Button color="primary" component="span">
-              <i className="material-icons" style={{ fontSize: '22px' }}>
-                insert_photo
-              </i>
-            </Button>
-          </label>
         </div>
         <br />
         <div
           style={{
             width: '100%',
-            height: '100%',
+            height: '100vh',
             padding: '10px 15px',
             border: isThemeDark
               ? '1px solid rgba(255, 255, 255, 0.5)'
@@ -133,7 +126,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
                   font: '16px Roboto',
                   color: isThemeDark ? '#fff' : '#000',
                   fontWeight: 300,
-                  height: '100vh', // TODO: check on Mobile
+                  height: '100vh',
                   lineHeight: '1.5em',
                   backgroundColor: content ? textareaBackgroundColor : 'transparent',
                 },
@@ -165,7 +158,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
                 data={membersMinusCurrentUser.map((u) => ({
                   id: u.avatarUrl,
                   display: u.displayName,
-                  you: u._id === currentUser._id ? true : false,
+                  // you: u._id === currentUser._id ? true : false,
                 }))}
                 markup={'[`@#__display__`](__id__)'}
                 displayTransform={(_, display) => {
@@ -213,10 +206,6 @@ class PostEditor extends React.Component<MyProps, MyState> {
           return `${text.replace('<code>@#', '<code>@')} `;
         }
 
-        if (text.startsWith('<code>@#')) {
-          return `${text.replace('<code>@#', '<code>@')} `;
-        }
-
         return `
           <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
             ${text}
@@ -255,24 +244,27 @@ class PostEditor extends React.Component<MyProps, MyState> {
 
     NProgress.start();
 
-    const bucket = BUCKET_FOR_POSTS;
+    const bucket = process.env.BUCKET_FOR_POSTS;
     const prefix = `${currentTeam.slug}`;
+    const fileName = file.name;
+    const fileType = file.type;
 
     try {
-      const responseFromApiServerForUpload = await getSignedRequestForUpload({
-        file,
+      const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({
+        fileName,
+        fileType,
         prefix,
         bucket,
       });
 
-      let markdown;
+      let imageMarkdown;
       let fileUrl;
 
       if (file.type.startsWith('image/')) {
         const { width } = await getImageDimension(file);
         const resizedFile = await resizeImage(file, 1024, 1024);
 
-        await uploadFileUsingSignedPutRequest(
+        await uploadFileUsingSignedPutRequestApiMethod(
           resizedFile,
           responseFromApiServerForUpload.signedRequest,
         );
@@ -283,18 +275,18 @@ class PostEditor extends React.Component<MyProps, MyState> {
 
         const finalWidth = width > 768 ? '100%' : `${width}px`;
 
-        markdown = `
+        imageMarkdown = `
           <div>
             <img style="max-width: ${finalWidth}; width:100%" src="${fileUrl}" alt="Async" class="s3-image" />
           </div>`;
       } else {
-        await uploadFileUsingSignedPutRequest(file, responseFromApiServerForUpload.signedRequest);
+        await uploadFileUsingSignedPutRequestApiMethod(file, responseFromApiServerForUpload.signedRequest);
 
         fileUrl = responseFromApiServerForUpload.url;
-        markdown = `[${file.name}](${fileUrl})`;
+        imageMarkdown = `[${file.name}](${fileUrl})`;
       }
 
-      const content = `${this.props.content}\n${markdown.replace(/\s+/g, ' ')}`;
+      const content = `${this.props.content}\n${imageMarkdown.replace(/\s+/g, ' ')}`;
 
       this.props.onChanged(content);
 
@@ -303,9 +295,10 @@ class PostEditor extends React.Component<MyProps, MyState> {
     } catch (error) {
       console.log(error);
       notify(error);
+    } finally {
       NProgress.done();
     }
   };
 }
 
-export default inject('store')(observer(PostEditor));
+export default observer(PostEditor);

@@ -12,6 +12,8 @@ import Notifier from '../common/Notifier';
 import { Store } from '../../lib/store';
 import DiscussionList from '../discussions/DiscussionList';
 
+const dev = process.env.NODE_ENV !== 'production';
+
 const styleGrid = {
   width: '100vw',
   minHeight: '100vh',
@@ -111,8 +113,8 @@ function LayoutWrapper({
                   },
                   {
                     text: 'Log out',
-                    href: `${process.env.URL_API}/logout`,
-                    as: `${process.env.URL_API}/logout`,
+                    href: `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/logout`,
+                    as: `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/logout`,
                     externalServer: true,
                   },
                 ]}
@@ -175,7 +177,12 @@ class Layout extends React.Component<Props> {
 
     if (!currentUser) {
       return (
-        <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
+        <LayoutWrapper
+          firstGridItem={firstGridItem}
+          isMobile={isMobile}
+          isThemeDark={isThemeDark}
+          store={store}
+        >
           <Grid item sm={12} xs={12}>
             {children}
           </Grid>
@@ -186,7 +193,12 @@ class Layout extends React.Component<Props> {
     if (!currentTeam) {
       if (teamRequired) {
         return (
-          <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
+          <LayoutWrapper
+            firstGridItem={firstGridItem}
+            isMobile={isMobile}
+            isThemeDark={isThemeDark}
+            store={store}
+          >
             <Grid item sm={10} xs={12}>
               <div style={{ padding: '20px' }}>
                 Select existing team or create a new team.
@@ -203,7 +215,12 @@ class Layout extends React.Component<Props> {
       } else {
         console.log('team not required');
         return (
-          <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
+          <LayoutWrapper
+            firstGridItem={firstGridItem}
+            isMobile={isMobile}
+            isThemeDark={isThemeDark}
+            store={store}
+          >
             <Grid item sm={10} xs={12}>
               {children}
             </Grid>
@@ -213,7 +230,12 @@ class Layout extends React.Component<Props> {
     }
 
     return (
-      <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} isThemeDark={isThemeDark} store={store}>
+      <LayoutWrapper
+        firstGridItem={firstGridItem}
+        isMobile={isMobile}
+        isThemeDark={isThemeDark}
+        store={store}
+      >
         <Grid item sm={firstGridItem ? 10 : 12} xs={12}>
           <div>
             {isMobile || store.currentUrl.includes('create-team') ? null : (

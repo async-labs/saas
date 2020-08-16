@@ -7,39 +7,27 @@ import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
 import Layout from '../components/layout';
-import { acceptAndGetInvitedTeamByToken, removeInvitationIfMemberAdded } from '../lib/api/public';
-import { Store, Team } from '../lib/store';
+import { acceptAndGetInvitedTeamByTokenApiMethod, removeInvitationIfMemberAddedApiMethod } from '../lib/api/public';
+import { Team } from '../lib/store/team';
+import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-class Invitation extends React.Component<{ store: Store; team: Team; token: string }> {
-  public static async getInitialProps({ query, req }) {
-    const { token } = query;
+type Props = { store: Store; team: Team; token: string };
+
+class Invitation extends React.Component<Props> {
+  public static async getInitialProps(ctx) {
+    const { token } = ctx.query;
     if (!token) {
       return {};
     }
 
     try {
-      const { team } = await acceptAndGetInvitedTeamByToken(token, req);
+      const { team } = await acceptAndGetInvitedTeamByTokenApiMethod(token, ctx.req);
 
       return { team, token };
     } catch (error) {
       console.log(error);
       return {};
-    }
-  }
-
-  public componentDidMount() {
-    const { store, team, token } = this.props;
-
-    const user = store.currentUser;
-
-    if (user && team) {
-      if (team.memberIds.includes(user._id)) {
-        removeInvitationIfMemberAdded(token);
-        Router.push(`/discussion?teamSlug=${team.slug}`, `/team/${team.slug}/discussions`);
-      } else {
-        Router.push('/');
-      }
     }
   }
 
@@ -66,7 +54,7 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
           <br />
           <Avatar
             src={`${team.avatarUrl ||
-              'https://storage.googleapis.com/async-await/async-logo-40.svg'}`}
+              'https://storage.googleapis.com/async-await/default-user.png?v=1'}`}
             alt="Team logo"
             style={{
               verticalAlign: 'middle',
@@ -78,11 +66,27 @@ class Invitation extends React.Component<{ store: Store; team: Team; token: stri
             Join <b>{team.name}</b> by logging in with your Google account.
           </p>
           <br />
-          <LoginButton next={`/team/${team.slug}/discussions`} invitationToken={token} />
+          <LoginButton invitationToken={token} />
         </div>
       </Layout>
     );
   }
+
+  public async componentDidMount() {
+    const { store, team, token } = this.props;
+
+    const user = store.currentUser;
+
+    if (user && team) {
+      if (team.memberIds.includes(user._id)) {
+        await removeInvitationIfMemberAddedApiMethod(token);
+        Router.push({
+          pathname: '/your-settings', 
+          query: { redirectMessage: `Success! You are now part of ${team.name} team.` }
+        });
+      }
+    }
+  }
 }
 
-export default withAuth(observer(Invitation), { teamRequired: false, loginRequired: false });
+export default withAuth(observer(Invitation), { loginRequired: false });

@@ -1,13 +1,16 @@
 import Avatar from '@material-ui/core/Avatar';
 import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import moment from 'moment';
 import React from 'react';
 
 import confirm from '../../lib/confirm';
-import notify from '../../lib/notifier';
-import { Post, Store, User } from '../../lib/store';
+import notify from '../../lib/notify';
+import { Store } from '../../lib/store';
+import { Post } from '../../lib/store/post';
+import { User } from '../../lib/store/user';
+
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 
 import PostContent from './PostContent';
@@ -62,69 +65,27 @@ const getMenuItemOptions = (post: Post, currentUser: User, component) => {
   return items;
 };
 
-class PostDetail extends React.Component<{
+type Props = {
   post: Post;
-  store?: Store;
+  store: Store;
+  isMobile: boolean;
   onEditClick: (post) => void;
   onShowMarkdownClick: (post) => void;
-  isMobile: boolean;
-}> {
-  public editPost = () => {
-    const { post, onEditClick } = this.props;
-    if (onEditClick) {
-      onEditClick(post);
-    }
-    console.log(`PostDetail: ${post._id}`);
-  };
+};
 
-  public deletePost = () => {
-    confirm({
-      title: 'Are you sure?',
-      message: '',
-      onAnswer: async (answer) => {
-        if (answer) {
-          const { post } = this.props;
-          await post.discussion.deletePost(post);
-          notify('You successfully deleted Post');
-        }
-      },
-    });
-  };
-
-  public showMarkdown = () => {
-    const { post, onShowMarkdownClick } = this.props;
-    if (onShowMarkdownClick) {
-      onShowMarkdownClick(post);
-    }
-  };
-
+class PostDetail extends React.Component<Props> {
   public render() {
     const { post, isMobile } = this.props;
 
     return <Paper style={stylePaper}>{this.renderPostDetail(post, isMobile)}</Paper>;
   }
 
-  public renderMenu() {
-    const { post, store } = this.props;
-    const { currentUser } = store;
-
-    if (!post.user || !currentUser) {
-      return null;
-    }
-
-    return (
-      <MenuWithMenuItems
-        menuOptions={getMenuOptions(post)}
-        itemOptions={getMenuItemOptions(post, store.currentUser, this)}
-      />
-    );
-  }
-
   public renderPostDetail(post: Post, isMobile) {
     const createdDate = moment(post.createdAt)
       .local()
       .format('MMM Do YYYY');
-    const lastEditedDate = moment(post.lastUpdatedAt).fromNow();
+    const lastUpdatedDate = moment(post.lastUpdatedAt).fromNow();
+
     return (
       <React.Fragment>
         <div
@@ -172,7 +133,7 @@ class PostDetail extends React.Component<{
               {post.isEdited ? (
                 <React.Fragment>
                   <span style={styleLineSeparator}>|</span>
-                  Last edited: {lastEditedDate}
+                  Last edited: {lastUpdatedDate}
                 </React.Fragment>
               ) : null}
             </span>
@@ -183,6 +144,51 @@ class PostDetail extends React.Component<{
       </React.Fragment>
     );
   }
+
+  public renderMenu() {
+    const { post, store } = this.props;
+    const { currentUser } = store;
+
+    if (!post.user || !currentUser) {
+      return null;
+    }
+
+    return (
+      <MenuWithMenuItems
+        menuOptions={getMenuOptions(post)}
+        itemOptions={getMenuItemOptions(post, store.currentUser, this)}
+      />
+    );
+  }
+
+  public showMarkdown = () => {
+    const { post, onShowMarkdownClick } = this.props;
+    if (onShowMarkdownClick) {
+      onShowMarkdownClick(post);
+    }
+  };
+
+  public editPost = () => {
+    const { post, onEditClick } = this.props;
+    if (onEditClick) {
+      onEditClick(post);
+    }
+    console.log(`PostDetail: ${post._id}`);
+  };
+
+  public deletePost = () => {
+    confirm({
+      title: 'Are you sure?',
+      message: '',
+      onAnswer: async (answer) => {
+        if (answer) {
+          const { post } = this.props;
+          await post.discussion.deletePost(post);
+          notify('You successfully deleted Post.');
+        }
+      },
+    });
+  };
 }
 
-export default inject('store')(observer(PostDetail));
+export default observer(PostDetail);

@@ -228,12 +228,16 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
       const post = await discussion.addPost(content);
 
+      const dev = process.env.NODE_ENV !== 'production';
+
       if (discussion.notificationType === 'email') {
         const userIdsForLambda = discussion.memberIds.filter((m) => m !== discussion.createdUserId);
 
         await discussion.sendDataToLambda({
           discussionName: discussion.name,
-          discussionLink: `${process.env.URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
+          discussionLink: `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${
+            discussion.team.slug
+          }/discussions/${discussion.slug}`,
           postContent: post.content,
           authorName: post.user.displayName,
           userIds: userIdsForLambda,

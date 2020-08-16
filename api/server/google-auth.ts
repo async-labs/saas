@@ -1,18 +1,15 @@
 import * as passport from 'passport';
 import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
 
-import logger from './logs';
-import Invitation from './models/Invitation';
 import User, { UserDocument } from './models/User';
+import Invitation from './models/Invitation';
 
-import { GOOGLE_CLIENTID, GOOGLE_CLIENTSECRET, URL_APP } from './consts';
-
-function setupGoogle({ ROOT_URL, server }) {
-  if (!GOOGLE_CLIENTID) {
+function setupGoogle({ server }) {
+  if (!process.env.GOOGLE_CLIENTID) {
     return;
   }
 
-  const verify = async (accessToken, refreshToken, profile, verified) => {
+  const verify = async (accessToken, refreshToken, profile, done) => {
     let email;
     let avatarUrl;
 
@@ -33,19 +30,21 @@ function setupGoogle({ ROOT_URL, server }) {
         avatarUrl,
       });
 
-      verified(null, user);
+      done(null, user);
     } catch (err) {
-      verified(err);
-      logger.error(err);
+      done(err);
+      console.error(err);
     }
   };
+
+  const dev = process.env.NODE_ENV !== 'production';
 
   passport.use(
     new Strategy(
       {
-        clientID: GOOGLE_CLIENTID,
-        clientSecret: GOOGLE_CLIENTSECRET,
-        callbackURL: `${ROOT_URL}/oauth2callback`,
+        clientID: process.env.GOOGLE_CLIENTID,
+        clientSecret: process.env.GOOGLE_CLIENTSECRET,
+        callbackURL: `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/oauth2callback`,
       },
       verify,
     ),
@@ -70,12 +69,6 @@ function setupGoogle({ ROOT_URL, server }) {
       prompt: 'select_account',
     };
 
-    if (req.query && req.query.next && req.query.next.startsWith('/')) {
-      req.session.next_url = req.query.next;
-    } else {
-      req.session.next_url = null;
-    }
-
     if (req.query && req.query.invitationToken) {
       req.session.invitationToken = req.query.invitationToken;
     } else {
@@ -95,24 +88,22 @@ function setupGoogle({ ROOT_URL, server }) {
         Invitation.addUserToTeam({
           token: req.session.invitationToken,
           user: req.user,
-        }).catch((err) => logger.error(err));
+        }).catch((err) => console.error(err));
 
         req.session.invitationToken = null;
       }
 
       let redirectUrlAfterLogin;
 
-      if (req.user && req.session.next_url) {
-        redirectUrlAfterLogin = req.session.next_url;
+      if (req.user && !req.user.defaultTeamSlug) {
+        redirectUrlAfterLogin = '/create-team';
       } else {
-        if (!req.user || !req.user.defaultTeamSlug) {
-          redirectUrlAfterLogin = '/create-team';
-        } else {
-          redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
-        }
+        redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
       }
 
-      res.redirect(`${URL_APP}${redirectUrlAfterLogin}`);
+      res.redirect(
+        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_API}${redirectUrlAfterLogin}`,
+      );
     },
   );
 }

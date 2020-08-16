@@ -1,14 +1,15 @@
-import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
-import NProgress from 'nprogress';
+import { action, decorate, IObservableArray, observable, runInAction, computed } from 'mobx';
 
 import {
-  addPost,
-  deletePost,
-  editDiscussion,
-  getPostList,
-  sendDataToLambda,
+  addPostApiMethod,
+  deletePostApiMethod,
+  editDiscussionApiMethod,
+  getPostListApiMethod,
+  sendDataToLambdaApiMethod,
 } from '../api/team-member';
-import { Post, Store, Team } from './index';
+import { Store } from './index';
+import { Team } from './team';
+import { Post } from './post';
 
 class Discussion {
   public _id: string;
@@ -20,8 +21,8 @@ class Discussion {
   public slug: string;
   public memberIds: IObservableArray<string> = observable([]);
   public posts: IObservableArray<Post> = observable([]);
-
   public isLoadingPosts = false;
+
   public notificationType: string;
 
   constructor(params) {
@@ -33,64 +34,23 @@ class Discussion {
     this.name = params.name;
     this.slug = params.slug;
     this.memberIds.replace(params.memberIds || []);
-    this.notificationType = params.notificationType;
 
-    if (params.initialDiscussions) {
-      this.setInitialDiscussions(params.initialDiscussions);
-    }
+    this.notificationType = params.notificationType;
 
     if (params.initialPosts) {
       this.setInitialPosts(params.initialPosts);
-      console.log(`store:${params.initialPosts}`);
+      console.log(params.initialPosts[0]);
+    } else {
+      this.loadPosts();
     }
   }
 
-  get members() {
-    return this.memberIds.map((id) => this.team.members.get(id)).filter((u) => !!u);
-  }
-
-  public setInitialPosts(posts) {
-    const postObjs = posts.map((t) => new Post({ discussion: this, store: this.store, ...t }));
-    this.posts.replace(postObjs);
-  }
-
-  public async loadPosts() {
-    if (this.isLoadingPosts || this.store.isServer) {
-      return;
-    }
-
-    NProgress.start();
-    this.isLoadingPosts = true;
-
+  public async editDiscussion(data) {
     try {
-      const { posts = [] } = await getPostList(this._id);
-
-      runInAction(() => {
-        const postObjs = posts.map((t) => new Post({ discussion: this, store: this.store, ...t }));
-        this.posts.replace(postObjs);
-      });
-    } finally {
-      runInAction(() => {
-        this.isLoadingPosts = false;
-        NProgress.done();
-      });
-    }
-  }
-
-  public changeLocalCache(data) {
-    // TODO: remove if current user no longer access to this discussion
-
-    this.name = data.name;
-    this.memberIds.replace(data.memberIds || []);
-    this.notificationType = data.notificationType;
-  }
-
-  public async edit(data) {
-    try {
-      await editDiscussion({
+      await editDiscussionApiMethod({
         id: this._id,
-        socketId: (this.store.socket && this.store.socket.id) || null,
         ...data,
+        socketId: (this.store.socket && this.store.socket.id) || null,
       });
 
       runInAction(() => {
@@ -102,36 +62,43 @@ class Discussion {
     }
   }
 
-  public addPostToLocalCache(data) {
-    const oldPost = this.posts.find((t) => t._id === data._id);
-    if (oldPost) {
-      this.posts.remove(oldPost);
-    }
-
-    const postObj = new Post({ discussion: this, store: this.store, ...data });
-
-    this.posts.push(postObj);
-
-    return postObj;
+  public changeLocalCache(data) {
+    this.name = data.name;
+    this.memberIds.replace(data.memberIds || []);
   }
 
-  public editPostFromLocalCache(data) {
-    const post = this.posts.find((t) => t._id === data._id);
-    if (post) {
-      post.changeLocalCache(data);
-    }
+  get members() {
+    return this.memberIds.map((id) => this.team.members.get(id)).filter((u) => !!u);
   }
 
-  public removePostFromLocalCache(postId) {
-    const post = this.posts.find((t) => t._id === postId);
-    this.posts.remove(post);
+  public setInitialPosts(posts) {
+    const postObjs = posts.map((p) => new Post({ discussion: this, store: this.store, ...p }));
+    this.posts.replace(postObjs);
+  }
+
+  public async loadPosts() {
+    if (this.store.isServer || this.isLoadingPosts) {
+      return;
+    }
+
+    this.isLoadingPosts = true;
+
+    try {
+      const { posts = [] } = await getPostListApiMethod(this._id);
+
+      runInAction(() => {
+        const postObjs = posts.map((t) => new Post({ discussion: this, store: this.store, ...t }));
+        this.posts.replace(postObjs);
+      });
+    } finally {
+      runInAction(() => {
+        this.isLoadingPosts = false;
+      });
+    }
   }
 
   public async addPost(content: string): Promise<Post> {
-    console.log(this.store.socket);
-    console.log(this.store.socket.id);
-
-    const { post } = await addPost({
+    const { post } = await addPostApiMethod({
       discussionId: this._id,
       content,
       socketId: (this.store.socket && this.store.socket.id) || null,
@@ -145,8 +112,16 @@ class Discussion {
     });
   }
 
+  public addPostToLocalCache(data) {
+    const postObj = new Post({ discussion: this, store: this.store, ...data });
+
+    this.posts.push(postObj);
+
+    return postObj;
+  }
+
   public async deletePost(post: Post) {
-    await deletePost({
+    await deletePostApiMethod({
       id: post._id,
       discussionId: this._id,
       socketId: (this.store.socket && this.store.socket.id) || null,
@@ -157,27 +132,34 @@ class Discussion {
     });
   }
 
-  public async sendDataToLambdaApiMethod({
-    discussionName,
-    discussionLink,
-    postContent,
-    authorName,
-    userIds,
-  }) {
-    console.log(discussionName, discussionLink, authorName, postContent, userIds);
-    try {
-      await sendDataToLambda({
-        discussionName,
-        discussionLink,
-        postContent,
-        authorName,
-        userIds,
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
+  public joinSocketRooms() {
+    if (this.store.socket) {
+      console.log('joining socket discussion room', this.name);
+      this.store.socket.emit('joinTeamRoom', this.team._id);
+      this.store.socket.emit('joinDiscussionRoom', this._id);
     }
   }
+
+  public leaveSocketRooms() {
+    if (this.store.socket) {
+      console.log('leaving socket discussion room', this.name);
+      this.store.socket.emit('leaveTeamRoom', this.team._id);
+      this.store.socket.emit('leaveDiscussionRoom', this._id);
+    }
+  }
+
+  public handleDiscussionRealtimeEvent = (data) => {
+    console.log('discussion realtime event', data);
+    const { actionType } = data;
+
+    if (actionType === 'added') {
+      this.addDiscussionToLocalCache(data.discussion);
+    } else if (actionType === 'edited') {
+      this.editDiscussionFromLocalCache(data.discussion);
+    } else if (actionType === 'deleted') {
+      this.deleteDiscussionFromLocalCache(data.id);
+    }
+  };
 
   public addDiscussionToLocalCache(data): Discussion {
     const obj = new Discussion({ team: this.team, store: this.store, ...data });
@@ -195,67 +177,62 @@ class Discussion {
       if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
         discussion.changeLocalCache(data);
       } else {
-        this.removeDiscussionFromLocalCache(data._id);
+        this.deleteDiscussionFromLocalCache(data._id);
       }
     } else if (data.memberIds && data.memberIds.includes(this.store.currentUser._id)) {
       this.addDiscussionToLocalCache(data);
     }
   }
 
-  public removeDiscussionFromLocalCache(discussionId: string) {
+  public deleteDiscussionFromLocalCache(discussionId: string) {
     const discussion = this.team.discussions.find((item) => item._id === discussionId);
     this.team.discussions.remove(discussion);
   }
 
-  public handleDiscussionRealtimeEvent = (data) => {
-    console.log('discussion realtime event', data);
-    const { action: actionName } = data;
-
-    if (actionName === 'added') {
-      this.addDiscussionToLocalCache(data.discussion);
-    } else if (actionName === 'edited') {
-      this.editDiscussionFromLocalCache(data.discussion);
-    } else if (actionName === 'deleted') {
-      this.removeDiscussionFromLocalCache(data.id);
-    }
-  };
-
   public handlePostRealtimeEvent(data) {
-    const { action: actionName } = data;
+    const { actionType } = data;
 
-    if (actionName === 'added') {
+    if (actionType === 'added') {
       this.addPostToLocalCache(data.post);
-    } else if (actionName === 'edited') {
+    } else if (actionType === 'edited') {
       this.editPostFromLocalCache(data.post);
-    } else if (actionName === 'deleted') {
-      this.removePostFromLocalCache(data.id);
+    } else if (actionType === 'deleted') {
+      this.deletePostFromLocalCache(data.id);
     }
   }
 
-  public leaveSocketRoom() {
-    if (this.store.socket) {
-      console.log('leaving socket discussion room', this.name);
-      this.store.socket.emit('leaveDiscussion', this._id);
-      this.store.socket.emit('leaveTeam', this.team._id);
+  public editPostFromLocalCache(data) {
+    const post = this.posts.find((t) => t._id === data._id);
+    if (post) {
+      post.changeLocalCache(data);
     }
   }
 
-  public joinSocketRoom() {
-    if (this.store.socket) {
-      console.log('joining socket discussion room', this.name);
-      this.store.socket.emit('joinDiscussion', this._id);
-      this.store.socket.emit('joinTeam', this.team._id);
-    }
+  public deletePostFromLocalCache(postId) {
+    const post = this.posts.find((t) => t._id === postId);
+    this.posts.remove(post);
   }
 
-  private setInitialDiscussions(discussions) {
-    const discussionObjs = discussions.map(
-      (d) => new Discussion({ team: this.team, store: this.store, ...d }),
-    );
-
-    this.team.discussions.replace(
-      discussionObjs.filter((d) => !d.isDraft || d.createdUserId === this.store.currentUser._id),
-    );
+  public async sendDataToLambda({
+    discussionName,
+    discussionLink,
+    postContent,
+    authorName,
+    userIds,
+  }) {
+    console.log(discussionName, discussionLink, authorName, postContent, userIds);
+    try {
+      await sendDataToLambdaApiMethod({
+        discussionName,
+        discussionLink,
+        postContent,
+        authorName,
+        userIds,
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
 
@@ -265,20 +242,23 @@ decorate(Discussion, {
   memberIds: observable,
   posts: observable,
   isLoadingPosts: observable,
-  notificationType: observable,
+
+  editDiscussion: action,
+  changeLocalCache: action,
 
   setInitialPosts: action,
   loadPosts: action,
-  changeLocalCache: action,
-  edit: action,
-  addPostToLocalCache: action,
-  editPostFromLocalCache: action,
-  removePostFromLocalCache: action,
   addPost: action,
+  addPostToLocalCache: action,
   deletePost: action,
+
   addDiscussionToLocalCache: action,
   editDiscussionFromLocalCache: action,
-  removeDiscussionFromLocalCache: action,
+  deleteDiscussionFromLocalCache: action,
+  editPostFromLocalCache: action,
+  deletePostFromLocalCache: action,
+
+  members: computed,
 });
 
 export { Discussion };

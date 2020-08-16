@@ -4,47 +4,10 @@ import * as he from 'he';
 import * as hljs from 'highlight.js';
 import * as marked from 'marked';
 
-import { chunk } from 'lodash';
-import * as qs from 'querystring';
-import * as url from 'url';
-
-import { deleteFiles } from '../aws-s3';
-import logger from '../logs';
 import Discussion from './Discussion';
 import Team from './Team';
 
 mongoose.set('useFindAndModify', false);
-
-function deletePostFiles(posts: PostDocument[]) {
-  const imgRegEx = /\<img.+data-src=[\"|\'](.+?)[\"|\']/g;
-  const files: { [key: string]: string[] } = {};
-
-  posts.forEach((post) => {
-    let res = imgRegEx.exec(post.content);
-
-    while (res) {
-      const { bucket, path } = qs.parse(url.parse(res[1]).query);
-
-      if (typeof bucket !== 'string' || typeof path !== 'string') {
-        continue;
-      }
-
-      if (!files[bucket]) {
-        files[bucket] = [];
-      }
-
-      files[bucket].push(path);
-
-      res = imgRegEx.exec(post.content);
-    }
-  });
-
-  Object.keys(files).forEach((bucket) => {
-    chunk(files[bucket], 1000).forEach((fileList) =>
-      deleteFiles(bucket, fileList).catch((err) => logger.error(err)),
-    );
-  });
-}
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
@@ -67,11 +30,11 @@ const mongoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  lastUpdatedAt: Date,
   createdAt: {
     type: Date,
     required: true,
   },
-  lastUpdatedAt: Date,
 });
 
 function markdownToHtml(content) {
@@ -109,13 +72,13 @@ function markdownToHtml(content) {
   return marked(he.decode(content));
 }
 
-interface PostDocument extends mongoose.Document {
+export interface PostDocument extends mongoose.Document {
   createdUserId: string;
   discussionId: string;
   content: string;
   isEdited: boolean;
-  createdAt: Date;
   lastUpdatedAt: Date;
+  createdAt: Date;
 }
 
 interface PostModel extends mongoose.Model<PostDocument> {
@@ -147,36 +110,38 @@ interface PostModel extends mongoose.Model<PostDocument> {
     id: string;
   }): Promise<PostDocument>;
 
-  uploadFile({
+  delete({ userId, id }: { userId: string; id: string }): Promise<void>;
+
+  checkPermissionAndGetTeamAndDiscussion({
     userId,
-    id,
-    fileName,
-    file,
+    discussionId,
+    post,
   }: {
     userId: string;
-    id: string;
-    fileName: string;
-    file: string;
-  }): Promise<void>;
-
-  delete({ userId, id }: { userId: string; id: string }): Promise<void>;
+    discussionId: string;
+    post: PostDocument;
+  }): Promise<{ TeamDocument; DiscussionDocument }>;
 }
 
 class PostClass extends mongoose.Model {
   public static async getList({ userId, discussionId }) {
-    await this.checkPermission({ userId, discussionId });
+    await this.checkPermissionAndGetTeamAndDiscussion({ userId, discussionId });
 
-    // eslint-disable-next-line
-    // eslint-disable-next-line
     const filter: any = { discussionId };
 
-    return this.find(filter).sort({ createdAt: 1 });
+    const posts: any[] = await this.find(filter)
+      .sort({ createdAt: 1 })
+      .setOptions({ lean: true });
+
+    return posts;
   }
 
   public static async add({ content, userId, discussionId }) {
     if (!content) {
       throw new Error('Bad data');
     }
+
+    await this.checkPermissionAndGetTeamAndDiscussion({ userId, discussionId });
 
     const htmlContent = markdownToHtml(content);
 
@@ -196,13 +161,15 @@ class PostClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    // TODO: old uploaded file deleted, delete it from S3
-
     const post = await this.findById(id)
       .select('createdUserId discussionId')
       .setOptions({ lean: true });
 
-    await this.checkPermission({ userId, discussionId: post.discussionId, post });
+    await this.checkPermissionAndGetTeamAndDiscussion({
+      userId,
+      discussionId: post.discussionId,
+      post,
+    });
 
     const htmlContent = markdownToHtml(content);
 
@@ -224,14 +191,20 @@ class PostClass extends mongoose.Model {
       .select('createdUserId discussionId content')
       .setOptions({ lean: true });
 
-    await this.checkPermission({ userId, discussionId: post.discussionId, post });
-
-    deletePostFiles([post]);
+    await this.checkPermissionAndGetTeamAndDiscussion({
+      userId,
+      discussionId: post.discussionId,
+      post,
+    });
 
     await this.deleteOne({ _id: id });
   }
 
-  public static async checkPermission({ userId, discussionId, post = null }) {
+  private static async checkPermissionAndGetTeamAndDiscussion({
+    userId,
+    discussionId,
+    post = null,
+  }) {
     if (!userId || !discussionId) {
       throw new Error('Bad data');
     }
@@ -269,4 +242,3 @@ mongoSchema.loadClass(PostClass);
 const Post = mongoose.model<PostDocument, PostModel>('Post', mongoSchema);
 
 export default Post;
-export { PostDocument, deletePostFiles };

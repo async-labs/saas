@@ -15,8 +15,13 @@
     "sourceMap": false,
     "skipLibCheck": true,
     "baseUrl": ".",
-    "typeRoots": ["./node_modules/@types"],
-    "lib": ["dom", "es2017"],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "lib": [
+      "dom",
+      "es2017"
+    ],
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
@@ -36,5 +41,5 @@
     "out",
     "next.config.js",
     "node_modules"
-  ]
+  ],
 }

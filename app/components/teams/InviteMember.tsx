@@ -1,12 +1,13 @@
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import { inject, observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 
-import notify from '../../lib/notifier';
+import notify from '../../lib/notify';
 import { Store } from '../../lib/store';
 
 type Props = {
@@ -30,36 +31,38 @@ class InviteMember extends React.Component<Props, State> {
     const { open } = this.props;
 
     return (
-      <Dialog onClose={this.handleClose} aria-labelledby="invite-memter-dialog-title" open={open}>
-        <DialogTitle id="invite-memter-dialog-title">Invite member</DialogTitle>
-        <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
-          <TextField
-            autoComplete="off"
-            value={this.state.email}
-            placeholder="Email"
-            onChange={(event) => {
-              this.setState({ email: event.target.value });
-            }}
-          />
-          <p />
-          <br />
-          <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
-            Cancel
-          </Button>{' '}
-          <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
-            Invite
-          </Button>
-        </form>
+      <Dialog onClose={this.handleClose} aria-labelledby="invite-member-dialog-title" open={open}>
+        <DialogTitle id="invite-member-dialog-title">Invite member</DialogTitle>
+        <DialogContent>
+          <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
+            <TextField
+              autoComplete="off"
+              value={this.state.email}
+              placeholder="Email"
+              onChange={(event) => {
+                this.setState({ email: event.target.value });
+              }}
+            />
+            <p />
+            <br />
+            <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
+              Cancel
+            </Button>{' '}
+            <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
+              Invite
+            </Button>
+          </form>
+        </DialogContent>
       </Dialog>
     );
   }
 
-  public handleClose = () => {
+  private handleClose = () => {
     this.setState({ email: '', disabled: false });
     this.props.onClose();
   };
 
-  public onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { store } = this.props;
@@ -79,7 +82,7 @@ class InviteMember extends React.Component<Props, State> {
     NProgress.start();
     try {
       this.setState({ disabled: true });
-      await store.currentTeam.inviteMember({ email });
+      await store.currentTeam.inviteMember(email);
 
       this.setState({ email: '' });
       notify('You successfully sent invitation.');

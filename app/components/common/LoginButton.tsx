@@ -2,29 +2,30 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
 
+import { emailLoginLinkApiMethod } from '../../lib/api/public';
+import notify from '../../lib/notify';
+import { styleLoginButton } from '../../lib/sharedStyles';
 import { makeQueryString } from '../../lib/api/makeQueryString';
 
-import { sendLoginToken } from '../../lib/api/public';
-import notify from '../../lib/notifier';
-import { styleLoginButton } from '../../lib/sharedStyles';
+const dev = process.env.NODE_ENV !== 'production';
 
-import { URL_API } from '../../lib/consts';
+type Props = { invitationToken?: string };
+type State = { email: string };
 
-class LoginButton extends React.PureComponent<
-  { next?: string; invitationToken?: string },
-  { email: string }
-> {
+class LoginButton extends React.PureComponent<Props, State> {
   public state = { email: '' };
 
   public render() {
-    const { next, invitationToken } = this.props;
+    const { invitationToken } = this.props;
 
-    let url = `${URL_API}/auth/google`;
-    const qs = makeQueryString({ next, invitationToken });
+    let url = `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/auth/google`;
+    const qs = makeQueryString({ invitationToken });
 
     if (qs) {
       url += `?${qs}`;
     }
+
+    // console.log(url);
 
     return (
       <React.Fragment>
@@ -67,16 +68,16 @@ class LoginButton extends React.PureComponent<
   private onSubmit = async (event) => {
     event.preventDefault();
     const { email } = this.state;
-    const { next, invitationToken } = this.props;
+    const { invitationToken } = this.props;
 
     if (!email) {
       notify('Email is required');
     }
 
     try {
-      await sendLoginToken({ email, next, invitationToken });
+      await emailLoginLinkApiMethod({ email, invitationToken });
       this.setState({ email: '' });
-      notify('We emailed you a login link.');
+      notify('SaaS boilerplate emailed you a login link.');
     } catch (error) {
       notify(error);
     }

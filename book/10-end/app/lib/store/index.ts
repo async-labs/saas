@@ -9,6 +9,8 @@ import { getTeamListApiMethod, getTeamMembersApiMethod } from '../api/team-membe
 import { User } from './user';
 import { Team } from './team';
 
+const dev = process.env.NODE_ENV !== 'production';
+
 useStaticRendering(typeof window === 'undefined');
 
 mobx.configure({ enforceActions: 'observed' });
@@ -158,7 +160,7 @@ let store: Store = null;
 function initializeStore(initialState = {}) {
   const isServer = typeof window === 'undefined';
 
-  const socket = isServer ? null : io(process.env.URL_API);
+  const socket = isServer ? null : io(dev ? process.env.URL_API : process.env.PRODUCTION_URL_API);
 
   const _store =
     store !== null && store !== undefined ? store : new Store({ initialState, isServer, socket });

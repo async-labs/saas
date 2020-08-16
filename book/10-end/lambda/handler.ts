@@ -4,6 +4,8 @@ import sendEmail from './api/server/aws-ses';
 import getEmailTemplate from './api/server/models/EmailTemplate';
 import User from './api/server/models/User';
 
+const dev = process.env.NODE_ENV !== 'production';
+
 export const sendEmailForNewPost = async (event) => {
   console.log('Received event (request representation):', JSON.stringify(event));
 
@@ -22,8 +24,6 @@ export const sendEmailForNewPost = async (event) => {
   }
 
   console.log(discussionName, discussionLink, postContent, authorName, userIds);
-
-  const dev = process.env.NODE_ENV !== 'production';
 
   await mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL, {
     useNewUrlParser: true,

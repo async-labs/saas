@@ -12,7 +12,7 @@ import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 import { fetchCheckoutSessionApiMethod } from '../lib/api/team-leader';
 
-const dev = process.env && process.env.NODE_ENV && process.env.NODE_ENV !== 'production';
+const dev = process.env.NODE_ENV !== 'production';
 
 const stripePromise = loadStripe(
   dev ? process.env.STRIPE_TEST_PUBLISHABLEKEY : process.env.STRIPE_LIVE_PUBLISHABLEKEY,

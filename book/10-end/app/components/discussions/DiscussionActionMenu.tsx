@@ -10,6 +10,8 @@ import { Discussion } from '../../lib/store/discussion';
 import MenuWithMenuItems from '../common/MenuWithMenuItems';
 import EditDiscussionForm from './EditDiscussionForm';
 
+const dev = process.env.NODE_ENV !== 'production';
+
 const getMenuOptions = (discussion) => ({
   dataId: discussion._id,
   id: `discussion-menu-${discussion._id}`,
@@ -98,7 +100,10 @@ class DiscussionActionMenu extends React.Component<Props, State> {
     }
 
     const selectedDiscussion = currentTeam.discussions.find((d) => d._id === id);
-    const discussionUrl = `${process.env.URL_APP}/team/${currentTeam.slug}/discussions/${selectedDiscussion.slug}`;
+
+    const discussionUrl = `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${
+      currentTeam.slug
+    }/discussions/${selectedDiscussion.slug}`;
 
     try {
       if (window.navigator) {

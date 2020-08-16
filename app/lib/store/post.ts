@@ -1,8 +1,10 @@
 import { action, computed, decorate, observable, runInAction } from 'mobx';
 
-import { editPost } from '../api/team-member';
+import { editPostApiMethod } from '../api/team-member';
 
-import { Discussion, Store, User } from './index';
+import { Store } from './index';
+import { User } from './user';
+import { Discussion } from './discussion';
 
 export class Post {
   public _id: string;
@@ -13,32 +15,32 @@ export class Post {
   public discussion: Discussion;
   public store: Store;
 
-  public isEdited: boolean;
   public content: string;
   public htmlContent: string;
 
+  public isEdited: boolean;
   public lastUpdatedAt: Date;
 
   constructor(params) {
-    Object.assign(this, params);
+    this._id = params._id;
+    this.createdUserId = params.createdUserId;
+    this.createdAt = params.createdAt;
+    this.discussionId = params.discussionId;
+
+
+    this.content = params.content;
+    this.htmlContent = params.htmlContent;
+
+    this.discussion = params.discussion;
+    this.store = params.store;
+
+    this.isEdited = params.isEdited;
+    this.lastUpdatedAt = params.lastUpdatedAt;
   }
 
-  get user(): User {
-    return this.discussion.team.members.get(this.createdUserId) || null;
-  }
-
-  public changeLocalCache(data) {
-    this.content = data.content;
-    this.htmlContent = data.htmlContent;
-    this.isEdited = true;
-    this.lastUpdatedAt = data.lastUpdatedAt;
-  }
-
-  public async edit(data) {
-    console.log(this.store.socket.id);
-
+  public async editPost(data) {
     try {
-      await editPost({
+      await editPostApiMethod({
         id: this._id,
         content: data.content,
         socketId: (this.store.socket && this.store.socket.id) || null,
@@ -52,15 +54,27 @@ export class Post {
       throw error;
     }
   }
+
+  public changeLocalCache(data) {
+    this.content = data.content;
+    this.htmlContent = data.htmlContent;
+    this.isEdited = true;
+    this.lastUpdatedAt = data.lastUpdatedAt;
+  }
+
+  get user(): User {
+    return this.discussion.team.members.get(this.createdUserId) || null;
+  }
 }
 
 decorate(Post, {
-  isEdited: observable,
   content: observable,
   htmlContent: observable,
+  isEdited: observable,
   lastUpdatedAt: observable,
 
-  user: computed,
+  editPost: action,
   changeLocalCache: action,
-  edit: action,
+
+  user: computed,
 });

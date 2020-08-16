@@ -1,6 +1,5 @@
 import * as express from 'express';
 
-import logger from '../logs';
 import Invitation from '../models/Invitation';
 import Team from '../models/Team';
 import User from '../models/User';
@@ -8,10 +7,8 @@ import { createSession } from '../stripe';
 
 const router = express.Router();
 
-// TODO: check for Team Leader properly
-
 router.use((req, res, next) => {
-  logger.debug('team leader API', req.path);
+  console.log('team leader API', req.path);
 
   if (!req.user) {
     res.status(401).json({ error: 'Unauthorized' });
@@ -25,9 +22,9 @@ router.post('/teams/add', async (req, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
-    logger.debug(`Express route: ${name}, ${avatarUrl}`);
+    console.log(`Express route: ${name}, ${avatarUrl}`);
 
-    const team = await Team.add({ userId: req.user.id, name, avatarUrl });
+    const team = await Team.addTeam({ userId: req.user.id, name, avatarUrl });
 
     res.json(team);
   } catch (err) {
@@ -38,6 +35,9 @@ router.post('/teams/add', async (req, res, next) => {
 router.post('/teams/update', async (req, res, next) => {
   try {
     const { teamId, name, avatarUrl } = req.body;
+
+    // console.log(req.user.id, typeof req.user.id);
+    // console.log(req.user._id, typeof req.user._id);
 
     const team = await Team.updateTeam({
       userId: req.user.id,
@@ -52,19 +52,9 @@ router.post('/teams/update', async (req, res, next) => {
   }
 });
 
-router.get('/teams/get-members', async (req, res, next) => {
+router.get('/teams/get-invitations-for-team', async (req, res, next) => {
   try {
-    const users = await User.getTeamMembers({ userId: req.user.id, teamId: req.query.teamId });
-
-    res.json({ users });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.get('/teams/get-invited-users', async (req, res, next) => {
-  try {
-    const users = await Invitation.getTeamInvitedUsers({
+    const users = await Invitation.getTeamInvitations({
       userId: req.user.id,
       teamId: req.query.teamId,
     });

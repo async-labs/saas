@@ -5,14 +5,42 @@ import App from 'next/app';
 import React from 'react';
 
 import { themeDark, themeLight } from '../lib/theme';
-import { getUser } from '../lib/api/public';
-import { getInitialData } from '../lib/api/team-member';
+import { getUserApiMethod } from '../lib/api/public';
+import { getInitialDataApiMethod } from '../lib/api/team-member';
 import { isMobile } from '../lib/isMobile';
-import { getStore, initStore, Store } from '../lib/store';
+import { getStore, initializeStore, Store } from '../lib/store';
 
 class MyApp extends App<{ isMobile: boolean }> {
   public static async getInitialProps({ Component, ctx }) {
-    const pageProps = { isMobile: isMobile({ req: ctx.req }) };
+    let firstGridItem = true;
+    let teamRequired = false;
+
+    if (
+      ctx.pathname.includes('/login') ||
+      ctx.pathname.includes('/create-team') ||
+      ctx.pathname.includes('/invitation')
+    ) {
+      firstGridItem = false;
+    }
+
+    if (
+      ctx.pathname.includes('/team-settings') ||
+      ctx.pathname.includes('/discussion') ||
+      ctx.pathname.includes('/billing')
+    ) {
+      teamRequired = true;
+    }
+
+    const { teamSlug, redirectMessage, discussionSlug } = ctx.query;
+
+    const pageProps = {
+      isMobile: isMobile({ req: ctx.req }),
+      firstGridItem,
+      teamRequired,
+      teamSlug,
+      redirectMessage,
+      discussionSlug,
+    };
 
     if (Component.getInitialProps) {
       Object.assign(pageProps, await Component.getInitialProps(ctx));
@@ -20,24 +48,31 @@ class MyApp extends App<{ isMobile: boolean }> {
 
     const appProps = { pageProps };
 
-    // if store initialized already, do not load data again
-    if (getStore()) {
+    const store = getStore();
+    if (store) {
       return appProps;
     }
 
-    let user = null;
+    const { req } = ctx;
+
+    const headers: any = {};
+    if (req.headers && req.headers.cookie) {
+      headers.cookie = req.headers.cookie;
+    }
+
+    let userObj = null;
     try {
-      user = ctx.req ? ctx.req.user : await getUser();
+      const { user } = await getUserApiMethod({ headers });
+      userObj = user;
     } catch (error) {
       console.log(error);
     }
 
     let initialData = {};
-    const { teamSlug, discussionSlug } = ctx.query;
 
-    if (user) {
+    if (userObj) {
       try {
-        initialData = await getInitialData({
+        initialData = await getInitialDataApiMethod({
           request: ctx.req,
           data: { teamSlug, discussionSlug },
         });
@@ -46,18 +81,14 @@ class MyApp extends App<{ isMobile: boolean }> {
       }
     }
 
+    // console.log(initialData);
+
+    // console.log(teamSlug);
+
     return {
       ...appProps,
-      initialState: { user, teamSlug, currentUrl: ctx.asPath, ...initialData },
+      initialState: { user: userObj, currentUrl: ctx.asPath, teamSlug, ...initialData },
     };
-  }
-
-  private store: Store;
-
-  constructor(props) {
-    super(props);
-
-    this.store = initStore(props.initialState);
   }
 
   public componentDidMount() {
@@ -66,6 +97,16 @@ class MyApp extends App<{ isMobile: boolean }> {
     if (jssStyles && jssStyles.parentNode) {
       jssStyles.parentNode.removeChild(jssStyles);
     }
+  }
+
+  private store: Store;
+
+  constructor(props) {
+    super(props);
+
+    console.log('MyApp.constructor');
+
+    this.store = initializeStore(props.initialState);
   }
 
   public render() {

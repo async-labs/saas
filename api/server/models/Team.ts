@@ -1,19 +1,15 @@
+/* eslint-disable @typescript-eslint/camelcase */
+
 import * as mongoose from 'mongoose';
 import Stripe from 'stripe';
 
-import logger from '../logs';
 import { cancelSubscription } from '../stripe';
 import { generateNumberSlug } from '../utils/slugify';
-
 import User from './User';
 
 mongoose.set('useFindAndModify', false);
 
 const mongoSchema = new mongoose.Schema({
-  teamLeaderId: {
-    type: String,
-    required: true,
-  },
   name: {
     type: String,
     required: true,
@@ -28,28 +24,31 @@ const mongoSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  memberIds: [String],
-  defaultTeam: {
-    type: Boolean,
-    default: false,
+  teamLeaderId: {
+    type: String,
+    required: true,
   },
-  isSubscriptionActive: {
+  memberIds: {
+    type: [String],
+    required: true,
+  },
+  defaultTeam: {
     type: Boolean,
     default: false,
   },
   stripeSubscription: {
     id: String,
     object: String,
-    // eslint-disable-next-line
     application_fee_percent: Number,
     billing: String,
-    // eslint-disable-next-line
     cancel_at_period_end: Boolean,
-    // eslint-disable-next-line
     billing_cycle_anchor: Number,
-    // eslint-disable-next-line
     canceled_at: Number,
     created: Number,
+  },
+  isSubscriptionActive: {
+    type: Boolean,
+    default: false,
   },
   isPaymentFailed: {
     type: Boolean,
@@ -57,16 +56,16 @@ const mongoSchema = new mongoose.Schema({
   },
 });
 
-interface TeamDocument extends mongoose.Document {
-  teamLeaderId: string;
+export interface TeamDocument extends mongoose.Document {
   name: string;
   slug: string;
   avatarUrl: string;
   createdAt: Date;
 
+  teamLeaderId: string;
   memberIds: string[];
+  defaultTeam: boolean;
 
-  isSubscriptionActive: boolean;
   stripeSubscription: {
     id: string;
     object: string;
@@ -77,11 +76,20 @@ interface TeamDocument extends mongoose.Document {
     canceled_at: number;
     created: number;
   };
+  isSubscriptionActive: boolean;
   isPaymentFailed: boolean;
 }
 
 interface TeamModel extends mongoose.Model<TeamDocument> {
-  add({ name, userId }: { userId: string; name: string; avatarUrl: string }): Promise<TeamDocument>;
+  addTeam({
+    name,
+    userId,
+  }: {
+    userId: string;
+    name: string;
+    avatarUrl: string;
+  }): Promise<TeamDocument>;
+
   updateTeam({
     userId,
     teamId,
@@ -93,8 +101,9 @@ interface TeamModel extends mongoose.Model<TeamDocument> {
     name: string;
     avatarUrl: string;
   }): Promise<TeamDocument>;
-  findBySlug(slug: string): Promise<TeamDocument>;
-  getList(userId: string): Promise<TeamDocument[]>;
+
+  getAllTeamsForUser(userId: string): Promise<TeamDocument[]>;
+
   removeMember({
     teamId,
     teamLeaderId,
@@ -104,6 +113,7 @@ interface TeamModel extends mongoose.Model<TeamDocument> {
     teamLeaderId: string;
     userId: string;
   }): Promise<void>;
+
   subscribeTeam({
     session,
     team,
@@ -111,6 +121,7 @@ interface TeamModel extends mongoose.Model<TeamDocument> {
     session: Stripe.Checkout.Session;
     team: TeamDocument;
   }): Promise<void>;
+
   cancelSubscription({
     teamLeaderId,
     teamId,
@@ -118,6 +129,7 @@ interface TeamModel extends mongoose.Model<TeamDocument> {
     teamLeaderId: string;
     teamId: string;
   }): Promise<TeamDocument>;
+
   cancelSubscriptionAfterFailedPayment({
     subscriptionId,
   }: {
@@ -126,8 +138,8 @@ interface TeamModel extends mongoose.Model<TeamDocument> {
 }
 
 class TeamClass extends mongoose.Model {
-  public static async add({ userId, name, avatarUrl }) {
-    logger.debug(`Static method: ${name}, ${avatarUrl}`);
+  public static async addTeam({ userId, name, avatarUrl }) {
+    console.log(`Static method: ${name}, ${avatarUrl}`);
 
     if (!userId || !name || !avatarUrl) {
       throw new Error('Bad data');
@@ -155,7 +167,7 @@ class TeamClass extends mongoose.Model {
   }
 
   public static async updateTeam({ userId, teamId, name, avatarUrl }) {
-    const team = await this.findById(teamId, 'slug name defaultTeam teamLeaderId');
+    const team = await this.findById(teamId, 'name teamLeaderId');
 
     if (!team) {
       throw new Error('Team not found');
@@ -173,22 +185,20 @@ class TeamClass extends mongoose.Model {
 
     await this.updateOne({ _id: teamId }, { $set: modifier }, { runValidators: true });
 
-    return this.findById(
-      teamId,
-      'name avatarUrl slug defaultTeam isSubscriptionActive stripeSubscription',
-    ).setOptions({ lean: true });
+    return this.findById(teamId, 'name avatarUrl slug defaultTeam').setOptions({ lean: true });
   }
 
-  public static findBySlug(slug: string) {
-    return this.findOne({ slug }).setOptions({ lean: true });
-  }
-
-  public static getList(userId: string) {
+  public static getAllTeamsForUser(userId: string) {
+    console.log(`userId:${userId}`);
     return this.find({ memberIds: userId }).setOptions({ lean: true });
   }
 
   public static async removeMember({ teamId, teamLeaderId, userId }) {
     const team = await this.findById(teamId).select('memberIds teamLeaderId');
+
+    if (!team) {
+      throw new Error('Team does not exist');
+    }
 
     if (team.teamLeaderId !== teamLeaderId || teamLeaderId === userId) {
       throw new Error('Permission denied');
@@ -254,7 +264,6 @@ class TeamClass extends mongoose.Model {
   }
 
   public static async cancelSubscriptionAfterFailedPayment({ subscriptionId }) {
-    // eslint-disable-next-line
     const team: any = await this.find({ 'stripeSubscription.id': subscriptionId })
       .select('teamLeaderId isSubscriptionActive stripeSubscription isPaymentFailed')
       .setOptions({ lean: true });

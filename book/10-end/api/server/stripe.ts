@@ -6,6 +6,8 @@ import Stripe from 'stripe';
 import Team from './models/Team';
 import User from './models/User';
 
+import logger from './logger';
+
 const dev = process.env.NODE_ENV !== 'production';
 
 const stripeInstance = new Stripe(
@@ -19,8 +21,12 @@ function createSession({ userId, teamId, teamSlug, customerId, subscriptionId, u
     customer: customerId,
     payment_method_types: ['card'],
     mode,
-    success_url: `${process.env.URL_API}/stripe/checkout-completed/{CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.URL_APP}/team/${teamSlug}/billing?redirectMessage=Checkout%20canceled`,
+    success_url: `${
+      dev ? process.env.URL_API : process.env.PRODUCTION_URL_API
+    }/stripe/checkout-completed/{CHECKOUT_SESSION_ID}`,
+    cancel_url: `${
+      dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP
+    }/team/${teamSlug}/billing?redirectMessage=Checkout%20canceled`,
     metadata: { userId, teamId },
   };
 
@@ -57,22 +63,22 @@ function retrieveSession({ sessionId }: { sessionId: string }) {
 }
 
 function updateCustomer(customerId, params: Stripe.CustomerUpdateParams) {
-  console.log('updating customer', customerId);
+  logger.debug('updating customer', customerId);
   return stripeInstance.customers.update(customerId, params);
 }
 
 function updateSubscription(subscriptionId: string, params: Stripe.SubscriptionUpdateParams) {
-  console.log('updating subscription', subscriptionId);
+  logger.debug('updating subscription', subscriptionId);
   return stripeInstance.subscriptions.update(subscriptionId, params);
 }
 
 function cancelSubscription({ subscriptionId }) {
-  console.log('cancel subscription', subscriptionId);
+  logger.debug('cancel subscription', subscriptionId);
   return stripeInstance.subscriptions.del(subscriptionId);
 }
 
 function getListOfInvoices({ customerId }) {
-  console.log('getting list of invoices for customer', customerId);
+  logger.debug('getting list of invoices for customer', customerId);
   return stripeInstance.invoices.list({ customer: customerId, limit: 100 });
 }
 
@@ -88,7 +94,7 @@ function stripeWebhookAndCheckoutCallback({ server }) {
           dev ? process.env.STRIPE_TEST_ENDPOINTSECRET : process.env.STRIPE_LIVE_ENDPOINTSECRET,
         );
 
-        console.log(`${event.id}, ${event.type}`);
+        logger.debug(`${event.id}, ${event.type}`);
 
         // invoice.payment_failed
         // data.object is an invoice
@@ -97,7 +103,7 @@ function stripeWebhookAndCheckoutCallback({ server }) {
         if (event.type === 'invoice.payment_failed') {
           // @ts-expect-error
           const { subscription } = event.data.object;
-          console.log(JSON.stringify(subscription));
+          logger.debug(JSON.stringify(subscription));
 
           await Team.cancelSubscriptionAfterFailedPayment({
             subscriptionId: JSON.stringify(subscription),
@@ -106,7 +112,7 @@ function stripeWebhookAndCheckoutCallback({ server }) {
 
         res.sendStatus(200);
       } catch (err) {
-        console.log(`Webhook error: ${err.message}`);
+        console.error(`Webhook error: ${err.message}`);
         next(err);
       }
     },
@@ -166,13 +172,16 @@ function stripeWebhookAndCheckoutCallback({ server }) {
         throw new Error('Wrong session.');
       }
 
-      res.redirect(`${process.env.URL_APP}/team/${team.slug}/billing`);
+      res.redirect(
+        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${team.slug}/billing`,
+      );
     } catch (err) {
       console.error(err);
 
       res.redirect(
-        `${process.env.URL_APP}/team/${team.slug}/billing?redirectMessage=${err.message ||
-          err.toString()}`,
+        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${
+          team.slug
+        }/billing?redirectMessage=${err.message || err.toString()}`,
       );
     }
   });

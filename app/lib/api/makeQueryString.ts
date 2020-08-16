@@ -1,8 +1,7 @@
 function makeQueryString(params) {
-  const esc = encodeURIComponent;
   const query = Object.keys(params)
     .filter((k) => !!params[k])
-    .map((k) => `${esc(k)}=${esc(params[k])}`)
+    .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
     .join('&');
 
   return query;

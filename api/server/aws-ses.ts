@@ -1,13 +1,11 @@
 import * as aws from 'aws-sdk';
 
-import { AMAZON_ACCESSKEYID, AMAZON_SECRETACCESSKEY } from './consts';
-
 export default function sendEmail(options) {
   const ses = new aws.SES({
     apiVersion: 'latest',
     region: 'us-east-1',
-    accessKeyId: AMAZON_ACCESSKEYID,
-    secretAccessKey: AMAZON_SECRETACCESSKEY,
+    accessKeyId: process.env.AMAZON_ACCESSKEYID,
+    secretAccessKey: process.env.AMAZON_SECRETACCESSKEY,
   });
 
   return new Promise((resolve, reject) => {

@@ -12,5 +12,6 @@ module.exports = {
     API_GATEWAY_ENDPOINT: process.env.API_GATEWAY_ENDPOINT,
     PRODUCTION_URL_API: process.env.PRODUCTION_URL_API,
     PRODUCTION_URL_API: process.env.PRODUCTION_URL_APP,
+    GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
   },
 };

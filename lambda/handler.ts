@@ -1,64 +1,92 @@
 import * as mongoose from 'mongoose';
 
-import { sendEmailNotification } from './src/sendEmailForNewPost';
+import sendEmail from './api/server/aws-ses';
+import getEmailTemplate from './api/server/models/EmailTemplate';
+import User from './api/server/models/User';
+
+const dev = process.env.NODE_ENV !== 'production';
 
 export const sendEmailForNewPost = async (event) => {
-  console.log('Received event:', JSON.stringify(event, null, 2));
+  console.log('Received event (request representation):', JSON.stringify(event));
+
+  const reqBody = JSON.parse(event.body);
+
+  const { discussionName, discussionLink, postContent, authorName, userIds } = reqBody;
 
   if (
-    event.discussionName === undefined ||
-    event.discussionLink === undefined ||
-    event.postContent === undefined ||
-    event.authorName === undefined ||
-    event.userIds === undefined
+    discussionName === undefined ||
+    discussionLink === undefined ||
+    postContent === undefined ||
+    authorName === undefined ||
+    userIds === undefined
   ) {
-    return { message: 'Some data is missing from body of POST request', event };
+    throw new Error('Missing data');
   }
 
-  console.log(
-    event.discussionName,
-    event.discussionLink,
-    event.postContent,
-    event.authorName,
-    event.userIds,
-  );
+  console.log(discussionName, discussionLink, postContent, authorName, userIds);
 
-  const dev = process.env.NODE_ENV !== 'production';
-
-  const MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
-
-  await mongoose.connect(MONGO_URL, { useNewUrlParser: true, useFindAndModify: false });
-
-  const { discussionName, discussionLink, postContent, authorName, userIds } = event;
+  await mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+  });
 
   try {
-    await sendEmailNotification({
-      productionUrlApp: process.env.PRODUCTION_URL_APP,
+    const emailTemplate = await getEmailTemplate('newPost', {
       discussionName,
       discussionLink,
       postContent,
       authorName,
-      userIds,
     });
+
+    if (!emailTemplate) {
+      throw new Error('newPost Email template not found');
+    }
+
+    const usersToNotify = await User.find({ _id: { $in: userIds } })
+      .select('email')
+      .setOptions({ lean: true });
+
+    console.log('usersToNotify', usersToNotify);
+
+    const jobs = usersToNotify
+      .filter((user) => !!user.email)
+      .map(async (user) => {
+        try {
+          await sendEmail({
+            from: `From async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+            to: [user.email],
+            subject: emailTemplate.subject,
+            body: emailTemplate.message,
+          });
+          console.log('email is sent');
+        } catch (err) {
+          console.error(err.stack);
+        }
+      });
+
+    await Promise.all(jobs);
   } catch (error) {
     console.error(error.stack);
-
     return { error: error.message, event };
   } finally {
     await mongoose.disconnect();
   }
 
-  return { message: 'Email was sent successfully!', event };
+  const response = {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Headers" : "Content-Type",
+      "Access-Control-Allow-Origin": dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
+      "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+      "Access-Control-Allow-Credentials": "true",
+    },
+    body: JSON.stringify({
+      message: 'Email notification was sent!',
+      input: event,
+    }),
+  };
 
-  // return {
-  //   statusCode: 200,
-  //   body: JSON.stringify({
-  //     message: 'Go Serverless v1.0! Your function executed successfully!',
-  //     input: event,
-  //   }),
-  // };
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
+  return response;
 };
-
-// set up and test API Gateway

@@ -21,6 +21,8 @@ custom:
       - Amazon_secretAccessKey
       - EMAIL_SUPPORT_FROM_ADDRESS
       - MONGO_URL_TEST
+      - URL_APP
+      - PRODUCTION_URL_APP
 
 functions:
   sendEmailForNewPost:

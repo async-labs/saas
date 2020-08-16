@@ -3,65 +3,53 @@ import Router from 'next/router';
 import React from 'react';
 
 import * as NProgress from 'nprogress';
-import * as gtag from './gtag';
-import { getStore, Store } from './store';
+
+import { Store, getStore } from './store';
 
 Router.events.on('routeChangeStart', () => {
   NProgress.start();
 });
 
 Router.events.on('routeChangeComplete', (url) => {
-  NProgress.done();
-  gtag.pageview(url);
-
   const store = getStore();
   if (store) {
     store.changeCurrentUrl(url);
   }
+
+  if (window && process.env.GA_MEASUREMENT_ID) {
+    (window as any).gtag('config', process.env.GA_MEASUREMENT_ID, {
+      page_path: url,
+    });
+  }
+
+  NProgress.done();
 });
 
 Router.events.on('routeChangeError', () => NProgress.done());
 
-export default function withAuth(
-  BaseComponent,
-  { loginRequired = true, logoutRequired = false, teamRequired = true } = {},
-) {
+export default function withAuth(Component, { loginRequired = true, logoutRequired = false } = {}) {
   class WithAuth extends React.Component<{ store: Store }> {
     public static async getInitialProps(ctx) {
-      const { query, req, pathname } = ctx;
+      console.log('WithAuth.getInitialProps');
 
-      let baseComponentProps = {};
+      const { req } = ctx;
 
-      let firstGridItem = true;
+      let pageComponentProps = {};
 
-      if (
-        pathname.includes('/login') ||
-        pathname.includes('/signup') ||
-        pathname.includes('/invitation') ||
-        pathname.includes('/create-team')
-      ) {
-        firstGridItem = false;
-      }
-
-      const { teamSlug, discussionSlug } = query;
-
-      if (BaseComponent.getInitialProps) {
-        baseComponentProps = await BaseComponent.getInitialProps(ctx);
+      if (Component.getInitialProps) {
+        pageComponentProps = await Component.getInitialProps(ctx);
       }
 
       return {
-        ...baseComponentProps,
-        teamSlug,
-        discussionSlug,
+        ...pageComponentProps,
         isServer: !!req,
-        teamRequired,
-        firstGridItem,
       };
     }
 
     public componentDidMount() {
-      const { store } = this.props;
+      console.log('WithAuth.componentDidMount');
 
+      const { store } = this.props;
       const user = store.currentUser;
 
       if (loginRequired && !logoutRequired && !user) {
@@ -76,8 +64,8 @@ export default function withAuth(
           redirectUrl = '/create-team';
           asUrl = '/create-team';
         } else {
-          redirectUrl = `/discussion?teamSlug=${user.defaultTeamSlug}`;
-          asUrl = `/team/${user.defaultTeamSlug}/discussions`;
+          redirectUrl = `/your-settings`;
+          asUrl = `/your-settings`;
         }
       }
 
@@ -98,7 +86,7 @@ export default function withAuth(
         return null;
       }
 
-      return <BaseComponent {...this.props} />;
+      return <Component {...this.props} />;
     }
   }
 

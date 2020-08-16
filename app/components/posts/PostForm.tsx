@@ -1,45 +1,44 @@
 import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
 import he from 'he';
 import marked from 'marked';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
 
-import notify from '../../lib/notifier';
-import { Discussion, Post, Store, User } from '../../lib/store';
+import notify from '../../lib/notify';
+import { Store } from '../../lib/store';
+import { Discussion } from '../../lib/store/discussion';
+import { Post } from '../../lib/store/post';
+import { User } from '../../lib/store/user';
 
 import PostEditor from './PostEditor';
 
-import { URL_APP } from '../../lib/consts';
+const dev = process.env.NODE_ENV !== 'production';
 
-const styles = {
-  paper: {
-    width: '100%', // TODO: should 100% when isMobile is true
-    padding: '0px 20px 20px 20px',
-  },
-};
-
-type MyProps = {
-  store?: Store;
+type Props = {
+  store: Store;
+  isMobile: boolean;
   members: User[];
-  post?: Post;
-  onFinished?: () => void;
-  open?: boolean;
-  classes: { paper: string };
+  post: Post;
   discussion: Discussion;
-  readOnly?: boolean;
-  isMobile?: boolean;
+  showMarkdownToNonCreator?: boolean;
+  onFinished?: () => void;
 };
 
-type MyState = {
-  postId: string | null;
+type State = {
+  postId: string;
   content: string;
   disabled: boolean;
 };
 
-class PostForm extends React.Component<MyProps, MyState> {
-  public static getDerivedStateFromProps(props: MyProps, state) {
+class PostForm extends React.Component<Props, State> {
+  public state = {
+    postId: null,
+    content: '',
+    disabled: false,
+  };
+
+  public static getDerivedStateFromProps(props: Props, state: State) {
     const { post } = props;
 
     if (!post && !state.postId) {
@@ -51,25 +50,19 @@ class PostForm extends React.Component<MyProps, MyState> {
     }
 
     return {
-      content: (post && post.content) || '',
       postId: (post && post._id) || null,
+      content: (post && post.content) || '',
     };
   }
 
-  public state = {
-    postId: null,
-    content: '',
-    disabled: false,
-  };
-
   public render() {
-    const { members, post, isMobile, readOnly } = this.props;
-    const isEditing = !!post;
+    const { store, members, post, isMobile, showMarkdownToNonCreator } = this.props;
+    const isEditingPost = !!post;
 
     let title = 'Add Post';
-    if (readOnly) {
-      title = 'Show Markdown';
-    } else if (isEditing) {
+    if (showMarkdownToNonCreator) {
+      title = 'Showing Markdown';
+    } else if (isEditingPost) {
       title = 'Edit Post';
     }
 
@@ -77,12 +70,12 @@ class PostForm extends React.Component<MyProps, MyState> {
       <div style={{ height: '100%', margin: '0px 20px' }}>
         <p />
         <br />
-        <h3>{title} </h3>
+        <h3>{title}</h3>
         <form style={{ width: '100%', height: '100%' }} onSubmit={this.onSubmit} autoComplete="off">
           <p />
           <br />
           <div>
-            {readOnly ? null : (
+            {showMarkdownToNonCreator ? null : (
               <React.Fragment>
                 <Button
                   type="submit"
@@ -90,41 +83,41 @@ class PostForm extends React.Component<MyProps, MyState> {
                   color="primary"
                   disabled={this.state.disabled}
                 >
-                  {isEditing ? 'Save changes' : 'Publish Post'}
+                  {isEditingPost ? 'Save changes' : 'Publish Post'}
                 </Button>
                 {isMobile ? <p /> : null}
               </React.Fragment>
             )}
-            {post ? (
+            {isEditingPost ? (
               <Button
                 variant="outlined"
                 onClick={this.closeForm}
                 disabled={this.state.disabled}
                 style={{ marginLeft: '10px' }}
               >
-                {readOnly ? 'Go back' : 'Cancel'}
+                {showMarkdownToNonCreator ? 'Go back' : 'Cancel'}
               </Button>
             ) : null}
           </div>
           <p />
           <br />
           <PostEditor
-            readOnly={readOnly}
             content={this.state.content}
             onChanged={this.onContentChanged}
             members={members}
+            store={store}
             textareaHeight="100%"
           />
           <p />
           <div style={{ margin: '20px 0px' }}>
-            {post ? (
+            {isEditingPost ? (
               <Button
                 variant="outlined"
                 onClick={this.closeForm}
                 disabled={this.state.disabled}
                 style={{ marginLeft: '10px' }}
               >
-                {readOnly ? 'Go back' : 'Cancel'}
+                {showMarkdownToNonCreator ? 'Go back' : 'Cancel'}
               </Button>
             ) : null}
           </div>
@@ -135,28 +128,24 @@ class PostForm extends React.Component<MyProps, MyState> {
     );
   }
 
-  private onContentChanged = (content: string) => {
-    this.setState({ content });
-  };
-
   private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { content } = this.state;
     const htmlContent = marked(he.decode(content));
     const { post, onFinished, store, discussion } = this.props;
-    const isEditing = !!post;
+    const isEditingPost = !!post;
 
     if (!content) {
       notify('Add content to your Post');
       return;
     }
 
-    if (isEditing) {
+    if (isEditingPost) {
       this.setState({ disabled: true });
       NProgress.start();
       try {
-        await post.edit({ content, htmlContent });
+        await post.editPost({ content, htmlContent });
         notify('You successfully edited Post');
       } catch (error) {
         console.log(error);
@@ -183,19 +172,24 @@ class PostForm extends React.Component<MyProps, MyState> {
     this.setState({ disabled: true });
 
     try {
-      const newPost = await discussion.addPost(content);
+      const post = await discussion.addPost(content);
 
       if (discussion.notificationType === 'email') {
-        const userIdsForLambda = discussion.memberIds.filter((m) => m !== discussion.createdUserId);
-        await discussion.sendDataToLambdaApiMethod({
+        const userIdsForLambda = discussion.memberIds.filter((m) => m !== store.currentUser._id);
+
+        this.setState({ content: '' });
+
+        await discussion.sendDataToLambda({
           discussionName: discussion.name,
-          discussionLink: `${URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
-          postContent: newPost.content,
-          authorName: newPost.user.displayName,
+          discussionLink: `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${
+            discussion.team.slug
+          }/discussions/${discussion.slug}`,
+          postContent: post.content,
+          authorName: post.user.displayName,
           userIds: userIdsForLambda,
         });
       }
-      this.setState({ content: '' });
+
       notify('You successfully published new Post.');
     } catch (error) {
       console.log(error);
@@ -210,8 +204,12 @@ class PostForm extends React.Component<MyProps, MyState> {
     }
   };
 
+  private onContentChanged = (content: string) => {
+    this.setState({ content });
+  };
+
   private closeForm = () => {
-    this.setState({ content: '', postId: null });
+    this.setState({ postId: null, content: '' });
 
     const { onFinished } = this.props;
     if (onFinished) {
@@ -220,4 +218,4 @@ class PostForm extends React.Component<MyProps, MyState> {
   };
 }
 
-export default withStyles(styles)(inject('store')(observer(PostForm)));
+export default observer(PostForm);

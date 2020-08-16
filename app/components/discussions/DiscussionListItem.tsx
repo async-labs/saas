@@ -1,13 +1,16 @@
 import Paper from '@material-ui/core/Paper';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import Link from 'next/link';
 import React from 'react';
 
-import { Discussion, Store, Team } from '../../lib/store';
+import { Store } from '../../lib/store';
+import { Discussion } from '../../lib/store/discussion';
+import { Team } from '../../lib/store/team';
+
 import DiscussionActionMenu from './DiscussionActionMenu';
 
 type Props = {
-  store?: Store;
+  store: Store;
   discussion: Discussion;
   team: Team;
   isMobile: boolean;
@@ -20,6 +23,8 @@ class DiscussionListItem extends React.Component<Props> {
 
     const selectedDiscussion =
       store.currentUrl === `/team/${team.slug}/discussions/${discussion.slug}`;
+
+    console.log(store.currentUrl);
 
     const isThemeDark = store && store.currentUser && store.currentUser.darkTheme === true;
 
@@ -55,7 +60,7 @@ class DiscussionListItem extends React.Component<Props> {
               marginRight: '-12px',
             }}
           >
-            <DiscussionActionMenu discussion={discussion} isMobile={isMobile} />
+            <DiscussionActionMenu discussion={discussion} isMobile={isMobile} store={store} />
           </div>
         </li>
       </Paper>
@@ -63,4 +68,4 @@ class DiscussionListItem extends React.Component<Props> {
   }
 }
 
-export default inject('store')(observer(DiscussionListItem));
+export default observer(DiscussionListItem);

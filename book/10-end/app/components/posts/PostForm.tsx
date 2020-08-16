@@ -13,6 +13,8 @@ import { User } from '../../lib/store/user';
 
 import PostEditor from './PostEditor';
 
+const dev = process.env.NODE_ENV !== 'production';
+
 type Props = {
   store: Store;
   isMobile: boolean;
@@ -35,7 +37,7 @@ class PostForm extends React.Component<Props, State> {
     content: '',
     disabled: false,
   };
-  
+
   public static getDerivedStateFromProps(props: Props, state: State) {
     const { post } = props;
 
@@ -179,7 +181,9 @@ class PostForm extends React.Component<Props, State> {
 
         await discussion.sendDataToLambda({
           discussionName: discussion.name,
-          discussionLink: `${process.env.URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
+          discussionLink: `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${
+            discussion.team.slug
+          }/discussions/${discussion.slug}`,
           postContent: post.content,
           authorName: post.user.displayName,
           userIds: userIdsForLambda,
