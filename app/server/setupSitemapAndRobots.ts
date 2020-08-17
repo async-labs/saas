@@ -45,6 +45,6 @@ export default function setupSitemapAndRobots({ server }) {
   });
 
   server.get('/robots.txt', (_, res) => {
-    res.sendFile(path.join(__dirname, '../static', 'robots.txt'));
+    res.sendFile(path.join(__dirname, './', 'robots.txt'));
   });
 }

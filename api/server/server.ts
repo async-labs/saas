@@ -87,5 +87,6 @@ server.get('*', (_, res) => {
 });
 
 http.listen(port, () => {
+  logger.debug('debug right before info');
   logger.info(`> Ready on ${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}`);
 });
