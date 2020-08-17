@@ -52,7 +52,7 @@ function setup({ http, origin, sessionMiddleware }) {
       });
 
       socket.on('disconnect', () => {
-        console.log(`disconnected'`);
+        console.log(`disconnected`);
       });
     });
   }
