@@ -4,6 +4,8 @@ import { OAuth2Strategy as Strategy } from 'passport-google-oauth';
 import User, { UserDocument } from './models/User';
 import Invitation from './models/Invitation';
 
+const dev = process.env.NODE_ENV !== 'production';
+
 function setupGoogle({ server }) {
   if (!process.env.GOOGLE_CLIENTID) {
     return;
@@ -36,8 +38,6 @@ function setupGoogle({ server }) {
       console.error(err);
     }
   };
-
-  const dev = process.env.NODE_ENV !== 'production';
 
   passport.use(
     new Strategy(

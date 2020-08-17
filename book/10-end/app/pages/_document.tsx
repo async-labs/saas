@@ -132,30 +132,13 @@ class MyDocument extends Document {
               }
             `}
           </style>
-          {this.gtag()}
-        </Head>
-        <body>
-          <Main />
-          <NextScript />
-        </body>
-      </Html>
-    );
-  }
-
-  public gtag() {
-    if (!process.env.GA_MEASUREMENT_ID) {
-      return;
-    }
-
-    return (
-      <div>
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GA_MEASUREMENT_ID}`}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GA_MEASUREMENT_ID}`}
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
@@ -163,9 +146,14 @@ class MyDocument extends Document {
                 page_path: window.location.pathname,
               });
             `,
-          }}
-        />
-      </div>
+            }}
+          />
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
     );
   }
 }
