@@ -4,8 +4,10 @@
     "module": "commonjs",
     "outDir": "production-server/",
     "target": "es2017",
+    "isolatedModules": false,
+    "noEmit": false
   },
-  "include": [
-    "./server/**/*.ts"
-  ]
+  "exclude": ["./server/types.d.ts"],
+  "include": ["./server/**/*.ts"],
+  "typeRoots": ["./node_modules/@types", "./server/types.d.ts"]
 }

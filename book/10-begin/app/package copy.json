@@ -1,11 +1,17 @@
 {
-  "name": "10-begin-app",
-  "version": "1",
+  "name": "10-end-app",
+  "version": "1.0.0",
   "license": "MIT",
+  "engines": {
+    "node": "12.16.1",
+    "yarn": "1.22.4"
+  },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpileOnly --project tsconfig.server.json --ignore-watch .next --ignore-watch components --ignore-watch lib --ignore-watch pages -- server/server.ts",
-    "build": "next build",
-    "lint": "eslint . --ext .ts,.tsx"
+    "lint": "eslint . --ext .ts,.tsx",
+    "postinstall": "rm -rf production-server/",
+    "build": "next build && tsc --project tsconfig.server.json && cp server/robots.txt production-server/server",
+    "start": "node production-server/server/server.js"
   },
   "dependencies": {
     "@material-ui/core": "^4.10.2",
