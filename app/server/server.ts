@@ -24,6 +24,10 @@ app.prepare().then(() => {
 
   server.use(express.json());
 
+  if (!dev) {
+    server.set('trust proxy', 1); // sets req.hostname, req.ip
+  }
+
   // server.get('/api/v1/public/get-user', (_, res) => {
   //   res.json({ user: { email: 'team@builderbook.org' } });
   // });
