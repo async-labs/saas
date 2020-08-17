@@ -1,15 +1,14 @@
-
 branch-defaults:
   default:
     environment: api-saas-boilerplate
 environment-defaults:
-  async-github1-env:
+  app-saas-boilerplate:
     branch: null
     repository: null
 global:
   application_name: book
   default_ec2_keyname: null
-  default_platform: Node.js
+  default_platform: Node.js 12 running on 64bit Amazon Linux 2
   default_region: us-east-1
   include_git_submodules: true
   instance_profile: null

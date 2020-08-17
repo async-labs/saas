@@ -19,3 +19,8 @@ compiled/
 production-server/
 
 yarn-error.log
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
