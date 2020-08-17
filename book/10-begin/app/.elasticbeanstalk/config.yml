@@ -7,7 +7,7 @@ environment-defaults:
     branch: null
     repository: null
 global:
-  application_name: books
+  application_name: book
   default_ec2_keyname: null
   default_platform: Node.js
   default_region: us-east-1
