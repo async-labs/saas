@@ -102,7 +102,7 @@ function setupGoogle({ server }) {
       }
 
       res.redirect(
-        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_API}${redirectUrlAfterLogin}`,
+        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}${redirectUrlAfterLogin}`,
       );
     },
   );
