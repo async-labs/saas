@@ -28,6 +28,36 @@ app.prepare().then(() => {
     server.set('trust proxy', 1); // sets req.hostname, req.ip
   }
 
+  server.use(async (req: any, _, nextfn) => {
+    const headers: any = {};
+    if (req.headers && req.headers.cookie) {
+      headers.cookie = req.headers.cookie;
+    }
+
+    try {
+      const { user } = await getUserApiMethod({ headers });
+      req.user = user;
+    } catch (error) {
+      console.log(error);
+    }
+
+    nextfn();
+  });
+
+  server.get('/', async (req: any, res) => {
+    let redirectUrl = 'login';
+
+    if (req.user) {
+      if (!req.user.defaultTeamSlug) {
+        redirectUrl = 'create-team';
+      } else {
+        redirectUrl = `team/${req.user.defaultTeamSlug}/discussions`;
+      }
+    }
+
+    res.redirect(`${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/${redirectUrl}`);
+  });
+
   // server.get('/api/v1/public/get-user', (_, res) => {
   //   res.json({ user: { email: 'team@builderbook.org' } });
   // });
@@ -59,31 +89,6 @@ app.prepare().then(() => {
   setupSitemapAndRobots({ server });
 
   routesWithCache({ server, app });
-
-  server.use(async (req: any, _, nextfn) => {
-    const headers: any = {};
-    if (req.headers && req.headers.cookie) {
-      headers.cookie = req.headers.cookie;
-    }
-
-    try {
-      const { user } = await getUserApiMethod({ headers });
-      req.user = user;
-    } catch (error) {
-      console.log(error);
-    }
-
-    nextfn();
-  });
-
-  server.all('/', (req: any, res) => {
-    if (!req.user) {
-      res.redirect(`${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/login`);
-      handle(req, res);
-    } else {
-      handle(req, res);
-    }
-  });
 
   server.get('*', (req, res) => {
     handle(req, res);
