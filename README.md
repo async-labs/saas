@@ -355,10 +355,17 @@ All code in this repository is provided under the [MIT License](https://github.c
 ## Project structure
 
 ```
+├── .elasticbeanstalk
+│   └── config.yml
+├── .github
+│   └── FUNDING.yml
 ├── .vscode
+│   ├── extensions.json
 │   ├── launch.json
 │   └── settings.json
 ├── api
+│   ├── .elasticbeanstalk
+│   │   └── config.yml
 │   ├── server
 │   │   ├── api
 │   │   │   ├── index.ts
@@ -370,47 +377,42 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   │   ├── EmailTemplate.ts
 │   │   │   ├── Invitation.ts
 │   │   │   ├── Post.ts
-│   │   │   ├── Purchase.ts
 │   │   │   ├── Team.ts
 │   │   │   └── User.ts
 │   │   ├── utils
-│   │   │   └── slugify.ts
-│   │   ├── app.ts
-│   │   ├── auth.ts
+│   │   │   ├── slugify.ts
+│   │   │   └── sum.ts
 │   │   ├── aws-s3.ts
 │   │   ├── aws-ses.ts
-│   │   ├── consts.ts
 │   │   ├── env.ts
-│   │   ├── logs.ts
+│   │   ├── google-auth.ts
+│   │   ├── logger.ts
 │   │   ├── mailchimp.ts
-│   │   ├── passwordless.ts
-│   │   ├── realtime.ts
+│   │   ├── passwordless-auth.ts
+│   │   ├── passwordless-token-mongostore.ts
+│   │   ├── server.ts
+│   │   ├── sockets.ts
 │   │   └── stripe.ts
 │   ├── static
 │   │   └── robots.txt
-│   ├── test
-│   │   ├── server
-│   │   │   └── utils
-│   │   └── tsconfig.json
-│   ├── .dockerignore
-│   ├── .env
+│   ├── test/server/utils
+│   │   ├── slugify.test.ts
+│   │   └── sum.test.ts
+│   ├── .eslintignore
+│   ├── .eslintrc.js
 │   ├── .gitignore
-│   ├── .node-dev.json
-│   ├── .npmignore
-│   ├── Dockerfile
-│   ├── README.md
 │   ├── package.json
 │   ├── tsconfig.json
-│   ├── tslint.json
+│   ├── tsconfig.server.json
 │   └── yarn.lock
 ├── app
+│   ├── .elasticbeanstalk
+│   │   └── config.yml
 │   ├── components
 │   │   ├── common
-│   │   │   ├── ActiveLink.tsx
-│   │   │   ├── AutoComplete.tsx
-│   │   │   ├── Confirm.tsx
-│   │   │   ├── Loading.tsx
+│   │   │   ├── Confirmer.tsx
 │   │   │   ├── LoginButton.tsx
+│   │   │   ├── MemberChooser.tsx
 │   │   │   ├── MenuWithLinks.tsx
 │   │   │   ├── MenuWithMenuItems.tsx
 │   │   │   └── Notifier.tsx
@@ -422,7 +424,6 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   │   └── EditDiscussionForm.tsx
 │   │   ├── layout
 │   │   │   ├── index.tsx
-│   │   │   └── menus.ts
 │   │   ├── posts
 │   │   │   ├── PostContent.tsx
 │   │   │   ├── PostDetail.tsx
@@ -430,8 +431,6 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   │   └── PostForm.tsx
 │   │   ├── teams
 │   │   │   └── InviteMember.tsx
-│   │   └── users
-│   │       └── MemberChooser.tsx
 │   ├── lib
 │   │   ├── api
 │   │   │   ├── makeQueryString.ts
@@ -447,15 +446,12 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   │   ├── team.ts
 │   │   │   └── user.ts
 │   │   ├── confirm.ts
-│   │   ├── consts.ts
-│   │   ├── context.ts
-│   │   ├── gtag.ts
 │   │   ├── isMobile.ts
-│   │   ├── notifier.ts
+│   │   ├── notify.ts
 │   │   ├── resizeImage.ts
 │   │   ├── sharedStyles.ts
-│   │   ├── withAuth.tsx
-│   │   └── withStore.tsx
+│   │   ├── theme.ts
+│   │   └── withAuth.tsx
 │   ├── pages
 │   │   ├── _app.tsx
 │   │   ├── _document.tsx
@@ -463,47 +459,43 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   ├── create-team.tsx
 │   │   ├── discussion.tsx
 │   │   ├── invitation.tsx
+│   │   ├── login-cached.tsx
 │   │   ├── login.tsx
 │   │   ├── team-settings.tsx
 │   │   └── your-settings.tsx
+│   ├── public
+│   │   └── pepe.jpg
 │   ├── server
-│   │   ├── app.ts
-│   │   ├── env.ts
-│   │   └── routesWithSlug.ts
-│   ├── static
-│   │   └── robots.txt
+│   │   ├── robots.txt
+│   │   ├── routesWithCache.ts
+│   │   ├── server.ts
+│   │   └── setupSitemapAndRobots.ts
 │   ├── .babelrc
-│   ├── .dockerignore
-│   ├── .env
-│   ├── .env.blueprint
+│   ├── .eslintignore
+│   ├── .eslintrc.js
 │   ├── .gitignore
-│   ├── .npmignore
-│   ├── Dockerfile
-│   ├── README.md
+│   ├── next.env.d.ts
 │   ├── next.config.js
 │   ├── package.json
 │   ├── tsconfig.json
 │   ├── tsconfig.server.json
-│   ├── tslint.json
 │   └── yarn.lock
+├── book
 ├── lambda
-│   ├── src
-│   │   ├── api -> ../../api/server
-│   │   └── sendEmailForNewPost.ts
+│   ├── .estlintignore
+│   ├── .eslintrc.js
 │   ├── .gitignore
-│   ├── README.md
+│   ├── api
 │   ├── handler.ts
 │   ├── package.json
 │   ├── serverless.yml
 │   ├── tsconfig.json
-│   ├── tslint.json
 │   └── yarn.lock
-├── .env
 ├── .gitignore
-├── .prettierrc.js
 ├── LICENSE.md
 ├── README.md
 ├── docker-compose.yml
 ├── mongo-user.sh
-└── package.json
+├── package.json
+├── yarn.lock
 ```
