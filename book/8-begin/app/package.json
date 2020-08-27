@@ -3,7 +3,7 @@
   "version": "1",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpileOnly --project tsconfig.server.json --ignore-watch .next --ignore-watch components --ignore-watch lib --ignore-watch pages -- server/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only --project tsconfig.server.json --ignore-watch .next --ignore-watch components --ignore-watch lib --ignore-watch pages server/server.ts",
     "build": "next build",
     "lint": "eslint . --ext .ts,.tsx"
   },
@@ -45,6 +45,6 @@
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.16.0",
     "prettier": "^1.18.2",
-    "ts-node-dev": "^1.0.0-pre.44"
+    "ts-node-dev": "1.0.0-pre.44"
   }
 }

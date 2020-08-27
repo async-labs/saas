@@ -7,7 +7,7 @@
     "yarn": "1.22.4"
   },
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpileOnly --project tsconfig.server.json server/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only --project tsconfig.server.json server/server.ts",
     "lint": "eslint . --ext .ts,.tsx",
     "test": "jest",
     "postinstall": "rm -rf production-server/",
@@ -66,6 +66,6 @@
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
     "ts-jest": "^25.2.1",
-    "ts-node-dev": "^1.0.0-pre.44"
+    "ts-node-dev": "1.0.0-pre.44"
   }
 }
