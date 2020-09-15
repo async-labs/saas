@@ -4,8 +4,8 @@ export default function sendEmail(options) {
   const ses = new aws.SES({
     apiVersion: 'latest',
     region: 'us-east-1',
-    accessKeyId: process.env.AMAZON_ACCESSKEYID,
-    secretAccessKey: process.env.AMAZON_SECRETACCESSKEY,
+    accessKeyId: process.env.AWS_ACCESSKEYID,
+    secretAccessKey: process.env.AWS_SECRETACCESSKEY,
   });
 
   return new Promise((resolve, reject) => {

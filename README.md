@@ -79,8 +79,8 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   GOOGLE_CLIENTSECRET=xxxxxx
 
   # Used in api/server/aws-s3.ts and api/server/aws-ses.ts
-  AMAZON_ACCESSKEYID=xxxxxx
-  AMAZON_SECRETACCESSKEY=xxxxxx
+  AWS_ACCESSKEYID=xxxxxx
+  AWS_SECRETACCESSKEY=xxxxxx
 
   # Used in api/server/models/Invitation.ts and api/server/models/User.ts
   EMAIL_SUPPORT_FROM_ADDRESS=xxxxxx
@@ -233,8 +233,8 @@ SESSION_SECRET=3NvS3Cr3t!
 COOKIE_DOMAIN=.saas.localhost
 GOOGLE_CLIENTID=
 GOOGLE_CLIENTSECRET=
-AMAZON_ACCESSKEYID=
-AMAZON_SECRETACCESSKEY=
+AWS_ACCESSKEYID=
+AWS_SECRETACCESSKEY=
 EMAIL_SUPPORT_FROM_ADDRESS=
 MAILCHIMP_API_KEY=
 MAILCHIMP_REGION=
