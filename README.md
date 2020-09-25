@@ -69,26 +69,27 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   `api/.env`:
 
   ```
-  # Used in api/server/app.ts
-  MONGO_URL=mongodb://saas:secret@localhost:27017/saas
-  SESSION_NAME=xxxxxx
-  SESSION_SECRET=xxxxxx
+  # Used in api/server/server.ts
+  MONGO_URL=
+  SESSION_NAME=
+  SESSION_SECRET=
+  COOKIE_DOMAIN=
 
   # Used in api/server/google.ts
-  GOOGLE_CLIENTID=xxxxxx
-  GOOGLE_CLIENTSECRET=xxxxxx
+  GOOGLE_CLIENTID=
+  GOOGLE_CLIENTSECRET=
 
   # Used in api/server/aws-s3.ts and api/server/aws-ses.ts
-  AWS_ACCESSKEYID=xxxxxx
-  AWS_SECRETACCESSKEY=xxxxxx
+  AWS_ACCESSKEYID=
+  AWS_SECRETACCESSKEY=
 
   # Used in api/server/models/Invitation.ts and api/server/models/User.ts
-  EMAIL_SUPPORT_FROM_ADDRESS=xxxxxx
+  EMAIL_SUPPORT_FROM_ADDRESS=
 
   # Used in api/server/mailchimp.ts
-  MAILCHIMP_API_KEY=xxxxxx
-  MAILCHIMP_REGION=xxxx
-  MAILCHIMP_SAAS_ALL_LIST_ID=xxxxxx
+  MAILCHIMP_API_KEY=
+  MAILCHIMP_REGION=
+  MAILCHIMP_SAAS_ALL_LIST_ID=
 
   # All env variables above this line are needed for successful user signup
 
@@ -107,7 +108,11 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   # Optionally determine the URL
   URL_APP=http://localhost:3000
   URL_API=http://localhost:8000
-  COOKIE_DOMAIN=localhost
+  PRODUCTION_URL_API=
+  PRODUCTION_URL_APP=
+
+  # in pages/_document.tsx and lib/withAuth.tsx
+  GA_MEASUREMENT_ID=
   ```
 
   Important: The above environmental variables are available on the server only. You should add your `.env` file to `.gitignore` inside the `api` folder so that your secret keys are not stored on a remote Github repo.
@@ -130,17 +135,17 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   - A `.env` file in the `app` folder is not required to run, but you can create one to override the default variables:
 
   ```
-    STRIPEPUBLISHABLEKEY=pk_test_xxxxxxxxxxxxxxx
+    STRIPE_TEST_PUBLISHABLEKEY=pk_test_xxxxxxxxxxxxxxx
     BUCKET_FOR_POSTS=xxxxxx
     BUCKET_FOR_TEAM_AVATARS=xxxxxx
     LAMBDA_API_ENDPOINT=xxxxxxapi
     URL_APP=http://localhost:3000
     URL_API=http://localhost:8000
-    GA_TRACKING_ID=
+    GA_MEASUREMENT_ID=
   ```
 
-  - To get `GA_TRACKING_ID`, set up Google Analytics and follow [these instructions](https://support.google.com/analytics/answer/1008080?hl=en) to find your tracking ID.
-  - To get `STRIPEPUBLISHABLEKEY`, go to your Stripe dashboard, click `Developers`, then click `API keys`.
+  - To get `GA_MEASUREMENT_ID`, set up Google Analytics and follow [these instructions](https://support.google.com/analytics/answer/1008080?hl=en) to find your tracking ID.
+  - To get `STRIPE_TEST_PUBLISHABLEKEY`, go to your Stripe dashboard, click `Developers`, then click `API keys`.
 
 - For successful file uploading, make sure your buckets have proper CORS configuration. Go to your AWS account, find your bucket, go to `Permissions > CORS configuration`, add:
 
@@ -149,7 +154,6 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
   <CORSRule>
       <AllowedOrigin>http://localhost:3000</AllowedOrigin>
-      <AllowedOrigin>http://app.saas.localhost:3000</AllowedOrigin>
       <AllowedOrigin>https://saas-app.builderbook.org</AllowedOrigin>
       <AllowedMethod>POST</AllowedMethod>
       <AllowedMethod>GET</AllowedMethod>
@@ -163,7 +167,7 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   </CORSConfiguration>
   ```
 
-- Make sure to update allowed origin with your actual `URL_APP`. In our case, it's `https://saas-app.builderbook.org` for production, `http://app.saas.localhost:3000` for staging locally and `http://localhost:3000` for development.
+- Make sure to update allowed origin with your actual values for `URL_APP` and `PRODUCTION_URL_APP`.
 
 - Once `.env` is created, you can run the `app` app. Navigate to the `app` folder, run `yarn install` to add all packages, then run the command below:
   ```
@@ -227,10 +231,10 @@ API_PORT=8000
 APP_PORT=3000
 
 # api (run)
-MONGO_URL=mongodb://saas:secret@saas-mongo:27017/saas
-SESSION_NAME=saas.localhost.sid
-SESSION_SECRET=3NvS3Cr3t!
-COOKIE_DOMAIN=.saas.localhost
+MONGO_URL=
+SESSION_NAME=
+SESSION_SECRET=
+COOKIE_DOMAIN=
 GOOGLE_CLIENTID=
 GOOGLE_CLIENTSECRET=
 AWS_ACCESSKEYID=
@@ -248,11 +252,11 @@ STRIPE_LIVE_PLANID=
 STRIPE_LIVE_ENDPOINTSECRET=
 
 # app (build and run)
-STRIPEPUBLISHABLEKEY=
+STRIPE_TEST_PUBLISHABLEKEY=
 BUCKET_FOR_POSTS=
 BUCKET_FOR_TEAM_AVATARS=
 LAMBDA_API_ENDPOINT=
-GA_TRACKING_ID=
+GA_MEASUREMENT_ID=
 
 # mongo config
 MONGO_INITDB_ROOT_USERNAME=root

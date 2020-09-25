@@ -11,7 +11,7 @@
     "@material-ui/core": "^4.10.2",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/styles": "^4.10.0",
-    "@stripe/stripe-js": "^1.8.0",
+    "@stripe/stripe-js": "^1.9.0",
     "dotenv": "^8.2.0",
     "downshift": "^5.4.5",
     "express": "^4.17.1",
