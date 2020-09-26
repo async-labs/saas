@@ -97,9 +97,6 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   STRIPE_TEST_SECRETKEY=sk_test_xxxxxx
   STRIPE_LIVE_SECRETKEY=sk_live_xxxxxx
 
-  STRIPE_TEST_PUBLISHABLEKEY=pk_test_xxxxxx
-  STRIPE_LIVE_PUBLISHABLEKEY=pk_live_xxxxxx
-
   STRIPE_TEST_PLANID=plan_xxxxxx
   STRIPE_LIVE_PLANID=plan_xxxxxx
 
@@ -136,11 +133,18 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 
   ```
     STRIPE_TEST_PUBLISHABLEKEY=pk_test_xxxxxxxxxxxxxxx
-    BUCKET_FOR_POSTS=xxxxxx
-    BUCKET_FOR_TEAM_AVATARS=xxxxxx
-    LAMBDA_API_ENDPOINT=xxxxxxapi
+    STRIPE_LIVE_PUBLISHABLEKEY=pk_live_xxxxxxxxxxxxxxx
+
+    BUCKET_FOR_POSTS=
+    BUCKET_FOR_TEAM_AVATARS=
+    BUCKET_FOR_TEAM_LOGOS=
+
     URL_APP=http://localhost:3000
     URL_API=http://localhost:8000
+    PRODUCTION_URL_API=
+    PRODUCTION_URL_APP=
+
+    API_GATEWAY_ENDPOINT=
     GA_MEASUREMENT_ID=
   ```
 
