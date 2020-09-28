@@ -18,9 +18,11 @@ custom:
       - NODE_ENV
       - MONGO_URL_TEST
       - MONGO_URL
-      - Amazon_accessKeyId
-      - Amazon_secretAccessKey
+      - AWS_ACCESSKEYID
+      - AWS_SECRETACCESSKEY
       - EMAIL_SUPPORT_FROM_ADDRESS
+      - URL_APP
+      - PRODUCTION_URL_APP
 
 functions:
   sendEmailForNewPost:
