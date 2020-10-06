@@ -170,10 +170,10 @@ class EditDiscussionForm extends React.Component<Props, State> {
       memberIds.push(discussion.store.currentUser._id);
     }
 
-    if (!memberIds || memberIds.length < 1) {
-      notify('Please assign at least one person to this Issue.');
-      return;
-    }
+    // if (!memberIds || memberIds.length < 1) {
+    //   notify('Please assign at least one person to this Discussion.');
+    //   return;
+    // }
 
     if (!notificationType) {
       notify('Please select notification type.');

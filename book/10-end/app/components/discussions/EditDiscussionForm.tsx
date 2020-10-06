@@ -171,7 +171,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
     }
 
     if (!memberIds || memberIds.length < 1) {
-      notify('Please assign at least one person to this Issue.');
+      notify('Please assign at least one person to this Discussion.');
       return;
     }
 
