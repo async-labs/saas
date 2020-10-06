@@ -204,10 +204,10 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       return;
     }
 
-    if (!memberIds || memberIds.length < 1) {
-      notify('Please assign at least one person to this Discussion.');
-      return;
-    }
+    // if (!memberIds || memberIds.length < 1) {
+    //   notify('Please assign at least one person to this Discussion.');
+    //   return;
+    // }
 
     if (!notificationType) {
       notify('Please select notification type.');
