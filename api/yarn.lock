@@ -2489,10 +2489,10 @@ helmet@4.1.0-rc.2:
   resolved "https://registry.yarnpkg.com/helmet/-/helmet-4.1.0-rc.2.tgz#12bc8f5c6f25350398fcefb0b522d048db60e934"
   integrity sha512-Ywt8Pfs54lvzguQ7JcSDo0+02VxMuDpkmPkt6nt08HHRA1h5UqSdvQquhEtotq9tQCx4icRSjSQpTIB9KU4PBA==
 
-highlight.js@^10.1.1:
-  version "10.1.1"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.1.1.tgz#691a2148a8d922bf12e52a294566a0d993b94c57"
-  integrity sha512-b4L09127uVa+9vkMgPpdUQP78ickGbHEQTWeBrQFTJZ4/n2aihWOGS0ZoUqAwjVmfjhq/C76HRzkqwZhK4sBbg==
+highlight.js@^10.4.1:
+  version "10.4.1"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.4.1.tgz#d48fbcf4a9971c4361b3f95f302747afe19dbad0"
+  integrity sha512-yR5lWvNz7c85OhVAEAeFhVCc/GV4C30Fjzc/rCP0aCWzc1UUOPUk55dK/qdwTZHBvMZo+eZ2jpk62ndX/xMFlg==
 
 hosted-git-info@^2.1.4:
   version "2.8.5"
