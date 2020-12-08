@@ -77,10 +77,10 @@ export const sendEmailForNewPost = async (event) => {
   const response = {
     statusCode: 200,
     headers: {
-      "Access-Control-Allow-Headers" : "Content-Type",
-      "Access-Control-Allow-Origin": dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
-      "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
-      "Access-Control-Allow-Credentials": "true",
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Origin': dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
+      'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+      'Access-Control-Allow-Credentials': 'true',
     },
     body: JSON.stringify({
       message: 'Email notification was sent!',

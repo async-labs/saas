@@ -52,11 +52,7 @@ class YourSettings extends React.Component<Props, State> {
           <h3>Your Settings</h3>
           <h4 style={{ marginTop: '40px' }}>Your account</h4>
           <div>
-            <i
-              className="material-icons"
-              color="action"
-              style={{ verticalAlign: 'text-bottom' }}
-            >
+            <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
               done
             </i>{' '}
             {currentUser.isSignedupViaGoogle
@@ -132,7 +128,7 @@ class YourSettings extends React.Component<Props, State> {
     if (redirectMessage) {
       notify(redirectMessage);
     }
-  };
+  }
 
   private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

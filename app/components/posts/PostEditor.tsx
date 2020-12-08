@@ -48,9 +48,8 @@ type State = { htmlContent: string };
 
 class PostEditor extends React.Component<Props, State> {
   public state = {
-      htmlContent: '',
-    };
-  
+    htmlContent: '',
+  };
 
   public render() {
     const { htmlContent } = this.state;
@@ -97,11 +96,7 @@ class PostEditor extends React.Component<Props, State> {
             id="upload-file"
             type="file"
             style={{ display: 'none' }}
-            onChange={(event) => {
-              const file = event.target.files[0];
-              event.target.value = '';
-              this.uploadFile(file);
-            }}
+            onChange={this.uploadFile}
           />
         </div>
         <br />
@@ -228,14 +223,17 @@ class PostEditor extends React.Component<Props, State> {
     this.setState({ htmlContent });
   };
 
-  private uploadFile = async (file: File) => {
+  private uploadFile = async () => {
+    const fileElement = document.getElementById('upload-file') as HTMLFormElement;
+    const file = fileElement.files[0];
+
     if (!file) {
       notify('No file selected.');
       return;
     }
 
     if (!file.type || (!file.type.startsWith('image/') && file.type !== 'application/pdf')) {
-      notify('Wrong file.');
+      notify('Wrong file type.');
       return;
     }
 
@@ -245,9 +243,11 @@ class PostEditor extends React.Component<Props, State> {
     NProgress.start();
 
     const bucket = process.env.BUCKET_FOR_POSTS;
-    const prefix = `${currentTeam.slug}`;
+    const prefix = `team-${currentTeam.slug}`;
     const fileName = file.name;
     const fileType = file.type;
+
+    console.log(bucket);
 
     try {
       const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({
@@ -267,6 +267,7 @@ class PostEditor extends React.Component<Props, State> {
         await uploadFileUsingSignedPutRequestApiMethod(
           resizedFile,
           responseFromApiServerForUpload.signedRequest,
+          { 'Cache-Control': 'max-age=2592000' },
         );
 
         fileUrl = responseFromApiServerForUpload.url;
@@ -280,7 +281,10 @@ class PostEditor extends React.Component<Props, State> {
             <img style="max-width: ${finalWidth}; width:100%" src="${fileUrl}" alt="Async" class="s3-image" />
           </div>`;
       } else {
-        await uploadFileUsingSignedPutRequestApiMethod(file, responseFromApiServerForUpload.signedRequest);
+        await uploadFileUsingSignedPutRequestApiMethod(
+          file,
+          responseFromApiServerForUpload.signedRequest,
+        );
 
         fileUrl = responseFromApiServerForUpload.url;
         imageMarkdown = `[${file.name}](${fileUrl})`;
