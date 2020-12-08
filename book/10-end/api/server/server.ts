@@ -58,7 +58,7 @@ const sessionOptions = {
   cookie: {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
-    domain: process.env.COOKIE_DOMAIN,
+    domain: dev ? 'localhost' : process.env.COOKIE_DOMAIN,
   } as any,
 };
 
