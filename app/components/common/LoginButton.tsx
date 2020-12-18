@@ -19,6 +19,8 @@ class LoginButton extends React.PureComponent<Props, State> {
     const { invitationToken } = this.props;
 
     let url = `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/auth/google`;
+    const ossoUrl = `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/auth/osso`;
+
     const qs = makeQueryString({ invitationToken });
 
     if (qs) {
@@ -35,6 +37,10 @@ class LoginButton extends React.PureComponent<Props, State> {
             alt="Log in with Google"
           />
           &nbsp;&nbsp;&nbsp; Log in with Google
+        </Button>
+        <Button variant="contained" style={styleLoginButton} href={ossoUrl}>
+          <img src="https://storage.googleapis.com/async-await-all/G.svg" alt="Log in with SAML" />
+          &nbsp;&nbsp;&nbsp; Log in with SAML
         </Button>
         <p />
         <br />

@@ -174,6 +174,14 @@ interface UserModel extends mongoose.Model<UserDocument> {
     googleToken: { accessToken?: string; refreshToken?: string };
   }): Promise<UserDocument>;
 
+  signInOrSignUpViaOsso({
+    ossoId,
+    email,
+  }: {
+    ossoId: string;
+    email: string;
+  }): Promise<UserDocument>;
+
   signInOrSignUpByPasswordless({
     uid,
     email,
@@ -307,6 +315,59 @@ class UserClass extends mongoose.Model {
     });
 
     const emailTemplate = await getEmailTemplate('welcome', { userName: displayName });
+
+    if (!emailTemplate) {
+      throw new Error('Welcome email template not found');
+    }
+
+    try {
+      await sendEmail({
+        from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: emailTemplate.subject,
+        body: emailTemplate.message,
+      });
+    } catch (err) {
+      console.error('Email sending error:', err);
+    }
+
+    try {
+      await addToMailchimp({ email, listName: 'signups' });
+    } catch (error) {
+      console.error('Mailchimp error:', error);
+    }
+
+    return _.pick(newUser, this.publicFields());
+  }
+
+  public static async signInOrSignUpViaOsso({ ossoId, email }) {
+    const user = await this.findOne({ email })
+      .select([...this.publicFields(), 'ossoId'].join(' '))
+      .setOptions({ lean: true });
+
+    if (user) {
+      if (user.ossoId) {
+        return user;
+      }
+
+      const modifier = { ossoId };
+
+      await this.updateOne({ email }, { $set: modifier });
+
+      return user;
+    }
+
+    const slug = await generateSlug(this, email);
+
+    const newUser = await this.create({
+      createdAt: new Date(),
+      email,
+      slug,
+      isSignedupViaGoogle: true,
+      defaultTeamSlug: '',
+    });
+
+    const emailTemplate = await getEmailTemplate('welcome', { userName: email });
 
     if (!emailTemplate) {
       throw new Error('Welcome email template not found');

@@ -8,6 +8,7 @@ import * as mongoose from 'mongoose';
 
 import api from './api';
 import { setupGoogle } from './google-auth';
+import { setupOsso } from './osso-auth';
 import { setupPasswordless } from './passwordless-auth';
 import { setup as setupSockets } from './sockets';
 import { stripeWebhookAndCheckoutCallback } from './stripe';
@@ -75,6 +76,7 @@ const sessionMiddleware = session(sessionOptions);
 server.use(sessionMiddleware);
 
 setupGoogle({ server });
+setupOsso({ server });
 setupPasswordless({ server });
 
 api(server);
