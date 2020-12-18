@@ -11,18 +11,7 @@ function setupOsso({ server }) {
     return;
   }
 
-  const verify = async (accessToken, refreshToken, _expiresIn, profile, done) => {
-    let email;
-    let avatarUrl;
-
-    if (profile.emails) {
-      email = profile.emails[0].value;
-    }
-
-    if (profile.photos && profile.photos.length > 0) {
-      avatarUrl = profile.photos[0].value.replace('sz=50', 'sz=128');
-    }
-
+  const verify = async (_accessToken, _refreshToken, _expiresIn, profile, done) => {
     try {
       const user = await User.signInOrSignUpViaOsso({
         ossoId: profile.id,
