@@ -22,6 +22,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@enterprise-oss/passport-osso": "^0.0.1",
     "aws-sdk": "^2.642.0",
     "bcrypt": "^4.0.1",
     "compression": "^1.7.4",
