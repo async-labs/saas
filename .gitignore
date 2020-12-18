@@ -4,3 +4,4 @@ yarn-error.log
 production-server/
 .yarn/
 .vscode/workspace.code-workspace
+.yarnrc
