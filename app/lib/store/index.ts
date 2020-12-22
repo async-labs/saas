@@ -1,7 +1,8 @@
 import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable } from 'mobx';
 import { useStaticRendering } from 'mobx-react';
-import io from 'socket.io-client';
+// @ts-expect-error
+import { io } from 'socket.io-client';
 
 import { addTeamApiMethod, getTeamInvitationsApiMethod } from '../api/team-leader';
 import { getTeamListApiMethod, getTeamMembersApiMethod } from '../api/team-member';
@@ -160,7 +161,14 @@ let store: Store = null;
 function initializeStore(initialState = {}) {
   const isServer = typeof window === 'undefined';
 
-  const socket = isServer ? null : io(dev ? process.env.URL_API : process.env.PRODUCTION_URL_API);
+  const socket = isServer
+    ? null
+    : io(dev ? process.env.URL_API : process.env.PRODUCTION_URL_API, {
+        reconnection: true,
+        autoConnect: true,
+        transports: ['polling', 'websocket'],
+        withCredentials: true,
+      });
 
   const _store =
     store !== null && store !== undefined ? store : new Store({ initialState, isServer, socket });

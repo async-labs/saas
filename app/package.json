@@ -4,7 +4,7 @@
   "license": "MIT",
   "engines": {
     "node": "12.16.1",
-    "yarn": "1.22.4"
+    "yarn": "1.22.5"
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --project tsconfig.server.json --ignore-watch .next --ignore-watch components --ignore-watch lib --ignore-watch pages server/server.ts",
@@ -35,7 +35,7 @@
     "react-dom": "16.11.0",
     "react-mentions": "3.0.2",
     "sitemap": "^6.2.0",
-    "socket.io-client": "^2.3.0",
+    "socket.io-client": "^3.0.4",
     "typescript": "3.6.4"
   },
   "devDependencies": {
