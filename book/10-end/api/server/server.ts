@@ -75,9 +75,9 @@ setupPasswordless({ server });
 
 api(server);
 
-const http = new httpModule.Server(server);
+const httpServer = new httpModule.Server(server);
 setupSockets({
-  http,
+  httpServer,
   origin: dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
   sessionMiddleware,
 });
@@ -86,7 +86,7 @@ server.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
-http.listen(port, () => {
+httpServer.listen(port, () => {
   logger.debug('debug right before info');
   logger.info(`> Ready on ${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}`);
 });

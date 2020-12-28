@@ -57,13 +57,13 @@ setupPasswordless({ server });
 
 api(server);
 
-const http = new httpModule.Server(server);
-setupSockets({ http, origin: process.env.URL_APP, sessionMiddleware });
+const httpServer = new httpModule.Server(server);
+setupSockets({ httpServer, origin: process.env.URL_APP, sessionMiddleware });
 
 server.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
-http.listen(process.env.PORT_API, () => {
+httpServer.listen(process.env.PORT_API, () => {
   console.log(`> Ready on ${process.env.URL_API}`);
 });

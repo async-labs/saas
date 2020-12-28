@@ -1,25 +1,35 @@
 import { Response } from 'express';
 import * as _ from 'lodash';
-import * as socketio from 'socket.io';
+import { Server } from 'socket.io';
 
 import { DiscussionDocument } from './models/Discussion';
 import { PostDocument } from './models/Post';
 
-let io: socketio.Server = null;
+let io: Server = null;
 
 const dev = process.env.NODE_ENV !== 'production';
 
-function setup({ http, origin, sessionMiddleware }) {
+function setup({ httpServer, origin, sessionMiddleware }) {
   if (io === null) {
-    io = socketio(http, { origins: origin, serveClient: false });
+    io = new Server(httpServer, {
+      cors: {
+        origin,
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        credentials: true,
+      },
+      cookie: {
+        httpOnly: true,
+        maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
+        domain: dev ? 'localhost' : '.builderbook.org',
+        secure: dev ? false : true,
+      },
+      serveClient: false,
+      transports: ['polling', 'websocket'],
+    });
 
-    if (dev) {
-      io.origins(origin);
-    } else {
-      io.origins(`${origin}:443`);
-    }
+    const wrap = (middleware) => (socket, next) => middleware(socket.request, {} as Response, next);
 
-    io.use((socket, next) => sessionMiddleware(socket.request, {} as Response, next));
+    io.use(wrap(sessionMiddleware));
 
     io.on('connection', (socket) => {
       if (
@@ -63,8 +73,8 @@ function getSocket(socketId?: string) {
     return null;
   }
 
-  if (socketId && io.sockets.connected[socketId]) {
-    return io.sockets.connected[socketId].broadcast;
+  if (socketId && io.sockets.sockets.get(socketId)) {
+    return io.sockets.sockets.get(socketId).broadcast;
   } else {
     return io;
   }

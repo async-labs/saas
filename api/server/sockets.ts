@@ -13,7 +13,7 @@ function setup({ httpServer, origin, sessionMiddleware }) {
   if (io === null) {
     io = new Server(httpServer, {
       cors: {
-        origin: dev ? 'http://localhost:3000' : origin,
+        origin,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true,
       },
