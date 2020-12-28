@@ -39,29 +39,3 @@ console.log(makeQueryString('?x=test1&y=test2'));
 We URI encode `qs` part of our API endpoint because entire string for `href` must be in valid, URI-encoded, format. You can read more on URL syntax here:
 
 https://www.w3.org/Addressing/URL/url-spec.html
-
----
-
-cookie:
-domain: process.env.COOKIE_DOMAIN
-
-if (process.env.NODE_ENV === 'production') {
-  server.set('trust proxy', 1); // sets req.hostname, req.ip
-  sessionOptions.cookie.secure = true; // sets cookie over HTTPS only
-}
-
----
-
-app//.eslintrc.js
-
-
-api/.eslintrc.js
-'@typescript-eslint/no-explicit-any': 'off',
-
----
-
-Autocomplete component should be a custom feature
-
----
-
-discuss having Signup page in addition to Login

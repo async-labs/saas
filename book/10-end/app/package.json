@@ -4,7 +4,7 @@
   "license": "MIT",
   "engines": {
     "node": "12.16.1",
-    "yarn": "1.22.4"
+    "yarn": "1.22.5"
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --project tsconfig.server.json --ignore-watch .next --ignore-watch components --ignore-watch lib --ignore-watch pages server/server.ts",

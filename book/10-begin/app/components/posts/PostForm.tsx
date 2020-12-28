@@ -175,8 +175,6 @@ class PostForm extends React.Component<Props, State> {
       if (discussion.notificationType === 'email') {
         const userIdsForLambda = discussion.memberIds.filter((m) => m !== store.currentUser._id);
 
-        this.setState({ content: '' });
-
         await discussion.sendDataToLambda({
           discussionName: discussion.name,
           discussionLink: `${process.env.URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
@@ -185,6 +183,8 @@ class PostForm extends React.Component<Props, State> {
           userIds: userIdsForLambda,
         });
       }
+
+      this.setState({ content: '' });
 
       notify('You successfully published new Post.');
     } catch (error) {

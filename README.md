@@ -28,11 +28,12 @@ Open source web app that saves you weeks of work when building your own SaaS pro
 ## Features
 
 - Server-side rendering for [fast initial load and SEO](https://async-await.com/article/server-side-vs-client-side-rendering-in-react-apps).
-- User authentication with Google, cookie, and session.
+- User authentication with Google OAuth API and Passwordless, cookie, and session.
 - Production-ready Express server with compression, parser, and helmet.
 - Transactional emails (`AWS SES`): welcome, team invitation, and payment.
 - Adding email addresses to newsletter lists (`Mailchimp`): new users, paying users.
 - File upload, load, and deletion (`AWS S3`) with pre-signed request for: Posts, Team Profile, and User Profile.
+- Websockets with socket.io v3.
 - Team creation, Team Member invitation, and settings for Team and User.
 - Opinionated architecture:
   - keeping babel and webpack configurations under the hood,
@@ -40,20 +41,16 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   - `withAuth` HOC to pass user prop and control user access to pages,
   - `withLayout` HOC for shared layout and to pass additional data to pages,
   - `withStore` HOC, developer-friendly state management with `MobX`,
+  - HOC extensions `MyApp` and `MyDocument`
   - server-side rendering with `Material-UI`,
   - model-specific components in addition to common components.
 - Universally-available environmental variables at runtime.
-- Server-side environmental variables managed with `dotenv`.
-- Browser-side environmental variables managed with `Next.js` and `webpack`'s `process.env` substitution (see `./app/.env.blueprint`).
 - Custom logger (configure what _not_ to print in production).
-- Useful components for any web app: `ActiveLink`, `AutoComplete`, `Confirm`, `Notifier`, `MenuWithLinks`, and more.
+- Useful components for any web app: `ActiveLink`, `Confirm`, `Notifier`, `MenuWithLinks`, and more.
 - Analytics with `Google Analytics`.
-- **`Docker CE` Integration**:
-  - spawn `MongoDB` database for development.
-  - stage service stack with lean container images.
 - Production-ready, scalable architecture:
-  - `app` - user-facing web app with Next/Express server, responsible for rendering pages (either client-side or server-side). `app` sends requests via API methods and fetch to `api` server's Express routes.
-  - `api` - server-only web app with Express server, responsible for processing requests for internal and external APIs.
+  - `app` - user-facing web app with Next/Express server, responsible for rendering pages (either client-side or server-side). `app` sends requests via API methods to `api` Express server.
+  - `api` - server-only code, Express server, responsible for processing requests for internal and external API infrastructures.
   - we prepared both apps for easy deployment to `now` by Zeit.
 - **Subscriptions with `Stripe`**:
   - subscribe/unsubscribe Team to plan,
@@ -178,103 +175,6 @@ Open source web app that saves you weeks of work when building your own SaaS pro
   yarn dev
   ```
 
-#### Run both app and api in the same shell
-
-- Install dependencies: either run `yarn install --no-lockfile` at project's root or go to `app` and `api` folders and run `yarn install` in each folder.
-- Add env variables as shown above, and then run `yarn dev` on the root of the project, it should initiate both `api` and `app` on the same shell. Alternatively, start each app in its own terminal shell by going to `app` and `api` folders and running `yarn dev` in each folder.
-
-## Stage database for development with Docker
-
-If you're not DB ready when starting the boilerplate, you can now spawn a mongo docker container with yarn stage:db on the root of the project that will configure a default database and users.
-
-The [compose file](https://github.com/async-labs/saas/blob/master/docker-compose.yml) is configured to stage the db with default values, but you can override them with a new root .env file (more details below) containing the expected variables to launch a [mongo docker image](https://hub.docker.com/_/mongo/), and `mongo-express`. My recommended stage settings are:
-
-```
-MONGO_INITDB_ROOT_USERNAME=root
-MONGO_INITDB_ROOT_PASSWORD=supersecret
-MONGO_INITDB_DATABASE=saas
-MONGO_NON_ROOT_USERNAME=saas
-MONGO_NON_ROOT_PASSWORD=secret
-
-# mongo-express config
-ME_CONFIG_MONGODB_SERVER=saas-mongo
-ME_CONFIG_MONGODB_ADMINUSERNAME=root
-ME_CONFIG_MONGODB_ADMINPASSWORD=supersecret
-```
-
-Once it starts you need to have `MONGO_URL=mongodb://saas:secret@localhost:27017/saas` connection string on your api/.env because the container exposes port 27017 to consume under localhost instead of being on the same network.
-
-Please note the [docker-compose.yml](https://github.com/async-labs/saas/blob/master/docker-compose.yml) configuration includes a volume for `saas-mongo` that persists data to your local path `/tmp/saas-db` across container restarts.
-
-## Stage apps locally with Docker
-
-Use `docker-compose` to build a new stack of the services whenever you change dependencies, refactor, or you can also use this workflow if you don't want to install all the dependencies to build the stack.
-
-Create the new root `.env` file (as shown bellow) and then run `yarn stage` on the project's root directory to build the images, and then `yarn stage:start` to start the containers. The app will be available on http://app.saas.localhost:3000.
-
-On another shell run `yarn stage:stop` and `yarn stage:clean` to stop all the container and clean them.
-
-With the containers running you can also `sh` into them by running `yarn sh:api` or `yarn sh:app`, there are other scripts, please have a look at the root's `project.json` file.
-
-**Please note** the first time you run the stage, there maybe a connection timeout whilst the mongo instance creates the first database/user, if that's the case just restart the stack.
-
-#### Example new root `.env` for staging with Docker
-
-This file is optional and only if you would like to use `docker-compose` to stage the project.
-
-```
-# compose
-COMPOSE_TAG_NAME=stage
-
-# common to api and app (build and run)
-LOG_LEVEL=notice
-NODE_ENV=development
-URL_APP=http://app.saas.localhost:3000
-URL_API=http://api.saas.localhost:8000
-API_PORT=8000
-APP_PORT=3000
-
-# api (run)
-MONGO_URL=
-SESSION_NAME=
-SESSION_SECRET=
-COOKIE_DOMAIN=
-GOOGLE_CLIENTID=
-GOOGLE_CLIENTSECRET=
-AWS_ACCESSKEYID=
-AWS_SECRETACCESSKEY=
-EMAIL_SUPPORT_FROM_ADDRESS=
-MAILCHIMP_API_KEY=
-MAILCHIMP_REGION=
-MAILCHIMP_SAAS_ALL_LIST_ID=
-STRIPE_TEST_SECRETKEY=
-STRIPE_LIVE_SECRETKEY=
-STRIPE_TEST_PUBLISHABLEKEY=
-STRIPE_LIVE_PUBLISHABLEKEY=
-STRIPE_TEST_PLANID=
-STRIPE_LIVE_PLANID=
-STRIPE_LIVE_ENDPOINTSECRET=
-
-# app (build and run)
-STRIPE_TEST_PUBLISHABLEKEY=
-BUCKET_FOR_POSTS=
-BUCKET_FOR_TEAM_AVATARS=
-LAMBDA_API_ENDPOINT=
-GA_MEASUREMENT_ID=
-
-# mongo config
-MONGO_INITDB_ROOT_USERNAME=root
-MONGO_INITDB_ROOT_PASSWORD=supersecret
-MONGO_INITDB_DATABASE=saas
-MONGO_NON_ROOT_USERNAME=saas
-MONGO_NON_ROOT_PASSWORD=secret
-
-# mongo-express config
-ME_CONFIG_MONGODB_SERVER=saas-mongo
-ME_CONFIG_MONGODB_ADMINUSERNAME=root
-ME_CONFIG_MONGODB_ADMINPASSWORD=supersecret
-```
-
 ## Deploy with Heroku
 
 To deploy the two apps (`api` and `app`), you can follow these instructions to deploy each app individually to Heroku:
@@ -295,7 +195,6 @@ If you need help deploying your SaaS Boilerplate app, or variation of it, you ca
 - [Mongoose](https://github.com/Automattic/mongoose)
 - [MongoDB](https://github.com/mongodb/mongo)
 - [Typescript](https://github.com/Microsoft/TypeScript)
-- [Docker CE](https://docs.docker.com/install/)
 
 For more detail, check `package.json` files in both `app` and `api` folders and project's root.
 
@@ -320,6 +219,7 @@ Creating a Discussion:
 
 Writing a Post, Markdown vs. HTML view:
 ![6_SaaS_Discussion_Markdown](https://user-images.githubusercontent.com/26158226/61417508-27f94680-a8ac-11e9-93fd-766014132e8d.png)
+
 ![7_SaaS_Discussion_HTML](https://user-images.githubusercontent.com/26158226/61417507-27f94680-a8ac-11e9-8058-d3701ef1696d.png)
 
 Discussion between team members:
@@ -341,10 +241,11 @@ Payment history:
 
 Check out projects built with the code in this open source app. Feel free to add your own project by creating a pull request.
 
-- [Async](https://async-await.com/): asynchronous communication for small teams of software engineers.
 - [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee) : Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
 - [Builder Book](https://github.com/builderbook/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
 - [Harbor](https://github.com/builderbook/harbor): Open source web app that allows anyone with a Gmail account to automatically charge for advice sent via email.
+- [Async](https://async-await.com/): asynchronous communication for small teams of software engineers.
+
 
 ## Contributing
 
