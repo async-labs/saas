@@ -2,6 +2,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/styles';
 import { Provider } from 'mobx-react';
 import App from 'next/app';
+import Head from 'next/head';
 import React from 'react';
 
 import { themeDark, themeLight } from '../lib/theme';
@@ -118,6 +119,9 @@ class MyApp extends App<{ isMobile: boolean }> {
       <ThemeProvider
         theme={store.currentUser && store.currentUser.darkTheme ? themeDark : themeLight}
       >
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        </Head>
         <CssBaseline />
         <Provider store={store}>
           <Component {...pageProps} store={store} />
