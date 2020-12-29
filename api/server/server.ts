@@ -79,7 +79,7 @@ setupPasswordless({ server });
 
 api(server);
 
-const httpServer = new httpModule.Server(server);
+const httpServer = httpModule.createServer(server);
 setupSockets({
   httpServer,
   origin: dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
