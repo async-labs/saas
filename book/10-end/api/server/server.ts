@@ -9,7 +9,7 @@ import * as mongoose from 'mongoose';
 import api from './api';
 import { setupGoogle } from './google-auth';
 import { setupPasswordless } from './passwordless-auth';
-import { setup as setupSockets } from './sockets';
+import { setupSockets } from './sockets';
 import { stripeWebhookAndCheckoutCallback } from './stripe';
 
 import logger from './logger';
