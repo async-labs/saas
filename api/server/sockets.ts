@@ -9,9 +9,9 @@ let io: Server = null;
 
 const dev = process.env.NODE_ENV !== 'production';
 
-function setupSockets({ server, origin, sessionMiddleware }) {
+function setupSockets({ httpServer, origin, sessionMiddleware }) {
   if (io === null) {
-    io = new Server(server, {
+    io = new Server(httpServer, {
       cors: {
         origin,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

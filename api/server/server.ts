@@ -3,7 +3,7 @@ import * as mongoSessionStore from 'connect-mongo';
 import * as cors from 'cors';
 import * as express from 'express';
 import * as session from 'express-session';
-// import * as httpModule from 'http';
+import * as httpModule from 'http';
 import * as mongoose from 'mongoose';
 
 import api from './api';
@@ -79,9 +79,9 @@ setupPasswordless({ server });
 
 api(server);
 
-// const httpServer = new httpModule.Server(server);
+const httpServer = new httpModule.Server(server);
 setupSockets({
-  server,
+  httpServer,
   origin: dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
   sessionMiddleware,
 });
@@ -90,7 +90,7 @@ server.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
-server.listen(port, () => {
+httpServer.listen(port, () => {
   logger.debug('debug right before info');
   logger.info(`> Ready on ${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}`);
 });
