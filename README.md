@@ -224,10 +224,7 @@ Billing settings:
 ![9_SaaS_Billing](https://user-images.githubusercontent.com/26158226/61417513-2891dd00-a8ac-11e9-9e3d-bcbcdfe5b5af.png)
 
 Purchasing a subscription:
-![10_SaaS_BuySubscription](https://user-images.githubusercontent.com/26158226/61417512-2891dd00-a8ac-11e9-9a32-552e0468726e.png)
-
-Add/Update card information:
-![11_SaaS_AddEditCard](https://user-images.githubusercontent.com/26158226/61417511-2891dd00-a8ac-11e9-9f97-25a444639c08.png)
+![10_SaaS_BuySubscription](https://user-images.githubusercontent.com/26158226/103588107-6407d900-4e9d-11eb-9159-e85301205739.png)
 
 Payment history:
 ![12_SaaS_PaymentHistory](https://user-images.githubusercontent.com/26158226/61417510-27f94680-a8ac-11e9-88d1-1eef120dcc34.png)
