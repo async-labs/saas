@@ -23,7 +23,13 @@ mongoose.connect(process.env._TEST, options);
 
 const server = express();
 
-server.use(cors({ origin: process.env.URL_APP, credentials: true }));
+server.use(
+  cors({
+    origin: process.env.URL_APP,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  }),
+);
 
 stripeWebhookAndCheckoutCallback({ server });
 

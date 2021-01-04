@@ -34,8 +34,8 @@ const server = express();
 server.use(
   cors({
     origin: dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
-    credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
   }),
 );
 

@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import * as _ from 'lodash';
 import { Server } from 'socket.io';
 
 import { DiscussionDocument } from './models/Discussion';
@@ -60,8 +59,8 @@ function setupSockets({ httpServer, origin, sessionMiddleware }) {
         socket.leave(`discussionRoom-${discussionId}`);
       });
 
-      socket.on('disconnect', () => {
-        console.log(`disconnected`);
+      socket.on('disconnect', (reason) => {
+        console.log(`disconnected`, `reason: ` + reason);
       });
     });
   }

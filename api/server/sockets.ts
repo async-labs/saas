@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import * as _ from 'lodash';
 import { Server } from 'socket.io';
 
 import { DiscussionDocument } from './models/Discussion';
@@ -37,7 +36,7 @@ function setupSockets({ httpServer, origin, sessionMiddleware }) {
         ((!socket.request.session.passport || !socket.request.session.passport.user) &&
           !socket.request.session.passwordless)
       ) {
-        socket.disconnect();
+        socket.disconnect(true);
         return;
       }
 
@@ -62,7 +61,7 @@ function setupSockets({ httpServer, origin, sessionMiddleware }) {
       });
 
       socket.on('disconnect', () => {
-        console.log(`disconnected`);
+        console.log(`disconnected`, `reason: ` + reason);
       });
     });
   }

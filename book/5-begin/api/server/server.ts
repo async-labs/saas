@@ -16,7 +16,13 @@ mongoose.connect(process.env.MONGO_URL, options);
 
 const server = express();
 
-server.use(cors({ origin: process.env.URL_APP, credentials: true }));
+server.use(
+  cors({
+    origin: process.env.URL_APP,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  }),
+);
 
 server.use(express.json());
 

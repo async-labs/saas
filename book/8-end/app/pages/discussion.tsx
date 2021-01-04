@@ -258,7 +258,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
       discussion.leaveSocketRooms();
     }
 
-    store.socket.off('discussionEvent',this.handleDiscussionEvent);
+    store.socket.off('discussionEvent', this.handleDiscussionEvent);
     store.socket.off('postEvent', this.handlePostEvent);
     store.socket.off('reconnect', this.handleSocketReconnect);
   }
@@ -274,11 +274,11 @@ class DiscussionPageComp extends React.Component<Props, State> {
         }
       }
 
-    const discussion = this.getDiscussion(discussionSlug);
+      const discussion = this.getDiscussion(discussionSlug);
 
-    if (!isServer && discussion) {
-       discussion.loadPosts().catch((err) => notify(err));
-     }
+      if (!isServer && discussion) {
+        discussion.loadPosts().catch((err) => notify(err));
+      }
 
       if (discussion) {
         discussion.joinSocketRooms();
