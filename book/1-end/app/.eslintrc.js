@@ -24,6 +24,7 @@ module.exports = {
     'react/no-unescaped-entities': 'off',
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
     '@typescript-eslint/no-explicit-any': 'off',
+    'prefer-arrow-callback': 'error',
   },
   plugins: ['prettier', 'react'],
 };
