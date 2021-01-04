@@ -35,7 +35,7 @@ function setupSockets({ httpServer, origin, sessionMiddleware }) {
         ((!socket.request.session.passport || !socket.request.session.passport.user) &&
           !socket.request.session.passwordless)
       ) {
-        socket.disconnect();
+        socket.disconnect(true);
         return;
       }
 
