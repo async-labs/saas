@@ -15,7 +15,7 @@
     "isomorphic-unfetch": "^3.0.0",
     "mobx": "^5.15.4",
     "mobx-react": "^6.2.2",
-    "next": "9.1.2",
+    "next": "9.3.2",
     "nprogress": "0.2.0",
     "react": "16.11.0",
     "react-dom": "16.11.0",
