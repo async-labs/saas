@@ -7,7 +7,6 @@ import notify from '../../lib/notify';
 import { styleLoginButton } from '../../lib/sharedStyles';
 
 class LoginButton extends React.PureComponent {
-
   public state = { email: '' };
 
   public render() {

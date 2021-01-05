@@ -1,7 +1,15 @@
 import { action, computed, decorate, IObservableArray, observable, runInAction } from 'mobx';
 import Router from 'next/router';
-import { inviteMemberApiMethod, removeMemberApiMethod, updateTeamApiMethod } from '../api/team-leader';
-import { addDiscussionApiMethod, deleteDiscussionApiMethod, getDiscussionListApiMethod } from '../api/team-member';
+import {
+  inviteMemberApiMethod,
+  removeMemberApiMethod,
+  updateTeamApiMethod,
+} from '../api/team-leader';
+import {
+  addDiscussionApiMethod,
+  deleteDiscussionApiMethod,
+  getDiscussionListApiMethod,
+} from '../api/team-member';
 import { Store } from './index';
 import { User } from './user';
 import { Invitation } from './invitation';
@@ -33,7 +41,6 @@ class Team {
     this.avatarUrl = params.avatarUrl;
     this.memberIds.replace(params.memberIds || []);
     this.currentDiscussionSlug = params.currentDiscussionSlug || null;
-
 
     this.store = params.store;
 

@@ -54,4 +54,3 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
     throw err;
   }
 }
-

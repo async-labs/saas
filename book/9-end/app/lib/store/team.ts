@@ -4,12 +4,12 @@ import {
   cancelSubscriptionApiMethod,
   inviteMemberApiMethod,
   removeMemberApiMethod,
-  updateTeamApiMethod
+  updateTeamApiMethod,
 } from '../api/team-leader';
 import {
   addDiscussionApiMethod,
   deleteDiscussionApiMethod,
-  getDiscussionListApiMethod
+  getDiscussionListApiMethod,
 } from '../api/team-member';
 import { Store } from './index';
 import { User } from './user';

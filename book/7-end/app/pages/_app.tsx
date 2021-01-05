@@ -11,7 +11,6 @@ import { getInitialDataApiMethod } from '../lib/api/team-member';
 import { isMobile } from '../lib/isMobile';
 import { getStore, initializeStore, Store } from '../lib/store';
 
-
 class MyApp extends App<{ isMobile: boolean }> {
   public static async getInitialProps({ Component, ctx }) {
     let firstGridItem = true;
@@ -20,7 +19,7 @@ class MyApp extends App<{ isMobile: boolean }> {
     if (
       ctx.pathname.includes('/login') ||
       ctx.pathname.includes('/create-team') ||
-      ctx.pathname.includes('/invitation') 
+      ctx.pathname.includes('/invitation')
     ) {
       firstGridItem = false;
     }
@@ -28,7 +27,7 @@ class MyApp extends App<{ isMobile: boolean }> {
     if (
       ctx.pathname.includes('/team-settings') ||
       ctx.pathname.includes('/discussion') ||
-      ctx.pathname.includes('/billing') 
+      ctx.pathname.includes('/billing')
     ) {
       teamRequired = true;
     }
@@ -37,10 +36,10 @@ class MyApp extends App<{ isMobile: boolean }> {
 
     // console.log(`ctx.query.teamSlug:${teamSlug}`);
 
-    const pageProps = { 
-      isMobile: isMobile({ req: ctx.req }), 
-      firstGridItem, 
-      teamRequired, 
+    const pageProps = {
+      isMobile: isMobile({ req: ctx.req }),
+      firstGridItem,
+      teamRequired,
       teamSlug,
       redirectMessage,
     };
@@ -65,7 +64,7 @@ class MyApp extends App<{ isMobile: boolean }> {
 
     let userObj = null;
     try {
-      const { user } = await getUserApiMethod({ headers});
+      const { user } = await getUserApiMethod({ headers });
       userObj = user;
     } catch (error) {
       console.log(error);

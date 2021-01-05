@@ -55,7 +55,6 @@ class DiscussionList extends React.Component<Props> {
               );
             })}
         </ul>
-
         <CreateDiscussionForm
           isMobile={this.props.isMobile}
           store={this.props.store}

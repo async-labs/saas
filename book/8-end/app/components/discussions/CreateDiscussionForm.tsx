@@ -52,88 +52,88 @@ class CreateDiscussionForm extends React.Component<Props, State> {
             <meta name="description" content="Create new discussion" />
           </Head>
         ) : null}
-        <Dialog 
+        <Dialog
           onClose={this.handleClose}
           aria-labelledby="simple-dialog-title"
           open={open}
           fullScreen={true}
         >
-        <DialogTitle id="simple-dialog-title">Create new Discussion</DialogTitle>
-        <DialogContent>
-          <br />
-          <form style={{ width: '100%', height: '60%' }} onSubmit={this.onSubmit}>
-            <p />
+          <DialogTitle id="simple-dialog-title">Create new Discussion</DialogTitle>
+          <DialogContent>
             <br />
-            <TextField
-              autoFocus
-              label="Type name of Discussion"
-              helperText="Give a short and informative name to new Discussion"
-              value={this.state.name}
-              onChange={(event) => {
-                this.setState({ name: event.target.value });
-              }}
-            />
-            <br />
-            <p />
-            <MemberChooser
-              helperText="These members will see all posts and be notified about unread posts in this discussion."
-              onChange={this.handleMembersChange}
-              members={membersMinusCreator}
-              selectedMemberIds={this.state.memberIds}
-            />
-            <p />
-            <br />
-            <div>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={this.state.disabled}
-              >
-                Create Discussion
-              </Button>
-              {isMobile ? <p /> : null}
-              <Button
-                variant="outlined"
-                onClick={this.handleClose}
-                disabled={this.state.disabled}
-                style={{ marginLeft: isMobile ? '0px' : '20px' }}
-              >
-                Cancel
-              </Button>{' '}
-            </div>
-            <p />
-            <PostEditor
-              content={this.state.content}
-              onChanged={(content) => this.setState({ content })}
-              members={Array.from(store.currentTeam.members.values())}
-              store={store}
-            />
-            <p />
-            <div>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={this.state.disabled}
-              >
-                Create Discussion
-              </Button>
-              {isMobile ? <p /> : null}
-              <Button
-                variant="outlined"
-                onClick={this.handleClose}
-                disabled={this.state.disabled}
-                style={{ marginLeft: isMobile ? '0px' : '20px' }}
-              >
-                Cancel
-              </Button>{' '}
+            <form style={{ width: '100%', height: '60%' }} onSubmit={this.onSubmit}>
               <p />
               <br />
+              <TextField
+                autoFocus
+                label="Type name of Discussion"
+                helperText="Give a short and informative name to new Discussion"
+                value={this.state.name}
+                onChange={(event) => {
+                  this.setState({ name: event.target.value });
+                }}
+              />
               <br />
-            </div>
-          </form>
-        </DialogContent>
+              <p />
+              <MemberChooser
+                helperText="These members will see all posts and be notified about unread posts in this discussion."
+                onChange={this.handleMembersChange}
+                members={membersMinusCreator}
+                selectedMemberIds={this.state.memberIds}
+              />
+              <p />
+              <br />
+              <div>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={this.state.disabled}
+                >
+                  Create Discussion
+                </Button>
+                {isMobile ? <p /> : null}
+                <Button
+                  variant="outlined"
+                  onClick={this.handleClose}
+                  disabled={this.state.disabled}
+                  style={{ marginLeft: isMobile ? '0px' : '20px' }}
+                >
+                  Cancel
+                </Button>{' '}
+              </div>
+              <p />
+              <PostEditor
+                content={this.state.content}
+                onChanged={(content) => this.setState({ content })}
+                members={Array.from(store.currentTeam.members.values())}
+                store={store}
+              />
+              <p />
+              <div>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={this.state.disabled}
+                >
+                  Create Discussion
+                </Button>
+                {isMobile ? <p /> : null}
+                <Button
+                  variant="outlined"
+                  onClick={this.handleClose}
+                  disabled={this.state.disabled}
+                  style={{ marginLeft: isMobile ? '0px' : '20px' }}
+                >
+                  Cancel
+                </Button>{' '}
+                <p />
+                <br />
+                <br />
+              </div>
+            </form>
+          </DialogContent>
         </Dialog>
       </React.Fragment>
     );

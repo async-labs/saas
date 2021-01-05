@@ -35,7 +35,7 @@ class PostForm extends React.Component<Props, State> {
     content: '',
     disabled: false,
   };
-  
+
   public static getDerivedStateFromProps(props: Props, state: State) {
     const { post } = props;
 

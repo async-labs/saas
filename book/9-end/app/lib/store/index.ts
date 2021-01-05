@@ -167,7 +167,7 @@ function initializeStore(initialState = {}) {
         transports: ['polling', 'websocket'],
         withCredentials: true,
       });
-  
+
   const _store =
     store !== null && store !== undefined ? store : new Store({ initialState, isServer, socket });
 

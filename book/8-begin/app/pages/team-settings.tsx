@@ -16,7 +16,10 @@ import Paper from '@material-ui/core/Paper';
 
 import Layout from '../components/layout';
 import InviteMember from '../components/teams/InviteMember';
-import { getSignedRequestForUploadApiMethod, uploadFileUsingSignedPutRequestApiMethod } from '../lib/api/team-member';
+import {
+  getSignedRequestForUploadApiMethod,
+  uploadFileUsingSignedPutRequestApiMethod,
+} from '../lib/api/team-member';
 import confirm from '../lib/confirm';
 import notify from '../lib/notify';
 import { resizeImage } from '../lib/resizeImage';
@@ -77,121 +80,121 @@ class TeamSettings extends React.Component<Props, State> {
       );
     }
 
-    console.log(Array.from(currentTeam.members.values()).filter(
-      (user) => user._id !== currentUser._id,
-    ));
+    console.log(
+      Array.from(currentTeam.members.values()).filter((user) => user._id !== currentUser._id),
+    );
 
     return (
       <Layout {...this.props}>
         <Head>
           <title>Team Settings</title>
-          <meta name="description" content={`Edit team settings. Add or edit members for Team ${currentTeam.name}`} />
+          <meta
+            name="description"
+            content={`Edit team settings. Add or edit members for Team ${currentTeam.name}`}
+          />
         </Head>
         <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
-              <h3>Team Settings</h3>
-              <p />
-              <br />
-              <form onSubmit={this.onSubmit}>
-                <h4>Team name</h4>
-                <TextField
-                  value={newName}
-                  helperText="Team name as seen by your team members"
-                  onChange={(event) => {
-                    this.setState({ newName: event.target.value });
-                  }}
-                />
-                <br />
-                <br />
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  type="submit"
-                  disabled={this.state.disabled}
-                >
-                  Update name
-                </Button>
-              </form>
-              <p />
-              <br />
-              <h4>Team logo</h4>
-              <Avatar
-                src={newAvatarUrl}
-                style={{
-                  display: 'inline-flex',
-                  verticalAlign: 'middle',
-                  marginRight: 20,
-                  width: 60,
-                  height: 60,
-                }}
-              />
-              <label htmlFor="upload-file">
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  component="span"
-                  disabled={this.state.disabled}
-                >
-                  Update logo
-                </Button>
-              </label>
-              <input
-                accept="image/*"
-                name="upload-file"
-                id="upload-file"
-                type="file"
-                style={{ display: 'none' }}
-                onChange={this.uploadFile}
-              />
-              <p />
-              <br />
-              <br />
-              <h4 style={{ marginRight: 20, display: 'inline' }}>
-                Team Members ( {Array.from(currentTeam.members.values()).length} / 20 )
-              </h4>
-              <Button
-                onClick={this.openInviteMember}
-                variant="outlined"
-                color="primary"
-                style={{ float: 'right', marginTop: '-20px' }}
-                disabled={this.state.disabled}
-              >
-                Invite member
-              </Button>
-              <p />
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Person</TableCell>
-                      <TableCell>Role</TableCell>
-                    </TableRow>
-                  </TableHead>
+          <h3>Team Settings</h3>
+          <p />
+          <br />
+          <form onSubmit={this.onSubmit}>
+            <h4>Team name</h4>
+            <TextField
+              value={newName}
+              helperText="Team name as seen by your team members"
+              onChange={(event) => {
+                this.setState({ newName: event.target.value });
+              }}
+            />
+            <br />
+            <br />
+            <Button variant="outlined" color="primary" type="submit" disabled={this.state.disabled}>
+              Update name
+            </Button>
+          </form>
+          <p />
+          <br />
+          <h4>Team logo</h4>
+          <Avatar
+            src={newAvatarUrl}
+            style={{
+              display: 'inline-flex',
+              verticalAlign: 'middle',
+              marginRight: 20,
+              width: 60,
+              height: 60,
+            }}
+          />
+          <label htmlFor="upload-file">
+            <Button
+              variant="outlined"
+              color="primary"
+              component="span"
+              disabled={this.state.disabled}
+            >
+              Update logo
+            </Button>
+          </label>
+          <input
+            accept="image/*"
+            name="upload-file"
+            id="upload-file"
+            type="file"
+            style={{ display: 'none' }}
+            onChange={this.uploadFile}
+          />
+          <p />
+          <br />
+          <br />
+          <h4 style={{ marginRight: 20, display: 'inline' }}>
+            Team Members ( {Array.from(currentTeam.members.values()).length} / 20 )
+          </h4>
+          <Button
+            onClick={this.openInviteMember}
+            variant="outlined"
+            color="primary"
+            style={{ float: 'right', marginTop: '-20px' }}
+            disabled={this.state.disabled}
+          >
+            Invite member
+          </Button>
+          <p />
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Person</TableCell>
+                  <TableCell>Role</TableCell>
+                </TableRow>
+              </TableHead>
 
-                  <TableBody>
-                    {currentTeam.memberIds.map(userId => currentTeam.members.get(userId)).map((m) => (
-                      <TableRow key={m._id}>
-                        <TableCell style={{ width: '300px' }}>
-                          <Hidden smDown>
-                            <Avatar
-                              role="presentation"
-                              src={m.avatarUrl}
-                              alt={(m.displayName || m.email)[0]}
-                              key={m._id}
-                              style={{
-                                margin: '0px 5px',
-                                display: 'inline-flex',
-                                width: '30px',
-                                height: '30px',
-                                verticalAlign: 'middle',
-                              }}
-                            />
-                          </Hidden>
-                          {m.email}
-                        </TableCell>
-                        <TableCell>
-                          {isTeamLeader && m._id !== currentUser._id ? 'Team Member' : 'Team Leader'}
-                        </TableCell>
-                        <TableCell>
+              <TableBody>
+                {currentTeam.memberIds
+                  .map((userId) => currentTeam.members.get(userId))
+                  .map((m) => (
+                    <TableRow key={m._id}>
+                      <TableCell style={{ width: '300px' }}>
+                        <Hidden smDown>
+                          <Avatar
+                            role="presentation"
+                            src={m.avatarUrl}
+                            alt={(m.displayName || m.email)[0]}
+                            key={m._id}
+                            style={{
+                              margin: '0px 5px',
+                              display: 'inline-flex',
+                              width: '30px',
+                              height: '30px',
+                              verticalAlign: 'middle',
+                            }}
+                          />
+                        </Hidden>
+                        {m.email}
+                      </TableCell>
+                      <TableCell>
+                        {isTeamLeader && m._id !== currentUser._id ? 'Team Member' : 'Team Leader'}
+                      </TableCell>
+                      <TableCell>
                         {isTeamLeader && m._id !== currentUser._id ? (
                           <i
                             color="action"
@@ -209,50 +212,48 @@ class TeamSettings extends React.Component<Props, State> {
                             delete
                           </i>
                         ) : null}
-                        </TableCell>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <p />
+          <br />
+
+          {Array.from(currentTeam.invitations.values()).length > 0 ? (
+            <React.Fragment>
+              <h4>Invited users</h4>
+              <p />
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Email</TableCell>
+                      <TableCell>Status</TableCell>
+                    </TableRow>
+                  </TableHead>
+
+                  <TableBody>
+                    {Array.from(currentTeam.invitations.values()).map((i) => (
+                      <TableRow key={i._id}>
+                        <TableCell style={{ width: '300px' }}>{i.email}</TableCell>
+                        <TableCell>Sent</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
-
-              <p />
-              <br />
-
-              {Array.from(currentTeam.invitations.values()).length > 0 ? (
-                <React.Fragment>
-                  <h4>
-                    Invited users
-                  </h4>
-                  <p />
-                  <TableContainer component={Paper}>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Email</TableCell>
-                          <TableCell>Status</TableCell>
-                        </TableRow>
-                      </TableHead>
-
-                      <TableBody>
-                        {Array.from(currentTeam.invitations.values()).map((i) => (
-                          <TableRow key={i._id}>
-                            <TableCell style={{ width: '300px' }}>{i.email}</TableCell>
-                            <TableCell>Sent</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </React.Fragment>
-              ) : null}
-              <p />
-              <br />
-              <InviteMember
-                open={this.state.inviteMemberOpen}
-                onClose={this.handleInviteMemberClose}
-                store={this.props.store}
-              />
+            </React.Fragment>
+          ) : null}
+          <p />
+          <br />
+          <InviteMember
+            open={this.state.inviteMemberOpen}
+            onClose={this.handleInviteMemberClose}
+            store={this.props.store}
+          />
           <br />
         </div>
       </Layout>
@@ -304,7 +305,7 @@ class TeamSettings extends React.Component<Props, State> {
     this.setState({ disabled: true });
 
     const bucket = process.env.BUCKET_FOR_TEAM_LOGOS;
-    const prefix = `${currentTeam.slug}`
+    const prefix = `${currentTeam.slug}`;
 
     console.log(bucket);
 

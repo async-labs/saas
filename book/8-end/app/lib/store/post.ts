@@ -27,7 +27,6 @@ export class Post {
     this.createdAt = params.createdAt;
     this.discussionId = params.discussionId;
 
-
     this.content = params.content;
     this.htmlContent = params.htmlContent;
 

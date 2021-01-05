@@ -8,7 +8,10 @@ import TextField from '@material-ui/core/TextField';
 import Head from 'next/head';
 import Router from 'next/router';
 
-import { getSignedRequestForUploadApiMethod, uploadFileUsingSignedPutRequestApiMethod } from '../lib/api/team-member';
+import {
+  getSignedRequestForUploadApiMethod,
+  uploadFileUsingSignedPutRequestApiMethod,
+} from '../lib/api/team-member';
 import notify from '../lib/notify';
 import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
@@ -152,9 +155,13 @@ class CreateTeam extends React.Component<Props, State> {
 
       const resizedFile = await resizeImage(file, 128, 128);
 
-      await uploadFileUsingSignedPutRequestApiMethod(resizedFile, responseFromApiServerForUpload.signedRequest, {
-        'Cache-Control': 'max-age=2592000',
-      });
+      await uploadFileUsingSignedPutRequestApiMethod(
+        resizedFile,
+        responseFromApiServerForUpload.signedRequest,
+        {
+          'Cache-Control': 'max-age=2592000',
+        },
+      );
 
       const uploadedAvatarUrl = responseFromApiServerForUpload.url;
 

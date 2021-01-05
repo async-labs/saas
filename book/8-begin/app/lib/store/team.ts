@@ -1,5 +1,9 @@
 import { action, decorate, IObservableArray, observable, runInAction } from 'mobx';
-import { inviteMemberApiMethod, removeMemberApiMethod, updateTeamApiMethod } from '../api/team-leader';
+import {
+  inviteMemberApiMethod,
+  removeMemberApiMethod,
+  updateTeamApiMethod,
+} from '../api/team-leader';
 import { Store } from './index';
 import { User } from './user';
 import { Invitation } from './invitation';

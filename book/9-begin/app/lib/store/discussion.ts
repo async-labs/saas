@@ -215,16 +215,16 @@ decorate(Discussion, {
   memberIds: observable,
   posts: observable,
   isLoadingPosts: observable,
-  
+
   editDiscussion: action,
   changeLocalCache: action,
-  
+
   setInitialPosts: action,
   loadPosts: action,
   addPost: action,
   addPostToLocalCache: action,
   deletePost: action,
-  
+
   addDiscussionToLocalCache: action,
   editDiscussionFromLocalCache: action,
   deleteDiscussionFromLocalCache: action,

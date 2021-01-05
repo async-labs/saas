@@ -162,13 +162,13 @@ function initializeStore(initialState = {}) {
   const isServer = typeof window === 'undefined';
 
   const socket = isServer
-  ? null
-  : io(dev ? process.env.URL_API : process.env.PRODUCTION_URL_API, {
-      reconnection: true,
-      autoConnect: true,
-      transports: ['polling', 'websocket'],
-      withCredentials: true,
-    });
+    ? null
+    : io(dev ? process.env.URL_API : process.env.PRODUCTION_URL_API, {
+        reconnection: true,
+        autoConnect: true,
+        transports: ['polling', 'websocket'],
+        withCredentials: true,
+      });
 
   const _store =
     store !== null && store !== undefined ? store : new Store({ initialState, isServer, socket });

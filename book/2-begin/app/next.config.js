@@ -1,22 +1,10 @@
 /* eslint-disable */
 require('dotenv').config();
-const path = require('path');
-const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  webpack: (config) => {
-    config.plugins = config.plugins || [];
-
-    config.plugins = [
-      ...config.plugins,
-
-      // Read the .env file
-      new Dotenv({
-        path: path.join(__dirname, '.env'),
-        systemvars: true,
-      }),
-    ];
-
-    return config;
+  env: {
+    URL_APP: process.env.URL_APP,
+    URL_API: process.env.URL_API,
+    PORT_APP: process.env.PORT_APP,
   },
 };

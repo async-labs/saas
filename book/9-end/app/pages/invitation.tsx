@@ -7,7 +7,10 @@ import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
 import Layout from '../components/layout';
-import { acceptAndGetInvitedTeamByTokenApiMethod, removeInvitationIfMemberAddedApiMethod } from '../lib/api/public';
+import {
+  acceptAndGetInvitedTeamByTokenApiMethod,
+  removeInvitationIfMemberAddedApiMethod,
+} from '../lib/api/public';
 import { Team } from '../lib/store/team';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
@@ -81,8 +84,8 @@ class Invitation extends React.Component<Props> {
       if (team.memberIds.includes(user._id)) {
         await removeInvitationIfMemberAddedApiMethod(token);
         Router.push({
-          pathname: '/your-settings', 
-          query: { redirectMessage: `Success! You are now part of ${team.name} team.` }
+          pathname: '/your-settings',
+          query: { redirectMessage: `Success! You are now part of ${team.name} team.` },
         });
       }
     }

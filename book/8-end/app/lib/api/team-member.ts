@@ -90,4 +90,3 @@ export const deletePostApiMethod = (data) =>
   sendRequestAndGetResponse(`${BASE_PATH}/posts/delete`, {
     body: JSON.stringify(data),
   });
-
