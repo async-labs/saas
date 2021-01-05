@@ -33,7 +33,7 @@
     "he": "^1.2.0",
     "helmet": "4.1.0-rc.2",
     "highlight.js": "^10.1.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "marked": "^1.1.0",
     "mongoose": "^5.9.2",
     "node-fetch": "^2.6.0",
