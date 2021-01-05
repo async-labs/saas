@@ -22,7 +22,7 @@
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "express-session": "^1.17.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mongoose": "^5.9.2",
     "node-fetch": "^2.6.0",
     "passport": "^0.4.1",
