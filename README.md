@@ -1,10 +1,13 @@
-## Boilerplate App for SaaS Product
+## SaaS Boilerplate
 
-Open source web app that saves you weeks of work when building your own SaaS product. The boilerplate comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you can focus on features that differentiate your product.
+Open source web app that saves you many days of work when building your own SaaS product. The boilerplate comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you can focus on features that differentiate your product.
+
+Open source project is located in the `saas` folder. If you purchased our book, codebases for book's chapters are located in the `book` folder.
 
 ## Live demo:
 
-- https://saas-app.builderbook.org
+- APP: https://saas-app.builderbook.org
+- API: https://saas-api.builderbook.org
 
 ## Contents
 
