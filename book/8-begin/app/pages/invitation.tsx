@@ -56,8 +56,9 @@ class Invitation extends React.Component<Props> {
         <div style={{ textAlign: 'center', margin: '0 20px' }}>
           <br />
           <Avatar
-            src={`${team.avatarUrl ||
-              'https://storage.googleapis.com/async-await/default-user.png?v=1'}`}
+            src={`${
+              team.avatarUrl || 'https://storage.googleapis.com/async-await/default-user.png?v=1'
+            }`}
             alt="Team logo"
             style={{
               verticalAlign: 'middle',

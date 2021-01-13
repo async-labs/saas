@@ -12,7 +12,7 @@ describe('slugify', () => {
       useUnifiedTopology: true,
     };
 
-    await mongoose.connect(process.env.MONGO_URL, options);
+    await mongoose.connect(process.env.MONGO_URL_TEST, options);
 
     const mockUsers = [
       { slug: 'john', email: 'john@example.com', createdAt: new Date() },

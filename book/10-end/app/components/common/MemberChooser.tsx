@@ -64,7 +64,7 @@ class MemberChooser extends React.Component<Props> {
     );
   }
 
-  public handleChange = (event, value, _) => {
+  public handleChange = (event, value) => {
     event.preventDefault();
 
     const selectedItems = value;

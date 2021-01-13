@@ -57,12 +57,7 @@ interface InvitationModel extends mongoose.Model<InvitationDocument> {
 
 function generateToken() {
   const gen = () =>
-    Math.random()
-      .toString(36)
-      .substring(2, 12) +
-    Math.random()
-      .toString(36)
-      .substring(2, 12);
+    Math.random().toString(36).substring(2, 12) + Math.random().toString(36).substring(2, 12);
 
   return `${gen()}`;
 }
@@ -73,14 +68,12 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const team = await Team.findById(teamId).setOptions({ lean: true });
+    const team = await Team.findById(teamId).lean();
     if (!team || team.teamLeaderId !== userId) {
       throw new Error('Team does not exist or you have no permission');
     }
 
-    const registeredUser = await User.findOne({ email })
-      .select('defaultTeamSlug')
-      .setOptions({ lean: true });
+    const registeredUser = await User.findOne({ email }).select('defaultTeamSlug').lean();
 
     if (registeredUser) {
       if (team.memberIds.includes(registeredUser._id.toString())) {
@@ -97,9 +90,7 @@ class InvitationClass extends mongoose.Model {
     }
 
     let token;
-    const invitation = await this.findOne({ teamId, email })
-      .select('token')
-      .setOptions({ lean: true });
+    const invitation = await this.findOne({ teamId, email }).select('token').lean();
 
     if (invitation) {
       token = invitation.token;
@@ -134,21 +125,17 @@ class InvitationClass extends mongoose.Model {
       console.log('Email sending error:', err);
     });
 
-    return await this.findOne({ teamId, email }).setOptions({ lean: true });
+    return await this.findOne({ teamId, email }).lean();
   }
 
   public static async getTeamInvitations({ userId, teamId }) {
-    const team = await Team.findOne({ _id: teamId })
-      .select('teamLeaderId')
-      .setOptions({ lean: true });
+    const team = await Team.findOne({ _id: teamId }).select('teamLeaderId').lean();
 
     if (userId !== team.teamLeaderId) {
       throw new Error('You have no permission.');
     }
 
-    return this.find({ teamId })
-      .select('email')
-      .setOptions({ lean: true });
+    return this.find({ teamId }).select('email').lean();
   }
 
   public static async getTeamByToken({ token }) {
@@ -156,7 +143,7 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const invitation = await this.findOne({ token }).setOptions({ lean: true });
+    const invitation = await this.findOne({ token }).lean();
 
     if (!invitation) {
       throw new Error('Invitation not found');
@@ -164,7 +151,7 @@ class InvitationClass extends mongoose.Model {
 
     const team = await Team.findById(invitation.teamId)
       .select('name slug avatarUrl memberIds')
-      .setOptions({ lean: true });
+      .lean();
 
     if (!team) {
       throw new Error('Team does not exist');
@@ -178,7 +165,7 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const invitation = await this.findOne({ token }).setOptions({ lean: true });
+    const invitation = await this.findOne({ token }).lean();
 
     if (!invitation) {
       throw new Error('Invitation not found');
@@ -186,7 +173,7 @@ class InvitationClass extends mongoose.Model {
 
     const team = await Team.findById(invitation.teamId)
       .select('name slug avatarUrl memberIds')
-      .setOptions({ lean: true });
+      .lean();
 
     if (!team) {
       throw new Error('Team does not exist');
@@ -202,7 +189,7 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const invitation = await this.findOne({ token }).setOptions({ lean: true });
+    const invitation = await this.findOne({ token }).lean();
 
     if (!invitation || invitation.email !== user.email) {
       throw new Error('Invitation not found');
@@ -212,7 +199,7 @@ class InvitationClass extends mongoose.Model {
 
     const team = await Team.findById(invitation.teamId)
       .select('memberIds slug teamLeaderId')
-      .setOptions({ lean: true });
+      .lean();
 
     if (!team) {
       throw new Error('Team does not exist');

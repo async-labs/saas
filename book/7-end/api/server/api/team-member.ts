@@ -121,7 +121,10 @@ router.get('/teams', async (req, res, next) => {
 
 router.get('/teams/get-members', async (req, res, next) => {
   try {
-    const users = await User.getMembersForTeam({ userId: req.user.id, teamId: req.query.teamId });
+    const users = await User.getMembersForTeam({
+      userId: req.user.id,
+      teamId: req.query.teamId as string,
+    });
 
     res.json({ users });
   } catch (err) {

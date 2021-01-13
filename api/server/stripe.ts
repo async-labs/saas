@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-
 import * as bodyParser from 'body-parser';
 import Stripe from 'stripe';
 
@@ -12,7 +10,7 @@ const dev = process.env.NODE_ENV !== 'production';
 
 const stripeInstance = new Stripe(
   dev ? process.env.STRIPE_TEST_SECRETKEY : process.env.STRIPE_LIVE_SECRETKEY,
-  { apiVersion: '2020-03-02' },
+  { apiVersion: '2020-08-27' },
 );
 
 function createSession({ userId, teamId, teamSlug, customerId, subscriptionId, userEmail, mode }) {
@@ -101,7 +99,7 @@ function stripeWebhookAndCheckoutCallback({ server }) {
         // Occurs whenever an invoice payment attempt fails, due either to a declined payment or to the lack of a stored payment method.
 
         if (event.type === 'invoice.payment_failed') {
-          // @ts-expect-error
+          // @ts-expect-error subscription does not exist on type Object
           const { subscription } = event.data.object;
           logger.debug(JSON.stringify(subscription));
 
@@ -129,12 +127,12 @@ function stripeWebhookAndCheckoutCallback({ server }) {
     const user = await User.findById(
       session.metadata.userId,
       '_id stripeCustomer email displayName isSubscriptionActive stripeSubscription',
-    ).setOptions({ lean: true });
+    ).lean();
 
     const team = await Team.findById(
       session.metadata.teamId,
       'isSubscriptionActive stripeSubscription teamLeaderId slug',
-    ).setOptions({ lean: true });
+    ).lean();
 
     if (!user) {
       throw new Error('User not found.');

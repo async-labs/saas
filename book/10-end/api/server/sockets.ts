@@ -60,7 +60,7 @@ function setupSockets({ httpServer, origin, sessionMiddleware }) {
         socket.leave(`discussionRoom-${discussionId}`);
       });
 
-      socket.on('disconnect', () => {
+      socket.on('disconnect', (reason) => {
         console.log(`disconnected`, `reason: ` + reason);
       });
     });

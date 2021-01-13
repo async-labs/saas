@@ -53,7 +53,7 @@ function setupGoogle({ server }) {
   });
 
   passport.deserializeUser((id, done) => {
-    User.findById(id, User.publicFields(), (err, user) => {
+    User.findById(id, User.publicFields()).exec((err, user) => {
       done(err, user);
     });
   });

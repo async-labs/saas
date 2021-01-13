@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-
 import * as mongoose from 'mongoose';
 import Stripe from 'stripe';
 
@@ -185,12 +183,12 @@ class TeamClass extends mongoose.Model {
 
     await this.updateOne({ _id: teamId }, { $set: modifier }, { runValidators: true });
 
-    return this.findById(teamId, 'name avatarUrl slug defaultTeam').setOptions({ lean: true });
+    return this.findById(teamId, 'name avatarUrl slug defaultTeam').lean();
   }
 
   public static getAllTeamsForUser(userId: string) {
     console.log(`userId:${userId}`);
-    return this.find({ memberIds: userId }).setOptions({ lean: true });
+    return this.find({ memberIds: userId }).lean();
   }
 
   public static async removeMember({ teamId, teamLeaderId, userId }) {
@@ -204,6 +202,7 @@ class TeamClass extends mongoose.Model {
       throw new Error('Permission denied');
     }
 
+    // @ts-expect-error probably problem with @types/mongoose, works with $set but not $pull
     await this.findByIdAndUpdate(teamId, { $pull: { memberIds: userId } });
   }
 
@@ -260,13 +259,13 @@ class TeamClass extends mongoose.Model {
       { new: true, runValidators: true },
     )
       .select('isSubscriptionActive stripeSubscription')
-      .setOptions({ lean: true });
+      .lean();
   }
 
   public static async cancelSubscriptionAfterFailedPayment({ subscriptionId }) {
     const team: any = await this.find({ 'stripeSubscription.id': subscriptionId })
       .select('teamLeaderId isSubscriptionActive stripeSubscription isPaymentFailed')
-      .setOptions({ lean: true });
+      .lean();
     if (!team.isSubscriptionActive) {
       throw new Error('Team is already unsubscribed.');
     }
@@ -286,7 +285,7 @@ class TeamClass extends mongoose.Model {
       { new: true, runValidators: true },
     )
       .select('isSubscriptionActive stripeSubscription isPaymentFailed')
-      .setOptions({ lean: true });
+      .lean();
   }
 }
 

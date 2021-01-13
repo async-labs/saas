@@ -36,7 +36,7 @@ function setupPasswordless({ server }) {
 
   server.use((req, __, next) => {
     if (req.user && typeof req.user === 'string') {
-      User.findById(req.user, User.publicFields(), (err, user) => {
+      User.findById(req.user, User.publicFields()).exec((err, user) => {
         req.user = user;
         console.log('passwordless middleware');
         next(err);
@@ -50,9 +50,7 @@ function setupPasswordless({ server }) {
     '/auth/email-login-link',
     passwordless.requestToken(async (email, __, callback) => {
       try {
-        const user = await User.findOne({ email })
-          .select('_id')
-          .setOptions({ lean: true });
+        const user = await User.findOne({ email }).select('_id').lean();
 
         if (user) {
           callback(null, user._id);
@@ -80,7 +78,7 @@ function setupPasswordless({ server }) {
     passwordless.acceptToken(),
     (req, __, next) => {
       if (req.user && typeof req.user === 'string') {
-        User.findById(req.user, User.publicFields(), (err, user) => {
+        User.findById(req.user, User.publicFields()).exec((err, user) => {
           req.user = user;
           next(err);
         });

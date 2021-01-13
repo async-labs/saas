@@ -1,7 +1,7 @@
 import * as mobx from 'mobx';
 import { action, decorate, IObservableArray, observable } from 'mobx';
 import { useStaticRendering } from 'mobx-react';
-// @ts-ignore: package's problem
+// @ts-expect-error no exported member io socket.io-client
 import { io } from 'socket.io-client';
 
 import { addTeamApiMethod, getTeamInvitationsApiMethod } from '../api/team-leader';

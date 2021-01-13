@@ -6,7 +6,7 @@ import Invitation from '../models/Invitation';
 const router = express.Router();
 
 router.get('/get-user', (req, res) => {
-  console.log(`req.user ${req.user}`);
+  console.log(`req.user ${req.user.id}`);
   res.json({ user: req.user || null });
 });
 
@@ -27,13 +27,13 @@ router.post('/get-user-by-slug', async (req, res, next) => {
 });
 
 router.get('/invitations/accept-and-get-team-by-token', async (req, res, next) => {
+  const token = req.query.token as string;
+
   try {
-    const team = await Invitation.getTeamByToken({
-      token: req.query.token,
-    });
+    const team = await Invitation.getTeamByToken({ token });
 
     if (req.user) {
-      await Invitation.addUserToTeam({ token: req.query.token, user: req.user });
+      await Invitation.addUserToTeam({ token, user: req.user });
     }
 
     res.json({ team });

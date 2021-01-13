@@ -56,7 +56,7 @@ router.get('/teams/get-invitations-for-team', async (req, res, next) => {
   try {
     const users = await Invitation.getTeamInvitations({
       userId: req.user.id,
-      teamId: req.query.teamId,
+      teamId: req.query.teamId as string,
     });
 
     res.json({ users });
@@ -93,13 +93,11 @@ router.post('/stripe/fetch-checkout-session', async (req, res, next) => {
   try {
     const { mode, teamId } = req.body;
 
-    const user = await User.findById(req.user.id)
-      .select(['stripeCustomer', 'email'])
-      .setOptions({ lean: true });
+    const user = await User.findById(req.user.id).select(['stripeCustomer', 'email']).lean();
 
     const team = await Team.findById(teamId)
       .select(['stripeSubscription', 'slug', 'teamLeaderId'])
-      .setOptions({ lean: true });
+      .lean();
 
     if (!user || !team || team.teamLeaderId !== req.user.id) {
       throw new Error('Permission denied');

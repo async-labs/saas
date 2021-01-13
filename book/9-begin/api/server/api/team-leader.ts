@@ -54,7 +54,7 @@ router.get('/teams/get-invitations-for-team', async (req, res, next) => {
   try {
     const users = await Invitation.getTeamInvitations({
       userId: req.user.id,
-      teamId: req.query.teamId,
+      teamId: req.query.teamId as string,
     });
 
     res.json({ users });

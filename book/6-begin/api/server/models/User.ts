@@ -83,7 +83,7 @@ class UserClass extends mongoose.Model {
   public static async getUserBySlug({ slug }) {
     console.log('Static method: getUserBySlug');
 
-    return this.findOne({ slug }, 'email displayName avatarUrl', { lean: true });
+    return this.findOne({ slug }, 'email displayName avatarUrl').lean();
   }
 
   public static async updateProfile({ userId, name, avatarUrl }) {
@@ -102,7 +102,7 @@ class UserClass extends mongoose.Model {
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('displayName avatarUrl slug')
-      .setOptions({ lean: true });
+      .lean();
   }
 
   public static publicFields(): string[] {
@@ -118,7 +118,7 @@ class UserClass extends mongoose.Model {
   }) {
     const user = await this.findOne({ email })
       .select([...this.publicFields(), 'googleId'].join(' '))
-      .setOptions({ lean: true });
+      .lean();
 
     if (user) {
       if (_.isEmpty(googleToken) && user.googleId) {

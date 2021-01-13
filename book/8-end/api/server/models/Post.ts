@@ -129,9 +129,7 @@ class PostClass extends mongoose.Model {
 
     const filter: any = { discussionId };
 
-    const posts: any[] = await this.find(filter)
-      .sort({ createdAt: 1 })
-      .setOptions({ lean: true });
+    const posts: any[] = await this.find(filter).sort({ createdAt: 1 }).lean();
 
     return posts;
   }
@@ -161,9 +159,7 @@ class PostClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const post = await this.findById(id)
-      .select('createdUserId discussionId')
-      .setOptions({ lean: true });
+    const post = await this.findById(id).select('createdUserId discussionId').lean();
 
     await this.checkPermissionAndGetTeamAndDiscussion({
       userId,
@@ -187,9 +183,7 @@ class PostClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const post = await this.findById(id)
-      .select('createdUserId discussionId content')
-      .setOptions({ lean: true });
+    const post = await this.findById(id).select('createdUserId discussionId content').lean();
 
     await this.checkPermissionAndGetTeamAndDiscussion({
       userId,
@@ -215,7 +209,7 @@ class PostClass extends mongoose.Model {
 
     const discussion = await Discussion.findById(discussionId)
       .select('teamId memberIds slug')
-      .setOptions({ lean: true });
+      .lean();
 
     if (!discussion) {
       throw new Error('Discussion not found');
@@ -225,9 +219,7 @@ class PostClass extends mongoose.Model {
       throw new Error('Permission denied');
     }
 
-    const team = await Team.findById(discussion.teamId)
-      .select('memberIds slug')
-      .setOptions({ lean: true });
+    const team = await Team.findById(discussion.teamId).select('memberIds slug').lean();
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');

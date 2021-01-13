@@ -166,7 +166,10 @@ router.get('/teams', async (req, res, next) => {
 
 router.get('/teams/get-members', async (req, res, next) => {
   try {
-    const users = await User.getMembersForTeam({ userId: req.user.id, teamId: req.query.teamId });
+    const users = await User.getMembersForTeam({
+      userId: req.user.id,
+      teamId: req.query.teamId as string,
+    });
 
     res.json({ users });
   } catch (err) {
@@ -228,11 +231,9 @@ router.post('/discussions/delete', async (req, res, next) => {
 
 router.get('/discussions/list', async (req, res, next) => {
   try {
-    const { teamId } = req.query;
-
     const { discussions } = await Discussion.getList({
       userId: req.user.id,
-      teamId,
+      teamId: req.query.teamId as string,
     });
 
     res.json({ discussions });
@@ -245,7 +246,7 @@ router.get('/posts/list', async (req, res, next) => {
   try {
     const posts = await Post.getList({
       userId: req.user.id,
-      discussionId: req.query.discussionId,
+      discussionId: req.query.discussionId as string,
     });
 
     res.json({ posts });

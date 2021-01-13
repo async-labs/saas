@@ -104,7 +104,7 @@ class DiscussionClass extends mongoose.Model {
 
     const filter: any = { teamId, memberIds: userId };
 
-    const discussions: any[] = await this.find(filter).setOptions({ lean: true });
+    const discussions: any[] = await this.find(filter).lean();
 
     return { discussions };
   }
@@ -134,9 +134,7 @@ class DiscussionClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const discussion = await this.findById(id)
-      .select('teamId createdUserId')
-      .setOptions({ lean: true });
+    const discussion = await this.findById(id).select('teamId createdUserId').lean();
 
     const team = await this.checkPermissionAndGetTeam({
       userId,
@@ -166,9 +164,7 @@ class DiscussionClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const discussion = await this.findById(id)
-      .select('teamId')
-      .setOptions({ lean: true });
+    const discussion = await this.findById(id).select('teamId').lean();
 
     await this.checkPermissionAndGetTeam({ userId, teamId: discussion.teamId });
 
@@ -184,9 +180,7 @@ class DiscussionClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const team = await Team.findById(teamId)
-      .select('memberIds teamLeaderId')
-      .setOptions({ lean: true });
+    const team = await Team.findById(teamId).select('memberIds teamLeaderId').lean();
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');

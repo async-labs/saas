@@ -128,12 +128,12 @@ class TeamClass extends mongoose.Model {
 
     await this.updateOne({ _id: teamId }, { $set: modifier }, { runValidators: true });
 
-    return this.findById(teamId, 'name avatarUrl slug defaultTeam').setOptions({ lean: true });
+    return this.findById(teamId, 'name avatarUrl slug defaultTeam').lean();
   }
 
   public static getAllTeamsForUser(userId: string) {
     console.log(`userId:${userId}`);
-    return this.find({ memberIds: userId }).setOptions({ lean: true });
+    return this.find({ memberIds: userId }).lean();
   }
 
   public static async removeMember({ teamId, teamLeaderId, userId }) {
@@ -147,6 +147,7 @@ class TeamClass extends mongoose.Model {
       throw new Error('Permission denied');
     }
 
+    // @ts-expect-error probably problem with @types/mongoose, works with $set but not $pull
     await this.findByIdAndUpdate(teamId, { $pull: { memberIds: userId } });
   }
 }

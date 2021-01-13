@@ -19,7 +19,7 @@ const options = {
   useUnifiedTopology: true,
 };
 
-mongoose.connect(process.env.MONGO_URL, options);
+mongoose.connect(process.env.MONGO_URL_TEST, options);
 
 const server = express();
 

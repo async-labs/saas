@@ -83,20 +83,30 @@
     "upgrade-5-latest": "cd 5-begin && yarn upgrade --latest && cd .. && cd 5-end && yarn upgrade --latest && cd ..",
     "upgrade-6-latest": "cd 6-begin && yarn upgrade --latest && cd .. && cd 6-end && yarn upgrade --latest && cd ..",
     "upgrade-7-latest": "cd 7-begin && yarn upgrade --latest && cd .. && cd 7-end && yarn upgrade --latest && cd ..",
-    "upgrade-8-latest": "cd 8-begin && yarn upgrade --latest && cd .. && cd 8-end && yarn upgrade --latest && cd .."
+    "upgrade-8-latest": "cd 8-begin && yarn upgrade --latest && cd .. && cd 8-end && yarn upgrade --latest && cd ..",
+    "yarn-all": "yarn yarn-1 && yarn yarn-2 && yarn yarn-3 && yarn yarn-4 && yarn yarn-5 && yarn yarn-6 && yarn yarn-7 && yarn yarn-8 && yarn yarn-9",
+    "yarn-1": "cross-env-shell && cd 1-end/app && yarn && cd .. && cd ..",
+    "yarn-2": "cross-env-shell && cd 2-begin/app && yarn && cd .. && cd .. && cd 2-end/app && yarn && cd .. && cd ..",
+    "yarn-3": "cross-env-shell && cd 3-begin/app && yarn && cd .. && cd .. && cd 3-end/app && yarn && cd .. && cd .. && cd 3-end/api && yarn && cd .. && cd ..",
+    "yarn-4": "cross-env-shell && cd 4-begin/app && yarn && cd .. && cd .. && cd 4-begin/api && yarn && cd .. && cd .. && cd 4-end/app && yarn && cd .. && cd .. && cd 4-end/api && yarn && cd .. && cd ..",
+    "yarn-5": "cross-env-shell && cd 5-begin/app && yarn && cd .. && cd .. && cd 5-begin/api && yarn && cd .. && cd .. && cd 5-end/app && yarn && cd .. && cd .. && cd 5-end/api && yarn && cd .. && cd ..",
+    "yarn-6": "cross-env-shell && cd 6-begin/app && yarn && cd .. && cd .. && cd 6-begin/api && yarn && cd .. && cd .. && cd 6-end/app && yarn && cd .. && cd .. && cd 6-end/api && yarn && cd .. && cd ..",
+    "yarn-7": "cross-env-shell && cd 7-begin/app && yarn && cd .. && cd .. && cd 7-begin/api && yarn && cd .. && cd .. && cd 7-end/app && yarn && cd .. && cd .. && cd 7-end/api && yarn && cd .. && cd ..",
+    "yarn-8": "cross-env-shell && cd 8-begin/app && yarn && cd .. && cd .. && cd 8-begin/api && yarn && cd .. && cd .. && cd 8-end/app && yarn && cd .. && cd .. && cd 8-end/api && yarn && cd .. && cd ..",
+    "yarn-9": "cross-env-shell && cd 9-begin/app && yarn && cd .. && cd .. && cd 9-begin/api && yarn && cd .. && cd .. && cd 9-end/app && yarn && cd .. && cd .. && cd 9-end/api && yarn && cd .. && cd ..",
+    "yarn-10": "cross-env-shell && cd 10-begin/app && yarn && cd .. && cd .. && cd 10-begin/api && yarn && cd .. && cd .. && cd 10-end/app && yarn && cd .. && cd .. && cd 10-end/api && yarn && cd .. && cd .."
   },
   "devDependencies": {
-    "@types/he": "^1.1.1",
-    "@types/marked": "^1.1.0",
+    "@types/he": "^0.5.29",
+    "@types/marked": "^0.3.0",
     "@types/socket.io-client": "^1.4.33",
     "cross-env": "5.2.0"
   },
   "dependencies": {
-    "downshift": "^5.4.5",
     "he": "^1.2.0",
     "keycode": "^2.2.0",
-    "marked": "^1.1.0",
-    "moment": "^2.27.0",
+    "marked": "^1.2.7",
+    "moment": "^2.29.1",
     "react-mentions": "^4.0.0",
     "socket.io-client": "^2.3.0"
   }

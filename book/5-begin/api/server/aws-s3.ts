@@ -3,12 +3,7 @@ import * as aws from 'aws-sdk';
 
 async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
   const randomStringForPrefix =
-    Math.random()
-      .toString(36)
-      .substring(2, 12) +
-    Math.random()
-      .toString(36)
-      .substring(2, 12);
+    Math.random().toString(36).substring(2, 12) + Math.random().toString(36).substring(2, 12);
 
   const key = `${prefix}/${randomStringForPrefix}/${fileName}`;
 

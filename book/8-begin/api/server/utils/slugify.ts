@@ -5,7 +5,7 @@ const slugify = (text) => _.kebabCase(text);
 async function createUniqueSlug(Model, slug, count, filter) {
   const obj = await Model.findOne({ slug: `${slug}-${count}`, ...filter })
     .select('_id')
-    .setOptions({ lean: true });
+    .lean();
 
   if (!obj) {
     return `${slug}-${count}`;
@@ -19,7 +19,7 @@ async function generateSlug(Model, name, filter = {}) {
 
   const obj = await Model.findOne({ slug: origSlug, ...filter })
     .select('_id')
-    .setOptions({ lean: true });
+    .lean();
 
   if (!obj) {
     return origSlug;
@@ -31,7 +31,7 @@ async function generateSlug(Model, name, filter = {}) {
 async function generateNumberSlug(Model, filter = {}, n = 1) {
   const obj = await Model.findOne({ slug: n, ...filter })
     .select('_id')
-    .setOptions({ lean: true });
+    .lean();
 
   if (!obj) {
     return `${n}`;

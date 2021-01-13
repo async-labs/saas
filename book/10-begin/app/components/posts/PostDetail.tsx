@@ -81,9 +81,7 @@ class PostDetail extends React.Component<Props> {
   }
 
   public renderPostDetail(post: Post, isMobile) {
-    const createdDate = moment(post.createdAt)
-      .local()
-      .format('MMM Do YYYY');
+    const createdDate = moment(post.createdAt).local().format('MMM Do YYYY');
     const lastUpdatedDate = moment(post.lastUpdatedAt).fromNow();
 
     return (

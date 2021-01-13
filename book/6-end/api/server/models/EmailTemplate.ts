@@ -58,11 +58,8 @@ export async function insertTemplates() {
   ];
 
   for (const t of templates) {
-    const et = await EmailTemplate.findOne({ name: t.name });
-    const message = t.message
-      .replace(/\n/g, '')
-      .replace(/[ ]+/g, ' ')
-      .trim();
+    const et = await EmailTemplate.findOne({ name: t.name }).lean();
+    const message = t.message.replace(/\n/g, '').replace(/[ ]+/g, ' ').trim();
 
     if (!et) {
       EmailTemplate.create(Object.assign({}, t, { message }));
@@ -75,9 +72,7 @@ export async function insertTemplates() {
 export default async function getEmailTemplate(name: string, params: any) {
   await insertTemplates();
 
-  const et = await EmailTemplate.findOne({ name }).setOptions({
-    lean: true,
-  });
+  const et = await EmailTemplate.findOne({ name }).lean();
 
   if (!et) {
     throw new Error('Email Template is not found in database.');
