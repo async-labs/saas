@@ -16,14 +16,14 @@
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
-  "eslint.alwaysShowStatus": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+  "eslint.alwaysShowStatus": true,
   "eslint.workingDirectories": [
-    { "directory": "./app", "changeProcessCWD": true },
-    { "directory": "./api", "changeProcessCWD": true },
-    { "directory": "./lambda", "changeProcessCWD": true },
+    { "directory": "./saas/app", "changeProcessCWD": true },
+    { "directory": "./saas/api", "changeProcessCWD": true },
+    { "directory": "./saas/lambda", "changeProcessCWD": true },
     { "directory": "./book/1-end/app", "changeProcessCWD": true },
     { "directory": "./book/2-begin/app", "changeProcessCWD": true },
     { "directory": "./book/2-end/app", "changeProcessCWD": true },

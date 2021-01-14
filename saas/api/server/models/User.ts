@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 import Stripe from 'stripe';

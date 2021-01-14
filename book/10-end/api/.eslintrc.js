@@ -5,6 +5,7 @@ module.exports = {
     "es6": true,
     "node": true,
   },
+  plugins: ["prettier"],
   rules: {
     'prettier/prettier': [
       'error',
@@ -22,7 +23,4 @@ module.exports = {
     'prefer-arrow-callback': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
  },
-  plugins: [
-    "prettier",
-  ]
 }
