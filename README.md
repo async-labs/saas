@@ -37,8 +37,6 @@ Open source project is located in the `saas` folder. If you purchased our book, 
   - keeping babel and webpack configurations under the hood,
   - striving to minimize number of configurations,
   - `withAuth` HOC to pass user prop and control user access to pages,
-  - `withLayout` HOC for shared layout and to pass additional data to pages,
-  - `withStore` HOC, developer-friendly state management with `MobX`,
   - HOC extensions `MyApp` and `MyDocument`
   - server-side rendering with `Material-UI`,
   - model-specific components in addition to common components.
@@ -47,7 +45,7 @@ Open source project is located in the `saas` folder. If you purchased our book, 
 - Useful components for any web app: `ActiveLink`, `Confirm`, `Notifier`, `MenuWithLinks`, and more.
 - Analytics with `Google Analytics`.
 - Production-ready, scalable architecture:
-  - `app` - user-facing web app with Next/Express server, responsible for rendering pages (either client-side or server-side). `app` sends requests via API methods to `api` Express server.
+  - `app` - user-facing web app with Next/Express server, responsible for rendering pages (either client-side or server-side rendered). `app` sends requests via API methods to `api` Express server.
   - `api` - server-only code, Express server, responsible for processing requests for internal and external API infrastructures.
   - we prepared both apps for easy deployment to `now` by Zeit.
 - **Subscriptions with `Stripe`**:
