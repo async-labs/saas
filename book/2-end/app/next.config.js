@@ -1,4 +1,4 @@
-/* eslint-disable */
+// eslint-disable-next-line
 require('dotenv').config();
 
 module.exports = {
