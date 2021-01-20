@@ -20,14 +20,14 @@ const styleGridIsMobile = {
 };
 
 type Props = {
-  firstGridItem?: boolean;
   children: React.ReactNode;
+  firstGridItem?: boolean;
   isMobile?: boolean;
 };
 
 class Layout extends React.Component<Props> {
   public render() {
-    const { firstGridItem, children, isMobile } = this.props;
+    const { children, firstGridItem, isMobile } = this.props;
 
     const isThemeDark = false;
 
