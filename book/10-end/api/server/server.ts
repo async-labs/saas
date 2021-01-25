@@ -1,4 +1,3 @@
-import './env';
 import * as mongoSessionStore from 'connect-mongo';
 import * as cors from 'cors';
 import * as express from 'express';
@@ -16,6 +15,9 @@ import logger from './logger';
 
 import * as compression from 'compression';
 import * as helmet from 'helmet';
+
+// eslint-disable-next-line
+require('dotenv').config();
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 8000;

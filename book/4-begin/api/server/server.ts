@@ -1,5 +1,7 @@
-import './env';
 import * as express from 'express';
+
+// eslint-disable-next-line
+require('dotenv').config();
 
 const server = express();
 

@@ -8,7 +8,7 @@ import NProgress from 'nprogress';
 
 import confirm from '../lib/confirm';
 import notify from '../lib/notify';
-import { getUser } from '../lib/api/public';
+import { getUserApiMethod } from '../lib/api/public';
 
 type Props = { user: { email: string } };
 
@@ -16,7 +16,7 @@ class Index extends React.Component<Props> {
   public static async getInitialProps(ctx) {
     const { req } = ctx;
 
-    const user = await getUser(req);
+    const user = await getUserApiMethod(req);
 
     console.log(user);
 

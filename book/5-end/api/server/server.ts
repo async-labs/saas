@@ -1,4 +1,3 @@
-import './env';
 import * as mongoSessionStore from 'connect-mongo';
 import * as cors from 'cors';
 import * as express from 'express';
@@ -7,6 +6,9 @@ import * as mongoose from 'mongoose';
 
 import api from './api';
 import { setupGoogle } from './google-auth';
+
+// eslint-disable-next-line
+require('dotenv').config();
 
 const options = {
   useNewUrlParser: true,

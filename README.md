@@ -288,7 +288,6 @@ All code in this repository is provided under the [MIT License](https://github.c
 │   │   │   └── sum.ts
 │   │   ├── aws-s3.ts
 │   │   ├── aws-ses.ts
-│   │   ├── env.ts
 │   │   ├── google-auth.ts
 │   │   ├── logger.ts
 │   │   ├── mailchimp.ts

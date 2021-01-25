@@ -1,9 +1,11 @@
-import './env';
 import * as cors from 'cors';
 import * as express from 'express';
 import * as mongoose from 'mongoose';
 
 import api from './api';
+
+// eslint-disable-next-line
+require('dotenv').config();
 
 const options = {
   useNewUrlParser: true,

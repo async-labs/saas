@@ -2,16 +2,11 @@ import sendRequestAndGetResponse from './sendRequestAndGetResponse';
 
 const BASE_PATH = '/api/v1/public';
 
-export const getUserApiMethod = (opts = {}) =>
-  sendRequestAndGetResponse(
-    `${BASE_PATH}/get-user`,
-    Object.assign(
-      {
-        method: 'GET',
-      },
-      opts,
-    ),
-  );
+export const getUserApiMethod = (request) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/get-user`, {
+    request,
+    method: 'GET',
+  });
 
 export const getUserBySlugApiMethod = (slug) =>
   sendRequestAndGetResponse(`${BASE_PATH}/get-user-by-slug`, {
