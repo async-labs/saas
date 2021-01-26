@@ -16,7 +16,7 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = express();
 
-  // give all Nextjs's request to Nextjs before anything else
+  // give all Nextjs's request to next server before anything else
   server.get('/_next/*', (req, res) => {
     // console.log('next server, page');
     handle(req, res);
