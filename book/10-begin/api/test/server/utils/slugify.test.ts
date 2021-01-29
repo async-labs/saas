@@ -1,7 +1,9 @@
 import * as mongoose from 'mongoose';
-import '../../../server/env';
 import User from '../../../server/models/User';
 import { generateSlug } from '../../../server/utils/slugify';
+
+// eslint-disable-next-line
+require('dotenv').config();
 
 describe('slugify', () => {
   beforeAll(async (done) => {
@@ -12,12 +14,30 @@ describe('slugify', () => {
       useUnifiedTopology: true,
     };
 
-    await mongoose.connect(process.env.MONGO_URLTEST, options);
+    await mongoose.connect(process.env.MONGO_URL_TEST, options);
 
     const mockUsers = [
-      { slug: 'john', email: 'john@example.com', createdAt: new Date() },
-      { slug: 'john-johnson', email: 'john-johnson@example.com', createdAt: new Date() },
-      { slug: 'john-johnson-1', email: 'john-johnson-1@example.com', createdAt: new Date() },
+      {
+        slug: 'john',
+        email: 'john@example.com',
+        createdAt: new Date(),
+        displayName: 'abc',
+        avatarUrl: 'def',
+      },
+      {
+        slug: 'john-johnson',
+        email: 'john-johnson@example.com',
+        createdAt: new Date(),
+        displayName: 'abc',
+        avatarUrl: 'def',
+      },
+      {
+        slug: 'john-johnson-1',
+        email: 'john-johnson-1@example.com',
+        createdAt: new Date(),
+        displayName: 'abc',
+        avatarUrl: 'def',
+      },
     ];
 
     await User.insertMany(mockUsers);
@@ -25,28 +45,22 @@ describe('slugify', () => {
     done();
   });
 
-  test('not duplicated', () => {
+  test('not duplicated', async () => {
     expect.assertions(1);
 
-    return generateSlug(User, 'John J Johnson@#$').then((slug) => {
-      expect(slug).toBe('john-j-johnson');
-    });
+    await expect(generateSlug(User, 'John J Johnson@#$')).resolves.toEqual('john-j-johnson');
   });
 
-  test('one time duplicated', () => {
+  test('one time duplicated', async () => {
     expect.assertions(1);
 
-    return generateSlug(User, ' John@#$').then((slug) => {
-      expect(slug).toBe('john-1');
-    });
+    await expect(generateSlug(User, ' John@#$')).resolves.toEqual('john-1');
   });
 
-  test('multiple duplicated', () => {
+  test('multiple duplicated', async () => {
     expect.assertions(1);
 
-    return generateSlug(User, 'John & Johnson@#$').then((slug) => {
-      expect(slug).toBe('john-johnson-2');
-    });
+    await expect(generateSlug(User, 'John & Johnson@#$')).resolves.toEqual('john-johnson-2');
   });
 
   afterAll(async (done) => {
