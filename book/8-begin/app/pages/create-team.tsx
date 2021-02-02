@@ -193,11 +193,11 @@ class CreateTeam extends React.Component<Props, State> {
 
     const reader = new FileReader();
 
+    reader.readAsDataURL(file);
+
     reader.onload = (e) => {
       this.setState({ newAvatarUrl: e.target.result });
     };
-
-    reader.readAsDataURL(file);
   };
 }
 

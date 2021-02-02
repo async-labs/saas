@@ -44,6 +44,8 @@ function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
 
     console.log(`before ${image.src}`);
 
+    reader.readAsDataURL(file);
+
     reader.onload = (e) => {
       image.src = e.target.result.toString();
 
@@ -51,8 +53,6 @@ function resizeImage(file: File, MAX_WIDTH, MAX_HEIGHT) {
 
       console.log(`after ${image.src}`);
     };
-
-    reader.readAsDataURL(file);
   });
 }
 

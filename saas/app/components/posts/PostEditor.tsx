@@ -23,6 +23,8 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
   const img = new Image();
 
   return new Promise((resolve) => {
+    reader.readAsDataURL(file);
+
     reader.onload = (e) => {
       img.onload = () => {
         resolve({ width: img.width, height: img.height });
@@ -30,8 +32,6 @@ function getImageDimension(file): Promise<{ width: number; height: number }> {
 
       img.src = e.target.result.toString();
     };
-
-    reader.readAsDataURL(file);
   });
 }
 
