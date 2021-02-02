@@ -48,7 +48,10 @@ class DiscussionListItem extends React.Component<Props> {
             href={`/discussion?teamSlug=${team.slug}&discussionSlug=${discussion.slug}`}
             as={`/team/${team.slug}/discussions/${discussion.slug}`}
           >
-            <a style={{ fontWeight: 300 }} key={discussion._id}>
+            <a
+              style={{ fontWeight: 300, color: isThemeDark ? '#fff' : '#000' }}
+              key={discussion._id}
+            >
               {discussion.name.length > trimmingLength
                 ? `${discussion.name.substring(0, trimmingLength)}...`
                 : discussion.name}

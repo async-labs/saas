@@ -1,5 +1,7 @@
 import { action, decorate, observable, runInAction } from 'mobx';
 
+import * as NProgress from 'nprogress';
+
 import { getListOfInvoicesApiMethod } from '../api/team-leader';
 import { toggleThemeApiMethod, updateProfileApiMethod } from '../api/team-member';
 import { Store } from './index';
@@ -72,6 +74,8 @@ class User {
     runInAction(() => {
       this.darkTheme = darkTheme;
     });
+    NProgress.start();
+    NProgress.set(0.5);
     window.location.reload();
   }
 
@@ -93,7 +97,7 @@ decorate(User, {
   email: observable,
   displayName: observable,
   avatarUrl: observable,
-  darkTheme: observable,
+  // darkTheme: observable,
   defaultTeamSlug: observable,
   stripeCard: observable,
   stripeListOfInvoices: observable,

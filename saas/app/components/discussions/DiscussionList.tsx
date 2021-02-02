@@ -28,14 +28,20 @@ class DiscussionList extends React.Component<Props> {
   }
 
   public render() {
-    const { team } = this.props;
+    const { store, team } = this.props;
+
+    const isThemeDark = store && store.currentUser && store.currentUser.darkTheme === true;
 
     return (
       <div>
         Discussions
         <Tooltip title="Add Discussion" placement="right" disableFocusListener disableTouchListener>
           <a onClick={this.addDiscussion} style={{ float: 'right', padding: '0px 10px' }}>
-            <i className="material-icons" color="action" style={{ fontSize: 14, opacity: 0.7 }}>
+            <i
+              className="material-icons"
+              color="action"
+              style={{ fontSize: 14, opacity: 0.7, color: isThemeDark ? '#fff' : '#000' }}
+            >
               add_circle_outline
             </i>{' '}
           </a>
