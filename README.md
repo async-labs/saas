@@ -47,7 +47,7 @@ Open source project is located in the `saas` folder. If you purchased our book, 
 - Production-ready, scalable architecture:
   - `app` - user-facing web app with Next/Express server, responsible for rendering pages (either client-side or server-side rendered). `app` sends requests via API methods to `api` Express server.
   - `api` - server-only code, Express server, responsible for processing requests for internal and external API infrastructures.
-  - we prepared both apps for easy deployment to `now` by Zeit.
+  - we prepared both apps for easy deployment to `now` by vercel.
 - **Subscriptions with `Stripe`**:
   - subscribe/unsubscribe Team to plan,
   - update card information,
@@ -107,7 +107,7 @@ Open source project is located in the `saas` folder. If you purchased our book, 
 
   Important: The above environmental variables are available on the server only. You should add your `.env` file to `.gitignore` inside the `api` folder so that your secret keys are not stored on a remote Github repo.
 
-  - To get `MONGO_URL`, we recommend you run `yarn stage:db` to spawn a database locally or a [free MongoDB at mLab](https://docs.mlab.com/).
+  - To get `MONGO_URL`, we recommend you run `yarn stage:db` to spawn a database locally or a [free MongoDB at MongoDB Atlas](https://docs.atlas.mongodb.com/).
   - Specify your own name and secret keys for Express session: [SESSION_NAME](https://github.com/expressjs/session#name) and [SESSION_SECRET](https://github.com/expressjs/session#express)
   - Get `GOOGLE_CLIENTID` and `GOOGLE_CLIENTSECRET` by following the [official OAuth tutorial](https://developers.google.com/identity/sign-in/web/sign-in#before_you_begin). <br/>
     Important: For Google OAuth app, callback URL is: http://localhost:8000/oauth2callback <br/>
@@ -185,7 +185,7 @@ If you need help deploying your SaaS Boilerplate app, or variation of it, you ca
 
 - [React](https://github.com/facebook/react)
 - [Material-UI](https://github.com/mui-org/material-ui)
-- [Next](https://github.com/zeit/next.js)
+- [Next](https://github.com/vercel/next.js)
 - [MobX](https://github.com/mobxjs/mobx)
 - [Express](https://github.com/expressjs/express)
 - [Mongoose](https://github.com/Automattic/mongoose)
