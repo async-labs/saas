@@ -1,7 +1,7 @@
 import express from 'express';
 import next from 'next';
 
-import { getUserApiMethod } from '../lib/api/public';
+// import { getUserApiMethod } from '../lib/api/public';
 
 import setupSitemapAndRobots from './setupSitemapAndRobots';
 
@@ -28,24 +28,21 @@ app.prepare().then(() => {
     server.set('trust proxy', 1); // sets req.hostname, req.ip
   }
 
-  server.use(async (req: any, _, nextfn) => {
-    const headers: any = {};
-    if (req.headers && req.headers.cookie) {
-      headers.cookie = req.headers.cookie;
-    }
+  // server.use(async (req: any, _, nextfn) => {
+  //   try {
+  //     const { user } = await getUserApiMethod(req);
+  //     req.user = user;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
 
-    try {
-      const { user } = await getUserApiMethod({ headers });
-      req.user = user;
-    } catch (error) {
-      console.log(error);
-    }
-
-    nextfn();
-  });
+  //   nextfn();
+  // });
 
   server.get('/', async (req: any, res) => {
     let redirectUrl = 'login';
+
+    console.log(req.user);
 
     if (req.user) {
       if (!req.user.defaultTeamSlug) {

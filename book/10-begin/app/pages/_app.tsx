@@ -54,16 +54,9 @@ class MyApp extends App<{ isMobile: boolean }> {
       return appProps;
     }
 
-    const { req } = ctx;
-
-    const headers: any = {};
-    if (req.headers && req.headers.cookie) {
-      headers.cookie = req.headers.cookie;
-    }
-
     let userObj = null;
     try {
-      const { user } = await getUserApiMethod({ headers });
+      const { user } = await getUserApiMethod(ctx.req);
       userObj = user;
     } catch (error) {
       console.log(error);

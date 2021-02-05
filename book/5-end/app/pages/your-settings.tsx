@@ -28,13 +28,7 @@ type State = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class YourSettings extends React.Component<Props, State> {
   // public static async getInitialProps(ctx) {
-  //   const headers: any = {};
-
-  //   if (ctx.req.headers && ctx.req.headers.cookie) {
-  //     headers.cookie = ctx.req.headers.cookie;
-  //   }
-
-  //   const user = await getUserApiMethod({ headers });
+  //   const user = await getUserApiMethod(ctx.req);
 
   //   console.log(user);
 

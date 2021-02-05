@@ -53,7 +53,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
     const discussion = this.getDiscussion(discussionSlug);
 
     if (!discussion) {
-      if (currentTeam.isLoadingDiscussions) {
+      if (currentTeam.isLoadingDiscussions || store.isServer) {
         return (
           <Layout {...this.props}>
             <Head>

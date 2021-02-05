@@ -11,7 +11,8 @@ router.use((req, res, next) => {
   console.log('team leader API', req.path);
 
   if (!req.user) {
-    res.status(401).json({ error: 'Unauthorized' });
+    // res.status(401).json({ error: 'Unauthorized' });
+    res.redirect('/login');
     return;
   }
 

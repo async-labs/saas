@@ -6,7 +6,7 @@ import Invitation from '../models/Invitation';
 const router = express.Router();
 
 router.get('/get-user', (req, res) => {
-  console.log(`req.user ${req.user.id}`);
+  // console.log(`req.user ${req.user.id}`);
   res.json({ user: req.user || null });
 });
 

@@ -64,8 +64,10 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
           redirectUrl = '/create-team';
           asUrl = '/create-team';
         } else {
-          redirectUrl = `/your-settings`;
-          asUrl = `/your-settings`;
+          // redirectUrl = `/your-settings`;
+          // asUrl = `/your-settings`;
+          redirectUrl = `/team/${user.defaultTeamSlug}/discussions`;
+          asUrl = `/team/${user.defaultTeamSlug}/discussions`;
         }
       }
 

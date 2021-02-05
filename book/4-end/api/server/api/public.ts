@@ -5,7 +5,7 @@ import User from '../models/User';
 const router = express.Router();
 
 // router.get('/get-user', (req, res) => {
-//   res.json({ user: req.user || null });
+//   res.json({ user: { email: 'team@builderbook.org' } });
 // });
 
 router.post('/get-user-by-slug', async (req, res, next) => {

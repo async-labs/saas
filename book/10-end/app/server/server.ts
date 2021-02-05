@@ -29,13 +29,8 @@ app.prepare().then(() => {
   }
 
   server.use(async (req: any, _, nextfn) => {
-    const headers: any = {};
-    if (req.headers && req.headers.cookie) {
-      headers.cookie = req.headers.cookie;
-    }
-
     try {
-      const { user } = await getUserApiMethod({ headers });
+      const { user } = await getUserApiMethod(req);
       req.user = user;
     } catch (error) {
       console.log(error);

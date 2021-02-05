@@ -30,12 +30,7 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
         pageComponentProps = await Component.getInitialProps(ctx);
       }
 
-      const headers: any = {};
-      if (req.headers && req.headers.cookie) {
-        headers.cookie = req.headers.cookie;
-      }
-
-      const { user } = await getUserApiMethod({ headers });
+      const { user } = await getUserApiMethodreq);
 
       console.log(user);
 
