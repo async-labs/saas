@@ -42,8 +42,6 @@ app.prepare().then(() => {
   server.get('/', async (req: any, res) => {
     let redirectUrl = 'login';
 
-    console.log(req.user);
-
     if (req.user) {
       if (!req.user.defaultTeamSlug) {
         redirectUrl = 'create-team';
