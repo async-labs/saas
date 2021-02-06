@@ -22,8 +22,7 @@ const router = express.Router();
 router.use((req, res, next) => {
   console.log('team member API', req.path);
   if (!req.user) {
-    // res.status(401).json({ error: 'Unauthorized' });
-    res.redirect('/login');
+    res.status(401).json({ error: 'Unauthorized' });
     return;
   }
 

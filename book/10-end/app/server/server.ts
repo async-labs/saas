@@ -1,8 +1,6 @@
 import express from 'express';
 import next from 'next';
 
-import { getUserApiMethod } from '../lib/api/public';
-
 import setupSitemapAndRobots from './setupSitemapAndRobots';
 
 import routesWithCache from './routesWithCache';
@@ -27,17 +25,6 @@ app.prepare().then(() => {
   if (!dev) {
     server.set('trust proxy', 1); // sets req.hostname, req.ip
   }
-
-  server.use(async (req: any, _, nextfn) => {
-    try {
-      const { user } = await getUserApiMethod(req);
-      req.user = user;
-    } catch (error) {
-      console.log(error);
-    }
-
-    nextfn();
-  });
 
   server.get('/', async (req: any, res) => {
     let redirectUrl = 'login';
