@@ -175,7 +175,7 @@ Open source project is located in the `saas` folder. If you purchased our book, 
 
 To deploy the two apps (`api` and `app`), you can follow these instructions to deploy each app individually to Heroku:
 
-https://github.com/builderbook/builderbook/blob/master/README.md#deploy-to-heroku
+https://github.com/async-labs/builderbook/blob/master/README.md#deploy-to-heroku
 
 You are welcome to deploy to any cloud provider. Eventually, we will publish a tutorial for AWS Elastic Beanstalk.
 
@@ -194,7 +194,7 @@ If you need help deploying your SaaS Boilerplate app, or variation of it, you ca
 
 For more detail, check `package.json` files in both `app` and `api` folders and project's root.
 
-To customize styles, check [this guide](https://github.com/builderbook/builderbook#add-your-own-styles).
+To customize styles, check [this guide](https://github.com/async-labs/builderbook#add-your-own-styles).
 
 ## Screenshots
 
@@ -235,7 +235,7 @@ Payment history:
 Check out projects built with the code in this open source app. Feel free to add your own project by creating a pull request.
 
 - [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee) : Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
-- [Builder Book](https://github.com/builderbook/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
+- [Builder Book](https://github.com/async-labs/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
 - [Harbor](https://github.com/builderbook/harbor): Open source web app that allows anyone with a Gmail account to automatically charge for advice sent via email.
 - [Async](https://async-await.com/): asynchronous communication for small teams of software engineers.
 
