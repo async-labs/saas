@@ -6,8 +6,8 @@ Open source project is located in the `saas` folder. If you purchased our book, 
 
 ## Live demo:
 
-- APP: https://saas-app.builderbook.org
-- API: https://saas-api.builderbook.org
+- APP: https://saas-app.async-await.com
+- API: https://saas-api.async-await.com
 
 ## Contents
 
@@ -151,7 +151,7 @@ Open source project is located in the `saas` folder. If you purchased our book, 
   <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
   <CORSRule>
       <AllowedOrigin>http://localhost:3000</AllowedOrigin>
-      <AllowedOrigin>https://saas-app.builderbook.org</AllowedOrigin>
+      <AllowedOrigin>https://saas-app.async-await.com</AllowedOrigin>
       <AllowedMethod>POST</AllowedMethod>
       <AllowedMethod>GET</AllowedMethod>
       <AllowedMethod>PUT</AllowedMethod>

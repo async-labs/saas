@@ -18,7 +18,7 @@ function setupPasswordless({ server }) {
       });
 
       await sendEmail({
-        from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        from: `Kelly from saas-app.async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [recipient],
         subject: template.subject,
         body: template.message,

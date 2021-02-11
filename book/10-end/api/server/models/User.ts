@@ -312,7 +312,7 @@ class UserClass extends mongoose.Model {
 
     try {
       await sendEmail({
-        from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        from: `Kelly from saas-app.async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [email],
         subject: emailTemplate.subject,
         body: emailTemplate.message,
@@ -355,7 +355,7 @@ class UserClass extends mongoose.Model {
 
     try {
       await sendEmail({
-        from: `Kelly from saas-app.builderbook.org <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        from: `Kelly from saas-app.async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
         to: [email],
         subject: emailTemplate.subject,
         body: emailTemplate.message,

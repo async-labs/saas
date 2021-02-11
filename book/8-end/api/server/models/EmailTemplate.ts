@@ -51,13 +51,13 @@ export async function insertTemplates() {
     },
     {
       name: 'login',
-      subject: 'Login link for saas-app.builderbook.org',
+      subject: 'Login link for saas-app.async-await.com',
       message: `
         <p>Log into your account by clicking on this link: <a href="<%= loginURL %>"><%= loginURL %></a>.</p>`,
     },
     {
       name: 'invitation',
-      subject: 'You are invited to join a Team at saas-app.builderbook.org',
+      subject: 'You are invited to join a Team at saas-app.async-await.com',
       message: `You've been invited to join <b><%= teamName%></b>.
         <br/>Click here to accept the invitation: <%= invitationURL%>
       `,
