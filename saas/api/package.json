@@ -12,7 +12,7 @@
     "test": "jest",
     "postinstall": "rm -rf production-server/",
     "build": "tsc --project tsconfig.server.json",
-    "start": "node production-server/server.js"
+    "start": "node production-server/server/server.js"
   },
   "jest": {
     "preset": "ts-jest",
