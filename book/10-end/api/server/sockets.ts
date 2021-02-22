@@ -19,7 +19,7 @@ function setupSockets({ httpServer, origin, sessionMiddleware }) {
       cookie: {
         httpOnly: true,
         maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
-        domain: dev ? 'localhost' : '.builderbook.org',
+        domain: dev ? 'localhost' : '.builderbook.org', // update value in the next book update
         secure: dev ? false : true,
       },
       serveClient: false,
