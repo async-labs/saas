@@ -1,6 +1,8 @@
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import LensIcon from '@material-ui/icons/Lens';
 
 import Link from 'next/link';
 import React from 'react';
@@ -131,9 +133,7 @@ function LayoutWrapper({
                   }}
                 />
 
-                <i className="material-icons" color="action" style={{ verticalAlign: 'super' }}>
-                  arrow_drop_down
-                </i>
+                <ArrowDropDownIcon color="action" style={{ verticalAlign: 'super' }} />
               </MenuWithLinks>
             </div>
             <hr />
@@ -240,7 +240,7 @@ class Layout extends React.Component<Props> {
           <div>
             {isMobile || store.currentUrl.includes('create-team') ? null : (
               <React.Fragment>
-                <i
+                <LensIcon
                   style={{
                     float: 'left',
                     margin: '15px 0px 10px 25px',
@@ -249,13 +249,10 @@ class Layout extends React.Component<Props> {
                     cursor: 'pointer',
                     verticalAlign: 'top',
                   }}
-                  className="material-icons"
                   onClick={async () => {
                     await store.currentUser.toggleTheme(!store.currentUser.darkTheme);
                   }}
-                >
-                  lens
-                </i>
+                />
               </React.Fragment>
             )}
             <div style={{ clear: 'both' }} />

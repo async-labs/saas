@@ -2,6 +2,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Hidden from '@material-ui/core/Hidden';
 import TextField from '@material-ui/core/TextField';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
 import NProgress from 'nprogress';
@@ -188,7 +189,7 @@ class TeamSettings extends React.Component<Props, State> {
                       </TableCell>
                       <TableCell>
                         {isTeamLeader && m._id !== currentUser._id ? (
-                          <i
+                          <DeleteOutlineIcon
                             color="action"
                             data-id={m._id}
                             onClick={this.removeMember}
@@ -199,10 +200,7 @@ class TeamSettings extends React.Component<Props, State> {
                               cursor: 'pointer',
                               verticalAlign: 'middle',
                             }}
-                            className="material-icons"
-                          >
-                            delete
-                          </i>
+                          />
                         ) : null}
                       </TableCell>
                     </TableRow>

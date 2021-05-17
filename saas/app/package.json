@@ -7,7 +7,7 @@
     "yarn": "1.22.5"
   },
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only --project tsconfig.server.json --ignore-watch .next --ignore-watch components --ignore-watch lib --ignore-watch pages server/server.ts",
+    "dev": "nodemon server/server.ts",
     "lint": "eslint . --ext .ts,.tsx",
     "postinstall": "rm -rf production-server/",
     "build": "next build && tsc --project tsconfig.server.json && cp server/robots.txt production-server",
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/styles": "^4.10.0",
     "@stripe/stripe-js": "^1.9.0",
@@ -51,7 +52,8 @@
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.21.5",
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
-    "ts-node-dev": "^1.0.0-pre.44"
+    "ts-node": "^9.1.1"
   }
 }

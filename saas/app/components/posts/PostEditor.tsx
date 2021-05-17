@@ -1,5 +1,6 @@
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import InsertPhotoIcon from '@material-ui/icons/InsertPhoto';
 import he from 'he';
 import marked from 'marked';
 import { observer } from 'mobx-react';
@@ -85,9 +86,7 @@ class PostEditor extends React.Component<Props, State> {
         <div style={{ display: 'inline', float: 'left' }}>
           <label htmlFor="upload-file">
             <Button color="primary" component="span">
-              <i className="material-icons" style={{ fontSize: '22px' }}>
-                insert_photo
-              </i>
+              <InsertPhotoIcon style={{ fontSize: '22px' }} />
             </Button>
           </label>
           <input
@@ -204,9 +203,6 @@ class PostEditor extends React.Component<Props, State> {
         return `
           <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
             ${text}
-            <i class="material-icons" style="font-size: 13px; vertical-align: baseline">
-              launch
-            </i>
           </a>
         `;
       };

@@ -25,9 +25,9 @@ class MyDocument extends Document {
   public render() {
     // console.log('rendered on the server');
 
-    const isThemeDark =
-      this.props.__NEXT_DATA__.props.initialState.user &&
-      this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
+    const isThemeDark = this.props.__NEXT_DATA__.props.initialState.user
+      ? this.props.__NEXT_DATA__.props.initialState.user.darkTheme
+      : true;
 
     return (
       <Html lang="en">
@@ -37,49 +37,34 @@ class MyDocument extends Document {
           <meta name="theme-color" content="#303030" />
 
           <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400:latin"
-          />
-
-          <link
             rel="shortcut icon"
             href="https://storage.googleapis.com/async-await/async-favicon32.png"
           />
 
-          <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+          <link
+            rel="prefetch"
+            href="/fonts/IBM-Plex-Mono/IBMPlexMono-Regular.woff2"
+            as="font"
+            crossOrigin="anonymous"
+            type="font/woff2"
+          />
+          <link
+            rel="prefetch"
+            href="/fonts/IBM-Plex-Mono/IBMPlexMono-Bold.woff2"
+            as="font"
+            crossOrigin="anonymous"
+            type="font/woff2"
+          />
+
           <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
-
-          <link
-            rel="stylesheet"
-            href={
-              isThemeDark
-                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
-                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
-            }
-          />
-
-          <link
-            rel="stylesheet"
-            href={
-              isThemeDark
-                ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/a11y-dark.min.css'
-                : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/a11y-light.min.css'
-            }
-          />
 
           <style>
             {`
-              a,
-              a:focus {
-                font-weight: 600;
-                color: #000;
+              a {
+                font-weight: 400;
+                color: #58a6ff;
                 text-decoration: none;
                 outline: none;
-              }
-              a:hover,
-              button:hover {
-                opacity: 0.6;
-                cursor: pointer;
               }
               hr {
                 border: 0.5px #707070 solid;
@@ -148,7 +133,13 @@ class MyDocument extends Document {
             }}
           />
         </Head>
-        <body>
+        <body
+          style={{
+            fontFamily: 'IBM Plex Mono, monospace',
+            padding: '0px 0px 0px 0px !important',
+            color: isThemeDark ? '#c9d1d9' : '#222',
+          }}
+        >
           <Main />
           <NextScript />
         </body>

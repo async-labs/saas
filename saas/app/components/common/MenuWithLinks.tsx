@@ -16,6 +16,8 @@ class MenuWithLinks extends React.PureComponent<{
     const { options, children, router } = this.props;
     const { anchorEl } = this.state;
 
+    // use Link component and anchor element instead of onClick
+
     return (
       <div style={{ textAlign: 'center' }}>
         <div

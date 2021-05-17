@@ -4,7 +4,6 @@ import React from 'react';
 
 import { emailLoginLinkApiMethod } from '../../lib/api/public';
 import notify from '../../lib/notify';
-import { styleLoginButton } from '../../lib/sharedStyles';
 import { makeQueryString } from '../../lib/api/makeQueryString';
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -29,7 +28,7 @@ class LoginButton extends React.PureComponent<Props, State> {
 
     return (
       <React.Fragment>
-        <Button variant="contained" style={styleLoginButton} href={url}>
+        <Button variant="contained" color="secondary" href={url}>
           <img
             src="https://storage.googleapis.com/async-await-all/G.svg"
             alt="Log in with Google"
