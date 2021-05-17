@@ -60,7 +60,7 @@ class PostEditor extends React.Component<Props, State> {
     const membersMinusCurrentUser = members.filter((member) => member._id !== currentUser._id);
 
     const isThemeDark = store && store.currentUser && store.currentUser.darkTheme === true;
-    const textareaBackgroundColor = isThemeDark ? '#303030' : '#fff';
+    const textareaBackgroundColor = isThemeDark ? '#0d1117' : '#fff';
 
     return (
       <div style={{ marginTop: '20px' }}>
@@ -102,7 +102,7 @@ class PostEditor extends React.Component<Props, State> {
         <div
           style={{
             width: '100%',
-            height: '100vh',
+            height: '100%',
             padding: '10px 15px',
             border: isThemeDark
               ? '1px solid rgba(255, 255, 255, 0.5)'
@@ -117,7 +117,6 @@ class PostEditor extends React.Component<Props, State> {
                 input: {
                   border: 'none',
                   outline: 'none',
-                  font: '16px Roboto',
                   color: isThemeDark ? '#fff' : '#000',
                   fontWeight: 300,
                   height: '100vh',

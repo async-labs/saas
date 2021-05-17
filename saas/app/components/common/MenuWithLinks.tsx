@@ -1,7 +1,7 @@
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Link from 'next/link';
 import { NextRouter, withRouter } from 'next/router';
-import Router from 'next/router';
 import React from 'react';
 
 class MenuWithLinks extends React.PureComponent<{
@@ -37,25 +37,30 @@ class MenuWithLinks extends React.PureComponent<{
         >
           {options.map((option, i) =>
             option.separator ? (
-              <hr style={{ width: '85%', margin: '10px auto' }} key={`separated-${i}`} />
-            ) : (
+              <hr style={{ width: '95%', margin: '10px auto' }} key={`separated-${i}`} />
+            ) : option.externalServer ? (
               <MenuItem
-                onClick={() => {
-                  if (option.externalServer) {
-                    window.location.href = option.href;
-                  } else {
-                    Router.push(option.href, option.as || option.href);
-                  }
+                onClick={(event) => {
+                  event.preventDefault();
+                  window.location.href = option.href;
                   this.handleClose();
                 }}
-                key={option.href}
-                style={{
-                  fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
-                  fontSize: '14px',
-                }}
+                key={option.href || option.text}
               >
                 {option.text}
               </MenuItem>
+            ) : (
+              <Link key={option.href} href={option.href} as={option.as} passHref>
+                <MenuItem
+                  key={option.href}
+                  style={{
+                    fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
+                    fontSize: '14px',
+                  }}
+                >
+                  {option.text}
+                </MenuItem>
+              </Link>
             ),
           )}
         </Menu>

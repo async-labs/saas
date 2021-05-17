@@ -94,22 +94,25 @@ function LayoutWrapper({
               <MenuWithLinks
                 options={[
                   {
+                    text: 'Your Settings',
+                    href: '/your-settings',
+                    highlighterSlug: '/your-settings',
+                  },
+                  {
                     text: 'Team Settings',
                     href: `/team-settings?teamSlug=${store.currentTeam.slug}`,
                     as: `/team/${store.currentTeam.slug}/team-settings`,
                     simple: true,
+                    highlighterSlug: '/team-settings',
                   },
                   {
                     text: 'Billing',
                     href: `/billing?teamSlug=${store.currentTeam.slug}`,
                     as: `/team/${store.currentTeam.slug}/billing`,
                     simple: true,
+                    highlighterSlug: '/billing',
                   },
-                  {
-                    text: 'Your Settings',
-                    href: '/your-settings',
-                    highlighterSlug: '/your-settings',
-                  },
+
                   {
                     separator: true,
                   },
