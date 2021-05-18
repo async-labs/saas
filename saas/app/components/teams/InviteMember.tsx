@@ -22,10 +22,14 @@ type State = {
 };
 
 class InviteMember extends React.Component<Props, State> {
-  public state = {
-    email: '',
-    disabled: false,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      email: '',
+      disabled: false,
+    };
+  }
 
   public render() {
     const { open } = this.props;
@@ -45,7 +49,7 @@ class InviteMember extends React.Component<Props, State> {
             />
             <p />
             <br />
-            <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
+            <Button variant="contained" onClick={this.handleClose} disabled={this.state.disabled}>
               Cancel
             </Button>{' '}
             <Button

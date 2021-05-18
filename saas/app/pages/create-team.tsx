@@ -28,11 +28,15 @@ type Props = { store: Store; isMobile: boolean; teamRequired: boolean };
 type State = { newName: string; newAvatarUrl: string | ArrayBuffer; disabled: boolean };
 
 class CreateTeam extends React.Component<Props, State> {
-  public state = {
-    newName: '',
-    newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
-    disabled: false,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      newName: '',
+      newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
+      disabled: false,
+    };
+  }
 
   public render() {
     const { newAvatarUrl } = this.state;
@@ -78,7 +82,7 @@ class CreateTeam extends React.Component<Props, State> {
                   }}
                 />
                 <label htmlFor="upload-file">
-                  <Button variant="outlined" color="primary" component="span">
+                  <Button variant="contained" color="primary" component="span">
                     Select team logo
                   </Button>
                 </label>

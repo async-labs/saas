@@ -4,13 +4,23 @@ import Link from 'next/link';
 import { NextRouter, withRouter } from 'next/router';
 import React from 'react';
 
-class MenuWithLinks extends React.PureComponent<{
+type Props = {
   options: any[];
   router: NextRouter;
-}> {
-  public state = {
-    anchorEl: null,
-  };
+};
+
+type State = {
+  anchorEl: Element | ((element: Element) => Element);
+};
+
+class MenuWithLinks extends React.PureComponent<Props, State> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      anchorEl: null,
+    };
+  }
 
   public render() {
     const { options, children, router } = this.props;

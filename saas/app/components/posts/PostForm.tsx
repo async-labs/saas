@@ -32,11 +32,15 @@ type State = {
 };
 
 class PostForm extends React.Component<Props, State> {
-  public state = {
-    postId: null,
-    content: '',
-    disabled: false,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      postId: null,
+      content: '',
+      disabled: false,
+    };
+  }
 
   public static getDerivedStateFromProps(props: Props, state: State) {
     const { post } = props;
@@ -90,7 +94,7 @@ class PostForm extends React.Component<Props, State> {
             )}
             {isEditingPost ? (
               <Button
-                variant="outlined"
+                variant="contained"
                 onClick={this.closeForm}
                 disabled={this.state.disabled}
                 style={{ marginLeft: '10px' }}
@@ -112,7 +116,7 @@ class PostForm extends React.Component<Props, State> {
           <div style={{ margin: '20px 0px' }}>
             {isEditingPost ? (
               <Button
-                variant="outlined"
+                variant="contained"
                 onClick={this.closeForm}
                 disabled={this.state.disabled}
                 style={{ marginLeft: '10px' }}

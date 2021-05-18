@@ -77,7 +77,12 @@ class YourSettings extends React.Component<Props, State> {
             />
             <br />
             <br />
-            <Button variant="outlined" color="primary" type="submit" disabled={this.state.disabled}>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={this.state.disabled}
+            >
               Update name
             </Button>
           </form>
@@ -96,7 +101,7 @@ class YourSettings extends React.Component<Props, State> {
           />
           <label htmlFor="upload-file">
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
               component="span"
               disabled={this.state.disabled}

@@ -101,7 +101,12 @@ class TeamSettings extends React.Component<Props, State> {
             />
             <br />
             <br />
-            <Button variant="outlined" color="primary" type="submit" disabled={this.state.disabled}>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={this.state.disabled}
+            >
               Update name
             </Button>
           </form>
@@ -120,7 +125,7 @@ class TeamSettings extends React.Component<Props, State> {
           />
           <label htmlFor="upload-file">
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
               component="span"
               disabled={this.state.disabled}
@@ -144,7 +149,7 @@ class TeamSettings extends React.Component<Props, State> {
           </h4>
           <Button
             onClick={this.openInviteMember}
-            variant="outlined"
+            variant="contained"
             color="primary"
             style={{ float: 'right', marginTop: '-20px' }}
             disabled={this.state.disabled}
@@ -152,12 +157,13 @@ class TeamSettings extends React.Component<Props, State> {
             Invite member
           </Button>
           <p />
-          <TableContainer component={Paper}>
+          <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Person</TableCell>
                   <TableCell>Role</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
 

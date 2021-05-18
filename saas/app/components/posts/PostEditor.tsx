@@ -48,9 +48,13 @@ type Props = {
 type State = { htmlContent: string };
 
 class PostEditor extends React.Component<Props, State> {
-  public state = {
-    htmlContent: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      htmlContent: '',
+    };
+  }
 
   public render() {
     const { htmlContent } = this.state;

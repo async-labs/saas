@@ -207,7 +207,7 @@ class Layout extends React.Component<Props> {
                 Select existing team or create a new team.
                 <p />
                 <Link href="/create-team" as="/create-team">
-                  <Button variant="outlined" color="primary">
+                  <Button variant="contained" color="primary">
                     Create new team
                   </Button>
                 </Link>

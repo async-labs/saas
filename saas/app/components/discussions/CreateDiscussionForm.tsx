@@ -35,13 +35,17 @@ type State = {
 };
 
 class CreateDiscussionForm extends React.Component<Props, State> {
-  public state = {
-    name: '',
-    memberIds: [],
-    disabled: false,
-    content: '',
-    notificationType: 'default',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      name: '',
+      memberIds: [],
+      disabled: false,
+      content: '',
+      notificationType: 'default',
+    };
+  }
 
   public render() {
     const { open, isMobile, store } = this.props;
@@ -121,7 +125,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                 </Button>
                 {isMobile ? <p /> : null}
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   onClick={this.handleClose}
                   disabled={this.state.disabled}
                   style={{ marginLeft: isMobile ? '0px' : '20px' }}
@@ -148,7 +152,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                 </Button>
                 {isMobile ? <p /> : null}
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   onClick={this.handleClose}
                   disabled={this.state.disabled}
                   style={{ marginLeft: isMobile ? '0px' : '20px' }}

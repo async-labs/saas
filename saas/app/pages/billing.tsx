@@ -29,7 +29,11 @@ type Props = {
 type State = { disabled: boolean; showInvoices: boolean };
 
 class Billing extends React.Component<Props, State> {
-  public state = { disabled: false, showInvoices: false };
+  constructor(props) {
+    super(props);
+
+    this.state = { disabled: false, showInvoices: false };
+  }
 
   public render() {
     const { store, isMobile } = this.props;
@@ -79,7 +83,7 @@ class Billing extends React.Component<Props, State> {
           <br />
           <h4>Payment history</h4>
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
             onClick={this.showListOfInvoicesOnClick}
             disabled={this.state.disabled}
@@ -167,7 +171,7 @@ class Billing extends React.Component<Props, State> {
           </span>
           <p />
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
             onClick={this.cancelSubscriptionOnClick}
             disabled={this.state.disabled}
@@ -241,7 +245,7 @@ class Billing extends React.Component<Props, State> {
           </li>
           <p />
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
             onClick={() => this.handleCheckoutClick('setup')}
             disabled={this.state.disabled}

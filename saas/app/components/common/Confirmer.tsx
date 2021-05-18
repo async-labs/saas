@@ -8,16 +8,24 @@ import React from 'react';
 
 export let openConfirmDialogExternal;
 
-class Confirmer extends React.Component {
-  public state = {
-    open: false,
-    title: 'Are you sure?',
-    message: '',
-    onAnswer: null,
-  };
+type State = {
+  open: boolean;
+  title: string;
+  message: string;
+  onAnswer: (answer) => void;
+};
 
+class Confirmer extends React.Component<any, State> {
   constructor(props) {
     super(props);
+
+    this.state = {
+      open: false,
+      title: 'Are you sure?',
+      message: '',
+      onAnswer: null,
+    };
+
     openConfirmDialogExternal = this.openConfirmDialog;
   }
 
@@ -34,10 +42,10 @@ class Confirmer extends React.Component {
           <DialogContentText id="alert-dialog-description">{this.state.message}</DialogContentText>
         </DialogContent>
         <DialogActions style={{ padding: '10px' }}>
-          <Button onClick={this.handleClose} variant="outlined" color="primary" autoFocus>
+          <Button onClick={this.handleClose} variant="contained" color="primary" autoFocus>
             Cancel
           </Button>
-          <Button onClick={this.handleYes} variant="contained" color="primary">
+          <Button onClick={this.handleYes} variant="contained" color="secondary">
             OK
           </Button>
         </DialogActions>
