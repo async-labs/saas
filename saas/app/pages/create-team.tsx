@@ -25,7 +25,7 @@ const styleGrid = {
 
 type Props = { store: Store; isMobile: boolean; teamRequired: boolean };
 
-type State = { newName: string; newAvatarUrl: string | ArrayBuffer; disabled: boolean };
+type State = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class CreateTeam extends React.Component<Props, State> {
   constructor(props) {
@@ -200,7 +200,7 @@ class CreateTeam extends React.Component<Props, State> {
     reader.readAsDataURL(file);
 
     reader.onload = (e) => {
-      this.setState({ newAvatarUrl: e.target.result });
+      this.setState({ newAvatarUrl: e.target.result as string });
     };
   };
 }
