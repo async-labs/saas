@@ -24,11 +24,4 @@ const styleForm = {
   width: '360px',
 };
 
-export {
-  styleBigAvatar,
-  styleRaisedButton,
-  styleToolbar,
-  styleLoginButton,
-  styleTextField,
-  styleForm,
-};
+export { styleBigAvatar, styleRaisedButton, styleToolbar, styleTextField, styleForm };
