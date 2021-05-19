@@ -1,11 +1,10 @@
-import * as mobx from 'mobx';
-import { action, decorate, IObservableArray, observable } from 'mobx';
+import { action, configure, IObservableArray, observable, makeObservable } from 'mobx';
 import { useStaticRendering } from 'mobx-react';
 // @ts-expect-error no exported member io socket.io-client
 import { io } from 'socket.io-client';
 
 import { addTeamApiMethod, getTeamInvitationsApiMethod } from '../api/team-leader';
-import { getTeamListApiMethod, getTeamMembersApiMethod } from '../api/team-member';
+import { getTeamMembersApiMethod } from '../api/team-member';
 
 import { User } from './user';
 import { Team } from './team';
@@ -14,7 +13,7 @@ const dev = process.env.NODE_ENV !== 'production';
 
 useStaticRendering(typeof window === 'undefined');
 
-mobx.configure({ enforceActions: 'observed' });
+configure({ enforceActions: 'observed' });
 
 class Store {
   public isServer: boolean;
@@ -22,7 +21,7 @@ class Store {
   public currentUser?: User = null;
   public currentUrl = '';
 
-  public currentTeam?: Team;
+  public currentTeam?: Team = null;
 
   public teams: IObservableArray<Team> = observable([]);
 
@@ -37,6 +36,16 @@ class Store {
     isServer: boolean;
     socket?: SocketIOClient.Socket;
   }) {
+    makeObservable(this, {
+      currentUser: observable,
+      currentUrl: observable,
+      currentTeam: observable,
+
+      changeCurrentUrl: action,
+      setCurrentUser: action,
+      setCurrentTeam: action,
+    });
+
     this.isServer = !!isServer;
 
     this.setCurrentUser(initialState.user);
@@ -45,12 +54,16 @@ class Store {
 
     // console.log(initialState.user);
 
-    if (initialState.teamSlug || (initialState.user && initialState.user.defaultTeamSlug)) {
-      this.setCurrentTeam(
-        initialState.teamSlug || initialState.user.defaultTeamSlug,
-        initialState.teams,
-      );
-    }
+    // if (initialState.teamSlug || (initialState.user && initialState.user.defaultTeamSlug)) {
+    //   this.setCurrentTeam(
+    //     initialState.teamSlug || initialState.user.defaultTeamSlug,
+    //     initialState.teams,
+    //   );
+    // }
+
+    console.log(initialState.team);
+
+    this.setCurrentTeam(initialState.team);
 
     this.socket = socket;
 
@@ -84,40 +97,25 @@ class Store {
     return team;
   }
 
-  public async setCurrentTeam(slug: string, initialTeams: any[]) {
+  public async setCurrentTeam(team) {
     if (this.currentTeam) {
-      if (this.currentTeam.slug === slug) {
+      if (this.currentTeam.slug === team.slug) {
         return;
       }
     }
 
-    let found = false;
+    this.currentTeam = new Team({ ...team, store: this });
 
-    const teams = initialTeams || (await getTeamListApiMethod()).teams;
+    console.log(team);
 
-    console.log(teams.length);
+    const users =
+      team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
 
-    for (const team of teams) {
-      if (team.slug === slug) {
-        found = true;
-        this.currentTeam = new Team({ ...team, store: this });
+    const invitations =
+      team.initialInvitations ||
+      (await getTeamInvitationsApiMethod(this.currentTeam._id)).invitations;
 
-        const users =
-          team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
-
-        const invitations =
-          team.initialInvitations ||
-          (await getTeamInvitationsApiMethod(this.currentTeam._id)).invitations;
-
-        this.currentTeam.setInitialMembersAndInvitations(users, invitations);
-
-        break;
-      }
-    }
-
-    if (!found) {
-      this.currentTeam = null;
-    }
+    this.currentTeam.setInitialMembersAndInvitations(users, invitations);
   }
 
   public addTeamToLocalCache(data): Team {
@@ -147,16 +145,6 @@ class Store {
     this.teams.remove(team);
   }
 }
-
-decorate(Store, {
-  currentUser: observable,
-  currentUrl: observable,
-  currentTeam: observable,
-
-  changeCurrentUrl: action,
-  setCurrentUser: action,
-  setCurrentTeam: action,
-});
 
 let store: Store = null;
 

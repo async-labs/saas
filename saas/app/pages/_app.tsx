@@ -62,7 +62,7 @@ class MyApp extends App {
       console.log(error);
     }
 
-    let initialData = {};
+    let initialData;
 
     if (userObj) {
       try {
@@ -79,9 +79,24 @@ class MyApp extends App {
 
     // console.log(teamSlug);
 
+    const selectedTeamSlug = teamSlug || userObj.defaultTeamSlug;
+
+    const team = initialData.teams.find((t) => {
+      return t.slug === selectedTeamSlug;
+    });
+
+    console.log('App', teamSlug, userObj.defaultTeamSlug, initialData.teams);
+    console.log('App', team);
+
     return {
       ...appProps,
-      initialState: { user: userObj, currentUrl: ctx.asPath, teamSlug, ...initialData },
+      initialState: {
+        user: userObj,
+        currentUrl: ctx.asPath,
+        team,
+        teamSlug,
+        ...initialData,
+      },
     };
   }
 

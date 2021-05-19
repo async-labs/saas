@@ -1,4 +1,4 @@
-import { action, computed, decorate, observable, runInAction } from 'mobx';
+import { action, computed, observable, runInAction, makeObservable } from 'mobx';
 
 import { editPostApiMethod } from '../api/team-member';
 
@@ -22,6 +22,18 @@ export class Post {
   public lastUpdatedAt: Date;
 
   constructor(params) {
+    makeObservable(this, {
+      content: observable,
+      htmlContent: observable,
+      isEdited: observable,
+      lastUpdatedAt: observable,
+
+      editPost: action,
+      changeLocalCache: action,
+
+      user: computed,
+    });
+
     this._id = params._id;
     this.createdUserId = params.createdUserId;
     this.createdAt = params.createdAt;
@@ -65,15 +77,3 @@ export class Post {
     return this.discussion.team.members.get(this.createdUserId) || null;
   }
 }
-
-decorate(Post, {
-  content: observable,
-  htmlContent: observable,
-  isEdited: observable,
-  lastUpdatedAt: observable,
-
-  editPost: action,
-  changeLocalCache: action,
-
-  user: computed,
-});

@@ -1,4 +1,4 @@
-import { action, decorate, IObservableArray, observable, runInAction, computed } from 'mobx';
+import { action, IObservableArray, observable, runInAction, computed, makeObservable } from 'mobx';
 
 import {
   addPostApiMethod,
@@ -26,6 +26,31 @@ class Discussion {
   public notificationType: string;
 
   constructor(params) {
+    makeObservable(this, {
+      name: observable,
+      slug: observable,
+      memberIds: observable,
+      posts: observable,
+      isLoadingPosts: observable,
+
+      editDiscussion: action,
+      changeLocalCache: action,
+
+      setInitialPosts: action,
+      loadPosts: action,
+      addPost: action,
+      addPostToLocalCache: action,
+      deletePost: action,
+
+      addDiscussionToLocalCache: action,
+      editDiscussionFromLocalCache: action,
+      deleteDiscussionFromLocalCache: action,
+      editPostFromLocalCache: action,
+      deletePostFromLocalCache: action,
+
+      members: computed,
+    });
+
     this._id = params._id;
     this.createdUserId = params.createdUserId;
     this.store = params.store;
@@ -235,30 +260,5 @@ class Discussion {
     }
   }
 }
-
-decorate(Discussion, {
-  name: observable,
-  slug: observable,
-  memberIds: observable,
-  posts: observable,
-  isLoadingPosts: observable,
-
-  editDiscussion: action,
-  changeLocalCache: action,
-
-  setInitialPosts: action,
-  loadPosts: action,
-  addPost: action,
-  addPostToLocalCache: action,
-  deletePost: action,
-
-  addDiscussionToLocalCache: action,
-  editDiscussionFromLocalCache: action,
-  deleteDiscussionFromLocalCache: action,
-  editPostFromLocalCache: action,
-  deletePostFromLocalCache: action,
-
-  members: computed,
-});
 
 export { Discussion };
