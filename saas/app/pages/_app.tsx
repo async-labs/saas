@@ -79,14 +79,20 @@ class MyApp extends App {
 
     // console.log(teamSlug);
 
-    const selectedTeamSlug = teamSlug || userObj.defaultTeamSlug;
+    let selectedTeamSlug = '';
 
-    const team = initialData.teams.find((t) => {
-      return t.slug === selectedTeamSlug;
-    });
+    if (teamRequired) {
+      selectedTeamSlug = teamSlug;
+    } else if (userObj) {
+      selectedTeamSlug = userObj.defaulTeamSlug;
+    }
 
-    console.log('App', teamSlug, userObj.defaultTeamSlug, initialData.teams);
-    console.log('App', team);
+    let team;
+    if (initialData && initialData.teams) {
+      team = initialData.teams.find((t) => {
+        return t.slug === selectedTeamSlug;
+      });
+    }
 
     return {
       ...appProps,

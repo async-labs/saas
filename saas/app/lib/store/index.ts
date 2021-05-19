@@ -61,7 +61,7 @@ class Store {
     //   );
     // }
 
-    console.log(initialState.team);
+    // console.log(initialState.team);
 
     this.setCurrentTeam(initialState.team);
 
@@ -104,18 +104,20 @@ class Store {
       }
     }
 
-    this.currentTeam = new Team({ ...team, store: this });
+    if (team) {
+      this.currentTeam = new Team({ ...team, store: this });
 
-    console.log(team);
+      const users =
+        team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
 
-    const users =
-      team.initialMembers || (await getTeamMembersApiMethod(this.currentTeam._id)).users;
+      const invitations =
+        team.initialInvitations ||
+        (await getTeamInvitationsApiMethod(this.currentTeam._id)).invitations;
 
-    const invitations =
-      team.initialInvitations ||
-      (await getTeamInvitationsApiMethod(this.currentTeam._id)).invitations;
-
-    this.currentTeam.setInitialMembersAndInvitations(users, invitations);
+      this.currentTeam.setInitialMembersAndInvitations(users, invitations);
+    } else {
+      this.currentTeam = null;
+    }
   }
 
   public addTeamToLocalCache(data): Team {
