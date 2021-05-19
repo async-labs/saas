@@ -1,5 +1,7 @@
 import { Response } from 'express';
+import * as express from 'express';
 import { Server } from 'socket.io';
+import * as httpModule from 'http';
 
 import { DiscussionDocument } from './models/Discussion';
 import { PostDocument } from './models/Post';
@@ -8,7 +10,15 @@ let io: Server = null;
 
 const dev = process.env.NODE_ENV !== 'production';
 
-function setupSockets({ httpServer, origin, sessionMiddleware }) {
+function setupSockets({
+  httpServer,
+  origin,
+  sessionMiddleware,
+}: {
+  httpServer: httpModule.Server;
+  origin: string | boolean | RegExp | (string | RegExp)[];
+  sessionMiddleware: express.RequestHandler;
+}) {
   if (io === null) {
     io = new Server(httpServer, {
       cors: {

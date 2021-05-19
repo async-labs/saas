@@ -52,7 +52,7 @@ function setupPasswordless({ server }) {
     '/auth/email-login-link',
     passwordless.requestToken(async (email, __, callback) => {
       try {
-        const user = await User.findOne({ email }).select('_id').lean();
+        const user = await User.findOne({ email }).select('_id').setOptions({ lean: true });
 
         if (user) {
           callback(null, user._id);

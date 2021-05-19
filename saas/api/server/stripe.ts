@@ -1,3 +1,4 @@
+import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import Stripe from 'stripe';
 
@@ -13,7 +14,23 @@ const stripeInstance = new Stripe(
   { apiVersion: '2020-08-27' },
 );
 
-function createSession({ userId, teamId, teamSlug, customerId, subscriptionId, userEmail, mode }) {
+function createSession({
+  userId,
+  teamId,
+  teamSlug,
+  customerId,
+  subscriptionId,
+  userEmail,
+  mode,
+}: {
+  userId: string;
+  teamId: string;
+  teamSlug: string;
+  customerId: string;
+  subscriptionId: string;
+  userEmail: string;
+  mode: Stripe.Checkout.SessionCreateParams.Mode;
+}) {
   const params: Stripe.Checkout.SessionCreateParams = {
     customer_email: customerId ? undefined : userEmail,
     customer: customerId,
@@ -70,17 +87,17 @@ function updateSubscription(subscriptionId: string, params: Stripe.SubscriptionU
   return stripeInstance.subscriptions.update(subscriptionId, params);
 }
 
-function cancelSubscription({ subscriptionId }) {
+function cancelSubscription({ subscriptionId }: { subscriptionId: string }) {
   logger.debug('cancel subscription', subscriptionId);
   return stripeInstance.subscriptions.del(subscriptionId);
 }
 
-function getListOfInvoices({ customerId }) {
+function getListOfInvoices({ customerId }: { customerId: string }) {
   logger.debug('getting list of invoices for customer', customerId);
   return stripeInstance.invoices.list({ customer: customerId, limit: 100 });
 }
 
-function stripeWebhookAndCheckoutCallback({ server }) {
+function stripeWebhookAndCheckoutCallback({ server }: { server: express.Application }) {
   server.post(
     '/api/v1/public/stripe-invoice-payment-failed',
     bodyParser.raw({ type: 'application/json' }),
@@ -127,12 +144,12 @@ function stripeWebhookAndCheckoutCallback({ server }) {
     const user = await User.findById(
       session.metadata.userId,
       '_id stripeCustomer email displayName isSubscriptionActive stripeSubscription',
-    ).lean();
+    ).setOptions({ lean: true });
 
     const team = await Team.findById(
       session.metadata.teamId,
       'isSubscriptionActive stripeSubscription teamLeaderId slug',
-    ).lean();
+    ).setOptions({ lean: true });
 
     if (!user) {
       throw new Error('User not found.');

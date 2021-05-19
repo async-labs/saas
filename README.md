@@ -73,6 +73,7 @@ Open source project is located in the `saas` folder. If you purchased our book, 
   GOOGLE_CLIENTSECRET=
 
   # Used in api/server/aws-s3.ts and api/server/aws-ses.ts
+  AWS_REGION=
   AWS_ACCESSKEYID=
   AWS_SECRETACCESSKEY=
 
@@ -397,8 +398,6 @@ All code in this repository is provided under the [MIT License](https://github.c
 ├── .gitignore
 ├── LICENSE.md
 ├── README.md
-├── docker-compose.yml
-├── mongo-user.sh
 ├── package.json
 ├── yarn.lock
 ```
