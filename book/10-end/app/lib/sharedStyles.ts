@@ -6,7 +6,6 @@ const styleBigAvatar = {
 
 const styleRaisedButton = {
   margin: '15px',
-  font: '14px Roboto',
 };
 
 const styleToolbar = {
@@ -15,17 +14,7 @@ const styleToolbar = {
   paddingRight: '20px',
 };
 
-const styleLoginButton = {
-  borderRadius: '2px',
-  font: '16px Roboto',
-  fontWeight: 400,
-  letterSpacing: '0.01em',
-  color: '#fff',
-  backgroundColor: '#DF4930',
-};
-
 const styleTextField = {
-  font: '15px Roboto',
   color: '#222',
   fontWeight: '300',
 };
@@ -35,11 +24,4 @@ const styleForm = {
   width: '360px',
 };
 
-export {
-  styleBigAvatar,
-  styleRaisedButton,
-  styleToolbar,
-  styleLoginButton,
-  styleTextField,
-  styleForm,
-};
+export { styleBigAvatar, styleRaisedButton, styleToolbar, styleTextField, styleForm };

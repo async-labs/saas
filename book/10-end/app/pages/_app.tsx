@@ -107,12 +107,34 @@ class MyApp extends App<{ isMobile: boolean }> {
     const { Component, pageProps } = this.props;
     const store = this.store;
 
+    const isThemeDark = store.currentUser ? store.currentUser.darkTheme : true;
+
     return (
-      <ThemeProvider
-        theme={store.currentUser && store.currentUser.darkTheme ? themeDark : themeLight}
-      >
+      <ThemeProvider theme={isThemeDark ? themeDark : themeLight}>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <link
+            rel="prefetch"
+            href="https://d2c24pn6pcl4ug.cloudfront.net/fonts/IBM-Plex-Mono/IBMPlexMono-Regular.woff2"
+            as="font"
+            crossOrigin="anonymous"
+            type="font/woff2"
+          />
+          <link
+            rel="prefetch"
+            href="https://d2c24pn6pcl4ug.cloudfront.net/fonts/IBM-Plex-Mono/IBMPlexMono-Bold.woff2"
+            as="font"
+            crossOrigin="anonymous"
+            type="font/woff2"
+          />
+          <link
+            rel="stylesheet"
+            href={
+              isThemeDark
+                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
+                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
+            }
+          />
         </Head>
         <CssBaseline />
         <Provider store={store}>

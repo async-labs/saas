@@ -1,8 +1,6 @@
 import Button from '@material-ui/core/Button';
 import React from 'react';
 
-import { styleLoginButton } from '../../lib/sharedStyles';
-
 class LoginButton extends React.PureComponent {
   public render() {
     const url = `${process.env.URL_API}/auth/google`;
@@ -11,7 +9,7 @@ class LoginButton extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <Button variant="contained" style={styleLoginButton} href={url}>
+        <Button variant="contained" color="secondary" href={url}>
           <img
             src="https://storage.googleapis.com/async-await-all/G.svg"
             alt="Log in with Google"

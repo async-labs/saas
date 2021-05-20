@@ -15,15 +15,6 @@ const styleToolbar = {
   paddingRight: '20px',
 };
 
-const styleLoginButton = {
-  borderRadius: '2px',
-  font: '16px Roboto',
-  fontWeight: 400,
-  letterSpacing: '0.01em',
-  color: '#fff',
-  backgroundColor: '#DF4930',
-};
-
 const styleTextField = {
   font: '15px Roboto',
   color: '#222',
@@ -39,7 +30,6 @@ export {
   styleBigAvatar,
   styleRaisedButton,
   styleToolbar,
-  styleLoginButton,
   styleTextField,
   styleForm,
 };

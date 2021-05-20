@@ -1,6 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import DoneIcon from '@material-ui/icons/Done';
 import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
 import NProgress from 'nprogress';
@@ -52,9 +53,7 @@ class YourSettings extends React.Component<Props, State> {
           <h3>Your Settings</h3>
           <h4 style={{ marginTop: '40px' }}>Your account</h4>
           <div>
-            <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
-              done
-            </i>{' '}
+            <DoneIcon color="action" style={{ verticalAlign: 'text-bottom' }} />{' '}
             {currentUser.isSignedupViaGoogle
               ? 'You signed up on Async using your Google account.'
               : 'You signed up on Async using your email.'}

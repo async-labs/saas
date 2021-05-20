@@ -45,24 +45,13 @@ class MyDocument extends Document {
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
           <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
 
-          <link
-            rel="stylesheet"
-            href="https://storage.googleapis.com/async-await/nprogress-light.min.css"
-          />
-
           <style>
             {`
-              a,
-              a:focus {
-                font-weight: 600;
-                color: #000;
+              a {
+                font-weight: 400;
+                color: #58a6ff;
                 text-decoration: none;
                 outline: none;
-              }
-              a:hover,
-              button:hover {
-                opacity: 0.6;
-                cursor: pointer;
               }
               hr {
                 border: 0.5px #707070 solid;

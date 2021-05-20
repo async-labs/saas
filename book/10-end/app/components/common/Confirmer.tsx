@@ -34,10 +34,10 @@ class Confirmer extends React.Component {
           <DialogContentText id="alert-dialog-description">{this.state.message}</DialogContentText>
         </DialogContent>
         <DialogActions style={{ padding: '10px' }}>
-          <Button onClick={this.handleClose} variant="outlined" color="primary" autoFocus>
+          <Button onClick={this.handleClose} variant="contained" color="primary" autoFocus>
             Cancel
           </Button>
-          <Button onClick={this.handleYes} variant="contained" color="primary">
+          <Button onClick={this.handleYes} variant="contained" color="secondary">
             OK
           </Button>
         </DialogActions>

@@ -208,9 +208,6 @@ class PostEditor extends React.Component<Props, State> {
         return `
           <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
             ${text}
-            <i class="material-icons" style="font-size: 13px; vertical-align: baseline">
-              launch
-            </i>
           </a>
         `;
       };

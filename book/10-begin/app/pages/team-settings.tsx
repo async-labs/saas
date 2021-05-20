@@ -157,6 +157,7 @@ class TeamSettings extends React.Component<Props, State> {
                 <TableRow>
                   <TableCell>Person</TableCell>
                   <TableCell>Role</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
 

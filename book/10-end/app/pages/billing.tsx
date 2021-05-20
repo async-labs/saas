@@ -4,6 +4,7 @@ import Head from 'next/head';
 import * as React from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import Button from '@material-ui/core/Button';
+import DoneIcon from '@material-ui/icons/Done';
 import NProgress from 'nprogress';
 
 import Layout from '../components/layout';
@@ -154,10 +155,8 @@ class Billing extends React.Component<Props, State> {
         <React.Fragment>
           <span>
             {' '}
-            <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
-              done
-            </i>{' '}
-            Subscription is active.
+            <DoneIcon color="action" style={{ verticalAlign: 'text-bottom' }} /> Subscription is
+            active.
             <p>
               You subscribed <b>{currentTeam.name}</b> on <b>{subscriptionDate}</b>.
             </p>
@@ -231,10 +230,8 @@ class Billing extends React.Component<Props, State> {
       return (
         <span>
           {' '}
-          <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
-            done
-          </i>{' '}
-          Your default payment method:
+          <DoneIcon color="action" style={{ verticalAlign: 'text-bottom' }} /> Your default payment
+          method:
           <li>
             {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
           </li>

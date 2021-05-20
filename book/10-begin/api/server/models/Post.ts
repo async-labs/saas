@@ -50,9 +50,6 @@ function markdownToHtml(content) {
     return `
       <a target="_blank" href="${href}" rel="noopener noreferrer"${t}>
         ${text}
-        <i class="material-icons" style="font-size: 16px; vertical-align: baseline">
-          launch
-        </i>
       </a>
     `;
   };
