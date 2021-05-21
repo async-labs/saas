@@ -10,7 +10,11 @@ type Props = { invitationToken?: string };
 type State = { email: string };
 
 class LoginButton extends React.PureComponent<Props, State> {
-  public state = { email: '' };
+  constructor(props) {
+    super(props);
+
+    this.state = { email: '' };
+  }
 
   public render() {
     const { invitationToken } = this.props;

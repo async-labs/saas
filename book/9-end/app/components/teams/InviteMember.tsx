@@ -22,10 +22,14 @@ type State = {
 };
 
 class InviteMember extends React.Component<Props, State> {
-  public state = {
-    email: '',
-    disabled: false,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      email: '',
+      disabled: false,
+    };
+  }
 
   public render() {
     const { open } = this.props;

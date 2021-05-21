@@ -8,16 +8,24 @@ import React from 'react';
 
 export let openConfirmDialogExternal;
 
-class Confirmer extends React.Component {
-  public state = {
-    open: false,
-    title: 'Are you sure?',
-    message: '',
-    onAnswer: null,
-  };
+type State = {
+  open: boolean;
+  title: string;
+  message: string;
+  onAnswer: (answer) => void;
+};
 
+class Confirmer extends React.Component<any, State> {
   constructor(props) {
     super(props);
+
+    this.state = {
+      open: false,
+      title: 'Are you sure?',
+      message: '',
+      onAnswer: null,
+    };
+
     openConfirmDialogExternal = this.openConfirmDialog;
   }
 

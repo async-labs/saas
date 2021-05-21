@@ -12,10 +12,16 @@ import notify from '../../lib/notify';
 
 type Props = { store: Store; team: Team; isMobile: boolean };
 
-class DiscussionList extends React.Component<Props> {
-  public state = {
-    discussionFormOpen: false,
-  };
+type State = { discussionFormOpen: boolean };
+
+class DiscussionList extends React.Component<Props, State> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      discussionFormOpen: false,
+    };
+  }
 
   public componentDidMount() {
     this.props.team.loadDiscussions().catch((err) => notify(err));

@@ -29,10 +29,15 @@ type State = {
 };
 
 class DiscussionPageComp extends React.Component<Props, State> {
-  public state = {
-    selectedPost: null,
-    showMarkdownClicked: false,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectedPost: null,
+      showMarkdownClicked: false,
+    };
+  }
+
 
   public render() {
     const { store, isMobile, discussionSlug } = this.props;

@@ -3,7 +3,7 @@
   "version": "1",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only --project tsconfig.server.json server/server.ts",
+    "dev": "nodemon server/server.ts",
     "lint": "eslint . --ext .ts,.tsx",
     "test": "jest"
   },
@@ -36,8 +36,9 @@
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "jest": "^26.4.2",
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "ts-jest": "^26.4.4",
-    "ts-node-dev": "^1.0.0-pre.44"
+    "ts-node": "^9.1.1"
   }
 }

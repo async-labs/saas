@@ -7,7 +7,7 @@
     "yarn": "1.22.5"
   },
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only --project tsconfig.server.json --ignore-watch .next --ignore-watch components --ignore-watch lib --ignore-watch pages server/server.ts",
+    "dev": "nodemon server/server.ts",
     "lint": "eslint . --ext .ts,.tsx",
     "postinstall": "rm -rf production-server/",
     "build": "next build && tsc --project tsconfig.server.json && cp server/robots.txt production-server",
@@ -26,8 +26,8 @@
     "keycode": "^2.2.0",
     "lru-cache": "^6.0.0",
     "marked": "^1.2.7",
-    "mobx": "^5.15.7",
-    "mobx-react": "^6.3.0",
+    "mobx": "^6.3.1",
+    "mobx-react": "6.3.1",
     "moment": "^2.29.1",
     "next": "^9.1.2",
     "nprogress": "0.2.0",
@@ -52,7 +52,8 @@
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.21.5",
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
-    "ts-node-dev": "^1.0.0-pre.44"
+    "ts-node": "^9.1.1"
   }
 }

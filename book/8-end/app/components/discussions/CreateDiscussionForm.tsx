@@ -29,12 +29,16 @@ type State = {
 };
 
 class CreateDiscussionForm extends React.Component<Props, State> {
-  public state = {
-    name: '',
-    memberIds: [],
-    disabled: false,
-    content: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      name: '',
+      memberIds: [],
+      disabled: false,
+      content: '',
+    };
+  }
 
   public render() {
     const { open, isMobile, store } = this.props;

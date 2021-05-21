@@ -2,13 +2,23 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 
-class MenuWithMenuItems extends React.PureComponent<{
+type Props = {
   menuOptions: any;
   itemOptions: any[];
-}> {
-  public state = {
-    menuElem: null,
-  };
+};
+
+type State = {
+  menuElem: Element | ((element: Element) => Element);
+};
+
+class MenuWithMenuItems extends React.PureComponent<Props, State> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      menuElem: null,
+    };
+  }
 
   public render() {
     const { menuOptions, itemOptions } = this.props;

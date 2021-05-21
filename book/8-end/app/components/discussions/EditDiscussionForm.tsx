@@ -30,12 +30,16 @@ type State = {
 };
 
 class EditDiscussionForm extends React.Component<Props, State> {
-  public state = {
-    name: '',
-    memberIds: [],
-    disabled: false,
-    discussionId: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      name: '',
+      memberIds: [],
+      disabled: false,
+      content: '',
+    };
+  }
 
   public static getDerivedStateFromProps(props: Props, state: State) {
     const { discussion } = props;

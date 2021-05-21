@@ -28,7 +28,11 @@ type Props = {
 type State = { disabled: boolean; showInvoices: boolean };
 
 class Billing extends React.Component<Props, State> {
-  public state = { disabled: false, showInvoices: false };
+  constructor(props) {
+    super(props);
+
+    this.state = { disabled: false, showInvoices: false };
+  }
 
   public render() {
     const { store, isMobile } = this.props;

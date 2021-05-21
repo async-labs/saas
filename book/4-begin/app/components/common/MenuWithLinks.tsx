@@ -1,16 +1,26 @@
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Link from 'next/link';
 import { NextRouter, withRouter } from 'next/router';
-import Router from 'next/router';
 import React from 'react';
 
-class MenuWithLinks extends React.PureComponent<{
+type Props = {
   options: any[];
   router: NextRouter;
-}> {
-  public state = {
-    anchorEl: null,
-  };
+};
+
+type State = {
+  anchorEl: Element | ((element: Element) => Element);
+};
+
+class MenuWithLinks extends React.PureComponent<Props, State> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      anchorEl: null,
+    };
+  }
 
   public render() {
     const { options, children, router } = this.props;
@@ -37,19 +47,17 @@ class MenuWithLinks extends React.PureComponent<{
             option.separator ? (
               <hr style={{ width: '85%', margin: '10px auto' }} key={`separated-${i}`} />
             ) : (
-              <MenuItem
-                onClick={() => {
-                  Router.push(option.href, option.as || option.href);
-                  this.handleClose();
-                }}
-                key={option.href}
-                style={{
-                  fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
-                  fontSize: '14px',
-                }}
-              >
-                {option.text}
-              </MenuItem>
+              <Link key={option.href} href={option.href} as={option.as} passHref>
+                <MenuItem
+                  key={option.href}
+                  style={{
+                    fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
+                    fontSize: '14px',
+                  }}
+                >
+                  {option.text}
+                </MenuItem>
+              </Link>
             ),
           )}
         </Menu>

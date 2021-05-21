@@ -3,15 +3,20 @@ import React from 'react';
 
 export let openSnackbarExternal;
 
-class Notifier extends React.PureComponent {
-  public state = {
-    open: false,
-    message: '',
-  };
+type State = {
+  open: boolean;
+  message: string;
+};
 
+class Notifier extends React.PureComponent<any, State> {
   constructor(props) {
     super(props);
     openSnackbarExternal = this.openSnackbar;
+
+    this.state = {
+      open: false,
+      message: '',
+    };
   }
 
   public render() {

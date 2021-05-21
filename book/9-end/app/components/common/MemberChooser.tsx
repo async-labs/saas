@@ -13,11 +13,11 @@ type Props = {
   helperText?: string;
 };
 
-class MemberChooser extends React.Component<Props> {
-  public state = {
-    selectedItems: [],
-  };
+type State = {
+  selectedItems: { label: string; id: string }[];
+};
 
+class MemberChooser extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 

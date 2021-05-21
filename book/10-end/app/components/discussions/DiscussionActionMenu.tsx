@@ -55,10 +55,14 @@ type State = {
 };
 
 class DiscussionActionMenu extends React.Component<Props, State> {
-  public state = {
-    discussionFormOpen: false,
-    selectedDiscussion: null,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      discussionFormOpen: false,
+      selectedDiscussion: null,
+    };
+  }
 
   public render() {
     const { discussion, store } = this.props;

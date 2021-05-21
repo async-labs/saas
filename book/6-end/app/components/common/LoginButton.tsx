@@ -5,8 +5,14 @@ import React from 'react';
 import { emailLoginLinkApiMethod } from '../../lib/api/public';
 import notify from '../../lib/notify';
 
-class LoginButton extends React.PureComponent {
-  public state = { email: '' };
+type State = { email: string };
+
+class LoginButton extends React.PureComponent<any, State> {
+  constructor(props) {
+    super(props);
+
+    this.state = { email: '' };
+  }
 
   public render() {
     const url = `${process.env.URL_API}/auth/google`;
