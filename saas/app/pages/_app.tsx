@@ -155,7 +155,6 @@ class MyApp extends App {
             rel="stylesheet"
             href="https://d2c24pn6pcl4ug.cloudfront.net/css/nprogress.min.css"
           />
-          <link rel="stylesheet" href="https://d2c24pn6pcl4ug.cloudfront.net/css/vs2015.min.css" />
         </Head>
         <CssBaseline />
         <Provider store={store}>

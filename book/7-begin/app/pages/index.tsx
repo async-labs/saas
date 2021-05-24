@@ -65,7 +65,7 @@ class Index extends React.Component<Props> {
             Test Confirmer and Notifier
           </Button>
           <p>Your email: {this.props.user.email}</p>
-          <p>Your name: {this.props.user.displayName}</p>
+          <p>Your username: {this.props.user.displayName}</p>
         </div>
       </Layout>
     );

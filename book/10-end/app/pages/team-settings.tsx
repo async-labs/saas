@@ -13,7 +13,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 
 import Layout from '../components/layout';
 import InviteMember from '../components/teams/InviteMember';
@@ -101,8 +100,13 @@ class TeamSettings extends React.Component<Props, State> {
             />
             <br />
             <br />
-            <Button variant="outlined" color="primary" type="submit" disabled={this.state.disabled}>
-              Update name
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={this.state.disabled}
+            >
+              Update username
             </Button>
           </form>
           <p />
@@ -120,7 +124,7 @@ class TeamSettings extends React.Component<Props, State> {
           />
           <label htmlFor="upload-file">
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
               component="span"
               disabled={this.state.disabled}
@@ -144,7 +148,7 @@ class TeamSettings extends React.Component<Props, State> {
           </h4>
           <Button
             onClick={this.openInviteMember}
-            variant="outlined"
+            variant="contained"
             color="primary"
             style={{ float: 'right', marginTop: '-20px' }}
             disabled={this.state.disabled}
@@ -152,7 +156,7 @@ class TeamSettings extends React.Component<Props, State> {
             Invite member
           </Button>
           <p />
-          <TableContainer component={Paper}>
+          <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
@@ -217,7 +221,7 @@ class TeamSettings extends React.Component<Props, State> {
             <React.Fragment>
               <h4>Invited users</h4>
               <p />
-              <TableContainer component={Paper}>
+              <TableContainer>
                 <Table>
                   <TableHead>
                     <TableRow>

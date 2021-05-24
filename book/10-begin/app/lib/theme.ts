@@ -6,8 +6,12 @@ const themeDark = createMuiTheme({
     secondary: { main: '#b62324' },
     type: 'dark',
     background: { default: '#0d1117' },
+    text: {
+      primary: '#c9d1d9',
+    },
   },
   typography: {
+    fontFamily: ['Roboto', 'sans-serif'].join(','),
     button: {
       textTransform: 'none',
     },
@@ -20,8 +24,12 @@ const themeLight = createMuiTheme({
     secondary: { main: '#b62324' },
     type: 'light',
     background: { default: '#fff' },
+    text: {
+      primary: '#222',
+    },
   },
   typography: {
+    fontFamily: ['Roboto', 'sans-serif'].join(','),
     button: {
       textTransform: 'none',
     },

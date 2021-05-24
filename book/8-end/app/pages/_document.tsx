@@ -25,9 +25,9 @@ class MyDocument extends Document {
   public render() {
     // console.log('rendered on the server');
 
-    const isThemeDark =
-      this.props.__NEXT_DATA__.props.initialState.user &&
-      this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
+    const isThemeDark = this.props.__NEXT_DATA__.props.initialState.user
+      ? this.props.__NEXT_DATA__.props.initialState.user.darkTheme
+      : true;
 
     return (
       <Html lang="en">
@@ -116,12 +116,7 @@ class MyDocument extends Document {
             `}
           </style>
         </Head>
-        <body
-          style={{
-            padding: '0px 0px 0px 0px !important',
-            color: isThemeDark ? '#c9d1d9' : '#222',
-          }}
-        >
+        <body>
           <Main />
           <NextScript />
         </body>

@@ -62,15 +62,15 @@ class YourSettings extends React.Component<Props, State> {
               Your email: <b>{currentUser.email}</b>
             </li>
             <li>
-              Your name: <b>{currentUser.displayName}</b>
+              Your username: <b>{currentUser.displayName}</b>
             </li>
           </div>
           <form onSubmit={this.onSubmit} autoComplete="off">
-            <h4>Your name</h4>
+            <h4>Your username</h4>
             <TextField
               autoComplete="off"
               value={newName}
-              helperText="Your name as seen by your team members"
+              helperText="Your username as seen by your team members"
               onChange={(event) => {
                 this.setState({ newName: event.target.value });
               }}
@@ -83,7 +83,7 @@ class YourSettings extends React.Component<Props, State> {
               type="submit"
               disabled={this.state.disabled}
             >
-              Update name
+              Update username
             </Button>
           </form>
 

@@ -140,13 +140,7 @@ class MyDocument extends Document {
             }}
           />
         </Head>
-        <body
-          style={{
-            fontFamily: 'IBM Plex Mono, monospace',
-            padding: '0px 0px 0px 0px !important',
-            color: isThemeDark ? '#c9d1d9' : '#222',
-          }}
-        >
+        <body>
           <Main />
           <NextScript />
         </body>

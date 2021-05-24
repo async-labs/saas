@@ -64,24 +64,22 @@ class PostEditor extends React.Component<Props, State> {
     const membersMinusCurrentUser = members.filter((member) => member._id !== currentUser._id);
 
     const isThemeDark = store && store.currentUser && store.currentUser.darkTheme === true;
-    const textareaBackgroundColor = isThemeDark ? '#303030' : '#fff';
+    const textareaBackgroundColor = isThemeDark ? '#0d1117' : '#fff';
 
     return (
       <div style={{ marginTop: '20px' }}>
         <div style={{ display: 'inline-flex' }}>
           <Button
-            color="primary"
             onClick={this.showMarkdownContent}
             variant="text"
-            style={{ fontWeight: htmlContent ? 300 : 600 }}
+            style={{ fontWeight: htmlContent ? 300 : 600, color: '#58a6ff' }}
           >
             Markdown
           </Button>{' '}
           <Button
-            color="primary"
             onClick={this.showHtmlContent}
             variant="text"
-            style={{ fontWeight: htmlContent ? 600 : 300 }}
+            style={{ fontWeight: htmlContent ? 600 : 300, color: '#58a6ff' }}
           >
             HTML
           </Button>
@@ -89,7 +87,7 @@ class PostEditor extends React.Component<Props, State> {
 
         <div style={{ display: 'inline', float: 'left' }}>
           <label htmlFor="upload-file">
-            <Button color="primary" component="span">
+            <Button component="span" style={{ color: '#58a6ff' }}>
               <InsertPhotoIcon style={{ fontSize: '22px' }} />
             </Button>
           </label>
