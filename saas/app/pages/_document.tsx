@@ -56,7 +56,14 @@ class MyDocument extends Document {
             type="font/woff2"
           />
 
-          <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
+          <link
+            rel="stylesheet"
+            href={
+              isThemeDark
+                ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/a11y-dark.min.css'
+                : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/a11y-light.min.css'
+            }
+          />
 
           <style>
             {`

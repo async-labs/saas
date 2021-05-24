@@ -238,7 +238,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
         await discussion.sendDataToLambda({
           discussionName: discussion.name,
-          discussionLink: `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${
+          discussionLink: `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/teams/${
             discussion.team.slug
           }/discussions/${discussion.slug}`,
           postContent: post.content,
@@ -253,7 +253,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
       Router.push(
         `/discussion?teamSlug=${currentTeam.slug}&discussionSlug=${discussion.slug}`,
-        `/team/${currentTeam.slug}/discussions/${discussion.slug}`,
+        `/teams/${currentTeam.slug}/discussions/${discussion.slug}`,
       );
     } catch (error) {
       console.log(error);

@@ -98,7 +98,7 @@ function setupGoogle({ server }) {
       if (req.user && !req.user.defaultTeamSlug) {
         redirectUrlAfterLogin = '/create-team';
       } else {
-        redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
+        redirectUrlAfterLogin = `/teams/${req.user.defaultTeamSlug}/discussions`;
       }
 
       res.redirect(

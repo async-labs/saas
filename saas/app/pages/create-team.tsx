@@ -140,7 +140,7 @@ class CreateTeam extends React.Component<Props, State> {
       console.log(`Returned to client: ${team._id}, ${team.name}, ${team.slug}`);
 
       if (file == null) {
-        Router.push(`/team/${team.slug}/team-settings`);
+        Router.push(`/teams/${team.slug}/team-settings`);
         notify('You successfully created Team.<p />Redirecting...');
         return;
       }
@@ -178,7 +178,7 @@ class CreateTeam extends React.Component<Props, State> {
 
       (document.getElementById('upload-file') as HTMLFormElement).value = '';
 
-      Router.push(`/team/${team.slug}/team-settings`);
+      Router.push(`/teams/${team.slug}/team-settings`);
 
       notify('You successfully created Team. Redirecting ...');
     } catch (error) {

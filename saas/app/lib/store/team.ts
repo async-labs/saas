@@ -270,10 +270,10 @@ class Team {
 
           Router.push(
             `/discussion?teamSlug=${this.slug}&discussionSlug=${d.slug}`,
-            `/team/${this.slug}/discussions/${d.slug}`,
+            `/teams/${this.slug}/discussions/${d.slug}`,
           );
         } else {
-          Router.push(`/discussion?teamSlug=${this.slug}`, `/team/${this.slug}/discussions`);
+          Router.push(`/discussion?teamSlug=${this.slug}`, `/teams/${this.slug}/discussions`);
         }
       }
     });

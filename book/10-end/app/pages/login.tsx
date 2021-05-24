@@ -22,7 +22,6 @@ class Login extends React.Component {
           </p>
           <p>You’ll be logged in for 14 days unless you log out manually.</p>
           <br />
-
           <LoginButton />
         </div>
       </Layout>

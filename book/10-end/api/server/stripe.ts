@@ -24,7 +24,7 @@ function createSession({ userId, teamId, teamSlug, customerId, subscriptionId, u
     }/stripe/checkout-completed/{CHECKOUT_SESSION_ID}`,
     cancel_url: `${
       dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP
-    }/team/${teamSlug}/billing?redirectMessage=Checkout%20canceled`,
+    }/teams/${teamSlug}/billing?redirectMessage=Checkout%20canceled`,
     metadata: { userId, teamId },
   };
 
@@ -171,13 +171,13 @@ function stripeWebhookAndCheckoutCallback({ server }) {
       }
 
       res.redirect(
-        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${team.slug}/billing`,
+        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/teams/${team.slug}/billing`,
       );
     } catch (err) {
       console.error(err);
 
       res.redirect(
-        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${
+        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/teams/${
           team.slug
         }/billing?redirectMessage=${err.message || err.toString()}`,
       );

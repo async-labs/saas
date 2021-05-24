@@ -6,7 +6,7 @@ import React from 'react';
 import { isMobile } from '../lib/isMobile';
 import { themeDark, themeLight } from '../lib/theme';
 
-class MyApp extends App<{ isMobile: boolean }> {
+class MyApp extends App {
   public static async getInitialProps({ Component, ctx }) {
     let firstGridItem = true;
 

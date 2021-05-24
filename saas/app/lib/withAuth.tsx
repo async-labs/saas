@@ -66,8 +66,8 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
         } else {
           // redirectUrl = `/your-settings`;
           // asUrl = `/your-settings`;
-          redirectUrl = `/team/${user.defaultTeamSlug}/discussions`;
-          asUrl = `/team/${user.defaultTeamSlug}/discussions`;
+          redirectUrl = `/teams/${user.defaultTeamSlug}/discussions`;
+          asUrl = `/teams/${user.defaultTeamSlug}/discussions`;
         }
       }
 

@@ -11,7 +11,7 @@ import { getInitialDataApiMethod } from '../lib/api/team-member';
 import { isMobile } from '../lib/isMobile';
 import { getStore, initializeStore, Store } from '../lib/store';
 
-class MyApp extends App<{ isMobile: boolean }> {
+class MyApp extends App {
   public static async getInitialProps({ Component, ctx }) {
     let firstGridItem = true;
     let teamRequired = false;
@@ -25,6 +25,7 @@ class MyApp extends App<{ isMobile: boolean }> {
     }
 
     if (
+      ctx.pathname.includes('/your-settings') || // because of MenuWithLinks inside `Layout` HOC
       ctx.pathname.includes('/team-settings') ||
       ctx.pathname.includes('/discussion') ||
       ctx.pathname.includes('/billing')
@@ -62,7 +63,7 @@ class MyApp extends App<{ isMobile: boolean }> {
       console.log(error);
     }
 
-    let initialData = {};
+    let initialData;
 
     if (userObj) {
       try {
@@ -79,9 +80,24 @@ class MyApp extends App<{ isMobile: boolean }> {
 
     // console.log(teamSlug);
 
+    let selectedTeamSlug = '';
+
+    if (teamRequired) {
+      selectedTeamSlug = teamSlug;
+    } else if (userObj) {
+      selectedTeamSlug = userObj.defaulTeamSlug;
+    }
+
+    let team;
+    if (initialData && initialData.teams) {
+      team = initialData.teams.find((t) => {
+        return t.slug === selectedTeamSlug;
+      });
+    }
+
     return {
       ...appProps,
-      initialState: { user: userObj, currentUrl: ctx.asPath, teamSlug, ...initialData },
+      initialState: { user: userObj, currentUrl: ctx.asPath, team, teamSlug, ...initialData },
     };
   }
 

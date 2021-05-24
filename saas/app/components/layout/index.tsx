@@ -95,21 +95,20 @@ function LayoutWrapper({
                 options={[
                   {
                     text: 'Your Settings',
-                    href: '/your-settings',
+                    href: `/your-settings?teamSlug=${store.currentTeam.slug}`,
+                    as: `/teams/${store.currentTeam.slug}/your-settings`,
                     highlighterSlug: '/your-settings',
                   },
                   {
                     text: 'Team Settings',
                     href: `/team-settings?teamSlug=${store.currentTeam.slug}`,
-                    as: `/team/${store.currentTeam.slug}/team-settings`,
-                    simple: true,
+                    as: `/teams/${store.currentTeam.slug}/team-settings`,
                     highlighterSlug: '/team-settings',
                   },
                   {
                     text: 'Billing',
                     href: `/billing?teamSlug=${store.currentTeam.slug}`,
-                    as: `/team/${store.currentTeam.slug}/billing`,
-                    simple: true,
+                    as: `/teams/${store.currentTeam.slug}/billing`,
                     highlighterSlug: '/billing',
                   },
 

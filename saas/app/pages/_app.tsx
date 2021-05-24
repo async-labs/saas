@@ -25,6 +25,7 @@ class MyApp extends App {
     }
 
     if (
+      ctx.pathname.includes('/your-settings') || // because of MenuWithLinks inside `Layout` HOC
       ctx.pathname.includes('/team-settings') ||
       ctx.pathname.includes('/discussion') ||
       ctx.pathname.includes('/billing')
@@ -93,6 +94,8 @@ class MyApp extends App {
         return t.slug === selectedTeamSlug;
       });
     }
+
+    console.log('App', selectedTeamSlug, team);
 
     return {
       ...appProps,

@@ -105,7 +105,7 @@ class DiscussionActionMenu extends React.Component<Props, State> {
 
     const selectedDiscussion = currentTeam.discussions.find((d) => d._id === id);
 
-    const discussionUrl = `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/team/${
+    const discussionUrl = `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/teams/${
       currentTeam.slug
     }/discussions/${selectedDiscussion.slug}`;
 

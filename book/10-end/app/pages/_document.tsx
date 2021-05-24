@@ -25,9 +25,9 @@ class MyDocument extends Document {
   public render() {
     // console.log('rendered on the server');
 
-    const isThemeDark =
-      this.props.__NEXT_DATA__.props.initialState.user &&
-      this.props.__NEXT_DATA__.props.initialState.user.darkTheme;
+    const isThemeDark = this.props.__NEXT_DATA__.props.initialState.user
+      ? this.props.__NEXT_DATA__.props.initialState.user.darkTheme
+      : true;
 
     return (
       <Html lang="en">

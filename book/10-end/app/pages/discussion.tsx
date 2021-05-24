@@ -154,7 +154,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
     if (!slug && currentTeam.discussions.length > 0) {
       Router.replace(
         `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
-        `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
+        `/teams/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
       );
       return;
     }

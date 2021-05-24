@@ -11,7 +11,7 @@ import { getInitialDataApiMethod } from '../lib/api/team-member';
 import { isMobile } from '../lib/isMobile';
 import { getStore, initializeStore, Store } from '../lib/store';
 
-class MyApp extends App<{ isMobile: boolean }> {
+class MyApp extends App {
   public static async getInitialProps({ Component, ctx }) {
     let firstGridItem = true;
     let teamRequired = false;

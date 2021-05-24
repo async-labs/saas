@@ -94,22 +94,24 @@ function LayoutWrapper({
               <MenuWithLinks
                 options={[
                   {
+                    text: 'Your Settings',
+                    href: `/your-settings?teamSlug=${store.currentTeam.slug}`,
+                    as: `/teams/${store.currentTeam.slug}/your-settings`,
+                    highlighterSlug: '/your-settings',
+                  },
+                  {
                     text: 'Team Settings',
                     href: `/team-settings?teamSlug=${store.currentTeam.slug}`,
-                    as: `/team/${store.currentTeam.slug}/team-settings`,
-                    simple: true,
+                    as: `/teams/${store.currentTeam.slug}/team-settings`,
+                    highlighterSlug: '/team-settings',
                   },
                   {
                     text: 'Billing',
                     href: `/billing?teamSlug=${store.currentTeam.slug}`,
-                    as: `/team/${store.currentTeam.slug}/billing`,
-                    simple: true,
+                    as: `/teams/${store.currentTeam.slug}/billing`,
+                    highlighterSlug: '/billing',
                   },
-                  {
-                    text: 'Your Settings',
-                    href: '/your-settings',
-                    highlighterSlug: '/your-settings',
-                  },
+
                   {
                     separator: true,
                   },
@@ -204,7 +206,7 @@ class Layout extends React.Component<Props> {
                 Select existing team or create a new team.
                 <p />
                 <Link href="/create-team" as="/create-team">
-                  <Button variant="outlined" color="primary">
+                  <Button variant="contained" color="primary">
                     Create new team
                   </Button>
                 </Link>
