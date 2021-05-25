@@ -130,7 +130,7 @@ MongoStore.prototype.storeOrUpdateByEmail = async function addEmail(email: strin
     throw new Error('TokenStore:addEmail called with invalid parameters');
   }
 
-  const obj = await PasswordlessToken.findOne({ email }).select('uid').lean();
+  const obj = await PasswordlessToken.findOne({ email }).select('uid').setOptions({ lean: true });
 
   if (obj) {
     return obj.uid;

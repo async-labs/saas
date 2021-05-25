@@ -18,9 +18,6 @@ server.get('*', (_, res) => {
 
 console.log(process.env.PORT_API, process.env.URL_API);
 
-server.listen(process.env['PORT_API'], (err) => {
-  if (err) {
-    throw err;
-  }
+server.listen(process.env.PORT_API, () => {
   console.log(`> Ready on ${process.env.URL_API}`);
 });

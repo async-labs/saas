@@ -26,10 +26,7 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(process.env.PORT_APP, (err) => {
-    if (err) {
-      throw err;
-    }
+  server.listen(process.env.PORT_APP, () => {
     console.log(`> Ready on ${process.env.URL_APP}`);
   });
 });

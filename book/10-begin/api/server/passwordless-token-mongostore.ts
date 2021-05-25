@@ -52,7 +52,7 @@ MongoStore.prototype.authenticate = async function (token, uid, callback) {
   }
 
   try {
-    const tokenDoc = await PasswordlessToken.findOne({ uid, ttl: { $gt: new Date() } }).lean();
+    const tokenDoc = await PasswordlessToken.findOne({ uid, ttl: { $gt: new Date() } }).setOptions({ lean: true });
 
     if (tokenDoc) {
       const isMatch = await bcrypt.compare(token, tokenDoc.hashedToken);
@@ -130,7 +130,7 @@ MongoStore.prototype.storeOrUpdateByEmail = async function addEmail(email: strin
     throw new Error('TokenStore:addEmail called with invalid parameters');
   }
 
-  const obj = await PasswordlessToken.findOne({ email }).select('uid').lean();
+  const obj = await PasswordlessToken.findOne({ email }).select('uid').setOptions({ lean: true });
 
   if (obj) {
     return obj.uid;

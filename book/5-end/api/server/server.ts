@@ -62,9 +62,6 @@ server.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
-server.listen(process.env.PORT_API, (err) => {
-  if (err) {
-    throw err;
-  }
+server.listen(process.env.PORT_API, () => {
   console.log(`> Ready on ${process.env.URL_API}`);
 });

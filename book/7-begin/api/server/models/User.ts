@@ -94,7 +94,7 @@ class UserClass extends mongoose.Model {
   public static async getUserBySlug({ slug }) {
     console.log('Static method: getUserBySlug');
 
-    return this.findOne({ slug }, 'email displayName avatarUrl').lean();
+    return this.findOne({ slug }, 'email displayName avatarUrl').setOptions({ lean: true });
   }
 
   public static async updateProfile({ userId, name, avatarUrl }) {
@@ -113,7 +113,7 @@ class UserClass extends mongoose.Model {
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('displayName avatarUrl slug')
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static publicFields(): string[] {
@@ -129,7 +129,7 @@ class UserClass extends mongoose.Model {
   }) {
     const user = await this.findOne({ email })
       .select([...this.publicFields(), 'googleId'].join(' '))
-      .lean();
+      .setOptions({ lean: true });
 
     if (user) {
       if (_.isEmpty(googleToken) && user.googleId) {
@@ -190,7 +190,7 @@ class UserClass extends mongoose.Model {
   }
 
   public static async signInOrSignUpByPasswordless({ uid, email }) {
-    const user = await this.findOne({ email }).select(this.publicFields().join(' ')).lean();
+    const user = await this.findOne({ email }).select(this.publicFields().join(' ')).setOptions({ lean: true });
 
     if (user) {
       throw Error('User already exists');

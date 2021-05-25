@@ -121,12 +121,12 @@ function stripeWebhookAndCheckoutCallback({ server }) {
     const user = await User.findById(
       session.metadata.userId,
       '_id stripeCustomer email displayName isSubscriptionActive stripeSubscription',
-    ).lean();
+    ).setOptions({ lean: true });
 
     const team = await Team.findById(
       session.metadata.teamId,
       'isSubscriptionActive stripeSubscription teamLeaderId slug',
-    ).lean();
+    ).setOptions({ lean: true });
 
     if (!user) {
       throw new Error('User not found.');

@@ -221,7 +221,7 @@ class TeamSettings extends React.Component<Props, State> {
             <React.Fragment>
               <h4>Invited users</h4>
               <p />
-              <TableContainer component={Paper}>
+              <TableContainer>
                 <Table>
                   <TableHead>
                     <TableRow>

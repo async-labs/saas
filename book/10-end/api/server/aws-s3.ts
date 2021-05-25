@@ -1,7 +1,17 @@
 import * as url from 'url';
 import * as aws from 'aws-sdk';
 
-async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
+async function signRequestForUpload({
+  fileName,
+  fileType,
+  prefix,
+  bucket,
+}: {
+  fileName: string;
+  fileType: string;
+  prefix: string;
+  bucket: string;
+}) {
   const randomStringForPrefix =
     Math.random().toString(36).substring(2, 12) + Math.random().toString(36).substring(2, 12);
 
@@ -21,7 +31,7 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
 
   const s3 = new aws.S3({
     apiVersion: 'latest',
-    region: 'us-east-1',
+    region: process.env.AWS_REGION,
     accessKeyId: process.env.AWS_ACCESSKEYID,
     secretAccessKey: process.env.AWS_SECRETACCESSKEY,
   });

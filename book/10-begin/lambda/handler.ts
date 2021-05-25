@@ -39,7 +39,7 @@ export const sendEmailForNewPost = async (event) => {
 
     const usersToNotify = await User.find({ _id: { $in: userIds } })
       .select('email')
-      .lean();
+      .setOptions({ lean: true });
 
     console.log('usersToNotify', usersToNotify);
 

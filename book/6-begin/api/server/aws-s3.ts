@@ -21,7 +21,7 @@ async function signRequestForUpload({ fileName, fileType, prefix, bucket }) {
 
   const s3 = new aws.S3({
     apiVersion: 'latest',
-    region: 'us-east-1',
+    region: process.env.AWS_REGION,
     accessKeyId: process.env.AWS_ACCESSKEYID,
     secretAccessKey: process.env.AWS_SECRETACCESSKEY,
   });

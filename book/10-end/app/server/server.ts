@@ -81,6 +81,8 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
+  // listen(handle: any, listeningListener?: () => void): http.Server;
+  // "@types/express-serve-static-core", "version": "4.17.1"
   server.listen(port, () => {
     console.log(`> Ready on ${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}`);
   });

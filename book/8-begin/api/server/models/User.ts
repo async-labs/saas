@@ -120,7 +120,7 @@ class UserClass extends mongoose.Model {
   public static async getUserBySlug({ slug }) {
     console.log('Static method: getUserBySlug');
 
-    return this.findOne({ slug }, 'email displayName avatarUrl').lean();
+    return this.findOne({ slug }, 'email displayName avatarUrl').setOptions({ lean: true });
   }
 
   public static async updateProfile({ userId, name, avatarUrl }) {
@@ -139,7 +139,7 @@ class UserClass extends mongoose.Model {
 
     return this.findByIdAndUpdate(userId, { $set: modifier }, { new: true, runValidators: true })
       .select('displayName avatarUrl slug')
-      .lean();
+      .setOptions({ lean: true });
   }
 
   public static publicFields(): string[] {
@@ -165,7 +165,7 @@ class UserClass extends mongoose.Model {
   }) {
     const user = await this.findOne({ email })
       .select([...this.publicFields(), 'googleId'].join(' '))
-      .lean();
+      .setOptions({ lean: true });
 
     if (user) {
       if (_.isEmpty(googleToken) && user.googleId) {
@@ -227,7 +227,7 @@ class UserClass extends mongoose.Model {
   }
 
   public static async signInOrSignUpByPasswordless({ uid, email }) {
-    const user = await this.findOne({ email }).select(this.publicFields().join(' ')).lean();
+    const user = await this.findOne({ email }).select(this.publicFields().join(' ')).setOptions({ lean: true });
 
     if (user) {
       throw Error('User already exists');
@@ -278,7 +278,7 @@ class UserClass extends mongoose.Model {
 
     return this.find({ _id: { $in: team.memberIds } })
       .select(this.publicFields().join(' '))
-      .lean();
+      .setOptions({ lean: true });
   }
 
   private static async checkPermissionAndGetTeam({ userId, teamId }) {
@@ -288,7 +288,7 @@ class UserClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const team = await Team.findById(teamId).select('memberIds').lean();
+    const team = await Team.findById(teamId).select('memberIds').setOptions({ lean: true });
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');

@@ -93,11 +93,11 @@ router.post('/stripe/fetch-checkout-session', async (req, res, next) => {
   try {
     const { mode, teamId } = req.body;
 
-    const user = await User.findById(req.user.id).select(['stripeCustomer', 'email']).lean();
+    const user = await User.findById(req.user.id).select(['stripeCustomer', 'email']).setOptions({ lean: true });
 
     const team = await Team.findById(teamId)
       .select(['stripeSubscription', 'slug', 'teamLeaderId'])
-      .lean();
+      .setOptions({ lean: true });
 
     if (!user || !team || team.teamLeaderId !== req.user.id) {
       throw new Error('Permission denied');
