@@ -5,7 +5,13 @@ import { NextRouter, withRouter } from 'next/router';
 import React from 'react';
 
 type Props = {
-  options: any[];
+  options: {
+    href: string;
+    as: string;
+    highlighterSlug: string;
+    text: string;
+    separator: boolean;
+  }[];
   router: NextRouter;
 };
 

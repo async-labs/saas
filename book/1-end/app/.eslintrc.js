@@ -24,7 +24,6 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     'react/no-unescaped-entities': 'off',
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
-    '@typescript-eslint/no-explicit-any': 'off',
     'prefer-arrow-callback': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
   },

@@ -46,6 +46,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       notificationType: 'default',
     };
   }
+
   public render() {
     const { open, isMobile, store } = this.props;
     const { currentTeam, currentUser } = store;
