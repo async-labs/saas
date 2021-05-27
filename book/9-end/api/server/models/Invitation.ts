@@ -116,14 +116,16 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Invitation email template not found');
     }
 
-    await sendEmail({
-      from: `Kelly from saas-app.async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
-      to: [email],
-      subject: emailTemplate.subject,
-      body: emailTemplate.message,
-    }).catch((err) => {
+    try {
+      await sendEmail({
+        from: `Kelly from saas-app.async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: emailTemplate.subject,
+        body: emailTemplate.message,
+      });
+    } catch (err) {
       console.log('Email sending error:', err);
-    });
+    }
 
     return await this.findOne({ teamId, email }).setOptions({ lean: true });
   }

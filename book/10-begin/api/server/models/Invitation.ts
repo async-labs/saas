@@ -73,7 +73,9 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Team does not exist or you have no permission');
     }
 
-    const registeredUser = await User.findOne({ email }).select('defaultTeamSlug').setOptions({ lean: true });
+    const registeredUser = await User.findOne({ email })
+      .select('defaultTeamSlug')
+      .setOptions({ lean: true });
 
     if (registeredUser) {
       if (team.memberIds.includes(registeredUser._id.toString())) {
@@ -90,7 +92,9 @@ class InvitationClass extends mongoose.Model {
     }
 
     let token;
-    const invitation = await this.findOne({ teamId, email }).select('token').setOptions({ lean: true });
+    const invitation = await this.findOne({ teamId, email })
+      .select('token')
+      .setOptions({ lean: true });
 
     if (invitation) {
       token = invitation.token;
@@ -116,20 +120,24 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Invitation email template not found');
     }
 
-    await sendEmail({
-      from: `Kelly from saas-app.async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
-      to: [email],
-      subject: emailTemplate.subject,
-      body: emailTemplate.message,
-    }).catch((err) => {
+    try {
+      await sendEmail({
+        from: `Kelly from saas-app.async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+        to: [email],
+        subject: emailTemplate.subject,
+        body: emailTemplate.message,
+      });
+    } catch (err) {
       console.log('Email sending error:', err);
-    });
+    }
 
     return await this.findOne({ teamId, email }).setOptions({ lean: true });
   }
 
   public static async getTeamInvitations({ userId, teamId }) {
-    const team = await Team.findOne({ _id: teamId }).select('teamLeaderId').setOptions({ lean: true });
+    const team = await Team.findOne({ _id: teamId })
+      .select('teamLeaderId')
+      .setOptions({ lean: true });
 
     if (userId !== team.teamLeaderId) {
       throw new Error('You have no permission.');

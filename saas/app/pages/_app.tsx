@@ -153,7 +153,11 @@ class MyApp extends App {
           />
           <link
             rel="stylesheet"
-            href="https://d2c24pn6pcl4ug.cloudfront.net/css/nprogress.min.css"
+            href={
+              isThemeDark
+                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
+                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
+            }
           />
         </Head>
         <CssBaseline />
