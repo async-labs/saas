@@ -124,7 +124,6 @@ class PostEditor extends React.Component<Props, State> {
                 input: {
                   border: 'none',
                   outline: 'none',
-                  font: '16px Roboto',
                   color: isThemeDark ? '#fff' : '#000',
                   fontWeight: 300,
                   height: '100vh',

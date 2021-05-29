@@ -108,10 +108,10 @@ class MyApp extends App {
     const { Component, pageProps } = this.props;
     const store = this.store;
 
+    const isThemeDark = store.currentUser ? store.currentUser.darkTheme : true;
+
     return (
-      <ThemeProvider
-        theme={store.currentUser && store.currentUser.darkTheme ? themeDark : themeLight}
-      >
+      <ThemeProvider theme={isThemeDark ? themeDark : themeLight}>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <link

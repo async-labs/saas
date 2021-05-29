@@ -45,14 +45,12 @@ class MyDocument extends Document {
             rel="prefetch"
             href="/fonts/IBM-Plex-Mono/IBMPlexMono-Regular.woff2"
             as="font"
-            crossOrigin="anonymous"
             type="font/woff2"
           />
           <link
             rel="prefetch"
             href="/fonts/IBM-Plex-Mono/IBMPlexMono-Bold.woff2"
             as="font"
-            crossOrigin="anonymous"
             type="font/woff2"
           />
 

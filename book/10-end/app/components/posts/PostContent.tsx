@@ -8,7 +8,7 @@ class PostContent extends React.Component<Props> {
 
     return (
       <div
-        style={{ fontSize: '15px', lineHeight: '2em', fontWeight: 300, wordBreak: 'break-all' }}
+        style={{ fontSize: '15px', lineHeight: '2em', font: '16px Roboto', wordBreak: 'break-all' }}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     );
