@@ -38,7 +38,6 @@ class DiscussionPageComp extends React.Component<Props, State> {
     };
   }
 
-
   public render() {
     const { store, isMobile, discussionSlug } = this.props;
     const { currentTeam } = store;

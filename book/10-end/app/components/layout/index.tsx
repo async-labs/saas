@@ -111,7 +111,6 @@ function LayoutWrapper({
                     as: `/teams/${store.currentTeam.slug}/billing`,
                     highlighterSlug: '/billing',
                   },
-
                   {
                     separator: true,
                   },

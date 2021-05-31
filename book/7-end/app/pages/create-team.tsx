@@ -200,7 +200,7 @@ class CreateTeam extends React.Component<Props, State> {
     reader.readAsDataURL(file);
 
     reader.onload = (e) => {
-      this.setState({ newAvatarUrl: e.target.result });
+      this.setState({ newAvatarUrl: e.target.result as string });
     };
   };
 }

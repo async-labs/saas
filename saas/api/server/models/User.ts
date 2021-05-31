@@ -375,7 +375,7 @@ class UserClass extends mongoose.Model {
     return _.pick(newUser, this.publicFields());
   }
 
-  // try `private` in Chapter 7
+  // try `private` and run `yarn build`
   public static toggleTheme({ userId, darkTheme }) {
     return this.updateOne({ _id: userId }, { darkTheme: !!darkTheme });
   }

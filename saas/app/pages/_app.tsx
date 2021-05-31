@@ -95,7 +95,7 @@ class MyApp extends App {
       });
     }
 
-    console.log('App', selectedTeamSlug, team);
+    // console.log('App', selectedTeamSlug, team);
 
     return {
       ...appProps,
