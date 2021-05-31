@@ -2,7 +2,9 @@
 
 Open source web app that saves you many days of work when building your own SaaS product. The boilerplate comes with many basic SaaS features (see [Features](https://github.com/async-labs/saas#features) below) so that you can focus on features that differentiate your product.
 
-Open source project is located in the `saas` folder. If you purchased our book, codebases for book's chapters are located in the `book` folder.
+If you want to learn how to build this project from scratch, check out our book: https://builderbook.org/book
+
+The open source project is located in the `saas` folder. If you purchased our book, codebases for each of the book's chapters are located in the `book` folder.
 
 ## Live demo:
 
@@ -243,7 +245,7 @@ Check out projects built with the code in this open source app. Feel free to add
 
 ## Contributing
 
-Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book), which teaches you how to build this project from scratch (currently available for [pre-order](https://builderbook.org/books/saas-boilerplate/introduction-project-structure) at 60% off).
+Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book), which teaches you how to build this project from scratch.
 
 ## Team
 
