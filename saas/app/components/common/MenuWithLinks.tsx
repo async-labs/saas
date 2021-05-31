@@ -10,6 +10,7 @@ type Props = {
     as: string;
     highlighterSlug: string;
     text: string;
+    externalServer: boolean;
     separator: boolean;
   }[];
   router: NextRouter;
