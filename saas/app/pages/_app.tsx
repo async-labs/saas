@@ -133,24 +133,13 @@ class MyApp extends App {
 
     const isThemeDark = store.currentUser ? store.currentUser.darkTheme : true;
 
+    const isServer = typeof window === 'undefined';
+
     return (
       <ThemeProvider theme={isThemeDark ? themeDark : themeLight}>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <link
-            rel="prefetch"
-            href="https://d2c24pn6pcl4ug.cloudfront.net/fonts/IBM-Plex-Mono/IBMPlexMono-Regular.woff2"
-            as="font"
-            crossOrigin="anonymous"
-            type="font/woff2"
-          />
-          <link
-            rel="prefetch"
-            href="https://d2c24pn6pcl4ug.cloudfront.net/fonts/IBM-Plex-Mono/IBMPlexMono-Bold.woff2"
-            as="font"
-            crossOrigin="anonymous"
-            type="font/woff2"
-          />
+          <link rel="stylesheet" href={isServer ? '/fonts/server.css' : '/fonts/cdn.css'} />
           <link
             rel="stylesheet"
             href={
