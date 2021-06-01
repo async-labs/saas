@@ -32,10 +32,7 @@ class MyDocument extends Document {
           <meta name="google" content="notranslate" />
           <meta name="theme-color" content="#303030" />
 
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400:latin"
-          />
+
 
           <link
             rel="shortcut icon"

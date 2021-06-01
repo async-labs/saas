@@ -11,7 +11,6 @@ const themeDark = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: ['Roboto', 'sans-serif'].join(','),
     button: {
       textTransform: 'none',
     },
@@ -29,7 +28,6 @@ const themeLight = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: ['Roboto', 'sans-serif'].join(','),
     button: {
       textTransform: 'none',
     },
