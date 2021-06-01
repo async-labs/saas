@@ -11,7 +11,7 @@ const themeDark = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: ['IBM Plex Mono', 'monospace', 'Roboto', 'sans-serif'].join(','),
+    fontFamily: ['IBM Plex Mono', 'monospace'].join(','),
     button: {
       textTransform: 'none',
     },
@@ -29,7 +29,7 @@ const themeLight = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: ['IBM Plex Mono', 'monospace', 'Roboto', 'sans-serif'].join(','),
+    fontFamily: ['IBM Plex Mono', 'monospace'].join(','),
     button: {
       textTransform: 'none',
     },

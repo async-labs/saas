@@ -42,19 +42,6 @@ class MyDocument extends Document {
           />
 
           <link
-            rel="prefetch"
-            href="/fonts/IBM-Plex-Mono/IBMPlexMono-Regular.woff2"
-            as="font"
-            type="font/woff2"
-          />
-          <link
-            rel="prefetch"
-            href="/fonts/IBM-Plex-Mono/IBMPlexMono-Bold.woff2"
-            as="font"
-            type="font/woff2"
-          />
-
-          <link
             rel="stylesheet"
             href={
               isThemeDark
