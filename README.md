@@ -6,16 +6,26 @@ If you want to learn how to build this project from scratch, check out our book:
 
 The open source project is located in the `saas` folder. If you purchased our book, codebases for each of the book's chapters are located in the `book` folder.
 
+
 ## Live demo:
 
 - APP: https://saas-app.async-await.com
 - API: https://saas-api.async-await.com
 
+
+## Showcase
+
+Check out projects built with the help of this open source app. Feel free to add your own project by creating a pull request.
+
+- [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee): Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
+- [Builder Book](https://github.com/async-labs/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
+- [Async](https://async-await.com/): Asynchronous communication and project management tool.
+
+
 ## Contents
 
 - [Features](#features)
 - [Run locally](#running-api-locally)
-- [Stage locally](#stage-apps-locally-with-docker)
 - [Deploy](#deploy-with-heroku)
 - [Built with](#built-with)
 - [Screenshots](#screenshots)
@@ -24,6 +34,7 @@ The open source project is located in the `saas` folder. If you purchased our bo
 - [Team](#team)
 - [License](#license)
 - [Project structure](#project-structure)
+
 
 ## Features
 
@@ -54,6 +65,7 @@ The open source project is located in the `saas` folder. If you purchased our bo
   - subscribe/unsubscribe Team to plan,
   - update card information,
   - verified Stripe webhook for failed payment for subscription.
+
 
 #### Running `api` locally:
 
@@ -121,6 +133,7 @@ The open source project is located in the `saas` folder. If you purchased our bo
   yarn dev
   ```
 
+
 #### Running `app` locally:
 
 - Navigate to the `app` folder, run `yarn` to add all packages, then run `yarn dev` and navigate to `http://localhost:3000`:
@@ -174,6 +187,7 @@ The open source project is located in the `saas` folder. If you purchased our bo
   yarn dev
   ```
 
+
 ## Deploy with Heroku
 
 To deploy the two apps (`api` and `app`), you can follow these instructions to deploy each app individually to Heroku:
@@ -198,6 +212,7 @@ If you need help deploying your SaaS Boilerplate app, or variation of it, you ca
 For more detail, check `package.json` files in both `app` and `api` folders and project's root.
 
 To customize styles, check [this guide](https://github.com/async-labs/builderbook#add-your-own-styles).
+
 
 ## Screenshots
 
@@ -233,19 +248,11 @@ Purchasing a subscription:
 Payment history:
 ![12_SaaS_PaymentHistory](https://user-images.githubusercontent.com/26158226/61417510-27f94680-a8ac-11e9-88d1-1eef120dcc34.png)
 
-## Showcase
-
-Check out projects built with the code in this open source app. Feel free to add your own project by creating a pull request.
-
-- [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee) : Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
-- [Builder Book](https://github.com/async-labs/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
-- [Harbor](https://github.com/builderbook/harbor): Open source web app that allows anyone with a Gmail account to automatically charge for advice sent via email.
-- [Async](https://async-await.com/): asynchronous communication for small teams of software engineers.
-
 
 ## Contributing
 
 Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book), which teaches you how to build this project from scratch.
+
 
 ## Team
 
@@ -254,6 +261,7 @@ Want to support this project? Sign up at [async](https://async-await.com) and/or
 - [Timur Zhiyentayev](https://github.com/tima101)
 
 You can contact us at team@async-await.com.
+
 
 ## License
 
