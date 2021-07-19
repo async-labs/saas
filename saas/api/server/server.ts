@@ -4,6 +4,8 @@ import * as express from 'express';
 import * as session from 'express-session';
 import * as httpModule from 'http';
 import * as mongoose from 'mongoose';
+import { OpticMiddleware } from '@useoptic/express-middleware';
+
 
 import api from './api';
 import { setupGoogle } from './google-auth';
@@ -47,6 +49,10 @@ server.use(compression());
 stripeWebhookAndCheckoutCallback({ server });
 
 server.use(express.json());
+
+server.use(OpticMiddleware({
+  enabled: dev,
+}))
 
 const MongoStore = mongoSessionStore(session);
 
