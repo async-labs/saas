@@ -133,6 +133,9 @@ Check out projects built with the help of this open source app. Feel free to add
   yarn dev
   ```
 
+#### API Documentation
+To simplify documenting the API, we have included [Optic](https://useoptic.com/). To use it, you will need to [install the CLI tool](https://useoptic.com/document#add-an-optic-specification-to-your-api-project). After you've installed the CLI navigate to the `api` folder and then you can use `api exec "yarn dev"` to start capturing your endpoints as you create them. Once you want to review and add them to your API specification run: `api status -- review`.
+
 
 #### Running `app` locally:
 
@@ -186,7 +189,6 @@ Check out projects built with the help of this open source app. Feel free to add
   ```
   yarn dev
   ```
-
 
 ## Deploy with Heroku
 
