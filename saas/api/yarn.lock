@@ -854,19 +854,19 @@
     "@typescript-eslint/types" "4.12.0"
     eslint-visitor-keys "^2.0.0"
 
-"@useoptic/express-middleware@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/express-middleware/-/express-middleware-0.0.3.tgz#3e084fdae5061efd8f76d69e3094b4b5411f03da"
-  integrity sha512-eeDMfsG1cgGu9rwrvrCk+9LW7pQ/pep44KdawZVP5MzK8MmIyxS0JEjZ3ddkOXgBYRFaB0WfJChKIaI7dx/mYg==
+"@useoptic/express-middleware@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@useoptic/express-middleware/-/express-middleware-0.0.5.tgz#c1a69f4dcee4d4a8e2db2fd4fb375da5dc460a2b"
+  integrity sha512-p+VEDALXPEDLQHNfM++JdWWg9WauvYUahc4P8ts78G7XbxK2lAtQolQ7kSXxgwtAYAb/V+0dyemh9ovVA2YyYA==
   dependencies:
     "@elastic/ecs-helpers" "^1.1.0"
-    "@useoptic/optic-node-sdk" "0.0.4"
+    "@useoptic/optic-node-sdk" "^0.0.5"
     debug "^4.3.1"
 
-"@useoptic/optic-node-sdk@0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@useoptic/optic-node-sdk/-/optic-node-sdk-0.0.4.tgz#d3fa7f006c5722053dc2e5cf5aff47fac0cbb1bb"
-  integrity sha512-ygXedYFP14Y/N7Cc9OpScUpCIlepjxld1FHtn/I/MNeyYTA1AJjXI1Ek4PH1u5htjRmGnupePwzlkAUGHaA/sA==
+"@useoptic/optic-node-sdk@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@useoptic/optic-node-sdk/-/optic-node-sdk-0.0.5.tgz#8d97fe52216bacd8b371c7e984d2445e1d6ce16a"
+  integrity sha512-V2l2lCGVD2+MCyVKc25m3ox5xeIsnqhnJjgX42akgvRmWkDt8mlnNmAyX8otCNRh36X3eR4b5Ctf3b9dx2YTig==
   dependencies:
     "@elastic/ecs-helpers" "^1.1.0"
     debug "^4.3.1"

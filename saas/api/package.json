@@ -22,7 +22,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@useoptic/express-middleware": "^0.0.3",
+    "@useoptic/express-middleware": "^0.0.5",
     "aws-sdk": "^2.796.0",
     "bcrypt": "^5.0.0",
     "compression": "^1.7.4",
