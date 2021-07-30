@@ -31,6 +31,7 @@ Check out projects built with the help of this open source app. Feel free to add
 - [Screenshots](#screenshots)
 - [Showcase](#showcase)
 - [Contributing](#contributing)
+- [Sponsors](#sponsors)
 - [Team](#team)
 - [License](#license)
 - [Project structure](#project-structure)
@@ -252,6 +253,11 @@ Payment history:
 ## Contributing
 
 Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book), which teaches you how to build this project from scratch.
+
+
+## Sponsors
+
+- [1Password](https://1password.com/)
 
 
 ## Team
