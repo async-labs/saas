@@ -163,23 +163,30 @@ Check out projects built with the help of this open source app. Feel free to add
 
 - For successful file uploading, make sure your buckets have proper CORS configuration. Go to your AWS account, find your bucket, go to `Permissions > CORS configuration`, add:
 
-  ```
-  <?xml version="1.0" encoding="UTF-8"?>
-  <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-  <CORSRule>
-      <AllowedOrigin>http://localhost:3000</AllowedOrigin>
-      <AllowedOrigin>https://saas-app.async-await.com</AllowedOrigin>
-      <AllowedMethod>POST</AllowedMethod>
-      <AllowedMethod>GET</AllowedMethod>
-      <AllowedMethod>PUT</AllowedMethod>
-      <AllowedMethod>DELETE</AllowedMethod>
-      <AllowedMethod>HEAD</AllowedMethod>
-      <ExposeHeader>ETag</ExposeHeader>
-      <ExposeHeader>x-amz-meta-custom-header</ExposeHeader>
-      <AllowedHeader>*</AllowedHeader>
-  </CORSRule>
-  </CORSConfiguration>
-  ```
+```
+[
+  {
+    "AllowedHeaders":[
+      "*"
+    ],
+    "AllowedMethods":[
+      "PUT",
+      "POST",
+      "GET",
+      "HEAD",
+      "DELETE"
+    ],
+    "AllowedOrigins":[
+      "http://localhost:3000",
+      "https://saas-app.async-await.com"
+    ],
+    "ExposeHeaders":[
+      "ETag",
+      "x-amz-meta-custom-header"
+    ]
+  }
+]
+```
 
 - Make sure to update allowed origin with your actual values for `URL_APP` and `PRODUCTION_URL_APP`.
 
