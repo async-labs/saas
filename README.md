@@ -264,6 +264,7 @@ Want to support this project? Sign up at [async](https://async-await.com) and/or
 
 ## Sponsors
 
+- [AWS Activate](https://aws.amazon.com/activate/)
 - [1Password](https://1password.com/)
 
 
