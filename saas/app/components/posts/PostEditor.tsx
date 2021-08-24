@@ -86,15 +86,15 @@ class PostEditor extends React.Component<Props, State> {
         </div>
 
         <div style={{ display: 'inline', float: 'left' }}>
-          <label htmlFor="upload-file">
+          <label htmlFor="upload-file-post-editor">
             <Button component="span" style={{ color: '#58a6ff' }}>
               <InsertPhotoIcon style={{ fontSize: '22px' }} />
             </Button>
           </label>
           <input
             accept="image/*"
-            name="upload-file"
-            id="upload-file"
+            name="upload-file-post-editor"
+            id="upload-file-post-editor"
             type="file"
             style={{ display: 'none' }}
             onChange={this.uploadFile}
@@ -221,7 +221,7 @@ class PostEditor extends React.Component<Props, State> {
   };
 
   private uploadFile = async () => {
-    const fileElement = document.getElementById('upload-file') as HTMLFormElement;
+    const fileElement = document.getElementById('upload-file-post-editor') as HTMLFormElement;
     const file = fileElement.files[0];
 
     if (!file) {
