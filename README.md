@@ -123,7 +123,7 @@ Check out projects built with the help of this open source app. Feel free to add
 
   Important: The above environmental variables are available on the server only. You should add your `.env` file to `.gitignore` inside the `api` folder so that your secret keys are not stored on a remote Github repo.
 
-  - To get `MONGO_URL`, we recommend you run `yarn stage:db` to spawn a database locally or a [free MongoDB at MongoDB Atlas](https://docs.atlas.mongodb.com/).
+  - To get `MONGO_URL`, we recommend you use a [free MongoDB at MongoDB Atlas](https://docs.atlas.mongodb.com/) or [$15/month MongoDB at Digital Ocean](https://www.digitalocean.com/products/managed-databases-mongodb/)
   - Specify your own name and secret keys for Express session: [SESSION_NAME](https://github.com/expressjs/session#name) and [SESSION_SECRET](https://github.com/expressjs/session#express)
   - Get `GOOGLE_CLIENTID` and `GOOGLE_CLIENTSECRET` by following the [official OAuth tutorial](https://developers.google.com/identity/sign-in/web/sign-in#before_you_begin). <br/>
     Important: For Google OAuth app, callback URL is: http://localhost:8000/oauth2callback <br/>
