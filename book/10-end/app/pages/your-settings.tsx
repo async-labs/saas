@@ -99,7 +99,7 @@ class YourSettings extends React.Component<Props, State> {
               height: 60,
             }}
           />
-          <label htmlFor="upload-file">
+          <label htmlFor="upload-file-user-avatar">
             <Button
               variant="outlined"
               color="primary"
@@ -111,8 +111,8 @@ class YourSettings extends React.Component<Props, State> {
           </label>
           <input
             accept="image/*"
-            name="upload-file"
-            id="upload-file"
+            name="upload-file-user-avatar"
+            id="upload-file-user-avatar"
             type="file"
             style={{ display: 'none' }}
             onChange={this.uploadFile}
@@ -164,7 +164,7 @@ class YourSettings extends React.Component<Props, State> {
   };
 
   private uploadFile = async () => {
-    const fileElement = document.getElementById('upload-file') as HTMLFormElement;
+    const fileElement = document.getElementById('upload-file-user-avatar') as HTMLFormElement;
     const file = fileElement.files[0];
 
     const { currentUser } = this.props.store;

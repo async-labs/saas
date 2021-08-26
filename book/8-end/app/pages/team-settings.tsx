@@ -125,7 +125,7 @@ class TeamSettings extends React.Component<Props, State> {
               height: 60,
             }}
           />
-          <label htmlFor="upload-file">
+          <label htmlFor="upload-file-team-logo">
             <Button
               variant="contained"
               color="primary"
@@ -137,8 +137,8 @@ class TeamSettings extends React.Component<Props, State> {
           </label>
           <input
             accept="image/*"
-            name="upload-file"
-            id="upload-file"
+            name="upload-file-team-logo"
+            id="upload-file-team-logo"
             type="file"
             style={{ display: 'none' }}
             onChange={this.uploadFile}
@@ -291,7 +291,7 @@ class TeamSettings extends React.Component<Props, State> {
     const { store } = this.props;
     const { currentTeam } = store;
 
-    const fileElement = document.getElementById('upload-file') as HTMLFormElement;
+    const fileElement = document.getElementById('upload-file-team-logo') as HTMLFormElement;
     const file = fileElement.files[0];
 
     if (file == null) {
