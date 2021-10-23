@@ -265,8 +265,9 @@ Want to support this project? Sign up at [async](https://async-await.com) and/or
 
 ## Sponsors
 
-- [AWS Activate](https://aws.amazon.com/activate/)
-- [1Password](https://1password.com/)
+[![aws-activate-logo](https://user-images.githubusercontent.com/26158226/138565715-4311ddda-fb77-452a-8755-d53eb18f8645.png)](https://aws.amazon.com/activate/)
+
+[![1password-logo](https://user-images.githubusercontent.com/26158226/138565841-ad435374-7330-477a-b6f3-2542109c3217.png)](https://1password.com/)
 
 
 ## Team
