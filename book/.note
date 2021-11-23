@@ -1,15 +1,3 @@
-helmet and compression for Express servers
-
-SEO (robots and sitemap) for APP and API
-
-Logs for API with winston
-
-Google Analytics in Chapter 12
-
-deleteFiles after introducing Post
-
----
-
 makeQueryString when it is needed
 
 Since `href` has to be URI-encoded, we convert `redirectUrlAfterLogin` string into URI-encoded string using `makeQueryString` method. We define this method in a new file `book/5-begin/app/lib/api/makeQueryString.ts`:

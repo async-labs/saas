@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "production-server/",
+    "target": "es2017",
+    "isolatedModules": false,
+    "noEmit": false
+  },
+  "exclude": ["./server/types.d.ts"],
+  "include": ["./server/**/*.ts"],
+  "typeRoots": ["./node_modules/@types", "./server/types.d.ts"]
+}
