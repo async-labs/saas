@@ -136,8 +136,8 @@ class MyApp extends App {
             rel="stylesheet"
             href={
               isThemeDark
-                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
-                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
+                ? 'https://storage.googleapis.com/async-await/nprogress-light-spinner.css'
+                : 'https://storage.googleapis.com/async-await/nprogress-dark-spinner.css'
             }
           />
         </Head>
