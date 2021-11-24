@@ -1,8 +1,8 @@
-const { GA_MEASUREMENT_ID } = process.env;
+const { NEXT_PUBLIC_GA_MEASUREMENT_ID } = process.env;
 
 // https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 export const pageview = (url) => {
-  (window as any).gtag('config', GA_MEASUREMENT_ID, {
+  (window as any).gtag('config', NEXT_PUBLIC_GA_MEASUREMENT_ID, {
     page_location: url,
   });
 };

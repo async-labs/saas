@@ -27,7 +27,6 @@ Router.events.on('routeChangeComplete', (url) => {
     });
   }
 
-
   NProgress.done();
 });
 

@@ -1,6 +1,6 @@
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import InsertPhotoIcon from '@material-ui/icons/InsertPhoto';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import he from 'he';
 import marked from 'marked';
 import { observer } from 'mobx-react';
@@ -240,7 +240,7 @@ class PostEditor extends React.Component<Props, State> {
 
     NProgress.start();
 
-    const bucket = process.env.BUCKET_FOR_POSTS;
+    const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_POSTS;
     const prefix = `${currentTeam.slug}`;
     const fileName = file.name;
     const fileType = file.type;

@@ -1,7 +1,6 @@
 import { action, configure, IObservableArray, observable, makeObservable } from 'mobx';
-import { useStaticRendering } from 'mobx-react';
-// @ts-expect-error no exported member io socket.io-client
-import { io } from 'socket.io-client';
+import { enableStaticRendering } from 'mobx-react';
+import { io, Socket } from 'socket.io-client';
 
 import { addTeamApiMethod, getTeamInvitationsApiMethod } from '../api/team-leader';
 import { getTeamMembersApiMethod } from '../api/team-member';
@@ -11,7 +10,7 @@ import { Team } from './team';
 
 const dev = process.env.NODE_ENV !== 'production';
 
-useStaticRendering(typeof window === 'undefined');
+enableStaticRendering(typeof window === 'undefined');
 
 configure({ enforceActions: 'observed' });
 
@@ -25,7 +24,7 @@ class Store {
 
   public teams: IObservableArray<Team> = observable([]);
 
-  public socket: SocketIOClient.Socket;
+  public socket: Socket;
 
   constructor({
     initialState = {},
@@ -34,7 +33,7 @@ class Store {
   }: {
     initialState?: any;
     isServer: boolean;
-    socket?: SocketIOClient.Socket;
+    socket?: Socket;
   }) {
     makeObservable(this, {
       currentUser: observable,
@@ -155,7 +154,7 @@ function initializeStore(initialState = {}) {
 
   const socket = isServer
     ? null
-    : io(dev ? process.env.URL_API : process.env.PRODUCTION_URL_API, {
+    : io(dev ? process.env.NEXT_PUBLIC_URL_API : process.env.NEXT_PUBLIC_PRODUCTION_URL_API, {
         reconnection: true,
         autoConnect: true,
         transports: ['polling', 'websocket'],

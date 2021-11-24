@@ -1,5 +1,7 @@
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider } from '@material-ui/styles';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
 import { Provider } from 'mobx-react';
 import App from 'next/app';
 import Head from 'next/head';
@@ -128,24 +130,26 @@ class MyApp extends App {
     const isServer = typeof window === 'undefined';
 
     return (
-      <ThemeProvider theme={isThemeDark ? themeDark : themeLight}>
-        <Head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <link rel="stylesheet" href={isServer ? '/fonts/server.css' : '/fonts/cdn.css'} />
-          <link
-            rel="stylesheet"
-            href={
-              isThemeDark
-                ? 'https://storage.googleapis.com/async-await/nprogress-light-spinner.css'
-                : 'https://storage.googleapis.com/async-await/nprogress-dark-spinner.css'
-            }
-          />
-        </Head>
-        <CssBaseline />
-        <Provider store={store}>
-          <Component {...pageProps} store={store} />
-        </Provider>
-      </ThemeProvider>
+      <CacheProvider value={createCache({ key: 'css' })}>
+        <ThemeProvider theme={isThemeDark ? themeDark : themeLight}>
+          <Head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <link rel="stylesheet" href={isServer ? '/fonts/server.css' : '/fonts/cdn.css'} />
+            <link
+              rel="stylesheet"
+              href={
+                isThemeDark
+                  ? 'https://storage.googleapis.com/async-await/nprogress-light-spinner.css'
+                  : 'https://storage.googleapis.com/async-await/nprogress-dark-spinner.css'
+              }
+            />
+          </Head>
+          <CssBaseline />
+          <Provider store={store}>
+            <Component {...pageProps} store={store} />
+          </Provider>
+        </ThemeProvider>
+      </CacheProvider>
     );
   }
 }

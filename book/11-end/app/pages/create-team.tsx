@@ -1,10 +1,10 @@
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 import Head from 'next/head';
 import Router from 'next/router';
 
@@ -147,7 +147,7 @@ class CreateTeam extends React.Component<Props, State> {
 
       const fileName = file.name;
       const fileType = file.type;
-      const bucket = process.env.BUCKET_FOR_TEAM_LOGOS;
+      const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_TEAM_LOGOS;
       const prefix = team.slug;
 
       const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({

@@ -1,5 +1,5 @@
-import Avatar from '@material-ui/core/Avatar';
-import Tooltip from '@material-ui/core/Tooltip';
+import Avatar from '@mui/material/Avatar';
+import Tooltip from '@mui/material/Tooltip';
 import Head from 'next/head';
 import Router from 'next/router';
 import * as React from 'react';
