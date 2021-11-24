@@ -193,6 +193,8 @@ class Billing extends React.Component<Props, State> {
 
       const { sessionId } = await fetchCheckoutSessionApiMethod({ mode, teamId: currentTeam._id });
 
+      console.log(process.env.STRIPE_TEST_PUBLISHABLEKEY, sessionId);
+
       // When the customer clicks on the button, redirect them to Checkout.
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({ sessionId });

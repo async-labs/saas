@@ -1,3 +1,4 @@
+import * as dotenv from 'dotenv';
 import * as express from 'express';
 import Stripe from 'stripe';
 
@@ -5,6 +6,8 @@ import Team from './models/Team';
 import User from './models/User';
 
 import logger from './logger';
+
+dotenv.config();
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -43,6 +46,8 @@ function createSession({
     }/teams/${teamSlug}/billing?redirectMessage=Checkout%20canceled`,
     metadata: { userId, teamId },
   };
+
+  console.log(process.env.STRIPE_TEST_SECRETKEY, process.env.STRIPE_TEST_PRICEID);
 
   if (mode === 'subscription') {
     params.line_items = [

@@ -1,11 +1,13 @@
+import * as dotenv from 'dotenv';
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
 import Stripe from 'stripe';
 
 import Team from './models/Team';
 import User from './models/User';
 
 import logger from './logger';
+
+dotenv.config();
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -100,7 +102,7 @@ function getListOfInvoices({ customerId }: { customerId: string }) {
 function stripeWebhookAndCheckoutCallback({ server }: { server: express.Application }) {
   server.post(
     '/api/v1/public/stripe-invoice-payment-failed',
-    bodyParser.raw({ type: 'application/json' }),
+    express.raw({ type: 'application/json' }),
     async (req, res, next) => {
       try {
         const event = stripeInstance.webhooks.constructEvent(
