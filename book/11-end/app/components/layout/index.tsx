@@ -182,7 +182,7 @@ class Layout extends React.Component<Props> {
 
     // console.log(isMobile);
 
-    // console.log(currentTeam);
+    console.log(store, currentUser, currentTeam);
 
     if (!currentUser) {
       return (

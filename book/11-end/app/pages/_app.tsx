@@ -27,7 +27,7 @@ class MyApp extends App {
     }
 
     if (
-      ctx.pathname.includes('/your-settings') || // because of MenuWithLinks inside `Layout` HOC
+      ctx.pathname.includes('/your-settings') ||
       ctx.pathname.includes('/team-settings') ||
       ctx.pathname.includes('/discussion') ||
       ctx.pathname.includes('/billing')
@@ -51,6 +51,8 @@ class MyApp extends App {
     }
 
     const appProps = { pageProps };
+
+    console.log('before getStore');
 
     const store = getStore();
     if (store) {
@@ -80,8 +82,6 @@ class MyApp extends App {
 
     // console.log(initialData);
 
-    // console.log(teamSlug);
-
     let selectedTeamSlug = '';
 
     if (teamRequired) {
@@ -93,22 +93,16 @@ class MyApp extends App {
     let team;
     if (initialData && initialData.teams) {
       team = initialData.teams.find((t) => {
-        return t.slug === selectedTeamSlug;
+        return t.slug === selectedTeamSlug || userObj.defaultTeamSlug;
       });
     }
+
+    console.log(initialData.teams, team);
 
     return {
       ...appProps,
       initialState: { user: userObj, currentUrl: ctx.asPath, team, teamSlug, ...initialData },
     };
-  }
-
-  public componentDidMount() {
-    // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
-    if (jssStyles && jssStyles.parentNode) {
-      jssStyles.parentNode.removeChild(jssStyles);
-    }
   }
 
   private store: Store;

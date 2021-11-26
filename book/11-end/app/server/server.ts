@@ -37,7 +37,11 @@ app.prepare().then(() => {
       }
     }
 
-    res.redirect(`${dev ? process.env.NEXT_PUBLIC_URL_APP : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP}/${redirectUrl}`);
+    res.redirect(
+      `${
+        dev ? process.env.NEXT_PUBLIC_URL_APP : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP
+      }/${redirectUrl}`,
+    );
   });
 
   // server.get('/api/v1/public/get-user', (_, res) => {
@@ -69,6 +73,16 @@ app.prepare().then(() => {
     app.render(req, res, '/discussion', { teamSlug });
   });
 
+  server.get('/teams/:teamSlug/discussions-f/:discussionSlug', (req, res) => {
+    const { teamSlug, discussionSlug } = req.params;
+    app.render(req, res, '/discussion-f', { teamSlug, discussionSlug });
+  });
+
+  server.get('/teams/:teamSlug/discussions-f', (req, res) => {
+    const { teamSlug } = req.params;
+    app.render(req, res, '/discussion-f', { teamSlug });
+  });
+
   server.get('/signup', (req, res) => {
     app.render(req, res, '/login');
   });
@@ -84,6 +98,10 @@ app.prepare().then(() => {
   // listen(handle: any, listeningListener?: () => void): http.Server;
   // "@types/express-serve-static-core", "version": "4.17.1"
   server.listen(port, () => {
-    console.log(`> Ready on ${dev ? process.env.NEXT_PUBLIC_URL_APP : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP}`);
+    console.log(
+      `> Ready on ${
+        dev ? process.env.NEXT_PUBLIC_URL_APP : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP
+      }`,
+    );
   });
 });

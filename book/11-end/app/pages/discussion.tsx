@@ -142,7 +142,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
     );
   }
 
-  public getDiscussion(slug: string): Discussion {
+  private getDiscussion(slug: string): Discussion {
     const { store, teamSlug } = this.props;
     const { currentTeam } = store;
 
@@ -165,7 +165,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
     return null;
   }
 
-  public renderPosts() {
+  private renderPosts() {
     const { isServer, store, isMobile } = this.props;
     const { selectedPost, showMarkdownClicked } = this.state;
     const discussion = this.getDiscussion(this.props.discussionSlug);
@@ -217,11 +217,11 @@ class DiscussionPageComp extends React.Component<Props, State> {
     );
   }
 
-  public onEditClickCallback = (post) => {
+  private onEditClickCallback = (post) => {
     this.setState({ selectedPost: post, showMarkdownClicked: false });
   };
 
-  public onSnowMarkdownClickCallback = (post) => {
+  private onSnowMarkdownClickCallback = (post) => {
     this.setState({ selectedPost: post, showMarkdownClicked: true });
   };
 

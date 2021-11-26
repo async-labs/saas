@@ -17,8 +17,8 @@ import withAuth from '../lib/withAuth';
 
 type Props = { store: Store; team: Team; token: string };
 
-class Invitation extends React.Component<Props> {
-  public static async getInitialProps(ctx) {
+class InvitationPageComp extends React.Component<Props> {
+  public static async getServerSideProps(ctx) {
     const { token } = ctx.query;
     if (!token) {
       return {};
@@ -93,4 +93,4 @@ class Invitation extends React.Component<Props> {
   }
 }
 
-export default withAuth(observer(Invitation), { loginRequired: false });
+export default withAuth(observer(InvitationPageComp), { loginRequired: false });

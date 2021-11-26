@@ -6,7 +6,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
@@ -174,10 +173,10 @@ class EditDiscussionForm extends React.Component<Props, State> {
       memberIds.push(discussion.store.currentUser._id);
     }
 
-    if (!memberIds || memberIds.length < 1) {
-      notify('Please assign at least one person to this Discussion.');
-      return;
-    }
+    // if (!memberIds || memberIds.length < 1) {
+    //   notify('Please assign at least one person to this Discussion.');
+    //   return;
+    // }
 
     if (!notificationType) {
       notify('Please select notification type.');

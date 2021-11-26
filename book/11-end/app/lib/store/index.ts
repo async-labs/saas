@@ -51,16 +51,7 @@ class Store {
 
     this.currentUrl = initialState.currentUrl || '';
 
-    // console.log(initialState.user);
-
-    // if (initialState.teamSlug || (initialState.user && initialState.user.defaultTeamSlug)) {
-    //   this.setCurrentTeam(
-    //     initialState.teamSlug || initialState.user.defaultTeamSlug,
-    //     initialState.teams,
-    //   );
-    // }
-
-    // console.log(initialState.team);
+    console.log(initialState);
 
     this.setCurrentTeam(initialState.team);
 
