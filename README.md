@@ -143,24 +143,24 @@ Check out projects built with the help of this open source app. Feel free to add
   - A `.env` file in the `app` folder is not required to run, but you can create one to override the default variables:
 
   ```
-    STRIPE_TEST_PUBLISHABLEKEY=pk_test_xxxxxxxxxxxxxxx
-    STRIPE_LIVE_PUBLISHABLEKEY=pk_live_xxxxxxxxxxxxxxx
+    NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY=pk_test_xxxxxxxxxxxxxxx
+    NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY=pk_live_xxxxxxxxxxxxxxx
 
-    BUCKET_FOR_POSTS=
-    BUCKET_FOR_TEAM_AVATARS=
-    BUCKET_FOR_TEAM_LOGOS=
+    NEXT_PUBLIC_BUCKET_FOR_POSTS=
+    NEXT_PUBLIC_BUCKET_FOR_TEAM_AVATARS=
+    NEXT_PUBLIC_BUCKET_FOR_TEAM_LOGOS=
 
-    URL_APP=http://localhost:3000
-    URL_API=http://localhost:8000
-    PRODUCTION_URL_API=
-    PRODUCTION_URL_APP=
+    NEXT_PUBLIC_URL_APP=http://localhost:3000
+    NEXT_PUBLIC_URL_API=http://localhost:8000
+    NEXT_PUBLIC_PRODUCTION_URL_API=
+    NEXT_PUBLIC_PRODUCTION_URL_APP=
 
-    API_GATEWAY_ENDPOINT=
-    GA_MEASUREMENT_ID=
+    NEXT_PUBLIC_API_GATEWAY_ENDPOINT=
+    NEXT_PUBLIC_GA_MEASUREMENT_ID=
   ```
 
-  - To get `GA_MEASUREMENT_ID`, set up Google Analytics and follow [these instructions](https://support.google.com/analytics/answer/1008080?hl=en) to find your tracking ID.
-  - To get `STRIPE_TEST_PUBLISHABLEKEY`, go to your Stripe dashboard, click `Developers`, then click `API keys`.
+  - To get `NEXT_PUBLIC_GA_MEASUREMENT_ID`, set up Google Analytics and follow [these instructions](https://support.google.com/analytics/answer/1008080?hl=en) to find your tracking ID.
+  - To get `NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY`, go to your Stripe dashboard, click `Developers`, then click `API keys`.
 
 - For successful file uploading, make sure your buckets have proper CORS configuration. Go to your AWS account, find your bucket, go to `Permissions > CORS configuration`, add:
 
@@ -189,7 +189,7 @@ Check out projects built with the help of this open source app. Feel free to add
 ]
 ```
 
-- Make sure to update allowed origin with your actual values for `URL_APP` and `PRODUCTION_URL_APP`.
+- Make sure to update allowed origin with your actual values for `NEXT_PUBLIC_URL_APP` and `NEXT_PUBLIC_PRODUCTION_URL_APP`.
 
 - Once `.env` is created, you can run the `app` app. Navigate to the `app` folder, run `yarn install` to add all packages, then run the command below:
   ```
