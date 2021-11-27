@@ -18,7 +18,7 @@ import withAuth from '../lib/withAuth';
 type Props = { store: Store; team: Team; token: string };
 
 class InvitationPageComp extends React.Component<Props> {
-  public static async getServerSideProps(ctx) {
+  public static async getInitialProps(ctx) {
     const { token } = ctx.query;
     if (!token) {
       return {};
