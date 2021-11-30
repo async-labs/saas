@@ -123,9 +123,15 @@ class PostEditor extends React.Component<Props, State> {
                   outline: 'none',
                   color: isThemeDark ? '#fff' : '#000',
                   fontFamily: 'Roboto, sans-serif',
-                  height: '100vh',
                   lineHeight: '1.5em',
                   backgroundColor: content ? textareaBackgroundColor : 'transparent',
+                },
+
+                '&multiLine': {
+                  control: {
+                    fontFamily: 'Roboto, sans-serif',
+                    minHeight: 100,
+                  },
                 },
                 suggestions: {
                   list: {
