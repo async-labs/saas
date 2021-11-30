@@ -104,7 +104,6 @@ class PostForm extends React.Component<Props, State> {
             ) : null}
           </div>
           <p />
-          <br />
           <PostEditor
             content={this.state.content}
             onChanged={this.onContentChanged}

@@ -107,8 +107,6 @@ class PostEditor extends React.Component<Props, State> {
         <br />
         <div
           style={{
-            width: '100%',
-            height: '100vh',
             padding: '10px 15px',
             border: isThemeDark
               ? '1px solid rgba(255, 255, 255, 0.5)'
