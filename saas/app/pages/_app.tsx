@@ -15,7 +15,7 @@ import { getStore, initializeStore, Store } from '../lib/store';
 
 class MyApp extends App {
   public static async getInitialProps({ Component, ctx }) {
-    console.log('MyApp.getInitialProps');
+    // console.log('MyApp.getInitialProps');
 
     let firstGridItem = true;
     let teamRequired = false;
@@ -99,7 +99,7 @@ class MyApp extends App {
       });
     }
 
-    console.log(initialData.teams, team);
+    // console.log(initialData.teams, team);
 
     return {
       ...appProps,

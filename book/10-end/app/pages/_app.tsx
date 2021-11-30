@@ -99,7 +99,7 @@ class MyApp extends App {
       });
     }
 
-    console.log(initialData.teams, team);
+    // console.log(initialData.teams, team);
 
     return {
       ...appProps,
