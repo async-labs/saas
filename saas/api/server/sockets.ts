@@ -27,6 +27,7 @@ function setupSockets({
         credentials: true,
       },
       cookie: {
+        name: 'saas-socket-cookie',
         httpOnly: true,
         maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
         domain: dev ? 'localhost' : '.async-await.com',
@@ -40,7 +41,7 @@ function setupSockets({
 
     io.use(wrap(sessionMiddleware));
 
-    io.on('connection', (socket) => {
+    io.on('connection', (socket: any) => {
       if (
         !socket.request.session ||
         ((!socket.request.session.passport || !socket.request.session.passport.user) &&

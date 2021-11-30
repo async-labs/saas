@@ -1,5 +1,5 @@
-import Avatar from '@material-ui/core/Avatar';
-import Tooltip from '@material-ui/core/Tooltip';
+import Avatar from '@mui/material/Avatar';
+import Tooltip from '@mui/material/Tooltip';
 import Head from 'next/head';
 import Router from 'next/router';
 import * as React from 'react';
@@ -39,6 +39,8 @@ class DiscussionPageComp extends React.Component<Props, State> {
   }
 
   public render() {
+    console.log('DiscussionPageComp.render');
+
     const { store, isMobile, discussionSlug } = this.props;
     const { currentTeam } = store;
     const { selectedPost } = this.state;
@@ -142,7 +144,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
     );
   }
 
-  public getDiscussion(slug: string): Discussion {
+  private getDiscussion(slug: string): Discussion {
     const { store, teamSlug } = this.props;
     const { currentTeam } = store;
 
@@ -165,7 +167,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
     return null;
   }
 
-  public renderPosts() {
+  private renderPosts() {
     const { isServer, store, isMobile } = this.props;
     const { selectedPost, showMarkdownClicked } = this.state;
     const discussion = this.getDiscussion(this.props.discussionSlug);
@@ -217,15 +219,17 @@ class DiscussionPageComp extends React.Component<Props, State> {
     );
   }
 
-  public onEditClickCallback = (post) => {
+  private onEditClickCallback = (post) => {
     this.setState({ selectedPost: post, showMarkdownClicked: false });
   };
 
-  public onSnowMarkdownClickCallback = (post) => {
+  private onSnowMarkdownClickCallback = (post) => {
     this.setState({ selectedPost: post, showMarkdownClicked: true });
   };
 
   public componentDidMount() {
+    console.log('DiscussionPageComp.componentDidMount');
+
     const { discussionSlug, store, isServer } = this.props;
 
     if (store.currentTeam && (!isServer || !discussionSlug)) {
@@ -245,21 +249,9 @@ class DiscussionPageComp extends React.Component<Props, State> {
     store.socket.on('reconnect', this.handleSocketReconnect);
   }
 
-  public componentWillUnmount() {
-    const { discussionSlug, store } = this.props;
-
-    const discussion = this.getDiscussion(discussionSlug);
-
-    if (discussion) {
-      discussion.leaveSocketRooms();
-    }
-
-    store.socket.off('discussionEvent', this.handleDiscussionEvent);
-    store.socket.off('postEvent', this.handlePostEvent);
-    store.socket.off('reconnect', this.handleSocketReconnect);
-  }
-
   public componentDidUpdate(prevProps: Props) {
+    console.log('DiscussionPageComp.componentDidUpdate');
+
     const { discussionSlug, isServer } = this.props;
 
     if (prevProps.discussionSlug !== discussionSlug) {
@@ -280,6 +272,22 @@ class DiscussionPageComp extends React.Component<Props, State> {
         discussion.joinSocketRooms();
       }
     }
+  }
+
+  public componentWillUnmount() {
+    console.log('DiscussionPageComp.componentWillUnmount');
+
+    const { discussionSlug, store } = this.props;
+
+    const discussion = this.getDiscussion(discussionSlug);
+
+    if (discussion) {
+      discussion.leaveSocketRooms();
+    }
+
+    store.socket.off('discussionEvent', this.handleDiscussionEvent);
+    store.socket.off('postEvent', this.handlePostEvent);
+    store.socket.off('reconnect', this.handleSocketReconnect);
   }
 
   private handleDiscussionEvent = (data) => {

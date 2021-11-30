@@ -53,14 +53,14 @@ const MongoStore = mongoSessionStore(session);
 const sessionOptions = {
   name: process.env.SESSION_NAME,
   secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
   store: new MongoStore({
     mongooseConnection: mongoose.connection,
     ttl: 14 * 24 * 60 * 60, // save session 14 days
     autoRemove: 'interval',
     autoRemoveInterval: 1440, // clears every day
   }),
+  resave: false,
+  saveUninitialized: false,
   cookie: {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days

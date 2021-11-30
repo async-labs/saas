@@ -1,4 +1,4 @@
-import Avatar from '@material-ui/core/Avatar';
+import Avatar from '@mui/material/Avatar';
 import { observer } from 'mobx-react';
 import Error from 'next/error';
 import Head from 'next/head';
@@ -17,7 +17,7 @@ import withAuth from '../lib/withAuth';
 
 type Props = { store: Store; team: Team; token: string };
 
-class Invitation extends React.Component<Props> {
+class InvitationPageComp extends React.Component<Props> {
   public static async getInitialProps(ctx) {
     const { token } = ctx.query;
     if (!token) {
@@ -93,4 +93,4 @@ class Invitation extends React.Component<Props> {
   }
 }
 
-export default withAuth(observer(Invitation), { loginRequired: false });
+export default withAuth(observer(InvitationPageComp), { loginRequired: false });

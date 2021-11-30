@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import Stripe from 'stripe';
 
 import { cancelSubscription } from '../stripe';
-import { generateNumberSlug } from '../utils/slugify';
+import { generateRandomSlug } from '../utils/slugify';
 import User from './User';
 
 mongoose.set('useFindAndModify', false);
@@ -145,7 +145,7 @@ class TeamClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const slug = await generateNumberSlug(this);
+    const slug = await generateRandomSlug(this);
 
     let defaultTeam = false;
     if ((await this.countDocuments({ teamLeaderId: userId })) === 0) {

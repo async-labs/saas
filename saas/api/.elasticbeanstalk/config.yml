@@ -1,14 +1,14 @@
 branch-defaults:
   default:
-    environment: api-saas-env
+    environment: api-saas-boilerplate-env
 environment-defaults:
-  api-saas-env:
+  api-saas-boilerplate-env:
     branch: null
     repository: null
 global:
-  application_name: builderbook-app
+  application_name: api-saas-boilerplate-app
   default_ec2_keyname: null
-  default_platform: Node.js 12 running on 64bit Amazon Linux 2
+  default_platform: Node.js 14 running on 64bit Amazon Linux 2
   default_region: us-east-1
   include_git_submodules: true
   instance_profile: null

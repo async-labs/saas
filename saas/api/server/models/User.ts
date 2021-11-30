@@ -221,7 +221,7 @@ class UserClass extends mongoose.Model {
   public static async getUserBySlug({ slug }) {
     console.log('Static method: getUserBySlug');
 
-    return this.findOne({ slug }, 'email displayName avatarUrl').setOptions({ lean: true });
+    return this.findOne({ slug }, 'email displayName avatarUrl');
   }
 
   public static async updateProfile({ userId, name, avatarUrl }) {
@@ -331,9 +331,7 @@ class UserClass extends mongoose.Model {
   }
 
   public static async signInOrSignUpByPasswordless({ uid, email }) {
-    const user = await this.findOne({ email })
-      .select(this.publicFields().join(' '))
-      .setOptions({ lean: true });
+    const user = await this.findOne({ email }).select(this.publicFields().join(' ')).setOptions({ lean: true });
 
     if (user) {
       throw Error('User already exists');
@@ -375,7 +373,7 @@ class UserClass extends mongoose.Model {
     return _.pick(newUser, this.publicFields());
   }
 
-  // try `private` and run `yarn build`
+  // try private instead of public, run `yarn build`
   public static toggleTheme({ userId, darkTheme }) {
     return this.updateOne({ _id: userId }, { darkTheme: !!darkTheme });
   }

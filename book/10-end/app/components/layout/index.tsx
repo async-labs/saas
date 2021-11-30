@@ -1,8 +1,8 @@
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import LensIcon from '@material-ui/icons/Lens';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import LensIcon from '@mui/icons-material/Lens';
 
 import Link from 'next/link';
 import React from 'react';
@@ -48,7 +48,7 @@ function LayoutWrapper({
       <Grid
         container
         direction="row"
-        justify="flex-start"
+        justifyContent="flex-start"
         alignItems="stretch"
         style={isMobile ? styleGridIsMobile : styleGrid}
       >
@@ -116,8 +116,16 @@ function LayoutWrapper({
                   },
                   {
                     text: 'Log out',
-                    href: `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/logout`,
-                    as: `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/logout`,
+                    href: `${
+                      dev
+                        ? process.env.NEXT_PUBLIC_URL_API
+                        : process.env.NEXT_PUBLIC_PRODUCTION_URL_API
+                    }/logout`,
+                    as: `${
+                      dev
+                        ? process.env.NEXT_PUBLIC_URL_API
+                        : process.env.NEXT_PUBLIC_PRODUCTION_URL_API
+                    }/logout`,
                     externalServer: true,
                   },
                 ]}
@@ -174,7 +182,7 @@ class Layout extends React.Component<Props> {
 
     // console.log(isMobile);
 
-    // console.log(currentTeam);
+    console.log(store, currentUser, currentTeam);
 
     if (!currentUser) {
       return (

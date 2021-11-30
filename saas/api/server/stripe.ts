@@ -47,6 +47,8 @@ function createSession({
     metadata: { userId, teamId },
   };
 
+  console.log(process.env.STRIPE_TEST_SECRETKEY, process.env.STRIPE_TEST_PRICEID);
+
   if (mode === 'subscription') {
     params.line_items = [
       {

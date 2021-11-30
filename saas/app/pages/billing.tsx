@@ -3,8 +3,8 @@ import moment from 'moment';
 import Head from 'next/head';
 import * as React from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import Button from '@material-ui/core/Button';
-import DoneIcon from '@material-ui/icons/Done';
+import Button from '@mui/material/Button';
+import DoneIcon from '@mui/icons-material/Done';
 import NProgress from 'nprogress';
 
 import Layout from '../components/layout';
@@ -16,7 +16,9 @@ import { fetchCheckoutSessionApiMethod } from '../lib/api/team-leader';
 const dev = process.env.NODE_ENV !== 'production';
 
 const stripePromise = loadStripe(
-  dev ? process.env.STRIPE_TEST_PUBLISHABLEKEY : process.env.STRIPE_LIVE_PUBLISHABLEKEY,
+  dev
+    ? process.env.NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY
+    : process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY,
 );
 
 type Props = {
@@ -83,7 +85,7 @@ class Billing extends React.Component<Props, State> {
           <br />
           <h4>Payment history</h4>
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             onClick={this.showListOfInvoicesOnClick}
             disabled={this.state.disabled}
@@ -171,7 +173,7 @@ class Billing extends React.Component<Props, State> {
           </span>
           <p />
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             onClick={this.cancelSubscriptionOnClick}
             disabled={this.state.disabled}
@@ -192,6 +194,8 @@ class Billing extends React.Component<Props, State> {
       this.setState({ disabled: true });
 
       const { sessionId } = await fetchCheckoutSessionApiMethod({ mode, teamId: currentTeam._id });
+
+      // console.log(process.env.NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY, sessionId);
 
       // When the customer clicks on the button, redirect them to Checkout.
       const stripe = await stripePromise;
@@ -245,7 +249,7 @@ class Billing extends React.Component<Props, State> {
           </li>
           <p />
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             onClick={() => this.handleCheckoutClick('setup')}
             disabled={this.state.disabled}

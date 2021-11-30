@@ -1,5 +1,7 @@
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider } from '@material-ui/styles';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
 import { Provider } from 'mobx-react';
 import App from 'next/app';
 import Head from 'next/head';
@@ -13,6 +15,8 @@ import { getStore, initializeStore, Store } from '../lib/store';
 
 class MyApp extends App {
   public static async getInitialProps({ Component, ctx }) {
+    console.log('MyApp.getInitialProps');
+
     let firstGridItem = true;
     let teamRequired = false;
 
@@ -25,7 +29,7 @@ class MyApp extends App {
     }
 
     if (
-      ctx.pathname.includes('/your-settings') || // because of MenuWithLinks inside `Layout` HOC
+      ctx.pathname.includes('/your-settings') ||
       ctx.pathname.includes('/team-settings') ||
       ctx.pathname.includes('/discussion') ||
       ctx.pathname.includes('/billing')
@@ -49,6 +53,8 @@ class MyApp extends App {
     }
 
     const appProps = { pageProps };
+
+    console.log('before getStore');
 
     const store = getStore();
     if (store) {
@@ -78,8 +84,6 @@ class MyApp extends App {
 
     // console.log(initialData);
 
-    // console.log(teamSlug);
-
     let selectedTeamSlug = '';
 
     if (teamRequired) {
@@ -91,22 +95,16 @@ class MyApp extends App {
     let team;
     if (initialData && initialData.teams) {
       team = initialData.teams.find((t) => {
-        return t.slug === selectedTeamSlug;
+        return t.slug === selectedTeamSlug || userObj.defaultTeamSlug;
       });
     }
+
+    console.log(initialData.teams, team);
 
     return {
       ...appProps,
       initialState: { user: userObj, currentUrl: ctx.asPath, team, teamSlug, ...initialData },
     };
-  }
-
-  public componentDidMount() {
-    // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
-    if (jssStyles && jssStyles.parentNode) {
-      jssStyles.parentNode.removeChild(jssStyles);
-    }
   }
 
   private store: Store;
@@ -128,24 +126,26 @@ class MyApp extends App {
     const isServer = typeof window === 'undefined';
 
     return (
-      <ThemeProvider theme={isThemeDark ? themeDark : themeLight}>
-        <Head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <link rel="stylesheet" href={isServer ? '/fonts/server.css' : '/fonts/cdn.css'} />
-          <link
-            rel="stylesheet"
-            href={
-              isThemeDark
-                ? 'https://storage.googleapis.com/async-await/nprogress-light.min.css?v=1'
-                : 'https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1'
-            }
-          />
-        </Head>
-        <CssBaseline />
-        <Provider store={store}>
-          <Component {...pageProps} store={store} />
-        </Provider>
-      </ThemeProvider>
+      <CacheProvider value={createCache({ key: 'css' })}>
+        <ThemeProvider theme={isThemeDark ? themeDark : themeLight}>
+          <Head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <link rel="stylesheet" href={isServer ? '/fonts/server.css' : '/fonts/cdn.css'} />
+            <link
+              rel="stylesheet"
+              href={
+                isThemeDark
+                  ? 'https://storage.googleapis.com/async-await/nprogress-light-spinner.css'
+                  : 'https://storage.googleapis.com/async-await/nprogress-dark-spinner.css'
+              }
+            />
+          </Head>
+          <CssBaseline />
+          <Provider store={store}>
+            <Component {...pageProps} store={store} />
+          </Provider>
+        </ThemeProvider>
+      </CacheProvider>
     );
   }
 }

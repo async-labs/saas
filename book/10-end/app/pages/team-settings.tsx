@@ -1,18 +1,18 @@
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import Hidden from '@material-ui/core/Hidden';
-import TextField from '@material-ui/core/TextField';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Hidden from '@mui/material/Hidden';
+import TextField from '@mui/material/TextField';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
 import NProgress from 'nprogress';
 import * as React from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 import Layout from '../components/layout';
 import InviteMember from '../components/teams/InviteMember';
@@ -172,7 +172,7 @@ class TeamSettings extends React.Component<Props, State> {
                   .map((m) => (
                     <TableRow key={m._id}>
                       <TableCell style={{ width: '300px' }}>
-                        <Hidden smDown>
+                        <Hidden mdDown>
                           <Avatar
                             role="presentation"
                             src={m.avatarUrl}
@@ -299,7 +299,7 @@ class TeamSettings extends React.Component<Props, State> {
     NProgress.start();
     this.setState({ disabled: true });
 
-    const bucket = process.env.BUCKET_FOR_TEAM_LOGOS;
+    const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_TEAM_LOGOS;
     const prefix = `${currentTeam.slug}`;
 
     console.log(bucket);

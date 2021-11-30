@@ -1,5 +1,5 @@
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import React from 'react';
 
 import { emailLoginLinkApiMethod } from '../../lib/api/public';
@@ -21,7 +21,9 @@ class LoginButton extends React.PureComponent<Props, State> {
   public render() {
     const { invitationToken } = this.props;
 
-    let url = `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/auth/google`;
+    let url = `${
+      dev ? process.env.NEXT_PUBLIC_URL_API : process.env.NEXT_PUBLIC_PRODUCTION_URL_API
+    }/auth/google`;
     const qs = makeQueryString({ invitationToken });
 
     if (qs) {

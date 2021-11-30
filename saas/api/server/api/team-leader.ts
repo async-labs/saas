@@ -93,9 +93,7 @@ router.post('/stripe/fetch-checkout-session', async (req, res, next) => {
   try {
     const { mode, teamId } = req.body;
 
-    const user = await User.findById(req.user.id)
-      .select(['stripeCustomer', 'email'])
-      .setOptions({ lean: true });
+    const user = await User.findById(req.user.id).select(['stripeCustomer', 'email']).setOptions({ lean: true });
 
     const team = await Team.findById(teamId)
       .select(['stripeSubscription', 'slug', 'teamLeaderId'])

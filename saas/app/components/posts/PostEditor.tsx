@@ -1,6 +1,6 @@
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import InsertPhotoIcon from '@material-ui/icons/InsertPhoto';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import he from 'he';
 import marked from 'marked';
 import { observer } from 'mobx-react';
@@ -97,14 +97,18 @@ class PostEditor extends React.Component<Props, State> {
             id="upload-file-post-editor"
             type="file"
             style={{ display: 'none' }}
-            onChange={this.uploadFile}
+            onChange={(event) => {
+              const file = event.target.files[0];
+              event.target.value = '';
+              this.uploadFile(file);
+            }}
           />
         </div>
         <br />
         <div
           style={{
             width: '100%',
-            height: '100%',
+            height: '100vh',
             padding: '10px 15px',
             border: isThemeDark
               ? '1px solid rgba(255, 255, 255, 0.5)'
@@ -220,17 +224,14 @@ class PostEditor extends React.Component<Props, State> {
     this.setState({ htmlContent });
   };
 
-  private uploadFile = async () => {
-    const fileElement = document.getElementById('upload-file-post-editor') as HTMLFormElement;
-    const file = fileElement.files[0];
-
+  private uploadFile = async (file: File) => {
     if (!file) {
       notify('No file selected.');
       return;
     }
 
     if (!file.type || (!file.type.startsWith('image/') && file.type !== 'application/pdf')) {
-      notify('Wrong file type.');
+      notify('Wrong file.');
       return;
     }
 
@@ -239,12 +240,10 @@ class PostEditor extends React.Component<Props, State> {
 
     NProgress.start();
 
-    const bucket = process.env.BUCKET_FOR_POSTS;
-    const prefix = `team-${currentTeam.slug}`;
+    const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_POSTS;
+    const prefix = `${currentTeam.slug}`;
     const fileName = file.name;
     const fileType = file.type;
-
-    console.log(bucket);
 
     try {
       const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({
@@ -264,7 +263,6 @@ class PostEditor extends React.Component<Props, State> {
         await uploadFileUsingSignedPutRequestApiMethod(
           resizedFile,
           responseFromApiServerForUpload.signedRequest,
-          { 'Cache-Control': 'max-age=2592000' },
         );
 
         fileUrl = responseFromApiServerForUpload.url;

@@ -1,5 +1,5 @@
-import Tooltip from '@material-ui/core/Tooltip';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import Tooltip from '@mui/material/Tooltip';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { observer } from 'mobx-react';
 import React from 'react';
 

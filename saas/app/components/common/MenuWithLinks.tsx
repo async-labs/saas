@@ -1,5 +1,5 @@
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Link from 'next/link';
 import { NextRouter, withRouter } from 'next/router';
 import React from 'react';
@@ -32,8 +32,6 @@ class MenuWithLinks extends React.PureComponent<Props, State> {
   public render() {
     const { options, children, router } = this.props;
     const { anchorEl } = this.state;
-
-    // use Link component and anchor element instead of onClick
 
     return (
       <div style={{ textAlign: 'center' }}>

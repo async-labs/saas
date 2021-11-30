@@ -43,11 +43,8 @@ export async function insertTemplates() {
         </p>
         <p>
           Also check out
-          <a href="https://async-await.com" target="blank"> Async</a>, our communication tool for small teams of software developers.
-        </p>
-        <p>
-          If you are interested in hiring our team to help build your SaaS web application, 
-          please fill out our form at <a href="https://async-labs.com/" target="blank">Async Labs</a>.
+          <a href="https://async-await.com" target="blank"> Async</a>
+          , our communication tool for small teams of software developers.
         </p>
         Kelly & Timur, Team Async
       `,

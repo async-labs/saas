@@ -134,8 +134,6 @@ router.post('/get-initial-data', async (req, res, next) => {
   try {
     const teams = await Team.getAllTeamsForUser(req.user.id);
 
-    console.log(req.user.id);
-
     let selectedTeamSlug = req.body.teamSlug;
     if (!selectedTeamSlug && teams && teams.length > 0) {
       selectedTeamSlug = teams[0].slug;
@@ -154,19 +152,17 @@ router.post('/get-initial-data', async (req, res, next) => {
   }
 });
 
-router.get('/teams', async (req, res, next) => {
-  try {
-    console.log(`user`, req.user.id);
+// router.get('/teams', async (req, res, next) => {
+//   try {
+//     const teams = await Team.getAllTeamsForUser(req.user.id);
 
-    const teams = await Team.getAllTeamsForUser(req.user.id);
+//     console.log(teams);
 
-    console.log(teams.length, teams[0]);
-
-    res.json({ teams });
-  } catch (err) {
-    next(err);
-  }
-});
+//     res.json({ teams });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 router.get('/teams/get-members', async (req, res, next) => {
   try {

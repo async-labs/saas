@@ -1,7 +1,7 @@
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import DoneIcon from '@material-ui/icons/Done';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import DoneIcon from '@mui/icons-material/Done';
 import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
 import NProgress from 'nprogress';
@@ -180,7 +180,7 @@ class YourSettings extends React.Component<Props, State> {
     NProgress.start();
     this.setState({ disabled: true });
 
-    const bucket = process.env.BUCKET_FOR_AVATARS;
+    const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_AVATARS;
 
     const prefix = `${currentUser.slug}`;
 

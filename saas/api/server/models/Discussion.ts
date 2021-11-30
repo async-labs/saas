@@ -1,7 +1,7 @@
 import { uniq } from 'lodash';
 import * as mongoose from 'mongoose';
 
-import { generateNumberSlug } from '../utils/slugify';
+import { generateRandomSlug } from '../utils/slugify';
 import Team, { TeamDocument } from './Team';
 import Post from './Post';
 
@@ -120,7 +120,7 @@ class DiscussionClass extends mongoose.Model {
 
     await this.checkPermissionAndGetTeam({ userId, teamId, memberIds });
 
-    const slug = await generateNumberSlug(this, { teamId });
+    const slug = await generateRandomSlug(this, { teamId });
 
     return this.create({
       createdUserId: userId,
@@ -138,9 +138,7 @@ class DiscussionClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const discussion = await this.findById(id)
-      .select('teamId createdUserId')
-      .setOptions({ lean: true });
+    const discussion = await this.findById(id).select('teamId createdUserId').setOptions({ lean: true });
 
     const team = await this.checkPermissionAndGetTeam({
       userId,
@@ -186,9 +184,7 @@ class DiscussionClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const team = await Team.findById(teamId)
-      .select('memberIds teamLeaderId')
-      .setOptions({ lean: true });
+    const team = await Team.findById(teamId).select('memberIds teamLeaderId').setOptions({ lean: true });
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');

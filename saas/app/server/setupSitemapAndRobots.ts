@@ -18,7 +18,7 @@ export default function setupSitemapAndRobots({ server }) {
 
     try {
       const smStream = new SitemapStream({
-        hostname: dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP,
+        hostname: dev ? process.env.NEXT_PUBLIC_URL_APP : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP,
       });
       const gzip = zlib.createGzip();
 
@@ -45,6 +45,6 @@ export default function setupSitemapAndRobots({ server }) {
   });
 
   server.get('/robots.txt', (_, res) => {
-    res.sendFile(path.join(__dirname, './', 'robots.txt'));
+    res.sendFile(path.join(__dirname, '../static', 'robots.txt'));
   });
 }

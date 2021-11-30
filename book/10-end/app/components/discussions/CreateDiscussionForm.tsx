@@ -1,13 +1,12 @@
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import { observer } from 'mobx-react';
 import Head from 'next/head';
 import Router from 'next/router';
@@ -94,10 +93,10 @@ class CreateDiscussionForm extends React.Component<Props, State> {
               <p />
               <br />
               <FormControl>
-                <InputLabel>Notification type</InputLabel>
                 <Select
                   value={this.state.notificationType}
-                  onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                  onChange={(event) => {
+                    event.stopPropagation();
                     this.setState({ notificationType: event.target.value });
                   }}
                   required
@@ -207,10 +206,10 @@ class CreateDiscussionForm extends React.Component<Props, State> {
       return;
     }
 
-    if (!memberIds || memberIds.length < 1) {
-      notify('Please assign at least one person to this Discussion.');
-      return;
-    }
+    // if (!memberIds || memberIds.length < 1) {
+    //   notify('Please assign at least one person to this Discussion.');
+    //   return;
+    // }
 
     if (!notificationType) {
       notify('Please select notification type.');
@@ -238,9 +237,9 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
         await discussion.sendDataToLambda({
           discussionName: discussion.name,
-          discussionLink: `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/teams/${
-            discussion.team.slug
-          }/discussions/${discussion.slug}`,
+          discussionLink: `${
+            dev ? process.env.NEXT_PUBLIC_URL_APP : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP
+          }/teams/${discussion.team.slug}/discussions/${discussion.slug}`,
           postContent: post.content,
           authorName: post.user.displayName,
           userIds: userIdsForLambda,

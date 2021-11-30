@@ -1,7 +1,7 @@
 import { uniq } from 'lodash';
 import * as mongoose from 'mongoose';
 
-import { generateNumberSlug } from '../utils/slugify';
+import { generateRandomSlug } from '../utils/slugify';
 import Team, { TeamDocument } from './Team';
 import Post from './Post';
 
@@ -120,7 +120,7 @@ class DiscussionClass extends mongoose.Model {
 
     await this.checkPermissionAndGetTeam({ userId, teamId, memberIds });
 
-    const slug = await generateNumberSlug(this, { teamId });
+    const slug = await generateRandomSlug(this, { teamId });
 
     return this.create({
       createdUserId: userId,

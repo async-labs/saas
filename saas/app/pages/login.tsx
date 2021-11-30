@@ -23,8 +23,6 @@ class Login extends React.Component {
           <p>You’ll be logged in for 14 days unless you log out manually.</p>
           <br />
           <LoginButton />
-          <br />
-          <p>Using a fake email address will not allow you to log in to the demo.</p>
         </div>
       </Layout>
     );

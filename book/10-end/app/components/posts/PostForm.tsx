@@ -1,4 +1,4 @@
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import he from 'he';
 import marked from 'marked';
 import { observer } from 'mobx-react';
@@ -183,9 +183,9 @@ class PostForm extends React.Component<Props, State> {
 
         await discussion.sendDataToLambda({
           discussionName: discussion.name,
-          discussionLink: `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/teams/${
-            discussion.team.slug
-          }/discussions/${discussion.slug}`,
+          discussionLink: `${
+            dev ? process.env.NEXT_PUBLIC_URL_APP : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP
+          }/teams/${discussion.team.slug}/discussions/${discussion.slug}`,
           postContent: post.content,
           authorName: post.user.displayName,
           userIds: userIdsForLambda,

@@ -32,10 +32,7 @@ Check out projects built with the help of this open source app. Feel free to add
 - [Showcase](#showcase)
 - [Contributing](#contributing)
 - [Sponsors](#sponsors)
-- [Team](#team)
-- [License](#license)
-- [Project structure](#project-structure)
-
+- [Team](#team)https://saas-app.async-await.com
 
 ## Features
 
@@ -113,14 +110,13 @@ Check out projects built with the help of this open source app. Feel free to add
   STRIPE_LIVE_ENDPOINTSECRET=whsec_xxxxxx
 
   # Optionally determine the URL
-  URL_APP=http://localhost:3000
-  URL_API=http://localhost:8000
-  PRODUCTION_URL_API=
-  PRODUCTION_URL_APP=
-
-  # in pages/_document.tsx and lib/withAuth.tsx
-  GA_MEASUREMENT_ID=
+  URL_APP="http://localhost:3000"
+  URL_API="http://localhost:8000"
+  PRODUCTION_URL_APP="https://saas-app.async-await.com"
+  PRODUCTION_URL_API="https://saas-api.async-await.com"
   ```
+
+  Important: use your values for `PRODUCTION_URL_APP` and `PRODUCTION_URL_API`. These are values for domain name that you own.
 
   Important: The above environmental variables are available on the server only. You should add your `.env` file to `.gitignore` inside the `api` folder so that your secret keys are not stored on a remote Github repo.
 
@@ -143,21 +139,25 @@ Check out projects built with the help of this open source app. Feel free to add
   - A `.env` file in the `app` folder is not required to run, but you can create one to override the default variables:
 
   ```
-    NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY=pk_test_xxxxxxxxxxxxxxx
-    NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY=pk_live_xxxxxxxxxxxxxxx
+    NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY="pk_test_xxxxxxxxxxxxxxx"
+    NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY="pk_live_xxxxxxxxxxxxxxx"
 
     NEXT_PUBLIC_BUCKET_FOR_POSTS=
     NEXT_PUBLIC_BUCKET_FOR_TEAM_AVATARS=
     NEXT_PUBLIC_BUCKET_FOR_TEAM_LOGOS=
 
-    NEXT_PUBLIC_URL_APP=http://localhost:3000
-    NEXT_PUBLIC_URL_API=http://localhost:8000
-    NEXT_PUBLIC_PRODUCTION_URL_API=
+    NEXT_PUBLIC_URL_APP="http://localhost:3000"
+    NEXT_PUBLIC_URL_API="http://localhost:8000"
     NEXT_PUBLIC_PRODUCTION_URL_APP=
+    NEXT_PUBLIC_PRODUCTION_URL_API=
+
 
     NEXT_PUBLIC_API_GATEWAY_ENDPOINT=
     NEXT_PUBLIC_GA_MEASUREMENT_ID=
   ```
+
+  Important: use your values for `PRODUCTION_URL_APP` and `PRODUCTION_URL_API`. These are values for domain name that you own.
+
 
   - To get `NEXT_PUBLIC_GA_MEASUREMENT_ID`, set up Google Analytics and follow [these instructions](https://support.google.com/analytics/answer/1008080?hl=en) to find your tracking ID.
   - To get `NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY`, go to your Stripe dashboard, click `Developers`, then click `API keys`.

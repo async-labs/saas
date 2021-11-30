@@ -1,5 +1,0 @@
-User-agent: *
-Disallow: /
-Allow: /login
-Allow: /signup
-Disallow: /*

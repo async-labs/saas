@@ -28,16 +28,19 @@ async function generateSlug(Model, name, filter = {}) {
   return createUniqueSlug(Model, origSlug, 1, filter);
 }
 
-async function generateNumberSlug(Model, filter = {}, n = 1) {
-  const obj = await Model.findOne({ slug: n, ...filter })
+async function generateRandomSlug(Model, filter = {}) {
+  const randomString12 =
+    Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);
+
+  const obj = await Model.findOne({ slug: randomString12, ...filter })
     .select('_id')
     .setOptions({ lean: true });
 
   if (!obj) {
-    return `${n}`;
+    return randomString12;
   }
 
-  return generateNumberSlug(Model, filter, ++n);
+  return generateRandomSlug(Model, filter);
 }
 
-export { generateSlug, generateNumberSlug };
+export { generateSlug, generateRandomSlug };

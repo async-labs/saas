@@ -1,15 +1,14 @@
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
@@ -99,10 +98,10 @@ class EditDiscussionForm extends React.Component<Props, State> {
             <p />
             <br />
             <FormControl>
-              <InputLabel>Notification type</InputLabel>
               <Select
                 value={this.state.notificationType}
-                onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                onChange={(event) => {
+                  event.stopPropagation();
                   this.setState({ notificationType: event.target.value });
                 }}
                 required
@@ -121,7 +120,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
             <DialogActions>
               <Button
                 color="primary"
-                variant="contained"
+                variant="outlined"
                 onClick={this.handleClose}
                 disabled={this.state.disabled}
               >
