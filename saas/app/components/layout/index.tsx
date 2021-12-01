@@ -262,6 +262,25 @@ class Layout extends React.Component<Props> {
                     await store.currentUser.toggleTheme(!store.currentUser.darkTheme);
                   }}
                 />
+                <span
+                  style={{
+                    float: 'right',
+                    margin: '15px 0px 10px 25px',
+                    fontSize: '11px',
+                  }}
+                >
+                  If you need help building your SaaS web app, let talk:{' '}
+                  <a
+                    style={{
+                      fontWeight: 600,
+                    }}
+                    target="_blank"
+                    href="https://async-labs.com"
+                    rel="noopener noreferrer"
+                  >
+                    Async Labs
+                  </a>
+                </span>
               </React.Fragment>
             )}
             <div style={{ clear: 'both' }} />
