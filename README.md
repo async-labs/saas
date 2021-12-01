@@ -18,8 +18,8 @@ The open source project is located in the `saas` folder. If you purchased our bo
 Check out projects built with the help of this open source app. Feel free to add your own project by creating a pull request.
 
 - [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee): Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
+- [Async](https://async-await.com/): Urgent vs non-urgent communication tool for small teams.
 - [Builder Book](https://github.com/async-labs/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
-- [Async](https://async-await.com/): Asynchronous communication and project management tool.
 
 
 ## Contents
@@ -260,7 +260,7 @@ Payment history:
 
 ## Contributing
 
-Want to support this project? Sign up at [async](https://async-await.com) and/or buy our [book](https://builderbook.org/book), which teaches you how to build this project from scratch.
+Want to support this project? Become customer at [async](https://async-await.com) and/or buy our [books](https://builderbook.org/).
 
 
 ## Sponsors
@@ -273,7 +273,6 @@ Want to support this project? Sign up at [async](https://async-await.com) and/or
 ## Team
 
 - [Kelly Burke](https://github.com/klyburke)
-- [Delgermurun Purevkhuu](https://github.com/delgermurun)
 - [Timur Zhiyentayev](https://github.com/tima101)
 
 You can contact us at team@async-await.com.
