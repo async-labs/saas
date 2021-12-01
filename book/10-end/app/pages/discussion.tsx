@@ -39,8 +39,6 @@ class DiscussionPageComp extends React.Component<Props, State> {
   }
 
   public render() {
-    console.log('DiscussionPageComp.render');
-
     const { store, isMobile, discussionSlug } = this.props;
     const { currentTeam } = store;
     const { selectedPost } = this.state;
@@ -228,7 +226,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
   };
 
   public componentDidMount() {
-    console.log('DiscussionPageComp.componentDidMount');
+    // console.log('DiscussionPageComp.componentDidMount');
 
     const { discussionSlug, store, isServer } = this.props;
 
@@ -250,11 +248,12 @@ class DiscussionPageComp extends React.Component<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    console.log('DiscussionPageComp.componentDidUpdate');
+    // console.log('before condition DiscussionPageComp.componentDidUpdate');
 
     const { discussionSlug, isServer } = this.props;
 
     if (prevProps.discussionSlug !== discussionSlug) {
+      console.log('inside condition DiscussionPageComp.componentDidUpdate');
       if (prevProps.discussionSlug) {
         const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
         if (prevDiscussion) {
@@ -275,7 +274,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
   }
 
   public componentWillUnmount() {
-    console.log('DiscussionPageComp.componentWillUnmount');
+    // console.log('DiscussionPageComp.componentWillUnmount');
 
     const { discussionSlug, store } = this.props;
 

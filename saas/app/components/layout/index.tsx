@@ -182,7 +182,7 @@ class Layout extends React.Component<Props> {
 
     // console.log(isMobile);
 
-    console.log(store, currentUser, currentTeam);
+    // console.log(store, currentUser, currentTeam);
 
     if (!currentUser) {
       return (
@@ -222,7 +222,7 @@ class Layout extends React.Component<Props> {
           </LayoutWrapper>
         );
       } else {
-        console.log('team not required');
+        // console.log('team not required');
         return (
           <LayoutWrapper
             firstGridItem={firstGridItem}

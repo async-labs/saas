@@ -51,7 +51,7 @@ class Store {
 
     this.currentUrl = initialState.currentUrl || '';
 
-    console.log(initialState);
+    // console.log(initialState);
 
     this.setCurrentTeam(initialState.team);
 

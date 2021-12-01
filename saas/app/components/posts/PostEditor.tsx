@@ -271,7 +271,7 @@ class PostEditor extends React.Component<Props, State> {
 
         fileUrl = responseFromApiServerForUpload.url;
 
-        console.log(fileUrl);
+        // console.log(fileUrl);
 
         const finalWidth = width > 768 ? '100%' : `${width}px`;
 

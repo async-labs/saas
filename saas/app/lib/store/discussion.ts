@@ -64,7 +64,7 @@ class Discussion {
 
     if (params.initialPosts) {
       this.setInitialPosts(params.initialPosts);
-      console.log(params.initialPosts[0]);
+      // console.log(params.initialPosts[0]);
     } else {
       this.loadPosts();
     }

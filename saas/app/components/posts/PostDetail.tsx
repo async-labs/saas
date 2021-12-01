@@ -171,7 +171,7 @@ class PostDetail extends React.Component<Props> {
     if (onEditClick) {
       onEditClick(post);
     }
-    console.log(`PostDetail: ${post._id}`);
+    // console.log(`PostDetail: ${post._id}`);
   };
 
   public deletePost = () => {

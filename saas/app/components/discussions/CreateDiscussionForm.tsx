@@ -219,7 +219,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     this.setState({ disabled: true });
     NProgress.start();
 
-    console.log(notificationType);
+    // console.log(notificationType);
 
     try {
       const discussion = await currentTeam.addDiscussion({

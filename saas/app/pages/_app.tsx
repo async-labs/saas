@@ -54,7 +54,7 @@ class MyApp extends App {
 
     const appProps = { pageProps };
 
-    console.log('before getStore');
+    // console.log('before getStore');
 
     const store = getStore();
     if (store) {
@@ -112,7 +112,7 @@ class MyApp extends App {
   constructor(props) {
     super(props);
 
-    console.log('MyApp.constructor');
+    // console.log('MyApp.constructor');
 
     this.store = initializeStore(props.initialState);
   }

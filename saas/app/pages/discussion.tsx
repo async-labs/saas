@@ -39,8 +39,6 @@ class DiscussionPageComp extends React.Component<Props, State> {
   }
 
   public render() {
-    // console.log('DiscussionPageComp.render');
-
     const { store, isMobile, discussionSlug } = this.props;
     const { currentTeam } = store;
     const { selectedPost } = this.state;
@@ -242,7 +240,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
       discussion.joinSocketRooms();
     }
 
-    console.log(store.socket);
+    // console.log(store.socket);
 
     store.socket.on('discussionEvent', this.handleDiscussionEvent);
     store.socket.on('postEvent', this.handlePostEvent);
@@ -250,11 +248,13 @@ class DiscussionPageComp extends React.Component<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    // console.log('DiscussionPageComp.componentDidUpdate');
+    // console.log('before condition DiscussionPageComp.componentDidUpdate');
 
     const { discussionSlug, isServer } = this.props;
 
     if (prevProps.discussionSlug !== discussionSlug) {
+      console.log('inside condition DiscussionPageComp.componentDidUpdate');
+
       if (prevProps.discussionSlug) {
         const prevDiscussion = this.getDiscussion(prevProps.discussionSlug);
         if (prevDiscussion) {

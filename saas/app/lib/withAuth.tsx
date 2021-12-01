@@ -35,7 +35,7 @@ Router.events.on('routeChangeError', () => NProgress.done());
 export default function withAuth(Component, { loginRequired = true, logoutRequired = false } = {}) {
   class WithAuth extends React.Component<{ store: Store }> {
     public static async getInitialProps(ctx) {
-      console.log('WithAuth.getInitialProps');
+      // console.log('WithAuth.getInitialProps');
 
       const { req } = ctx;
 
@@ -52,7 +52,7 @@ export default function withAuth(Component, { loginRequired = true, logoutRequir
     }
 
     public componentDidMount() {
-      console.log('WithAuth.componentDidMount');
+      // console.log('WithAuth.componentDidMount');
 
       const { store } = this.props;
       const user = store.currentUser;

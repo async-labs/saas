@@ -50,7 +50,7 @@ function DiscussionPageCompFunctional({
 
   useEffect(() => {
     if (!mounted.current) {
-      // console.log('useEffect 1 for DiscussionPageCompFunctional');
+      console.log('useEffect 1 for DiscussionPageCompFunctional');
 
       if (store.currentTeam && (!isServer || !discussionSlug)) {
         store.currentTeam.loadDiscussions().catch((err) => notify(err));
@@ -62,7 +62,7 @@ function DiscussionPageCompFunctional({
         discussion.joinSocketRooms();
       }
 
-      console.log(store.socket);
+      // console.log(store.socket);
 
       store.socket.on('discussionEvent', handleDiscussionEvent);
       store.socket.on('postEvent', handlePostEvent);
@@ -70,7 +70,7 @@ function DiscussionPageCompFunctional({
 
       (mounted as any).current = true;
     } else {
-      // console.log('useEffect 2 for DiscussionPageCompFunctional');
+      console.log('useEffect 2 for DiscussionPageCompFunctional');
 
       if (prevDiscussionSlug) {
         const prevDiscussion = getDiscussion(prevDiscussionSlug);
@@ -91,8 +91,6 @@ function DiscussionPageCompFunctional({
     }
 
     return () => {
-      // console.log('useEffect 3 for DiscussionPageCompFunctional');
-
       const discussion = getDiscussion(discussionSlug);
 
       if (discussion) {
@@ -114,8 +112,8 @@ function DiscussionPageCompFunctional({
 
     if (!slug && currentTeam.discussions.length > 0) {
       Router.replace(
-        `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
-        `/teams/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
+        `/discussion-f?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
+        `/teams/${teamSlug}/discussions-f/${currentTeam.orderedDiscussions[0].slug}`,
       );
       return;
     }
@@ -253,8 +251,6 @@ function DiscussionPageCompFunctional({
   }
 
   const title = discussion ? `${discussion.name} · Discussion` : 'Discussions';
-
-  // console.log('return for DiscussionPageCompFunctional');
 
   return (
     <Layout store={store} isMobile={isMobile} firstGridItem={firstGridItem}>
