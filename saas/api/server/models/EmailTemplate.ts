@@ -30,26 +30,24 @@ export async function insertTemplates() {
   const templates = [
     {
       name: 'welcome',
-      subject: 'Welcome to SaaS boilerplate by Async',
+      subject: 'Welcome to SaaS boilerplate (demo)',
       message: `Welcome <%= userName %>,
         <p>
-          Thanks for signing up on our <a href="https://github.com/async-labs/saas" target="blank">SaaS boilerplate</a>!
+          Thanks for signing up on our demo!
         </p>
         <p>
-          If you are learning how to build a SaaS web app, check out our 2 books:
+          If you are learning how to code and/or build a SaaS web application, check out our two books:
            <a href="https://builderbook.org" target="blank">Builder Book</a>
            and
            <a href="https://builderbook.org/book" target="blank">SaaS Boilerplate</a>.
         </p>
         <p>
           Also check out
-          <a href="https://async-await.com" target="blank"> Async</a>, our communication tool for small teams of software developers.
-        </p>
-        <p>
-          If you are building your own SaaS web application and need help, consider working with our team:
+          <a href="https://async-await.com" target="blank"> Async </a>
+          and
           <a href="https://async-labs.com" target="blank"> Async Labs</a>.
         </p>
-        Kelly & Timur, Team Async
+        Kelly & Timur, Team Async Labs
       `,
     },
     {
