@@ -83,9 +83,11 @@ function setupGoogle({ server }) {
     passport.authenticate('google', {
       failureRedirect: '/login',
     }),
-    (req, res) => {
+    async (req, res) => {
+      let teamSlugOfInvitedTeam;
+
       if (req.user && req.session.invitationToken) {
-        Invitation.addUserToTeam({
+        teamSlugOfInvitedTeam = await Invitation.addUserToTeam({
           token: req.session.invitationToken,
           user: req.user,
         }).catch((err) => console.error(err));
@@ -95,10 +97,14 @@ function setupGoogle({ server }) {
 
       let redirectUrlAfterLogin;
 
-      if (req.user && !req.user.defaultTeamSlug) {
-        redirectUrlAfterLogin = '/create-team';
-      } else {
+      // console.log(req.user.defaultTeamSlug, teamSlugOfInvitedTeam);
+
+      if (req.user && teamSlugOfInvitedTeam) {
+        redirectUrlAfterLogin = `/teams/${teamSlugOfInvitedTeam}/discussions`;
+      } else if (req.user && !teamSlugOfInvitedTeam && req.user.defaultTeamSlug) {
         redirectUrlAfterLogin = `/teams/${req.user.defaultTeamSlug}/discussions`;
+      } else if (req.user && !teamSlugOfInvitedTeam && !req.user.defaultTeamSlug) {
+        redirectUrlAfterLogin = `/create-team`;
       }
 
       res.redirect(

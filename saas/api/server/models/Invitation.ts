@@ -73,22 +73,10 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Team does not exist or you have no permission');
     }
 
-    const registeredUser = await User.findOne({ email })
-      .select('defaultTeamSlug')
-      .setOptions({ lean: true });
+    const registeredUser = await User.findOne({ email }).setOptions({ lean: true });
 
-    if (registeredUser) {
-      if (team.memberIds.includes(registeredUser._id.toString())) {
-        throw new Error('This user is already Team Member.');
-      } else {
-        await Team.updateOne({ _id: team._id }, { $addToSet: { memberIds: registeredUser._id } });
-
-        if (registeredUser._id !== team.teamLeaderId && !registeredUser.defaultTeamSlug) {
-          await User.findByIdAndUpdate(registeredUser._id, {
-            $set: { defaultTeamSlug: team.slug },
-          });
-        }
-      }
+    if (team.memberIds.includes(registeredUser._id.toString())) {
+      throw new Error('This user is already Team Member.');
     }
 
     let token;
@@ -224,6 +212,8 @@ class InvitationClass extends mongoose.Model {
         await User.findByIdAndUpdate(user._id, { $set: { defaultTeamSlug: team.slug } });
       }
     }
+
+    return team.slug;
   }
 }
 

@@ -67,7 +67,7 @@ class InvitationPageComp extends React.Component<Props> {
           />{' '}
           <h2>{team.name}</h2>
           <p>
-            Join <b>{team.name}</b> by logging in with your Google account.
+            Join <b>{team.name}</b> by logging in or signing up.
           </p>
           <br />
           <LoginButton invitationToken={token} />

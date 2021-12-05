@@ -251,12 +251,10 @@ class Layout extends React.Component<Props> {
               <React.Fragment>
                 <LensIcon
                   style={{
-                    float: 'left',
                     margin: '15px 0px 10px 25px',
                     opacity: 0.8,
                     fontSize: '18px',
                     cursor: 'pointer',
-                    verticalAlign: 'top',
                   }}
                   onClick={async () => {
                     await store.currentUser.toggleTheme(!store.currentUser.darkTheme);
@@ -281,6 +279,14 @@ class Layout extends React.Component<Props> {
                     Async Labs
                   </a>
                 </span>
+                <h4
+                  style={{
+                    margin: '15px 0px 10px 30px',
+                    fontWeight: 300,
+                  }}
+                >
+                  Current team: <b>{store.currentTeam.name}</b>
+                </h4>
               </React.Fragment>
             )}
             <div style={{ clear: 'both' }} />
