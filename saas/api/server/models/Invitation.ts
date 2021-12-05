@@ -75,7 +75,7 @@ class InvitationClass extends mongoose.Model {
 
     const registeredUser = await User.findOne({ email }).setOptions({ lean: true });
 
-    if (team.memberIds.includes(registeredUser._id.toString())) {
+    if (registeredUser && team.memberIds.includes(registeredUser._id.toString())) {
       throw new Error('This user is already Team Member.');
     }
 
