@@ -51,7 +51,6 @@ interface InvitationModel extends mongoose.Model<InvitationDocument> {
 
   getTeamInvitations({ userId, teamId }: { userId: string; teamId: string });
   getTeamByToken({ token }: { token: string });
-  removeIfMemberAdded({ token, userId }: { token: string; userId: string });
   addUserToTeam({ token, user }: { token: string; user: UserDocument });
 }
 
@@ -73,24 +72,16 @@ class InvitationClass extends mongoose.Model {
       throw new Error('Team does not exist or you have no permission');
     }
 
-    const registeredUser = await User.findOne({ email }).select('defaultTeamSlug').setOptions({ lean: true });
+    const registeredUser = await User.findOne({ email }).setOptions({ lean: true });
 
-    if (registeredUser) {
-      if (team.memberIds.includes(registeredUser._id.toString())) {
-        throw new Error('This user is already Team Member.');
-      } else {
-        await Team.updateOne({ _id: team._id }, { $addToSet: { memberIds: registeredUser._id } });
-
-        if (registeredUser._id !== team.teamLeaderId && !registeredUser.defaultTeamSlug) {
-          await User.findByIdAndUpdate(registeredUser._id, {
-            $set: { defaultTeamSlug: team.slug },
-          });
-        }
-      }
+    if (registeredUser && team.memberIds.includes(registeredUser._id.toString())) {
+      throw new Error('This user is already Team Member.');
     }
 
     let token;
-    const invitation = await this.findOne({ teamId, email }).select('token').setOptions({ lean: true });
+    const invitation = await this.findOne({ teamId, email })
+      .select('token')
+      .setOptions({ lean: true });
 
     if (invitation) {
       token = invitation.token;
@@ -131,7 +122,9 @@ class InvitationClass extends mongoose.Model {
   }
 
   public static async getTeamInvitations({ userId, teamId }) {
-    const team = await Team.findOne({ _id: teamId }).select('teamLeaderId').setOptions({ lean: true });
+    const team = await Team.findOne({ _id: teamId })
+      .select('teamLeaderId')
+      .setOptions({ lean: true });
 
     if (userId !== team.teamLeaderId) {
       throw new Error('You have no permission.');
@@ -162,30 +155,6 @@ class InvitationClass extends mongoose.Model {
     return team;
   }
 
-  public static async removeIfMemberAdded({ token, userId }) {
-    if (!token) {
-      throw new Error('Bad data');
-    }
-
-    const invitation = await this.findOne({ token }).setOptions({ lean: true });
-
-    if (!invitation) {
-      throw new Error('Invitation not found');
-    }
-
-    const team = await Team.findById(invitation.teamId)
-      .select('name slug avatarUrl memberIds')
-      .setOptions({ lean: true });
-
-    if (!team) {
-      throw new Error('Team does not exist');
-    }
-
-    if (team && team.memberIds.includes(userId)) {
-      this.deleteOne({ token }).exec();
-    }
-  }
-
   public static async addUserToTeam({ token, user }) {
     if (!token || !user) {
       throw new Error('Bad data');
@@ -214,6 +183,8 @@ class InvitationClass extends mongoose.Model {
         await User.findByIdAndUpdate(user._id, { $set: { defaultTeamSlug: team.slug } });
       }
     }
+
+    return team.slug;
   }
 }
 

@@ -262,6 +262,14 @@ class Layout extends React.Component<Props> {
                     await store.currentUser.toggleTheme(!store.currentUser.darkTheme);
                   }}
                 />
+                <h4
+                  style={{
+                    margin: '15px 0px 10px 30px',
+                    fontWeight: 300,
+                  }}
+                >
+                  Current team: <b>{store.currentTeam.name}</b>
+                </h4>
               </React.Fragment>
             )}
             <div style={{ clear: 'both' }} />

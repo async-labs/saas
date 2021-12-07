@@ -7,10 +7,7 @@ import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
 import Layout from '../components/layout';
-import {
-  acceptAndGetInvitedTeamByTokenApiMethod,
-  removeInvitationIfMemberAddedApiMethod,
-} from '../lib/api/public';
+import { acceptAndGetInvitedTeamByTokenApiMethod } from '../lib/api/public';
 import { Team } from '../lib/store/team';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
@@ -77,17 +74,17 @@ class InvitationPageComp extends React.Component<Props> {
   }
 
   public async componentDidMount() {
-    const { store, team, token } = this.props;
+    const { store, team } = this.props;
 
     const user = store.currentUser;
 
     if (user && team) {
       if (team.memberIds.includes(user._id)) {
-        await removeInvitationIfMemberAddedApiMethod(token);
-        Router.push({
-          pathname: '/your-settings',
-          query: { redirectMessage: `Success! You are now part of ${team.name} team.` },
-        });
+        const redirectMessage = `Success%21%20You%20are%20now%20part%20of%20${team.name}%20team%2E`;
+        Router.push(
+          `/your-settings?teamSlug=${team.slug}&redirectMessage=${redirectMessage}`,
+          `/teams/${team.slug}/your-settings`,
+        );
       }
     }
   }

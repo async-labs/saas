@@ -92,14 +92,23 @@ class MyApp extends App {
       selectedTeamSlug = userObj.defaulTeamSlug;
     }
 
+    // console.log(selectedTeamSlug, userObj.defaultTeamSlug);
+    // console.log(initialData && initialData.teams);
+
     let team;
-    if (initialData && initialData.teams) {
-      team = initialData.teams.find((t) => {
-        return t.slug === selectedTeamSlug || userObj.defaultTeamSlug;
-      });
+    if (selectedTeamSlug) {
+      team =
+        initialData &&
+        initialData.teams &&
+        initialData.teams.find((t) => t.slug === selectedTeamSlug);
+    } else {
+      team =
+        initialData &&
+        initialData.teams &&
+        initialData.teams.find((t) => t.slug === userObj.defaultTeamSlug);
     }
 
-    // console.log(initialData.teams, team);
+    // console.log(team);
 
     return {
       ...appProps,

@@ -86,9 +86,11 @@ function setupPasswordless({ server }) {
         next();
       }
     },
-    (req, res) => {
+    async (req, res) => {
+      let teamSlugOfInvitedTeam;
+
       if (req.user && req.session.invitationToken) {
-        Invitation.addUserToTeam({
+        teamSlugOfInvitedTeam = await Invitation.addUserToTeam({
           token: req.session.invitationToken,
           user: req.user,
         }).catch((err) => console.error(err));
@@ -98,10 +100,12 @@ function setupPasswordless({ server }) {
 
       let redirectUrlAfterLogin;
 
-      if (req.user && !req.user.defaultTeamSlug) {
-        redirectUrlAfterLogin = '/create-team';
-      } else {
-        redirectUrlAfterLogin = `/your-settings`;
+      if (req.user && teamSlugOfInvitedTeam) {
+        redirectUrlAfterLogin = `/teams/${teamSlugOfInvitedTeam}/discussions`;
+      } else if (req.user && !teamSlugOfInvitedTeam && req.user.defaultTeamSlug) {
+        redirectUrlAfterLogin = `/teams/${req.user.defaultTeamSlug}/discussions`;
+      } else if (req.user && !teamSlugOfInvitedTeam && !req.user.defaultTeamSlug) {
+        redirectUrlAfterLogin = `/create-team`;
       }
 
       res.redirect(`${process.env.URL_APP}${redirectUrlAfterLogin}`);

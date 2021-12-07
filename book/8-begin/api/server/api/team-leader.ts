@@ -53,12 +53,12 @@ router.post('/teams/update', async (req, res, next) => {
 
 router.get('/teams/get-invitations-for-team', async (req, res, next) => {
   try {
-    const users = await Invitation.getTeamInvitations({
+    const invitations = await Invitation.getTeamInvitations({
       userId: req.user.id,
       teamId: req.query.teamId as string,
     });
 
-    res.json({ users });
+    res.json({ invitations });
   } catch (err) {
     next(err);
   }

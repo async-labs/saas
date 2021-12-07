@@ -51,7 +51,6 @@ interface InvitationModel extends mongoose.Model<InvitationDocument> {
 
   getTeamInvitations({ userId, teamId }: { userId: string; teamId: string });
   getTeamByToken({ token }: { token: string });
-  removeIfMemberAdded({ token, userId }: { token: string; userId: string });
   addUserToTeam({ token, user }: { token: string; user: UserDocument });
 }
 
@@ -158,30 +157,6 @@ class InvitationClass extends mongoose.Model {
     }
 
     return team;
-  }
-
-  public static async removeIfMemberAdded({ token, userId }) {
-    if (!token) {
-      throw new Error('Bad data');
-    }
-
-    const invitation = await this.findOne({ token }).setOptions({ lean: true });
-
-    if (!invitation) {
-      throw new Error('Invitation not found');
-    }
-
-    const team = await Team.findById(invitation.teamId)
-      .select('name slug avatarUrl memberIds')
-      .setOptions({ lean: true });
-
-    if (!team) {
-      throw new Error('Team does not exist');
-    }
-
-    if (team && team.memberIds.includes(userId)) {
-      this.deleteOne({ token }).exec();
-    }
   }
 
   public static async addUserToTeam({ token, user }) {
