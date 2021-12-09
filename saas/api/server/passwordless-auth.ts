@@ -121,8 +121,6 @@ function setupPasswordless({ server }) {
   server.get('/logout', passwordless.logout(), (req, res) => {
     req.logout();
 
-    console.log(req.query && req.query.invitationToken);
-
     if (req.query && req.query.invitationToken) {
       res.redirect(
         `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/invitation?token=${

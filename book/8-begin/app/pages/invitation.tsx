@@ -7,7 +7,7 @@ import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
 import Layout from '../components/layout';
-import { acceptAndGetInvitedTeamByTokenApiMethod } from '../lib/api/public';
+import { getTeamByTokenApiMethod } from '../lib/api/public';
 import { Team } from '../lib/store/team';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
@@ -22,7 +22,7 @@ class InvitationPageComp extends React.Component<Props> {
     }
 
     try {
-      const { team } = await acceptAndGetInvitedTeamByTokenApiMethod(token, ctx.req);
+      const { team } = await getTeamByTokenApiMethod(token, ctx.req);
 
       return { team, token };
     } catch (error) {
@@ -74,18 +74,15 @@ class InvitationPageComp extends React.Component<Props> {
   }
 
   public async componentDidMount() {
-    const { store, team } = this.props;
+    const { store, team, token } = this.props;
 
     const user = store.currentUser;
 
     if (user && team) {
-      if (team.memberIds.includes(user._id)) {
-        const redirectMessage = `Success%21%20You%20are%20now%20part%20of%20${team.name}%20team%2E`;
-        Router.push(
-          `/your-settings?teamSlug=${team.slug}&redirectMessage=${redirectMessage}`,
-          `/teams/${team.slug}/your-settings`,
-        );
-      }
+      Router.push(
+        `${process.env.NEXT_PUBLIC_URL_API}/logout?invitationToken=${token}`,
+        `${process.env.NEXT_PUBLIC_URL_API}/logout`,
+      );
     }
   }
 }

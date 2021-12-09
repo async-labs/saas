@@ -25,8 +25,8 @@ export const emailLoginLinkApiMethod = ({
     body: JSON.stringify({ user: email }),
   });
 
-export const acceptAndGetInvitedTeamByTokenApiMethod = (token: string, request) =>
-  sendRequestAndGetResponse(`${BASE_PATH}/invitations/accept-and-get-team-by-token`, {
+export const getTeamByTokenApiMethod = (token: string, request) =>
+  sendRequestAndGetResponse(`${BASE_PATH}/invitations/get-team-by-token`, {
     request,
     method: 'GET',
     qs: { token },
