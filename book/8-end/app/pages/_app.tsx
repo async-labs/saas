@@ -32,14 +32,13 @@ class MyApp extends App {
       teamRequired = true;
     }
 
-    const { teamSlug, redirectMessage, discussionSlug } = ctx.query;
+    const { teamSlug, discussionSlug } = ctx.query;
 
     const pageProps = {
       isMobile: isMobile({ req: ctx.req }),
       firstGridItem,
       teamRequired,
       teamSlug,
-      redirectMessage,
       discussionSlug,
     };
 

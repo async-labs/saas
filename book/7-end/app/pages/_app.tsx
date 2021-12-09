@@ -32,7 +32,7 @@ class MyApp extends App {
       teamRequired = true;
     }
 
-    const { teamSlug, redirectMessage } = ctx.query;
+    const { teamSlug } = ctx.query;
 
     // console.log(`ctx.query.teamSlug:${teamSlug}`);
 
@@ -41,7 +41,6 @@ class MyApp extends App {
       firstGridItem,
       teamRequired,
       teamSlug,
-      redirectMessage,
     };
 
     if (Component.getInitialProps) {
