@@ -189,7 +189,6 @@ class TeamClass extends mongoose.Model {
   }
 
   public static getAllTeamsForUser(userId: string) {
-    console.log(`userId:${userId}`);
     return this.find({ memberIds: userId }).setOptions({ lean: true });
   }
 

@@ -183,7 +183,7 @@ class InvitationClass extends mongoose.Model {
     if (team && !team.memberIds.includes(user._id)) {
       await Team.updateOne({ _id: team._id }, { $addToSet: { memberIds: user._id } });
 
-      if (user._id !== team.teamLeaderId && !user.defaultTeamSlug) {
+      if (user._id !== team.teamLeaderId) {
         await User.findByIdAndUpdate(user._id, { $set: { defaultTeamSlug: team.slug } });
       }
     }
