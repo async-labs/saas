@@ -22,7 +22,7 @@ class DiscussionListItem extends React.Component<Props> {
     const trimmingLength = 16;
 
     const selectedDiscussion =
-      store.currentUrl === `/teams/${team.slug}/discussions-f/${discussion.slug}`;
+      store.currentUrl === `/teams/${team.slug}/discussions/${discussion.slug}`;
 
     // console.log(store.currentUrl);
 
@@ -46,7 +46,7 @@ class DiscussionListItem extends React.Component<Props> {
           <Link
             scroll={false}
             href={`/discussion-f?teamSlug=${team.slug}&discussionSlug=${discussion.slug}`}
-            as={`/teams/${team.slug}/discussions-f/${discussion.slug}`}
+            as={`/teams/${team.slug}/discussions/${discussion.slug}`}
           >
             <a
               style={{ fontWeight: 300, color: isThemeDark ? '#fff' : '#000' }}

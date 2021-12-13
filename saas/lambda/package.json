@@ -1,6 +1,6 @@
 {
   "name": "lambda",
-  "version": "1",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx"
