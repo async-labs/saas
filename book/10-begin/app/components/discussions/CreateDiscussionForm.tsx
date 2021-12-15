@@ -103,10 +103,8 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                   }}
                   required
                 >
-                  <MenuItem value="default">Default: notification in browser tab.</MenuItem>
-                  <MenuItem value="email">
-                    Default + Email: notification in browser tab and via email.
-                  </MenuItem>
+                  <MenuItem value="default">Default: without email notification.</MenuItem>
+                  <MenuItem value="email">Email: with email notification.</MenuItem>
                 </Select>
                 <FormHelperText>
                   Choose how to notify members about new Posts inside Discussion.
