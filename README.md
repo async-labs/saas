@@ -12,6 +12,11 @@ The open source project is located in the `saas` folder. If you purchased our bo
 - APP: https://saas-app.async-await.com
 - API: https://saas-api.async-await.com
 
+## Sponsors
+
+[![aws-activate-logo](https://user-images.githubusercontent.com/26158226/138565715-4311ddda-fb77-452a-8755-d53eb18f8645.png)](https://aws.amazon.com/activate/)
+
+[![1password-logo](https://user-images.githubusercontent.com/26158226/138565841-ad435374-7330-477a-b6f3-2542109c3217.png)](https://1password.com/)
 
 ## Showcase
 
@@ -197,15 +202,9 @@ Check out projects built with the help of this open source app. Feel free to add
   ```
 
 
-## Deploy with Heroku
+## Deploy to Heroku, AWS Elastic Beanstalk, API Gateway and AWS Lambda
 
-To deploy the two apps (`api` and `app`), you can follow these instructions to deploy each app individually to Heroku:
-
-https://github.com/async-labs/builderbook/blob/master/README.md#deploy-to-heroku
-
-You are welcome to deploy to any cloud provider. Eventually, we will publish a tutorial for AWS Elastic Beanstalk.
-
-If you need help deploying your SaaS Boilerplate app, or variation of it, you can hire us. Email us for more details: team@async-await.com.
+We give detailed instructions inside Chapter 9 and 10 of our SaaS Boilerplate book: https://builderbook.org/book
 
 ## Built with
 
@@ -260,14 +259,7 @@ Payment history:
 
 ## Contributing
 
-Want to support this project? Become customer at [async](https://async-await.com) and/or buy our [books](https://builderbook.org/).
-
-
-## Sponsors
-
-[![aws-activate-logo](https://user-images.githubusercontent.com/26158226/138565715-4311ddda-fb77-452a-8755-d53eb18f8645.png)](https://aws.amazon.com/activate/)
-
-[![1password-logo](https://user-images.githubusercontent.com/26158226/138565841-ad435374-7330-477a-b6f3-2542109c3217.png)](https://1password.com/)
+Want to support this project? Consider buying our [books](https://builderbook.org/). If you represent company, consider becoming a recurring sponsor for this repo. Our two most popular repos get >1000 unique visitor per week, mostly comprised of people who are building their SaaS web applications.
 
 
 ## Team
@@ -275,7 +267,7 @@ Want to support this project? Become customer at [async](https://async-await.com
 - [Kelly Burke](https://github.com/klyburke)
 - [Timur Zhiyentayev](https://github.com/tima101)
 
-You can contact us at team@async-await.com.
+You can contact us at team@builderbook.org
 
 If you are interested in hiring our team to help build your SaaS web application, please fill out our form at [Async Labs](https://async-labs.com/).
 
