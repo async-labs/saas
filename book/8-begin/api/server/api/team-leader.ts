@@ -2,7 +2,6 @@ import * as express from 'express';
 
 import Invitation from '../models/Invitation';
 import Team from '../models/Team';
-import User from '../models/User';
 
 const router = express.Router();
 

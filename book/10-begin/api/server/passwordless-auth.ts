@@ -101,9 +101,9 @@ function setupPasswordless({ server }) {
       let redirectUrlAfterLogin;
 
       if (req.user && teamSlugOfInvitedTeam) {
-        redirectUrlAfterLogin = `/teams/${teamSlugOfInvitedTeam}/discussions`;
+        redirectUrlAfterLogin = `/team/${teamSlugOfInvitedTeam}/discussions`;
       } else if (req.user && !teamSlugOfInvitedTeam && req.user.defaultTeamSlug) {
-        redirectUrlAfterLogin = `/teams/${req.user.defaultTeamSlug}/discussions`;
+        redirectUrlAfterLogin = `/team/${req.user.defaultTeamSlug}/discussions`;
       } else if (req.user && !teamSlugOfInvitedTeam && !req.user.defaultTeamSlug) {
         redirectUrlAfterLogin = `/create-team`;
       }

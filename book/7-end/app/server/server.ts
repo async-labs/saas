@@ -18,6 +18,20 @@ app.prepare().then(() => {
 
   server.use(express.json());
 
+  server.get('/', async (req: any, res) => {
+    let redirectUrl = 'login';
+
+    if (req.user) {
+      if (!req.user.defaultTeamSlug) {
+        redirectUrl = 'create-team';
+      } else {
+        redirectUrl = `team/${req.user.defaultTeamSlug}/your-settings`;
+      }
+    }
+
+    res.redirect(`${process.env.URL_APP}/${redirectUrl}`);
+  });
+
   // server.get('/api/v1/public/get-user', (_, res) => {
   //   res.json({ user: { email: 'team@builderbook.org' } });
   // });
