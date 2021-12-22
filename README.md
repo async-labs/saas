@@ -36,7 +36,6 @@ Check out projects built with the help of this open source app. Feel free to add
 - [Screenshots](#screenshots)
 - [Showcase](#showcase)
 - [Contributing](#contributing)
-- [Sponsors](#sponsors)
 - [Team](#team)https://saas-app.async-await.com
 
 ## Features
@@ -269,7 +268,7 @@ Want to support this project? Consider buying our [books](https://builderbook.or
 
 You can contact us at team@builderbook.org
 
-If you are interested in hiring our team to help build your SaaS web application, please fill out our form at [Async Labs](https://async-labs.com/).
+If you are interested in working with us, check out [Async Labs](https://async-labs.com/).
 
 
 ## License
