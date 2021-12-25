@@ -201,6 +201,12 @@ Check out projects built with the help of this open source app. Feel free to add
   ```
 
 
+#### Symlink `api` in `lambda`:
+In lambda directory we are symlinking api directory. You can run symlink file as mentioned below:
+```
+bash symlink ../app
+```
+
 ## Deploy to Heroku, AWS Elastic Beanstalk, API Gateway and AWS Lambda
 
 We give detailed instructions inside Chapter 9 and 10 of our SaaS Boilerplate book: https://builderbook.org/book
