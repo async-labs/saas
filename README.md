@@ -71,54 +71,9 @@ Check out projects built with the help of this open source app. Feel free to add
 
 #### Running `api` locally:
 
-- Before running, create a `.env` file inside the `api` folder with the environmental variables listed below.<br/>
+- Before running, create a `.env` file inside the `api` folder with the environmental variables from .env.example<br/>
   This file _must_ have values for the `required` variables.<br/>
   To use all features and third-party integrations, also add the `optional` variables. <br/>
-
-  `api/.env`:
-
-  ```
-  # Used in api/server/server.ts
-  MONGO_URL_TEST=
-  MONGO_URL=
-  SESSION_NAME=
-  SESSION_SECRET=
-  COOKIE_DOMAIN=
-
-  # Used in api/server/google.ts
-  GOOGLE_CLIENTID=
-  GOOGLE_CLIENTSECRET=
-
-  # Used in api/server/aws-s3.ts and api/server/aws-ses.ts
-  AWS_REGION=
-  AWS_ACCESSKEYID=
-  AWS_SECRETACCESSKEY=
-
-  # Used in api/server/models/Invitation.ts and api/server/models/User.ts
-  EMAIL_SUPPORT_FROM_ADDRESS=
-
-  # Used in api/server/mailchimp.ts
-  MAILCHIMP_API_KEY=
-  MAILCHIMP_REGION=
-  MAILCHIMP_SAAS_ALL_LIST_ID=
-
-  # All env variables above this line are needed for successful user signup
-
-  # Used in api/server/stripe.ts
-  STRIPE_TEST_SECRETKEY=sk_test_xxxxxx
-  STRIPE_LIVE_SECRETKEY=sk_live_xxxxxx
-
-  STRIPE_TEST_PLANID=plan_xxxxxx
-  STRIPE_LIVE_PLANID=plan_xxxxxx
-
-  STRIPE_LIVE_ENDPOINTSECRET=whsec_xxxxxx
-
-  # Optionally determine the URL
-  URL_APP="http://localhost:3000"
-  URL_API="http://localhost:8000"
-  PRODUCTION_URL_APP="https://saas-app.async-await.com"
-  PRODUCTION_URL_API="https://saas-api.async-await.com"
-  ```
 
   Important: use your values for `PRODUCTION_URL_APP` and `PRODUCTION_URL_API`. These are values for domain name that you own.
 
@@ -140,26 +95,7 @@ Check out projects built with the help of this open source app. Feel free to add
 
 - Navigate to the `app` folder, run `yarn` to add all packages, then run `yarn dev` and navigate to `http://localhost:3000`:
 
-  - A `.env` file in the `app` folder is not required to run, but you can create one to override the default variables:
-
-  ```
-    NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY="pk_test_xxxxxxxxxxxxxxx"
-    NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY="pk_live_xxxxxxxxxxxxxxx"
-
-    NEXT_PUBLIC_BUCKET_FOR_POSTS=
-    NEXT_PUBLIC_BUCKET_FOR_TEAM_AVATARS=
-    NEXT_PUBLIC_BUCKET_FOR_TEAM_LOGOS=
-
-    NEXT_PUBLIC_URL_APP="http://localhost:3000"
-    NEXT_PUBLIC_URL_API="http://localhost:8000"
-    NEXT_PUBLIC_PRODUCTION_URL_APP=
-    NEXT_PUBLIC_PRODUCTION_URL_API=
-
-
-    NEXT_PUBLIC_API_GATEWAY_ENDPOINT=
-    NEXT_PUBLIC_GA_MEASUREMENT_ID=
-  ```
-
+  - A `.env` file in the `app` folder is not required to run, but you can create one to override the default variables. You can refer .env.example for creating .env file.
   Important: use your values for `PRODUCTION_URL_APP` and `PRODUCTION_URL_API`. These are values for domain name that you own.
 
 
