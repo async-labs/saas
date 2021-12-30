@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 
-import sendEmail from './api/server/aws-ses';
+import sendEmail from './api/server/mail';
 import getEmailTemplate from './api/server/models/EmailTemplate';
 import User from './api/server/models/User';
 

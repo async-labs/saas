@@ -1,6 +1,6 @@
 import * as passwordless from 'passwordless';
 
-import sendEmail from './aws-ses';
+import sendEmail from './mail';
 import getEmailTemplate from './models/EmailTemplate';
 import User from './models/User';
 import PasswordlessMongoStore from './passwordless-token-mongostore';

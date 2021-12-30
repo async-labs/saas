@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 import Stripe from 'stripe';
 
-import sendEmail from '../aws-ses';
+import sendEmail from '../mail';
 import { addToMailchimp } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
 import getEmailTemplate from './EmailTemplate';
