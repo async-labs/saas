@@ -71,8 +71,12 @@ Check out projects built with the help of this open source app. Feel free to add
 
 #### Running `api` locally:
 
-- Before running, create a `.env` file inside the `api` folder with the environmental variables from .env.example<br/>
+- Before running, create a `.env` file inside the `api` folder with the environmental variables from [`.env.example`](https://github.com/async-labs/saas/blob/master/saas/api/.env.example)<br/>
+  
+  Important: do not publish your actual values for environmentable variables in `.env.example`; this file is public and only meant to show you how your `.env` should look.<br/>
+  
   This file _must_ have values for the `required` variables.<br/>
+  
   To use all features and third-party integrations, also add the `optional` variables. <br/>
 
   Important: use your values for `PRODUCTION_URL_APP` and `PRODUCTION_URL_API`. These are values for domain name that you own.
@@ -95,7 +99,10 @@ Check out projects built with the help of this open source app. Feel free to add
 
 - Navigate to the `app` folder, run `yarn` to add all packages, then run `yarn dev` and navigate to `http://localhost:3000`:
 
-  - A `.env` file in the `app` folder is not required to run, but you can create one to override the default variables. You can refer .env.example for creating .env file.
+  - A `.env` file in the `app` folder is not required to run, but you can create one to override the default variables. You can refer [`.env.example`](https://github.com/async-labs/saas/blob/master/saas/app/.env.example) for creating `.env` file.<br/>
+
+  Important: do not publish your actual values for environmentable variables in `.env.example`; this file is public and only meant to show you how your `.env` should look.<br/>
+  
   Important: use your values for `PRODUCTION_URL_APP` and `PRODUCTION_URL_API`. These are values for domain name that you own.
 
 
