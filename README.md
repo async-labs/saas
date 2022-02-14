@@ -23,7 +23,7 @@ The open source project is located in the `saas` folder. If you purchased our bo
 Check out projects built with the help of this open source app. Feel free to add your own project by creating a pull request.
 
 - [Async](https://async-await.com/): Urgent vs non-urgent communication tool for small teams.
-- [WIB](https://workinbiotech/): Work in biotech: job board for small and young biotech companies
+- [workinbiotech.com](https://workinbiotech.com): Work in biotech, job board for small and young biotech companies
 - [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee): Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
 - [Builder Book](https://github.com/async-labs/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
 
