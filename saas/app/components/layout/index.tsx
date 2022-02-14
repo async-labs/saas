@@ -267,16 +267,16 @@ class Layout extends React.Component<Props> {
                     fontSize: '11px',
                   }}
                 >
-                  If you need help building your SaaS web app, let talk:{' '}
+                  Check up our latest project (share with your biotech friends):{' '}
                   <a
                     style={{
                       fontWeight: 600,
                     }}
                     target="_blank"
-                    href="https://async-labs.com"
+                    href="https://workinbiotech.com"
                     rel="noopener noreferrer"
                   >
-                    Async Labs
+                    Work in biotech
                   </a>
                 </span>
                 <h4
