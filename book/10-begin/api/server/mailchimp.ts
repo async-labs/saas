@@ -1,5 +1,8 @@
 import fetch, { Response } from 'node-fetch';
 
+// eslint-disable-next-line
+require('dotenv').config();
+
 const LIST_IDS = {
   signups: process.env.MAILCHIMP_SAAS_ALL_LIST_ID,
 };
