@@ -40,6 +40,7 @@ class InviteMember extends React.Component<Props, State> {
         <DialogContent>
           <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
             <TextField
+              disabled
               autoComplete="off"
               value={this.state.email}
               placeholder="Email"
@@ -47,16 +48,16 @@ class InviteMember extends React.Component<Props, State> {
                 this.setState({ email: event.target.value });
               }}
             />
-            <p />
+            <p>Disabled in this demo due to high bounce rate (people submitting fake emails)</p>
             <br />
             <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
               Cancel
             </Button>{' '}
             <Button
+              disabled
               type="submit"
               variant="contained"
               color="primary"
-              disabled={this.state.disabled}
             >
               Invite
             </Button>
@@ -85,11 +86,6 @@ class InviteMember extends React.Component<Props, State> {
 
     if (!email) {
       notify('Email is required');
-      return;
-    }
-
-    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
-      notify('Invalid email address.');
       return;
     }
 

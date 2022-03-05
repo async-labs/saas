@@ -49,6 +49,7 @@ class LoginButton extends React.PureComponent<Props, State> {
         <div>
           <form autoComplete="off" onSubmit={this.onSubmit}>
             <TextField
+              disabled
               required
               type="email"
               label="Email address"
@@ -58,8 +59,8 @@ class LoginButton extends React.PureComponent<Props, State> {
               }}
               style={{ width: '300px' }}
             />
-            <p />
-            <Button variant="contained" color="primary" type="submit">
+            <p>Disabled in this demo due to high bounce rate (people submitting fake emails)</p>
+            <Button disabled variant="contained" color="primary" type="submit">
               Log in with email
             </Button>
           </form>
@@ -77,11 +78,6 @@ class LoginButton extends React.PureComponent<Props, State> {
 
     if (!email) {
       notify('Email is required');
-      return;
-    }
-
-    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
-      notify('Invalid email address.');
       return;
     }
 
