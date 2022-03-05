@@ -88,6 +88,11 @@ class InviteMember extends React.Component<Props, State> {
       return;
     }
 
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+      notify('Invalid email address.');
+      return;
+    }
+
     NProgress.start();
     try {
       this.setState({ disabled: true });

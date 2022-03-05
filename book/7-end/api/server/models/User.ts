@@ -227,7 +227,9 @@ class UserClass extends mongoose.Model {
   }
 
   public static async signInOrSignUpByPasswordless({ uid, email }) {
-    const user = await this.findOne({ email }).select(this.publicFields().join(' ')).setOptions({ lean: true });
+    const user = await this.findOne({ email })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
 
     if (user) {
       throw Error('User already exists');
