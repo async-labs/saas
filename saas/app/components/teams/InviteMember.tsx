@@ -53,12 +53,7 @@ class InviteMember extends React.Component<Props, State> {
             <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
               Cancel
             </Button>{' '}
-            <Button
-              disabled
-              type="submit"
-              variant="contained"
-              color="primary"
-            >
+            <Button disabled type="submit" variant="contained" color="primary">
               Invite
             </Button>
           </form>
