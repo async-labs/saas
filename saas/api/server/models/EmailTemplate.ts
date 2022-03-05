@@ -42,10 +42,10 @@ export async function insertTemplates() {
            <a href="https://builderbook.org/book" target="blank">SaaS Boilerplate</a>.
         </p>
         <p>
-          Also check out
-          <a href="https://async-await.com" target="blank"> Async </a>
-          and
-          <a href="https://async-labs.com" target="blank"> Async Labs</a>.
+          Also check out our other projects built with SaaS boilerplate:
+          <a href="https://async-await.com" target="blank"> Async</a>, 
+          <a href="https://async-labs.com" target="blank"> Async Labs</a>, and
+          <a href="https://workinbiotech.com" target="blank"> Work in biotech</a>.
         </p>
         Kelly & Timur, Team Async Labs
       `,
