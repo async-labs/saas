@@ -42,7 +42,7 @@ Check out projects built with the help of this open source app. Feel free to add
 - [Screenshots](#screenshots)
 - [Showcase](#showcase)
 - [Contributing](#contributing)
-- [Team](#team)https://saas-app.async-await.com
+- [Team](#team)
 
 ## Features
 
