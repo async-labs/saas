@@ -28,7 +28,9 @@ router.post('/user/update-profile', async (req, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
-    const userId = '5e6427a51c9d440000c9ba6f';
+    const userId = '62167b54873bce9ec3240910';
+
+    // NOTE: For userId above, input the value of _id from your user document in your own database.
 
     const updatedUser = await User.updateProfile({
       userId: userId,
