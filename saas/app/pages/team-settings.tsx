@@ -6,7 +6,10 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
 import NProgress from 'nprogress';
+
 import * as React from 'react';
+import { useState } from 'react';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -26,239 +29,23 @@ import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-type Props = { isMobile: boolean; store: Store; teamSlug: string };
-
-type State = {
-  newName: string;
-  newAvatarUrl: string;
-  disabled: boolean;
-  inviteMemberOpen: boolean;
+type Props = {
+  store: Store;
+  isMobile: boolean;
+  firstGridItem: boolean;
+  teamRequired: boolean;
+  teamSlug: string;
 };
 
-class TeamSettings extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
+function TeamSettings({ store, isMobile, firstGridItem, teamRequired, teamSlug }: Props) {
+  const [newName, setNewName] = useState<string>(store.currentTeam.name);
+  const [newAvatarUrl, setNewAvatarUrl] = useState<string>(store.currentTeam.avatarUrl);
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const [inviteMemberOpen, setInviteMemberOpen] = useState<boolean>(false);
 
-    this.state = {
-      newName: this.props.store.currentTeam.name,
-      newAvatarUrl: this.props.store.currentTeam.avatarUrl,
-      disabled: false,
-      inviteMemberOpen: false,
-    };
-  }
-
-  public render() {
-    const { store, isMobile } = this.props;
-    const { currentTeam, currentUser } = store;
-    const { newName, newAvatarUrl } = this.state;
-    const isTeamLeader = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
-
-    // console.log(this.props.firstGridItem);
-
-    if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return (
-        <Layout {...this.props}>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
-            <p>You did not select any team.</p>
-            <p>
-              To access this page, please select existing team or create new team if you have no
-              teams.
-            </p>
-          </div>
-        </Layout>
-      );
-    }
-
-    if (!isTeamLeader) {
-      return (
-        <Layout {...this.props}>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
-            <p>Only the Team Leader can access this page.</p>
-            <p>Create your own team to become a Team Leader.</p>
-          </div>
-        </Layout>
-      );
-    }
-
-    return (
-      <Layout {...this.props}>
-        <Head>
-          <title>Team Settings</title>
-        </Head>
-        <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
-          <h3>Team Settings</h3>
-          <p />
-          <br />
-          <form onSubmit={this.onSubmit}>
-            <h4>Team name</h4>
-            <TextField
-              value={newName}
-              helperText="Team name as seen by your team members"
-              onChange={(event) => {
-                this.setState({ newName: event.target.value });
-              }}
-            />
-            <br />
-            <br />
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={this.state.disabled}
-            >
-              Update username
-            </Button>
-          </form>
-          <p />
-          <br />
-          <h4>Team logo</h4>
-          <Avatar
-            src={newAvatarUrl}
-            style={{
-              display: 'inline-flex',
-              verticalAlign: 'middle',
-              marginRight: 20,
-              width: 60,
-              height: 60,
-            }}
-          />
-          <label htmlFor="upload-file-team-logo">
-            <Button
-              variant="contained"
-              color="primary"
-              component="span"
-              disabled={this.state.disabled}
-            >
-              Update logo
-            </Button>
-          </label>
-          <input
-            accept="image/*"
-            name="upload-file-team-logo"
-            id="upload-file-team-logo"
-            type="file"
-            style={{ display: 'none' }}
-            onChange={this.uploadFile}
-          />
-          <p />
-          <br />
-          <br />
-          <h4 style={{ marginRight: 20, display: 'inline' }}>
-            Team Members ( {Array.from(currentTeam.members.values()).length} / 20 )
-          </h4>
-          <Button
-            onClick={this.openInviteMember}
-            variant="contained"
-            color="primary"
-            style={{ float: 'right', marginTop: '-20px' }}
-            disabled={this.state.disabled}
-          >
-            Invite member
-          </Button>
-          <p />
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Person</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {currentTeam.memberIds
-                  .map((userId) => currentTeam.members.get(userId))
-                  .map((m) => (
-                    <TableRow key={m._id}>
-                      <TableCell style={{ width: '300px' }}>
-                        <Hidden mdDown>
-                          <Avatar
-                            role="presentation"
-                            src={m.avatarUrl}
-                            alt={(m.displayName || m.email)[0]}
-                            key={m._id}
-                            style={{
-                              margin: '0px 5px',
-                              display: 'inline-flex',
-                              width: '30px',
-                              height: '30px',
-                              verticalAlign: 'middle',
-                            }}
-                          />
-                        </Hidden>
-                        {m.email}
-                      </TableCell>
-                      <TableCell>
-                        {isTeamLeader && m._id !== currentUser._id ? 'Team Member' : 'Team Leader'}
-                      </TableCell>
-                      <TableCell>
-                        {isTeamLeader && m._id !== currentUser._id ? (
-                          <DeleteOutlineIcon
-                            color="action"
-                            data-id={m._id}
-                            onClick={this.removeMember}
-                            style={{
-                              marginLeft: '20px',
-                              fontSize: '16px',
-                              opacity: 0.6,
-                              cursor: 'pointer',
-                              verticalAlign: 'middle',
-                            }}
-                          />
-                        ) : null}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <p />
-          <br />
-
-          {Array.from(currentTeam.invitations.values()).length > 0 ? (
-            <React.Fragment>
-              <h4>Invited users</h4>
-              <p />
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Status</TableCell>
-                    </TableRow>
-                  </TableHead>
-
-                  <TableBody>
-                    {Array.from(currentTeam.invitations.values()).map((i) => (
-                      <TableRow key={i._id}>
-                        <TableCell style={{ width: '300px' }}>{i.email}</TableCell>
-                        <TableCell>Sent</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </React.Fragment>
-          ) : null}
-          <p />
-          <br />
-          <InviteMember
-            open={this.state.inviteMemberOpen}
-            onClose={this.handleInviteMemberClose}
-            store={this.props.store}
-          />
-          <br />
-        </div>
-      </Layout>
-    );
-  }
-
-  private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const { newName, newAvatarUrl } = this.state;
-    const { currentTeam } = this.props.store;
+    const { currentTeam } = store;
 
     if (!newName) {
       notify('Team name is required');
@@ -266,23 +53,21 @@ class TeamSettings extends React.Component<Props, State> {
     }
 
     NProgress.start();
+    setDisabled(true);
 
     try {
-      this.setState({ disabled: true });
-
       await currentTeam.updateTheme({ name: newName, avatarUrl: newAvatarUrl });
 
       notify('You successfully updated Team name.');
     } catch (error) {
       notify(error);
     } finally {
-      this.setState({ disabled: false });
+      setDisabled(false);
       NProgress.done();
     }
   };
 
-  private uploadFile = async () => {
-    const { store } = this.props;
+  const uploadFile = async () => {
     const { currentTeam } = store;
 
     const fileElement = document.getElementById('upload-file-team-logo') as HTMLFormElement;
@@ -297,7 +82,7 @@ class TeamSettings extends React.Component<Props, State> {
     const fileType = file.type;
 
     NProgress.start();
-    this.setState({ disabled: true });
+    setDisabled(true);
 
     const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_TEAM_LOGOS;
     const prefix = `${currentTeam.slug}`;
@@ -320,26 +105,24 @@ class TeamSettings extends React.Component<Props, State> {
         { 'Cache-Control': 'max-age=2592000' },
       );
 
-      this.setState({
-        newAvatarUrl: responseFromApiServerForUpload.url,
-      });
+      setNewAvatarUrl(responseFromApiServerForUpload.url);
 
       await currentTeam.updateTheme({
-        name: this.state.newName,
-        avatarUrl: this.state.newAvatarUrl,
+        name: newName,
+        avatarUrl: newAvatarUrl,
       });
 
       notify('You successfully uploaded new Team logo.');
     } catch (error) {
       notify(error);
     } finally {
-      this.setState({ disabled: false });
+      setDisabled(false);
       NProgress.done();
     }
   };
 
-  private openInviteMember = async () => {
-    const { currentTeam } = this.props.store;
+  const openInviteMember = async () => {
+    const { currentTeam } = store;
     if (!currentTeam) {
       notify('You have not selected a Team.');
       return;
@@ -357,15 +140,16 @@ class TeamSettings extends React.Component<Props, State> {
       return;
     }
 
-    this.setState({ inviteMemberOpen: true });
+    setInviteMemberOpen(true);
   };
 
-  private handleInviteMemberClose = () => {
-    this.setState({ inviteMemberOpen: false });
+  const handleInviteMemberClose = () => {
+    setInviteMemberOpen(false);
   };
 
-  private removeMember = (event) => {
-    const { currentTeam } = this.props.store;
+  const removeMember = (event) => {
+    const { currentTeam } = store;
+
     if (!currentTeam) {
       notify('You have not selected a Team.');
       return;
@@ -391,6 +175,209 @@ class TeamSettings extends React.Component<Props, State> {
       },
     });
   };
+
+  const { currentTeam, currentUser } = store;
+  const isTeamLeader = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
+
+  if (!currentTeam || currentTeam.slug !== teamSlug) {
+    return (
+      <Layout
+        store={store}
+        isMobile={isMobile}
+        teamRequired={teamRequired}
+        firstGridItem={firstGridItem}
+      >
+        <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+          <p>You did not select any team.</p>
+          <p>
+            To access this page, please select existing team or create new team if you have no
+            teams.
+          </p>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!isTeamLeader) {
+    return (
+      <Layout
+        store={store}
+        isMobile={isMobile}
+        teamRequired={teamRequired}
+        firstGridItem={firstGridItem}
+      >
+        <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+          <p>Only the Team Leader can access this page.</p>
+          <p>Create your own team to become a Team Leader.</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout
+      store={store}
+      isMobile={isMobile}
+      teamRequired={teamRequired}
+      firstGridItem={firstGridItem}
+    >
+      <Head>
+        <title>Team Settings</title>
+      </Head>
+      <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
+        <h3>Team Settings</h3>
+        <p />
+        <br />
+        <form onSubmit={onSubmit}>
+          <h4>Team name</h4>
+          <TextField
+            value={newName}
+            helperText="Team name as seen by your team members"
+            onChange={(event) => {
+              setNewName(event.target.value);
+            }}
+          />
+          <br />
+          <br />
+          <Button variant="contained" color="primary" type="submit" disabled={disabled}>
+            Update username
+          </Button>
+        </form>
+        <p />
+        <br />
+        <h4>Team logo</h4>
+        <Avatar
+          src={newAvatarUrl}
+          style={{
+            display: 'inline-flex',
+            verticalAlign: 'middle',
+            marginRight: 20,
+            width: 60,
+            height: 60,
+          }}
+        />
+        <label htmlFor="upload-file-team-logo">
+          <Button variant="contained" color="primary" component="span" disabled={disabled}>
+            Update logo
+          </Button>
+        </label>
+        <input
+          accept="image/*"
+          name="upload-file-team-logo"
+          id="upload-file-team-logo"
+          type="file"
+          style={{ display: 'none' }}
+          onChange={uploadFile}
+        />
+        <p />
+        <br />
+        <br />
+        <h4 style={{ marginRight: 20, display: 'inline' }}>
+          Team Members ( {Array.from(currentTeam.members.values()).length} / 20 )
+        </h4>
+        <Button
+          onClick={openInviteMember}
+          variant="contained"
+          color="primary"
+          style={{ float: 'right', marginTop: '-20px' }}
+          disabled={disabled}
+        >
+          Invite member
+        </Button>
+        <p />
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Person</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Action</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {currentTeam.memberIds
+                .map((userId) => currentTeam.members.get(userId))
+                .map((m) => (
+                  <TableRow key={m._id}>
+                    <TableCell style={{ width: '300px' }}>
+                      <Hidden mdDown>
+                        <Avatar
+                          role="presentation"
+                          src={m.avatarUrl}
+                          alt={(m.displayName || m.email)[0]}
+                          key={m._id}
+                          style={{
+                            margin: '0px 5px',
+                            display: 'inline-flex',
+                            width: '30px',
+                            height: '30px',
+                            verticalAlign: 'middle',
+                          }}
+                        />
+                      </Hidden>
+                      {m.email}
+                    </TableCell>
+                    <TableCell>
+                      {isTeamLeader && m._id !== currentUser._id ? 'Team Member' : 'Team Leader'}
+                    </TableCell>
+                    <TableCell>
+                      {isTeamLeader && m._id !== currentUser._id ? (
+                        <DeleteOutlineIcon
+                          color="action"
+                          data-id={m._id}
+                          onClick={removeMember}
+                          style={{
+                            marginLeft: '20px',
+                            fontSize: '16px',
+                            opacity: 0.6,
+                            cursor: 'pointer',
+                            verticalAlign: 'middle',
+                          }}
+                        />
+                      ) : null}
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <p />
+        <br />
+
+        {Array.from(currentTeam.invitations.values()).length > 0 ? (
+          <React.Fragment>
+            <h4>Invited users</h4>
+            <p />
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Status</TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {Array.from(currentTeam.invitations.values()).map((i) => (
+                    <TableRow key={i._id}>
+                      <TableCell style={{ width: '300px' }}>{i.email}</TableCell>
+                      <TableCell>Sent</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </React.Fragment>
+        ) : null}
+        <p />
+        <br />
+        <InviteMember open={inviteMemberOpen} onClose={handleInviteMemberClose} store={store} />
+        <br />
+      </div>
+    </Layout>
+  );
 }
 
 export default withAuth(inject('store')(observer(TeamSettings)));

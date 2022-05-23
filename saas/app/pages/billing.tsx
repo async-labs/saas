@@ -1,7 +1,10 @@
 import { observer } from 'mobx-react';
 import moment from 'moment';
 import Head from 'next/head';
+
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+
 import { loadStripe } from '@stripe/stripe-js';
 import Button from '@mui/material/Button';
 import DoneIcon from '@mui/icons-material/Done';
@@ -24,174 +27,35 @@ const stripePromise = loadStripe(
 type Props = {
   store: Store;
   isMobile: boolean;
+  firstGridItem: boolean;
+  teamRequired: boolean;
   teamSlug: string;
   redirectMessage?: string;
 };
 
-type State = { disabled: boolean; showInvoices: boolean };
+function Billing({
+  store,
+  isMobile,
+  firstGridItem,
+  teamRequired,
+  teamSlug,
+  redirectMessage,
+}: Props) {
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const [showInvoices, setShowInvoices] = useState<boolean>(false);
 
-class Billing extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-
-    this.state = { disabled: false, showInvoices: false };
-  }
-
-  public render() {
-    const { store, isMobile } = this.props;
-    const { currentTeam, currentUser } = store;
-    const isTeamLeader = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
-
-    if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
-      return (
-        <Layout {...this.props}>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
-            <p>You did not select any team.</p>
-            <p>
-              To access this page, please select existing team or create new team if you have no
-              teams.
-            </p>
-          </div>
-        </Layout>
-      );
+  useEffect(() => {
+    if (redirectMessage) {
+      notify(redirectMessage);
     }
+  }, []);
 
-    if (!isTeamLeader) {
-      return (
-        <Layout {...this.props}>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
-            <p>Only the Team Leader can access this page.</p>
-            <p>Create your own team to become a Team Leader.</p>
-          </div>
-        </Layout>
-      );
-    }
-
-    return (
-      <Layout {...this.props}>
-        <Head>
-          <title>Your Billing</title>
-        </Head>
-        <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
-          <h3>Your Billing</h3>
-          <p />
-          <h4 style={{ marginTop: '40px' }}>Paid plan</h4>
-          {this.renderSubscriptionButton()}
-          <p />
-          <br />
-          <h4>Card information</h4>
-          {this.renderCardInfo()}
-          <p />
-          <br />
-          <h4>Payment history</h4>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={this.showListOfInvoicesOnClick}
-            disabled={this.state.disabled}
-          >
-            Show payment history
-          </Button>
-          <p />
-          {this.renderInvoices()}
-          <p />
-          <br />
-        </div>
-      </Layout>
-    );
-  }
-
-  public async componentDidMount() {
-    if (this.props.redirectMessage) {
-      notify(this.props.redirectMessage);
-    }
-  }
-
-  private renderSubscriptionButton() {
-    const { currentTeam } = this.props.store;
-
-    let subscriptionDate;
-    let billingDay;
-    if (currentTeam && currentTeam.stripeSubscription) {
-      subscriptionDate = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format(
-        'MMM Do YYYY',
-      );
-      billingDay = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format('Do');
-    }
-
-    if (currentTeam && !currentTeam.isSubscriptionActive && currentTeam.isPaymentFailed) {
-      return (
-        <>
-          <p>You are not a paying customer.</p>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.handleCheckoutClick('subscription')}
-            disabled={this.state.disabled}
-          >
-            Buy subscription
-          </Button>
-          <p />
-          <p>
-            Team was automatically unsubscribed due to failed payment. You will be prompt to update
-            card information if you choose to re-subscribe Team.
-          </p>
-        </>
-      );
-    } else if (currentTeam && !currentTeam.isSubscriptionActive && !currentTeam.isPaymentFailed) {
-      return (
-        <React.Fragment>
-          <p>You are not a paying customer.</p>
-          <p>
-            Buy subscription using your current card, see below section for current card
-            information.
-          </p>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.handleCheckoutClick('subscription')}
-            disabled={this.state.disabled}
-          >
-            Buy subscription
-          </Button>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          <span>
-            {' '}
-            <DoneIcon color="action" style={{ verticalAlign: 'text-bottom' }} /> Subscription is
-            active.
-            <p>
-              You subscribed <b>{currentTeam.name}</b> on <b>{subscriptionDate}</b>.
-            </p>
-            <p>
-              You will be billed $50 on <b>{billingDay} day</b> of each month unless you cancel
-              subscription or subscription is cancelled automatically due to failed payment.
-            </p>
-          </span>
-          <p />
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={this.cancelSubscriptionOnClick}
-            disabled={this.state.disabled}
-          >
-            Unsubscribe Team
-          </Button>
-          <br />
-        </React.Fragment>
-      );
-    }
-  }
-
-  private handleCheckoutClick = async (mode: 'subscription' | 'setup') => {
+  const handleCheckoutClick = async (mode: 'subscription' | 'setup') => {
     try {
-      const { currentTeam } = this.props.store;
+      const { currentTeam } = store;
 
       NProgress.start();
-      this.setState({ disabled: true });
+      setDisabled(true);
 
       const { sessionId } = await fetchCheckoutSessionApiMethod({ mode, teamId: currentTeam._id });
 
@@ -209,16 +73,16 @@ class Billing extends React.Component<Props, State> {
       notify(err);
       console.error(err);
     } finally {
-      this.setState({ disabled: false });
+      setDisabled(false);
       NProgress.done();
     }
   };
 
-  private cancelSubscriptionOnClick = async () => {
-    const { currentTeam } = this.props.store;
+  const cancelSubscriptionOnClick = async () => {
+    const { currentTeam } = store;
 
     NProgress.start();
-    this.setState({ disabled: true });
+    setDisabled(true);
 
     try {
       await currentTeam.cancelSubscription({ teamId: currentTeam._id });
@@ -226,13 +90,13 @@ class Billing extends React.Component<Props, State> {
     } catch (err) {
       notify(err);
     } finally {
-      this.setState({ disabled: false });
+      setDisabled(false);
       NProgress.done();
     }
   };
 
-  private renderCardInfo() {
-    const { currentUser } = this.props.store;
+  const renderCardInfo = () => {
+    const { currentUser } = store;
 
     if (currentUser && currentUser.hasCardInformation) {
       return (
@@ -251,8 +115,8 @@ class Billing extends React.Component<Props, State> {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => this.handleCheckoutClick('setup')}
-            disabled={this.state.disabled}
+            onClick={() => handleCheckoutClick('setup')}
+            disabled={disabled}
           >
             Update card
           </Button>
@@ -261,11 +125,10 @@ class Billing extends React.Component<Props, State> {
     } else {
       return 'You have not added a card.';
     }
-  }
+  };
 
-  private renderInvoices() {
-    const { currentUser } = this.props.store;
-    const { showInvoices } = this.state;
+  const renderInvoices = () => {
+    const { currentUser } = store;
 
     if (!showInvoices) {
       return null;
@@ -292,22 +155,179 @@ class Billing extends React.Component<Props, State> {
     } else {
       return 'You have no history of payments.';
     }
-  }
+  };
 
-  private showListOfInvoicesOnClick = async () => {
-    const { currentUser } = this.props.store;
+  const showListOfInvoicesOnClick = async () => {
+    const { currentUser } = store;
+
     NProgress.start();
-    this.setState({ disabled: true });
+    setDisabled(true);
+
     try {
       await currentUser.getListOfInvoices();
-      this.setState({ showInvoices: true });
+      setShowInvoices(true);
     } catch (err) {
       notify(err);
     } finally {
-      this.setState({ disabled: false });
+      setDisabled(false);
       NProgress.done();
     }
   };
+
+  const renderSubscriptionButton = () => {
+    const { currentTeam } = store;
+
+    let subscriptionDate;
+    let billingDay;
+    if (currentTeam && currentTeam.stripeSubscription) {
+      subscriptionDate = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format(
+        'MMM Do YYYY',
+      );
+      billingDay = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format('Do');
+    }
+
+    if (currentTeam && !currentTeam.isSubscriptionActive && currentTeam.isPaymentFailed) {
+      return (
+        <>
+          <p>You are not a paying customer.</p>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleCheckoutClick('subscription')}
+            disabled={disabled}
+          >
+            Buy subscription
+          </Button>
+          <p />
+          <p>
+            Team was automatically unsubscribed due to failed payment. You will be prompt to update
+            card information if you choose to re-subscribe Team.
+          </p>
+        </>
+      );
+    } else if (currentTeam && !currentTeam.isSubscriptionActive && !currentTeam.isPaymentFailed) {
+      return (
+        <React.Fragment>
+          <p>You are not a paying customer.</p>
+          <p>
+            Buy subscription using your current card, see below section for current card
+            information.
+          </p>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleCheckoutClick('subscription')}
+            disabled={disabled}
+          >
+            Buy subscription
+          </Button>
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <span>
+            {' '}
+            <DoneIcon color="action" style={{ verticalAlign: 'text-bottom' }} /> Subscription is
+            active.
+            <p>
+              You subscribed <b>{currentTeam.name}</b> on <b>{subscriptionDate}</b>.
+            </p>
+            <p>
+              You will be billed $50 on <b>{billingDay} day</b> of each month unless you cancel
+              subscription or subscription is cancelled automatically due to failed payment.
+            </p>
+          </span>
+          <p />
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={cancelSubscriptionOnClick}
+            disabled={disabled}
+          >
+            Unsubscribe Team
+          </Button>
+          <br />
+        </React.Fragment>
+      );
+    }
+  };
+
+  const { currentTeam, currentUser } = store;
+  const isTeamLeader = currentTeam && currentUser && currentUser._id === currentTeam.teamLeaderId;
+
+  if (!currentTeam || currentTeam.slug !== teamSlug) {
+    return (
+      <Layout
+        store={store}
+        isMobile={isMobile}
+        teamRequired={teamRequired}
+        firstGridItem={firstGridItem}
+      >
+        <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+          <p>You did not select any team.</p>
+          <p>
+            To access this page, please select existing team or create new team if you have no
+            teams.
+          </p>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!isTeamLeader) {
+    return (
+      <Layout
+        store={store}
+        isMobile={isMobile}
+        teamRequired={teamRequired}
+        firstGridItem={firstGridItem}
+      >
+        <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+          <p>Only the Team Leader can access this page.</p>
+          <p>Create your own team to become a Team Leader.</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout
+      store={store}
+      isMobile={isMobile}
+      teamRequired={teamRequired}
+      firstGridItem={firstGridItem}
+    >
+      <Head>
+        <title>Your Billing</title>
+      </Head>
+      <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+        <h3>Your Billing</h3>
+        <p />
+        <h4 style={{ marginTop: '40px' }}>Paid plan</h4>
+        {renderSubscriptionButton()}
+        <p />
+        <br />
+        <h4>Card information</h4>
+        {renderCardInfo()}
+        <p />
+        <br />
+        <h4>Payment history</h4>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={showListOfInvoicesOnClick}
+          disabled={disabled}
+        >
+          Show payment history
+        </Button>
+        <p />
+        {renderInvoices()}
+        <p />
+        <br />
+      </div>
+    </Layout>
+  );
 }
 
 export default withAuth(observer(Billing));

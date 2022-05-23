@@ -73,16 +73,6 @@ app.prepare().then(() => {
     app.render(req, res, '/discussion', { teamSlug });
   });
 
-  server.get('/teams/:teamSlug/discussions-f/:discussionSlug', (req, res) => {
-    const { teamSlug, discussionSlug } = req.params;
-    app.render(req, res, '/discussion-f', { teamSlug, discussionSlug });
-  });
-
-  server.get('/teams/:teamSlug/discussions-f', (req, res) => {
-    const { teamSlug } = req.params;
-    app.render(req, res, '/discussion-f', { teamSlug });
-  });
-
   server.get('/signup', (req, res) => {
     app.render(req, res, '/login');
   });
