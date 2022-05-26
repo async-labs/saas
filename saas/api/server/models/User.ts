@@ -302,6 +302,7 @@ class UserClass extends mongoose.Model {
       slug,
       isSignedupViaGoogle: true,
       defaultTeamSlug: '',
+      darkTheme: false,
     });
 
     const emailTemplate = await getEmailTemplate('welcome', { userName: displayName });

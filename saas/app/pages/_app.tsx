@@ -12,11 +12,22 @@ import { getInitialDataApiMethod } from '../lib/api/team-member';
 import { isMobile } from '../lib/isMobile';
 import { getStore, initializeStore, Store } from '../lib/store';
 
-import type { AppProps } from 'next/app';
+// import type { AppProps } from 'next/app';
 import { NextPage, NextPageContext } from 'next';
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const store: Store = initializeStore(pageProps.initialState);
+// add types
+type Props = {
+  Component: NextPage;
+  pageProps: any;
+  initialState: any;
+};
+
+function MyApp({ Component, pageProps, initialState }: Props) {
+  // console.log('initialState', initialState);
+
+  const store: Store = initializeStore(initialState);
+
+  // console.log('store.currentUser.email', store.currentUser);
 
   const isThemeDark = store.currentUser ? store.currentUser.darkTheme : true;
 
@@ -132,6 +143,8 @@ MyApp.getInitialProps = async ({
 
   const team =
     initialData && initialData.teams && initialData.teams.find((t) => t.slug === selectedTeamSlug);
+
+  // console.log('userObj', userObj);
 
   return {
     ...appProps,

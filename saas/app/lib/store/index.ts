@@ -47,6 +47,8 @@ class Store {
 
     this.isServer = !!isServer;
 
+    // console.log('initialState.user', initialState.user);
+
     this.setCurrentUser(initialState.user);
 
     this.currentUrl = initialState.currentUrl || '';

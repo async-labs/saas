@@ -35,14 +35,14 @@ function LayoutWrapper({
   isMobile,
   firstGridItem,
   store,
-  isThemeDark,
 }: {
   children: React.ReactNode;
   isMobile: boolean;
   firstGridItem: boolean;
   store: Store;
-  isThemeDark: boolean;
 }) {
+  const isThemeDark = store.currentUser ? store.currentUser.darkTheme : true;
+
   return (
     <React.Fragment>
       <Grid
@@ -162,9 +162,9 @@ function LayoutWrapper({
 
 type Props = {
   children: React.ReactNode;
+  store?: Store;
   isMobile?: boolean;
   firstGridItem?: boolean;
-  store?: Store;
   teamRequired?: boolean;
 };
 
@@ -173,8 +173,6 @@ class Layout extends React.Component<Props> {
     const { children, isMobile, firstGridItem, store, teamRequired } = this.props;
 
     const { currentUser, currentTeam } = store;
-
-    const isThemeDark = currentUser && currentUser.darkTheme === true;
 
     // console.log(this.props.store.currentUser.darkTheme);
 
@@ -186,12 +184,7 @@ class Layout extends React.Component<Props> {
 
     if (!currentUser) {
       return (
-        <LayoutWrapper
-          firstGridItem={firstGridItem}
-          isMobile={isMobile}
-          isThemeDark={isThemeDark}
-          store={store}
-        >
+        <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
           <Grid item sm={12} xs={12}>
             {children}
           </Grid>
@@ -202,12 +195,7 @@ class Layout extends React.Component<Props> {
     if (!currentTeam) {
       if (teamRequired) {
         return (
-          <LayoutWrapper
-            firstGridItem={firstGridItem}
-            isMobile={isMobile}
-            isThemeDark={isThemeDark}
-            store={store}
-          >
+          <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
             <Grid item sm={10} xs={12}>
               <div style={{ padding: '20px' }}>
                 Select existing team or create a new team.
@@ -224,12 +212,7 @@ class Layout extends React.Component<Props> {
       } else {
         // console.log('team not required');
         return (
-          <LayoutWrapper
-            firstGridItem={firstGridItem}
-            isMobile={isMobile}
-            isThemeDark={isThemeDark}
-            store={store}
-          >
+          <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
             <Grid item sm={10} xs={12}>
               {children}
             </Grid>
@@ -239,12 +222,7 @@ class Layout extends React.Component<Props> {
     }
 
     return (
-      <LayoutWrapper
-        firstGridItem={firstGridItem}
-        isMobile={isMobile}
-        isThemeDark={isThemeDark}
-        store={store}
-      >
+      <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
         <Grid item sm={firstGridItem ? 10 : 12} xs={12}>
           <div>
             {isMobile || store.currentUrl.includes('create-team') ? null : (
