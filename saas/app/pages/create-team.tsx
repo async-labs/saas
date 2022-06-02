@@ -6,8 +6,9 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+
 import Head from 'next/head';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 
 import {
   getSignedRequestForUploadApiMethod,
@@ -33,6 +34,8 @@ function CreateTeam({ store, isMobile, firstGridItem, teamRequired }: Props) {
   );
   const [disabled, setDisabled] = useState<boolean>(false);
 
+  const router = useRouter();
+
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -47,6 +50,7 @@ function CreateTeam({ store, isMobile, firstGridItem, teamRequired }: Props) {
       setDisabled(true);
 
       const defaultAvatarUrl = 'https://storage.googleapis.com/async-await/default-user.png?v=1';
+
       const team = await store.addTeam({
         name: newName,
         avatarUrl: defaultAvatarUrl,
@@ -55,8 +59,8 @@ function CreateTeam({ store, isMobile, firstGridItem, teamRequired }: Props) {
       console.log(`Returned to client: ${team._id}, ${team.name}, ${team.slug}`);
 
       if (file == null) {
-        Router.push(`/teams/${team.slug}/team-settings`);
         notify('You successfully created Team.<p />Redirecting...');
+        router.push(`/teams/${team.slug}/team-settings`);
         return;
       }
 
@@ -91,9 +95,9 @@ function CreateTeam({ store, isMobile, firstGridItem, teamRequired }: Props) {
 
       (document.getElementById('upload-file') as HTMLFormElement).value = '';
 
-      Router.push(`/teams/${team.slug}/team-settings`);
-
       notify('You successfully created Team. Redirecting ...');
+
+      router.push(`/teams/${team.slug}/team-settings`);
     } catch (error) {
       console.log(error);
       notify(error);

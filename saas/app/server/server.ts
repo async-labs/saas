@@ -77,6 +77,8 @@ app.prepare().then(() => {
     app.render(req, res, '/login');
   });
 
+  // token for invitation page
+
   setupSitemapAndRobots({ server });
 
   routesWithCache({ server, app });
