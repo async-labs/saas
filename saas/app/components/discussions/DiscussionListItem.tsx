@@ -45,7 +45,7 @@ class DiscussionListItem extends React.Component<Props> {
         <li key={discussion._id} style={{ whiteSpace: 'nowrap', paddingRight: '10px' }}>
           <Link
             scroll={false}
-            href={`/discussion-f?teamSlug=${team.slug}&discussionSlug=${discussion.slug}`}
+            href={`/discussion?teamSlug=${team.slug}&discussionSlug=${discussion.slug}`}
             as={`/teams/${team.slug}/discussions/${discussion.slug}`}
           >
             <a

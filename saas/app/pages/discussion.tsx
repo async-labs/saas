@@ -112,8 +112,8 @@ function DiscussionPageCompFunctional({
 
     if (!slug && currentTeam.discussions.length > 0) {
       Router.replace(
-        `/discussion-f?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
-        `/teams/${teamSlug}/discussions-f/${currentTeam.orderedDiscussions[0].slug}`,
+        `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
+        `/teams/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
       );
       return;
     }

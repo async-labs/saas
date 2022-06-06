@@ -110,6 +110,7 @@ class PostForm extends React.Component<Props, State> {
             members={members}
             store={store}
             textareaHeight="100%"
+            parentComponent="PF"
           />
           <p />
           <div style={{ margin: '20px 0px' }}>
