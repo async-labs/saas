@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import he from 'he';
-import marked from 'marked';
+import { marked } from 'marked';
 import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';

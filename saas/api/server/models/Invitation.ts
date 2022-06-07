@@ -5,8 +5,6 @@ import getEmailTemplate from './EmailTemplate';
 import Team from './Team';
 import User, { UserDocument } from './User';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   teamId: {
     type: String,

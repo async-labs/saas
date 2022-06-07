@@ -10,8 +10,6 @@ import Team, { TeamDocument } from './Team';
 
 import { getListOfInvoices } from '../stripe';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   slug: {
     type: String,

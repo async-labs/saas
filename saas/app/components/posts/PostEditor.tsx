@@ -2,7 +2,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import he from 'he';
-import marked from 'marked';
+import { marked } from 'marked';
 import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
