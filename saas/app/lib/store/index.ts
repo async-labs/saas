@@ -57,7 +57,9 @@ class Store {
 
     this.setCurrentTeam(initialState.team);
 
-    this.setInitialTeamsStoreMethod(initialState.teams);
+    if (initialState.teams && initialState.teams.length > 0) {
+      this.setInitialTeamsStoreMethod(initialState.teams);
+    }
 
     this.socket = socket;
 
