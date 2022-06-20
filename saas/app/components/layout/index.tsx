@@ -17,17 +17,19 @@ import DiscussionList from '../discussions/DiscussionList';
 const dev = process.env.NODE_ENV !== 'production';
 
 const styleGrid = {
-  width: '100vw',
-  minHeight: '100vh',
+  width: '100%',
+  height: '100vh',
   maxWidth: '100%',
   padding: '0px 10px',
+  overflow: 'hidden',
 };
 
 const styleGridIsMobile = {
-  width: '100vw',
-  minHeight: '100vh',
+  width: '100%',
+  height: '100vh',
   maxWidth: '100%',
   padding: '0px 0px 0px 10px',
+  overflow: 'hidden',
 };
 
 function LayoutWrapper({
@@ -59,6 +61,8 @@ function LayoutWrapper({
             xs={12}
             style={{
               borderRight: '1px #707070 solid',
+              justifyContent: 'center',
+              height: '100vh',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -196,7 +200,12 @@ class Layout extends React.Component<Props> {
       if (teamRequired) {
         return (
           <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
-            <Grid item sm={10} xs={12}>
+            <Grid
+              item
+              sm={10}
+              xs={12}
+              style={{ padding: '0px 35px', overflow: 'auto', minHeight: '100%' }}
+            >
               <div style={{ padding: '20px' }}>
                 Select existing team or create a new team.
                 <p />
@@ -213,7 +222,12 @@ class Layout extends React.Component<Props> {
         // console.log('team not required');
         return (
           <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
-            <Grid item sm={10} xs={12}>
+            <Grid
+              item
+              sm={10}
+              xs={12}
+              style={{ padding: '0px 35px', overflow: 'auto', minHeight: '100%' }}
+            >
               {children}
             </Grid>
           </LayoutWrapper>
@@ -223,7 +237,12 @@ class Layout extends React.Component<Props> {
 
     return (
       <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
-        <Grid item sm={firstGridItem ? 10 : 12} xs={12}>
+        <Grid
+          item
+          sm={firstGridItem ? 10 : 12}
+          xs={12}
+          style={{ padding: '0px 35px', overflow: 'auto', minHeight: '100%' }}
+        >
           <div>
             {isMobile || store.currentUrl.includes('create-team') ? null : (
               <React.Fragment>

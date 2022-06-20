@@ -2,8 +2,17 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DoneIcon from '@mui/icons-material/Done';
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+
 import { inject, observer } from 'mobx-react';
 import Head from 'next/head';
+import Link from 'next/link';
 import NProgress from 'nprogress';
 
 import * as React from 'react';
@@ -20,6 +29,9 @@ import notify from '../lib/notify';
 import { resizeImage } from '../lib/resizeImage';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
+
+const dev = process.env.NODE_ENV !== 'production';
+const URL_APP = dev ? process.env.NEXT_PUBLIC_URL_APP : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP;
 
 type Props = {
   store: Store;
@@ -124,7 +136,6 @@ function YourSettings({ store, isMobile, firstGridItem, teamRequired }: Props) {
       teamRequired={teamRequired}
       firstGridItem={firstGridItem}
     >
-      {' '}
       <Head>
         <title>Your Settings at Async</title>
       </Head>
@@ -194,6 +205,54 @@ function YourSettings({ store, isMobile, firstGridItem, teamRequired }: Props) {
         />
         <p />
         <br />
+        <h4 style={{ marginRight: 20, display: 'inline' }}>Your Teams</h4>
+        <Link href={`${URL_APP}/create-team`}>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{
+              fontSize: isMobile ? '13px' : '14px',
+              marginTop: isMobile ? '10px' : '-20px',
+              float: 'right',
+            }}
+          >
+            + Add team
+          </Button>
+        </Link>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Team name</TableCell>
+                <TableCell>Team slug</TableCell>
+                <TableCell>Action</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {store.teams.map((t) => (
+                <TableRow key={t._id}>
+                  <TableCell style={{ width: '300px' }}>{t.name}</TableCell>
+                  <TableCell>{t.slug}</TableCell>
+                  <TableCell>
+                    <Link href={`${URL_APP}/teams/${t.slug}/discussions`}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        style={{
+                          fontSize: isMobile ? '13px' : '14px',
+                          marginTop: isMobile ? '10px' : 'inherit',
+                        }}
+                      >
+                        See team
+                      </Button>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </Layout>
   );

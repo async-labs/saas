@@ -57,6 +57,8 @@ class Store {
 
     this.setCurrentTeam(initialState.team);
 
+    this.setInitialTeamsStoreMethod(initialState.teams);
+
     this.socket = socket;
 
     if (socket) {
@@ -137,6 +139,14 @@ class Store {
     const team = this.teams.find((t) => t._id === teamId);
 
     this.teams.remove(team);
+  }
+
+  private setInitialTeamsStoreMethod(teams: any[]) {
+    // console.log(initialTeams);
+
+    const teamObjs = teams.map((t) => new Team({ store: this, ...t }));
+
+    this.teams.replace(teamObjs);
   }
 }
 
