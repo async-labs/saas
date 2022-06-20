@@ -146,6 +146,8 @@ router.post('/get-initial-data', async (req: any, res, next) => {
       }
     }
 
+    // console.log(teams.length, teams);
+
     res.json({ teams });
   } catch (err) {
     next(err);

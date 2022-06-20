@@ -34,7 +34,7 @@ function MyApp({ Component, pageProps, initialState }: Props) {
   const isServer = typeof window === 'undefined';
 
   return (
-    <CacheProvider value={createCache({ key: 'css' })}>
+    <CacheProvider value={createCache({ key: 'css', prepend: true })}>
       <ThemeProvider theme={isThemeDark ? themeDark : themeLight}>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
