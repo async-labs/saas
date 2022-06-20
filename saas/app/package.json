@@ -14,12 +14,12 @@
     "start": "node production-server/server.js"
   },
   "dependencies": {
-    "@emotion/cache": "^11.6.0",
-    "@emotion/react": "^11.6.0",
+    "@emotion/cache": "^11.9.3",
+    "@emotion/react": "^11.9.3",
     "@emotion/server": "^11.4.0",
-    "@emotion/styled": "^11.6.0",
-    "@mui/icons-material": "^5.2.0",
-    "@mui/material": "^5.2.0",
+    "@emotion/styled": "^11.9.3",
+    "@mui/icons-material": "^5.8.3",
+    "@mui/material": "^5.8.3",
     "@stripe/stripe-js": "^1.21.1",
     "express": "^4.17.1",
     "he": "^1.2.0",
