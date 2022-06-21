@@ -21,6 +21,7 @@ const styleGrid = {
   height: '100vh',
   maxWidth: '100%',
   padding: '0px 10px',
+  display: 'flex',
   overflow: 'hidden',
 };
 
@@ -29,6 +30,7 @@ const styleGridIsMobile = {
   height: '100vh',
   maxWidth: '100%',
   padding: '0px 0px 0px 10px',
+  display: 'flex',
   overflow: 'hidden',
 };
 
@@ -62,7 +64,8 @@ function LayoutWrapper({
             style={{
               borderRight: '1px #707070 solid',
               justifyContent: 'center',
-              height: '100vh',
+              height: '100%',
+              overflow: 'hidden',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -204,7 +207,7 @@ class Layout extends React.Component<Props> {
               item
               sm={10}
               xs={12}
-              style={{ padding: '0px 35px', overflow: 'auto', minHeight: '100%' }}
+              style={{ padding: '0px 35px', overflow: 'auto', height: 'auto' }}
             >
               <div style={{ padding: '20px' }}>
                 Select existing team or create a new team.
@@ -226,7 +229,7 @@ class Layout extends React.Component<Props> {
               item
               sm={10}
               xs={12}
-              style={{ padding: '0px 35px', overflow: 'auto', minHeight: '100%' }}
+              style={{ padding: '0px 35px', overflow: 'auto', height: 'auto' }}
             >
               {children}
             </Grid>
@@ -241,7 +244,7 @@ class Layout extends React.Component<Props> {
           item
           sm={firstGridItem ? 10 : 12}
           xs={12}
-          style={{ padding: '0px 35px', overflow: 'auto', minHeight: '100%' }}
+          style={{ padding: '0px 35px', overflowY: 'auto', height: 'auto' }}
         >
           <div>
             {isMobile || store.currentUrl.includes('create-team') ? null : (

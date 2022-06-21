@@ -33,6 +33,10 @@ function MyDocument({ __NEXT_DATA__ }: { __NEXT_DATA__: any }) {
 
         <style>
           {`
+          #__next {
+            width: 100%;
+            height: 100%;
+          }
           a {
             font-weight: 400;
             color: #58a6ff;

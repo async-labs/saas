@@ -77,7 +77,9 @@ app.prepare().then(() => {
     app.render(req, res, '/login');
   });
 
-  // token for invitation page
+  server.get('/invitation', (req, res) => {
+    app.render(req, res, '/invitation', { token: req.query.token as string });
+  });
 
   setupSitemapAndRobots({ server });
 

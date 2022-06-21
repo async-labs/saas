@@ -142,7 +142,6 @@ function YourSettings({ store, isMobile, firstGridItem, teamRequired }: Props) {
       <div
         style={{
           padding: isMobile ? '0px' : '0px 30px',
-          fontSize: '15px',
           height: '100%',
         }}
       >

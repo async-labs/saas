@@ -11,7 +11,7 @@ function setupGoogle({ server }) {
     return;
   }
 
-  const verify = async (accessToken, refreshToken, profile, done) => {
+  const verify = async (req, accessToken, refreshToken, profile, done) => {
     let email;
     let avatarUrl;
 
@@ -32,6 +32,13 @@ function setupGoogle({ server }) {
         avatarUrl,
       });
 
+      if (user && req.session.invitationToken) {
+        await Invitation.addUserToTeam({
+          token: req.session.invitationToken,
+          user,
+        }).catch((err) => console.error(err));
+      }
+
       done(null, user);
     } catch (err) {
       done(err);
@@ -45,6 +52,7 @@ function setupGoogle({ server }) {
         clientID: process.env.GOOGLE_CLIENTID,
         clientSecret: process.env.GOOGLE_CLIENTSECRET,
         callbackURL: `${dev ? process.env.URL_API : process.env.PRODUCTION_URL_API}/oauth2callback`,
+        passReqToCallback: true,
       },
       verify,
     ),
@@ -84,31 +92,10 @@ function setupGoogle({ server }) {
       failureRedirect: '/login',
     }),
     async (req, res) => {
-      let teamSlugOfInvitedTeam;
-
-      if (req.user && req.session.invitationToken) {
-        teamSlugOfInvitedTeam = await Invitation.addUserToTeam({
-          token: req.session.invitationToken,
-          user: req.user,
-        }).catch((err) => console.error(err));
-
-        req.session.invitationToken = null;
-      }
-
-      let redirectUrlAfterLogin;
-
-      // console.log(req.user.defaultTeamSlug, teamSlugOfInvitedTeam);
-
-      if (req.user && teamSlugOfInvitedTeam) {
-        redirectUrlAfterLogin = `/teams/${teamSlugOfInvitedTeam}/discussions`;
-      } else if (req.user && !teamSlugOfInvitedTeam && req.user.defaultTeamSlug) {
-        redirectUrlAfterLogin = `/teams/${req.user.defaultTeamSlug}/discussions`;
-      } else if (req.user && !teamSlugOfInvitedTeam && !req.user.defaultTeamSlug) {
-        redirectUrlAfterLogin = `/create-team`;
-      }
-
       res.redirect(
-        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}${redirectUrlAfterLogin}`,
+        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/teams/${
+          req.user.defaultTeamSlug
+        }/your-settings`,
       );
     },
   );
