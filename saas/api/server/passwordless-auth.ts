@@ -89,17 +89,13 @@ function setupPasswordless({ server }) {
       }
     },
     async (req, res) => {
-
       if (req.user && req.session.invitationToken) {
         await Invitation.addUserToTeam({
           token: req.session.invitationToken,
           user: req.user,
         }).catch((err) => console.error(err));
-
         req.session.invitationToken = null;
       }
-
-      // console.log(req.user.defaultTeamSlug, teamSlugOfInvitedTeam);
       res.redirect(
         `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/teams/${
           req.user.defaultTeamSlug

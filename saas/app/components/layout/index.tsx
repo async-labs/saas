@@ -244,7 +244,7 @@ class Layout extends React.Component<Props> {
           item
           sm={firstGridItem ? 10 : 12}
           xs={12}
-          style={{ padding: '0px 35px', overflowY: 'auto', height: 'auto' }}
+          style={{ padding: '0px 35px', overflowY: 'auto', height: 'inherit' }}
         >
           <div>
             {isMobile || store.currentUrl.includes('create-team') ? null : (
