@@ -18,7 +18,9 @@ export default function setupSitemapAndRobots({ server }) {
 
     try {
       const smStream = new SitemapStream({
-        hostname: dev ? process.env.NEXT_PUBLIC_URL_APP : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP,
+        hostname: dev
+          ? process.env.NEXT_PUBLIC_URL_APP
+          : process.env.NEXT_PUBLIC_PRODUCTION_URL_APP,
       });
       const gzip = zlib.createGzip();
 

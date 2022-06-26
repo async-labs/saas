@@ -23,6 +23,7 @@ type Props = {
   isServer: boolean;
   isMobile: boolean;
   firstGridItem: boolean;
+  teamRequired: boolean;
 };
 
 function DiscussionPageCompFunctional({
@@ -32,6 +33,7 @@ function DiscussionPageCompFunctional({
   isServer,
   isMobile,
   firstGridItem,
+  teamRequired,
 }: Props) {
   const [selectedPost, setSelectedPost] = useState<Post>(null);
   const [showMarkdownClicked, setShowMarkdownClicked] = useState<boolean>(false);
@@ -213,7 +215,12 @@ function DiscussionPageCompFunctional({
 
   if (!currentTeam || currentTeam.slug !== teamSlug) {
     return (
-      <Layout store={store} isMobile={isMobile} firstGridItem={firstGridItem}>
+      <Layout
+        store={store}
+        isMobile={isMobile}
+        firstGridItem={firstGridItem}
+        teamRequired={teamRequired}
+      >
         <Head>
           <title>No Team is found.</title>
         </Head>
@@ -227,7 +234,12 @@ function DiscussionPageCompFunctional({
   if (!discussion) {
     if (currentTeam.isLoadingDiscussions) {
       return (
-        <Layout store={store} isMobile={isMobile} firstGridItem={firstGridItem}>
+        <Layout
+          store={store}
+          isMobile={isMobile}
+          firstGridItem={firstGridItem}
+          teamRequired={teamRequired}
+        >
           <Head>
             <title>Loading...</title>
           </Head>
@@ -238,7 +250,12 @@ function DiscussionPageCompFunctional({
       );
     } else {
       return (
-        <Layout store={store} isMobile={isMobile} firstGridItem={firstGridItem}>
+        <Layout
+          store={store}
+          isMobile={isMobile}
+          firstGridItem={firstGridItem}
+          teamRequired={teamRequired}
+        >
           <Head>
             <title>No Discussion is found.</title>
           </Head>
@@ -253,11 +270,16 @@ function DiscussionPageCompFunctional({
   const title = discussion ? `${discussion.name} · Discussion` : 'Discussions';
 
   return (
-    <Layout store={store} isMobile={isMobile} firstGridItem={firstGridItem}>
+    <Layout
+      store={store}
+      isMobile={isMobile}
+      firstGridItem={firstGridItem}
+      teamRequired={teamRequired}
+    >
       <Head>
         <title>{title}</title>
       </Head>
-      <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+      <div style={{ padding: isMobile ? '0px' : '0px 30px', height: '100vh' }}>
         <h4>
           <span style={{ fontWeight: 300 }}>Discussion : </span>
           {(discussion && discussion.name) || 'No Discussion is found.'}

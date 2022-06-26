@@ -2,7 +2,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import he from 'he';
-import marked from 'marked';
+import { marked } from 'marked';
 import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
@@ -43,6 +43,7 @@ type Props = {
   members: User[];
   textareaHeight?: string;
   placeholder?: string;
+  parentComponent: string;
 };
 
 type State = { htmlContent: string };
@@ -58,7 +59,7 @@ class PostEditor extends React.Component<Props, State> {
 
   public render() {
     const { htmlContent } = this.state;
-    const { content, members, store } = this.props;
+    const { content, members, store, parentComponent } = this.props;
     const { currentUser } = store;
 
     const membersMinusCurrentUser = members.filter((member) => member._id !== currentUser._id);
@@ -86,21 +87,21 @@ class PostEditor extends React.Component<Props, State> {
         </div>
 
         <div style={{ display: 'inline', float: 'left' }}>
-          <label htmlFor="upload-file-post-editor">
+          <label htmlFor={'upload-file-post-editor-' + parentComponent}>
             <Button component="span" style={{ color: '#58a6ff' }}>
               <InsertPhotoIcon style={{ fontSize: '22px' }} />
             </Button>
           </label>
           <input
             accept="image/*"
-            name="upload-file-post-editor"
-            id="upload-file-post-editor"
+            name={'upload-file-post-editor-' + parentComponent}
+            id={'upload-file-post-editor-' + parentComponent}
             type="file"
             style={{ display: 'none' }}
-            onChange={(event) => {
+            onChange={async (event) => {
               const file = event.target.files[0];
+              await this.uploadFile(file);
               event.target.value = '';
-              this.uploadFile(file);
             }}
           />
         </div>
@@ -257,7 +258,7 @@ class PostEditor extends React.Component<Props, State> {
         bucket,
       });
 
-      let imageMarkdown;
+      let fileHtmlOrMarkdown;
       let fileUrl;
 
       if (file.type.startsWith('image/')) {
@@ -271,11 +272,11 @@ class PostEditor extends React.Component<Props, State> {
 
         fileUrl = responseFromApiServerForUpload.url;
 
-        console.log(fileUrl);
+        // console.log(fileUrl);
 
         const finalWidth = width > 768 ? '100%' : `${width}px`;
 
-        imageMarkdown = `
+        fileHtmlOrMarkdown = `
           <div>
             <img style="max-width: ${finalWidth}; width:100%" src="${fileUrl}" alt="Async" class="s3-image" />
           </div>`;
@@ -286,14 +287,13 @@ class PostEditor extends React.Component<Props, State> {
         );
 
         fileUrl = responseFromApiServerForUpload.url;
-        imageMarkdown = `[${file.name}](${fileUrl})`;
+        fileHtmlOrMarkdown = `[${file.name}](${fileUrl})`;
       }
 
-      const content = `${this.props.content}\n${imageMarkdown.replace(/\s+/g, ' ')}`;
+      const content = `${this.props.content}\n${fileHtmlOrMarkdown.replace(/\s+/g, ' ')}`;
 
       this.props.onChanged(content);
 
-      NProgress.done();
       notify('You successfully uploaded file.');
     } catch (error) {
       console.log(error);

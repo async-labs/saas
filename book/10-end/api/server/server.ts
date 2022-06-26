@@ -22,14 +22,20 @@ require('dotenv').config();
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 8000;
 
-const options = {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true,
-};
+mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL);
 
-mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL, options);
+// check connection
+(async () => {
+  try {
+    await mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL);
+    logger.info('connected to db');
+
+    // async tasks, for ex, inserting email templates to db
+    // logger.info('finished async tasks');
+  } catch (err) {
+    console.log('error: ' + err);
+  }
+})();
 
 const server = express();
 

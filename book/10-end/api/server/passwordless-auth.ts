@@ -116,18 +116,22 @@ function setupPasswordless({ server }) {
     },
   );
 
-  server.get('/logout', passwordless.logout(), (req, res) => {
-    req.logout();
+  server.get('/logout', (req, res, next) => {
+    req.logout((err) => {
+      if (err) {
+        next(err);
+      }
 
-    if (req.query && req.query.invitationToken) {
-      res.redirect(
-        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/invitation?token=${
-          req.query.invitationToken
-        }`,
-      );
-    } else {
-      res.redirect(`${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/login`);
-    }
+      if (req.query && req.query.invitationToken) {
+        res.redirect(
+          `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/invitation?token=${
+            req.query.invitationToken
+          }`,
+        );
+      } else {
+        res.redirect(`${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/login`);
+      }
+    });
   });
 }
 

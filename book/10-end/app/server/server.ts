@@ -87,6 +87,10 @@ app.prepare().then(() => {
     app.render(req, res, '/login');
   });
 
+  server.get('/invitation', (req, res) => {
+    app.render(req, res, '/invitation', { token: req.query.token as string });
+  });
+
   setupSitemapAndRobots({ server });
 
   routesWithCache({ server, app });

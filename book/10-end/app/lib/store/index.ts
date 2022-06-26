@@ -47,13 +47,19 @@ class Store {
 
     this.isServer = !!isServer;
 
+    // console.log('initialState.user', initialState.user);
+
     this.setCurrentUser(initialState.user);
 
     this.currentUrl = initialState.currentUrl || '';
 
-    console.log(initialState);
+    // console.log(initialState);
 
     this.setCurrentTeam(initialState.team);
+
+    if (initialState.teams && initialState.teams.length > 0) {
+      this.setInitialTeamsStoreMethod(initialState.teams);
+    }
 
     this.socket = socket;
 
@@ -135,6 +141,14 @@ class Store {
     const team = this.teams.find((t) => t._id === teamId);
 
     this.teams.remove(team);
+  }
+
+  private setInitialTeamsStoreMethod(teams: any[]) {
+    // console.log(initialTeams);
+
+    const teamObjs = teams.map((t) => new Team({ store: this, ...t }));
+
+    this.teams.replace(teamObjs);
   }
 }
 

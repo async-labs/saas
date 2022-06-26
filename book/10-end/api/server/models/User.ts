@@ -10,8 +10,6 @@ import Team, { TeamDocument } from './Team';
 
 import { getListOfInvoices } from '../stripe';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   slug: {
     type: String,
@@ -221,7 +219,7 @@ class UserClass extends mongoose.Model {
   public static async getUserBySlug({ slug }) {
     console.log('Static method: getUserBySlug');
 
-    return this.findOne({ slug }, 'email displayName avatarUrl');
+    return this.findOne({ slug }, 'email displayName avatarUrl').setOptions({ lean: true });
   }
 
   public static async updateProfile({ userId, name, avatarUrl }) {
@@ -302,6 +300,7 @@ class UserClass extends mongoose.Model {
       slug,
       isSignedupViaGoogle: true,
       defaultTeamSlug: '',
+      darkTheme: false,
     });
 
     const emailTemplate = await getEmailTemplate('welcome', { userName: displayName });
@@ -331,7 +330,9 @@ class UserClass extends mongoose.Model {
   }
 
   public static async signInOrSignUpByPasswordless({ uid, email }) {
-    const user = await this.findOne({ email }).select(this.publicFields().join(' ')).setOptions({ lean: true });
+    const user = await this.findOne({ email })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
 
     if (user) {
       throw Error('User already exists');
@@ -373,7 +374,6 @@ class UserClass extends mongoose.Model {
     return _.pick(newUser, this.publicFields());
   }
 
-  // try private instead of public, run `yarn build`
   public static toggleTheme({ userId, darkTheme }) {
     return this.updateOne({ _id: userId }, { darkTheme: !!darkTheme });
   }
