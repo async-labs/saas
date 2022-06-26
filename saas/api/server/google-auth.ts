@@ -92,11 +92,11 @@ function setupGoogle({ server }) {
       failureRedirect: '/login',
     }),
     async (req, res) => {
-      res.redirect(
-        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/teams/${
-          req.user.defaultTeamSlug
-        }/your-settings`,
-      );
+      if (req.user && !req.user.defaultTeamSlug) {
+        res.redirect(`${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/create-team`);
+      }
+
+      res.redirect(`${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/your-settings`);
     },
   );
 }
