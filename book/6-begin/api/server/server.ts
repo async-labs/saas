@@ -10,14 +10,7 @@ import { setupGoogle } from './google-auth';
 // eslint-disable-next-line
 require('dotenv').config();
 
-const options = {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true,
-};
-
-mongoose.connect(process.env.MONGO_URL_TEST, options);
+mongoose.connect(process.env.MONGO_URL_TEST);
 
 const server = express();
 

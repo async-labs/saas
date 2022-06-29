@@ -6,8 +6,6 @@ import { addToMailchimp } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
 import getEmailTemplate from './EmailTemplate';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   slug: {
     type: String,
@@ -161,6 +159,7 @@ class UserClass extends mongoose.Model {
       avatarUrl,
       slug,
       isSignedupViaGoogle: true,
+      darkTheme: false,
     });
 
     const emailTemplate = await getEmailTemplate('welcome', { userName: displayName });
@@ -190,7 +189,9 @@ class UserClass extends mongoose.Model {
   }
 
   public static async signInOrSignUpByPasswordless({ uid, email }) {
-    const user = await this.findOne({ email }).select(this.publicFields().join(' ')).setOptions({ lean: true });
+    const user = await this.findOne({ email })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
 
     if (user) {
       throw Error('User already exists');

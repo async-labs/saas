@@ -5,8 +5,6 @@ import getEmailTemplate from './EmailTemplate';
 import Team from './Team';
 import User, { UserDocument } from './User';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   teamId: {
     type: String,
@@ -79,7 +77,9 @@ class InvitationClass extends mongoose.Model {
     }
 
     let token;
-    const invitation = await this.findOne({ teamId, email }).select('token').setOptions({ lean: true });
+    const invitation = await this.findOne({ teamId, email })
+      .select('token')
+      .setOptions({ lean: true });
 
     if (invitation) {
       token = invitation.token;
@@ -120,7 +120,9 @@ class InvitationClass extends mongoose.Model {
   }
 
   public static async getTeamInvitations({ userId, teamId }) {
-    const team = await Team.findOne({ _id: teamId }).select('teamLeaderId').setOptions({ lean: true });
+    const team = await Team.findOne({ _id: teamId })
+      .select('teamLeaderId')
+      .setOptions({ lean: true });
 
     if (userId !== team.teamLeaderId) {
       throw new Error('You have no permission.');

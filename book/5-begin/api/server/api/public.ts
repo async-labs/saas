@@ -22,7 +22,7 @@ router.post('/get-user-by-slug', async (req, res, next) => {
   }
 });
 
-router.post('/user/update-profile', async (req, res, next) => {
+router.post('/user/update-profile', async (req: any, res, next) => {
   console.log('Express route: /user/update-profile');
 
   try {

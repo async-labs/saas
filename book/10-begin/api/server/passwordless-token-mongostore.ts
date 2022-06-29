@@ -52,7 +52,9 @@ MongoStore.prototype.authenticate = async function (token, uid, callback) {
   }
 
   try {
-    const tokenDoc = await PasswordlessToken.findOne({ uid, ttl: { $gt: new Date() } }).setOptions({ lean: true });
+    const tokenDoc = await PasswordlessToken.findOne({ uid, ttl: { $gt: new Date() } }).setOptions({
+      lean: true,
+    });
 
     if (tokenDoc) {
       const isMatch = await bcrypt.compare(token, tokenDoc.hashedToken);
@@ -136,7 +138,7 @@ MongoStore.prototype.storeOrUpdateByEmail = async function addEmail(email: strin
     return obj.uid;
   }
 
-  const uid = mongoose.Types.ObjectId().toHexString();
+  const uid = new mongoose.Types.ObjectId().toHexString();
   await PasswordlessToken.updateOne({ uid }, { email }, { upsert: true });
 
   return uid;

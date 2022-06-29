@@ -6,17 +6,21 @@ import Confirmer from '../common/Confirmer';
 import Notifier from '../common/Notifier';
 
 const styleGrid = {
-  width: '100vw',
-  minHeight: '100vh',
+  width: '100%',
+  height: '100vh',
   maxWidth: '100%',
   padding: '0px 10px',
+  display: 'flex',
+  overflow: 'hidden',
 };
 
 const styleGridIsMobile = {
-  width: '100vw',
-  minHeight: '100vh',
+  width: '100%',
+  height: '100vh',
   maxWidth: '100%',
   padding: '0px 0px 0px 10px',
+  display: 'flex',
+  overflow: 'hidden',
 };
 
 type Props = {
@@ -48,6 +52,9 @@ class Layout extends React.Component<Props> {
             xs={12}
             style={{
               borderRight: '1px #707070 solid',
+              justifyContent: 'center',
+              height: '100%',
+              overflow: 'hidden',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>

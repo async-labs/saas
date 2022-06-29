@@ -6,8 +6,6 @@ import { addToMailchimp } from '../mailchimp';
 import { generateSlug } from '../utils/slugify';
 import getEmailTemplate from './EmailTemplate';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   slug: {
     type: String,
@@ -161,6 +159,7 @@ class UserClass extends mongoose.Model {
       avatarUrl,
       slug,
       isSignedupViaGoogle: true,
+      darkTheme: false,
     });
 
     const emailTemplate = await getEmailTemplate('welcome', { userName: displayName });

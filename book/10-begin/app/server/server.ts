@@ -42,6 +42,10 @@ app.prepare().then(() => {
     app.render(req, res, '/billing', { teamSlug, ...(req.query || {}) });
   });
 
+  server.get('/invitation', (req, res) => {
+    app.render(req, res, '/invitation', { token: req.query.token as string });
+  });
+
   server.all('*', (req, res) => {
     handle(req, res);
   });

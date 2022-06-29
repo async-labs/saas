@@ -1,6 +1,6 @@
 import Button from '@material-ui/core/Button';
 import he from 'he';
-import marked from 'marked';
+import { marked } from 'marked';
 import { observer } from 'mobx-react';
 import NProgress from 'nprogress';
 import React from 'react';
@@ -109,6 +109,7 @@ class PostForm extends React.Component<Props, State> {
             members={members}
             store={store}
             textareaHeight="100%"
+            parentComponent="PF"
           />
           <p />
           <div style={{ margin: '20px 0px' }}>

@@ -13,17 +13,21 @@ import { Store } from '../../lib/store';
 import DiscussionList from '../discussions/DiscussionList';
 
 const styleGrid = {
-  width: '100vw',
-  minHeight: '100vh',
+  width: '100%',
+  height: '100vh',
   maxWidth: '100%',
   padding: '0px 10px',
+  display: 'flex',
+  overflow: 'hidden',
 };
 
 const styleGridIsMobile = {
-  width: '100vw',
-  minHeight: '100vh',
+  width: '100%',
+  height: '100vh',
   maxWidth: '100%',
   padding: '0px 0px 0px 10px',
+  display: 'flex',
+  overflow: 'hidden',
 };
 
 function LayoutWrapper({
@@ -31,14 +35,14 @@ function LayoutWrapper({
   isMobile,
   firstGridItem,
   store,
-  isThemeDark,
 }: {
   children: React.ReactNode;
   isMobile: boolean;
   firstGridItem: boolean;
   store: Store;
-  isThemeDark: boolean;
 }) {
+  const isThemeDark = store.currentUser ? store.currentUser.darkTheme : true;
+
   return (
     <React.Fragment>
       <Grid
@@ -55,6 +59,9 @@ function LayoutWrapper({
             xs={12}
             style={{
               borderRight: '1px #707070 solid',
+              justifyContent: 'center',
+              height: '100%',
+              overflow: 'hidden',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -175,12 +182,7 @@ class Layout extends React.Component<Props> {
 
     if (!currentUser) {
       return (
-        <LayoutWrapper
-          firstGridItem={firstGridItem}
-          isMobile={isMobile}
-          isThemeDark={isThemeDark}
-          store={store}
-        >
+        <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
           <Grid item sm={12} xs={12}>
             {children}
           </Grid>
@@ -191,13 +193,13 @@ class Layout extends React.Component<Props> {
     if (!currentTeam) {
       if (teamRequired) {
         return (
-          <LayoutWrapper
-            firstGridItem={firstGridItem}
-            isMobile={isMobile}
-            isThemeDark={isThemeDark}
-            store={store}
-          >
-            <Grid item sm={10} xs={12}>
+          <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
+            <Grid
+              item
+              sm={10}
+              xs={12}
+              style={{ padding: '0px 35px', overflow: 'auto', height: 'auto' }}
+            >
               <div style={{ padding: '20px' }}>
                 Select existing team or create a new team.
                 <p />
@@ -213,13 +215,13 @@ class Layout extends React.Component<Props> {
       } else {
         console.log('team not required');
         return (
-          <LayoutWrapper
-            firstGridItem={firstGridItem}
-            isMobile={isMobile}
-            isThemeDark={isThemeDark}
-            store={store}
-          >
-            <Grid item sm={10} xs={12}>
+          <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
+            <Grid
+              item
+              sm={10}
+              xs={12}
+              style={{ padding: '0px 35px', overflow: 'auto', height: 'auto' }}
+            >
               {children}
             </Grid>
           </LayoutWrapper>
@@ -228,13 +230,13 @@ class Layout extends React.Component<Props> {
     }
 
     return (
-      <LayoutWrapper
-        firstGridItem={firstGridItem}
-        isMobile={isMobile}
-        isThemeDark={isThemeDark}
-        store={store}
-      >
-        <Grid item sm={firstGridItem ? 10 : 12} xs={12}>
+      <LayoutWrapper firstGridItem={firstGridItem} isMobile={isMobile} store={store}>
+        <Grid
+          item
+          sm={firstGridItem ? 10 : 12}
+          xs={12}
+          style={{ padding: '0px 35px', overflowY: 'auto', height: 'inherit' }}
+        >
           <div>
             {isMobile || store.currentUrl.includes('create-team') ? null : (
               <React.Fragment>

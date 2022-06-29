@@ -84,9 +84,13 @@ function setupPasswordless({ server }) {
     },
   );
 
-  server.get('/logout', passwordless.logout(), (req, res) => {
-    req.logout();
-    res.redirect(`${process.env.URL_APP}/login`);
+  server.get('/logout', (req, res, next) => {
+    req.logout((err) => {
+      if (err) {
+        next(err);
+      }
+      res.redirect(`${process.env.URL_APP}/login`);
+    });
   });
 }
 

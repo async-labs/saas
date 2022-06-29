@@ -27,7 +27,8 @@
     "noEmit": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",
@@ -41,5 +42,5 @@
     "out",
     "next.config.js",
     "node_modules"
-  ],
+  ]
 }

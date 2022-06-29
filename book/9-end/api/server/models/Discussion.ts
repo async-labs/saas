@@ -5,8 +5,6 @@ import { generateNumberSlug } from '../utils/slugify';
 import Team, { TeamDocument } from './Team';
 import Post from './Post';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
     type: String,

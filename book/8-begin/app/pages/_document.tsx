@@ -42,6 +42,10 @@ class MyDocument extends Document {
 
           <style>
             {`
+              #__next {
+                width: 100%;
+                height: 100%;
+              }
               a {
                 font-weight: 400;
                 color: #58a6ff;

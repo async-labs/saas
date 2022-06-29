@@ -26,8 +26,6 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  console.log(process.env.PORT_APP);
-
   server.listen(process.env.PORT_APP, () => {
     console.log(`> Ready on ${process.env.URL_APP}`);
   });

@@ -25,7 +25,7 @@ router.post('/get-user-by-slug', async (req, res, next) => {
   }
 });
 
-router.post('/user/update-profile', async (req, res, next) => {
+router.post('/user/update-profile', async (req: any, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 

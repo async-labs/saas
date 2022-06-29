@@ -12,9 +12,7 @@ router.get('/get-user', (req, res) => {
 router.post('/get-user-by-slug', async (req, res, next) => {
   console.log('Express route: /get-user-by-slug');
 
-  //@ts-ignore
-
-  req.session.foo = 'bar';
+  // req.session.foo = 'bar';
 
   try {
     const { slug } = req.body;
@@ -27,7 +25,7 @@ router.post('/get-user-by-slug', async (req, res, next) => {
   }
 });
 
-router.post('/user/update-profile', async (req, res, next) => {
+router.post('/user/update-profile', async (req: any, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 

@@ -3,8 +3,6 @@ import * as mongoose from 'mongoose';
 
 import { generateSlug } from '../utils/slugify';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   slug: {
     type: String,
@@ -150,6 +148,7 @@ class UserClass extends mongoose.Model {
       avatarUrl,
       slug,
       isSignedupViaGoogle: true,
+      darkTheme: false,
     });
 
     return _.pick(newUser, this.publicFields());

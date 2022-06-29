@@ -2,12 +2,10 @@ import * as mongoose from 'mongoose';
 
 import * as he from 'he';
 import * as hljs from 'highlight.js';
-import * as marked from 'marked';
+import { marked } from 'marked';
 
 import Discussion from './Discussion';
 import Team from './Team';
-
-mongoose.set('useFindAndModify', false);
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
@@ -156,7 +154,9 @@ class PostClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const post = await this.findById(id).select('createdUserId discussionId').setOptions({ lean: true });
+    const post = await this.findById(id)
+      .select('createdUserId discussionId')
+      .setOptions({ lean: true });
 
     await this.checkPermissionAndGetTeamAndDiscussion({
       userId,
@@ -180,7 +180,9 @@ class PostClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const post = await this.findById(id).select('createdUserId discussionId content').setOptions({ lean: true });
+    const post = await this.findById(id)
+      .select('createdUserId discussionId content')
+      .setOptions({ lean: true });
 
     await this.checkPermissionAndGetTeamAndDiscussion({
       userId,
@@ -216,7 +218,9 @@ class PostClass extends mongoose.Model {
       throw new Error('Permission denied');
     }
 
-    const team = await Team.findById(discussion.teamId).select('memberIds slug').setOptions({ lean: true });
+    const team = await Team.findById(discussion.teamId)
+      .select('memberIds slug')
+      .setOptions({ lean: true });
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');

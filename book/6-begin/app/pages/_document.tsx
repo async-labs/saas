@@ -32,8 +32,6 @@ class MyDocument extends Document {
           <meta name="google" content="notranslate" />
           <meta name="theme-color" content="#303030" />
 
-
-
           <link
             rel="shortcut icon"
             href="https://storage.googleapis.com/async-await/async-favicon32.png"
@@ -44,6 +42,10 @@ class MyDocument extends Document {
 
           <style>
             {`
+              #__next {
+                width: 100%;
+                height: 100%;
+              }
               a {
                 font-weight: 400;
                 color: #58a6ff;

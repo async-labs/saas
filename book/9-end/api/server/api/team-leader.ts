@@ -18,7 +18,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.post('/teams/add', async (req, res, next) => {
+router.post('/teams/add', async (req: any, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
@@ -32,7 +32,7 @@ router.post('/teams/add', async (req, res, next) => {
   }
 });
 
-router.post('/teams/update', async (req, res, next) => {
+router.post('/teams/update', async (req: any, res, next) => {
   try {
     const { teamId, name, avatarUrl } = req.body;
 
@@ -52,7 +52,7 @@ router.post('/teams/update', async (req, res, next) => {
   }
 });
 
-router.get('/teams/get-invitations-for-team', async (req, res, next) => {
+router.get('/teams/get-invitations-for-team', async (req: any, res, next) => {
   try {
     const invitations = await Invitation.getTeamInvitations({
       userId: req.user.id,
@@ -65,7 +65,7 @@ router.get('/teams/get-invitations-for-team', async (req, res, next) => {
   }
 });
 
-router.post('/teams/invite-member', async (req, res, next) => {
+router.post('/teams/invite-member', async (req: any, res, next) => {
   try {
     const { teamId, email } = req.body;
 
@@ -77,7 +77,7 @@ router.post('/teams/invite-member', async (req, res, next) => {
   }
 });
 
-router.post('/teams/remove-member', async (req, res, next) => {
+router.post('/teams/remove-member', async (req: any, res, next) => {
   try {
     const { teamId, userId } = req.body;
 
@@ -89,7 +89,7 @@ router.post('/teams/remove-member', async (req, res, next) => {
   }
 });
 
-router.post('/stripe/fetch-checkout-session', async (req, res, next) => {
+router.post('/stripe/fetch-checkout-session', async (req: any, res, next) => {
   try {
     const { mode, teamId } = req.body;
 
@@ -121,7 +121,7 @@ router.post('/stripe/fetch-checkout-session', async (req, res, next) => {
   }
 });
 
-router.post('/cancel-subscription', async (req, res, next) => {
+router.post('/cancel-subscription', async (req: any, res, next) => {
   const { teamId } = req.body;
 
   try {
@@ -136,7 +136,7 @@ router.post('/cancel-subscription', async (req, res, next) => {
   }
 });
 
-router.get('/get-list-of-invoices-for-customer', async (req, res, next) => {
+router.get('/get-list-of-invoices-for-customer', async (req: any, res, next) => {
   try {
     const { stripeListOfInvoices } = await User.getListOfInvoicesForCustomer({
       userId: req.user.id,

@@ -3,8 +3,6 @@ import * as mongoose from 'mongoose';
 
 import { generateSlug } from '../utils/slugify';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   slug: {
     type: String,
@@ -38,13 +36,15 @@ const mongoSchema = new mongoose.Schema({
   },
 });
 
-// interface UserDocument extends mongoose.Document {
 export interface UserDocument extends mongoose.Document {
   slug: string;
   createdAt: Date;
   email: string;
   displayName: string;
   avatarUrl: string;
+  googleId: string;
+  googleToken: { accessToken: string; refreshToken: string };
+  isSignedupViaGoogle: boolean;
 }
 
 interface UserModel extends mongoose.Model<UserDocument> {
@@ -148,6 +148,7 @@ class UserClass extends mongoose.Model {
       avatarUrl,
       slug,
       isSignedupViaGoogle: true,
+      darkTheme: false,
     });
 
     return _.pick(newUser, this.publicFields());

@@ -2,12 +2,10 @@ import * as mongoose from 'mongoose';
 
 import * as he from 'he';
 import * as hljs from 'highlight.js';
-import * as marked from 'marked';
+import { marked } from 'marked';
 
 import Discussion from './Discussion';
 import Team from './Team';
-
-mongoose.set('useFindAndModify', false);
 
 const mongoSchema = new mongoose.Schema({
   createdUserId: {

@@ -49,7 +49,7 @@ router.post('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) =
   }
 });
 
-router.post('/user/update-profile', async (req, res, next) => {
+router.post('/user/update-profile', async (req: any, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
@@ -65,7 +65,7 @@ router.post('/user/update-profile', async (req, res, next) => {
   }
 });
 
-router.post('/user/toggle-theme', async (req, res, next) => {
+router.post('/user/toggle-theme', async (req: any, res, next) => {
   try {
     const { darkTheme } = req.body;
 
@@ -130,7 +130,7 @@ async function loadTeamData(team, userId, body) {
   return data;
 }
 
-router.post('/get-initial-data', async (req, res, next) => {
+router.post('/get-initial-data', async (req: any, res, next) => {
   try {
     const teams = await Team.getAllTeamsForUser(req.user.id);
 
@@ -152,7 +152,7 @@ router.post('/get-initial-data', async (req, res, next) => {
   }
 });
 
-router.get('/teams', async (req, res, next) => {
+router.get('/teams', async (req: any, res, next) => {
   try {
     const teams = await Team.getAllTeamsForUser(req.user.id);
 
@@ -164,7 +164,7 @@ router.get('/teams', async (req, res, next) => {
   }
 });
 
-router.get('/teams/get-members', async (req, res, next) => {
+router.get('/teams/get-members', async (req: any, res, next) => {
   try {
     const users = await User.getMembersForTeam({
       userId: req.user.id,
@@ -177,7 +177,7 @@ router.get('/teams/get-members', async (req, res, next) => {
   }
 });
 
-router.post('/discussions/add', async (req, res, next) => {
+router.post('/discussions/add', async (req: any, res, next) => {
   try {
     const { name, teamId, memberIds = [], socketId } = req.body;
 
@@ -196,7 +196,7 @@ router.post('/discussions/add', async (req, res, next) => {
   }
 });
 
-router.post('/discussions/edit', async (req, res, next) => {
+router.post('/discussions/edit', async (req: any, res, next) => {
   try {
     const { name, id, memberIds = [], socketId } = req.body;
 
@@ -215,7 +215,7 @@ router.post('/discussions/edit', async (req, res, next) => {
   }
 });
 
-router.post('/discussions/delete', async (req, res, next) => {
+router.post('/discussions/delete', async (req: any, res, next) => {
   try {
     const { id, socketId } = req.body;
 
@@ -229,7 +229,7 @@ router.post('/discussions/delete', async (req, res, next) => {
   }
 });
 
-router.get('/discussions/list', async (req, res, next) => {
+router.get('/discussions/list', async (req: any, res, next) => {
   try {
     const { discussions } = await Discussion.getList({
       userId: req.user.id,
@@ -242,7 +242,7 @@ router.get('/discussions/list', async (req, res, next) => {
   }
 });
 
-router.get('/posts/list', async (req, res, next) => {
+router.get('/posts/list', async (req: any, res, next) => {
   try {
     const posts = await Post.getList({
       userId: req.user.id,
@@ -255,7 +255,7 @@ router.get('/posts/list', async (req, res, next) => {
   }
 });
 
-router.post('/posts/add', async (req, res, next) => {
+router.post('/posts/add', async (req: any, res, next) => {
   try {
     const { content, discussionId, socketId } = req.body;
 
@@ -269,7 +269,7 @@ router.post('/posts/add', async (req, res, next) => {
   }
 });
 
-router.post('/posts/edit', async (req, res, next) => {
+router.post('/posts/edit', async (req: any, res, next) => {
   try {
     const { content, id, socketId } = req.body;
 
@@ -283,7 +283,7 @@ router.post('/posts/edit', async (req, res, next) => {
   }
 });
 
-router.post('/posts/delete', async (req, res, next) => {
+router.post('/posts/delete', async (req: any, res, next) => {
   try {
     const { id, discussionId, socketId } = req.body;
 

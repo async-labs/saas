@@ -305,7 +305,7 @@ class TeamSettings extends React.Component<Props, State> {
     NProgress.start();
     this.setState({ disabled: true });
 
-    const bucket = process.env.BUCKET_FOR_TEAM_LOGOS;
+    const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_TEAM_LOGOS;
     const prefix = `${currentTeam.slug}`;
 
     console.log(bucket);
@@ -350,17 +350,6 @@ class TeamSettings extends React.Component<Props, State> {
       notify('You have not selected a Team.');
       return;
     }
-
-    // const ifTeamLeaderMustBeCustomer = await currentTeam.checkIfTeamLeaderMustBeCustomer();
-    // if (ifTeamLeaderMustBeCustomer) {
-    //   notify(
-    //     'To add a third team member, you have to become a paid customer.' +
-    //       '<p />' +
-    //       ' To become a paid customer,' +
-    //       ' navigate to Billing page.',
-    //   );
-    //   return;
-    // }
 
     this.setState({ inviteMemberOpen: true });
   };

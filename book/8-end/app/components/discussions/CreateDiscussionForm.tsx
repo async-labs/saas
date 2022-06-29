@@ -109,9 +109,10 @@ class CreateDiscussionForm extends React.Component<Props, State> {
               <p />
               <PostEditor
                 content={this.state.content}
-                onChanged={(content) => this.setState({ content })}
+                onChanged={this.onContentChanged}
                 members={Array.from(store.currentTeam.members.values())}
                 store={store}
+                parentComponent="CDF"
               />
               <p />
               <div>
@@ -150,6 +151,11 @@ class CreateDiscussionForm extends React.Component<Props, State> {
   public handleClose = () => {
     this.setState({ name: '', memberIds: [], disabled: false, content: '' });
     this.props.onClose();
+  };
+
+  private onContentChanged = (content: string) => {
+    console.log('onContentChanged', content);
+    this.setState({ content });
   };
 
   private onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

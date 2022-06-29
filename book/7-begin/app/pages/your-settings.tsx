@@ -186,7 +186,7 @@ class YourSettings extends React.Component<Props, State> {
     NProgress.start();
     this.setState({ disabled: true });
 
-    const bucket = process.env.BUCKET_FOR_AVATARS;
+    const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_AVATARS;
 
     const prefix = 'team-builder-book';
 

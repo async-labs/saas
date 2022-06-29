@@ -7,8 +7,6 @@ import { generateSlug } from '../utils/slugify';
 import getEmailTemplate from './EmailTemplate';
 import Team, { TeamDocument } from './Team';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   slug: {
     type: String,
@@ -198,6 +196,7 @@ class UserClass extends mongoose.Model {
       slug,
       isSignedupViaGoogle: true,
       defaultTeamSlug: '',
+      darkTheme: false,
     });
 
     const emailTemplate = await getEmailTemplate('welcome', { userName: displayName });
@@ -227,7 +226,9 @@ class UserClass extends mongoose.Model {
   }
 
   public static async signInOrSignUpByPasswordless({ uid, email }) {
-    const user = await this.findOne({ email }).select(this.publicFields().join(' ')).setOptions({ lean: true });
+    const user = await this.findOne({ email })
+      .select(this.publicFields().join(' '))
+      .setOptions({ lean: true });
 
     if (user) {
       throw Error('User already exists');

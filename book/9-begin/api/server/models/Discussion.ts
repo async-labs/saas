@@ -5,8 +5,6 @@ import { generateNumberSlug } from '../utils/slugify';
 import Team, { TeamDocument } from './Team';
 import Post from './Post';
 
-mongoose.set('useFindAndModify', false);
-
 const mongoSchema = new mongoose.Schema({
   createdUserId: {
     type: String,
@@ -126,7 +124,9 @@ class DiscussionClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const discussion = await this.findById(id).select('teamId createdUserId').setOptions({ lean: true });
+    const discussion = await this.findById(id)
+      .select('teamId createdUserId')
+      .setOptions({ lean: true });
 
     const team = await this.checkPermissionAndGetTeam({
       userId,
@@ -171,7 +171,9 @@ class DiscussionClass extends mongoose.Model {
       throw new Error('Bad data');
     }
 
-    const team = await Team.findById(teamId).select('memberIds teamLeaderId').setOptions({ lean: true });
+    const team = await Team.findById(teamId)
+      .select('memberIds teamLeaderId')
+      .setOptions({ lean: true });
 
     if (!team || team.memberIds.indexOf(userId) === -1) {
       throw new Error('Team not found');

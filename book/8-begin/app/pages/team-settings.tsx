@@ -309,7 +309,7 @@ class TeamSettings extends React.Component<Props, State> {
     NProgress.start();
     this.setState({ disabled: true });
 
-    const bucket = process.env.BUCKET_FOR_TEAM_LOGOS;
+    const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_TEAM_LOGOS;
     const prefix = `${currentTeam.slug}`;
 
     console.log(bucket);

@@ -9,7 +9,7 @@ function setupGoogle({ server }) {
     return;
   }
 
-  const verify = async (accessToken, refreshToken, profile, done) => {
+  const verify = async (req, accessToken, refreshToken, profile, done) => {
     let email;
     let avatarUrl;
 
@@ -30,6 +30,16 @@ function setupGoogle({ server }) {
         avatarUrl,
       });
 
+      let teamSlugOfInvitedTeam;
+      if (user && req.session.invitationToken) {
+        teamSlugOfInvitedTeam = await Invitation.addUserToTeam({
+          token: req.session.invitationToken,
+          user,
+        }).catch((err) => console.error(err));
+      }
+
+      user.defaultTeamSlug = teamSlugOfInvitedTeam ? teamSlugOfInvitedTeam : user.defaultTeamSlug;
+
       done(null, user);
     } catch (err) {
       done(err);
@@ -43,6 +53,7 @@ function setupGoogle({ server }) {
         clientID: process.env.GOOGLE_CLIENTID,
         clientSecret: process.env.GOOGLE_CLIENTSECRET,
         callbackURL: `${process.env.URL_API}/oauth2callback`,
+        passReqToCallback: true,
       },
       verify,
     ),
@@ -106,11 +117,6 @@ function setupGoogle({ server }) {
       res.redirect(`${process.env.URL_APP}${redirectUrlAfterLogin}`);
     },
   );
-
-  // server.get('/logout', (req, res) => {
-  //   req.logout();
-  //   res.redirect(`${process.env.URL_APP}/login`);
-  // });
 }
 
 export { setupGoogle };

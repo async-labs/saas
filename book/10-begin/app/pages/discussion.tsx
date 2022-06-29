@@ -21,6 +21,7 @@ type Props = {
   discussionSlug: string;
   isServer: boolean;
   isMobile: boolean;
+  teamRequired: boolean;
 };
 
 type State = {
@@ -89,7 +90,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
         <Head>
           <title>{title}</title>
         </Head>
-        <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+        <div style={{ padding: isMobile ? '0px' : '0px 30px', height: '100vh' }}>
           <h4>
             <span style={{ fontWeight: 300 }}>Discussion : </span>
             {(discussion && discussion.name) || 'No Discussion is found.'}

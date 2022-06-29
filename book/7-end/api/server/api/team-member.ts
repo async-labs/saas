@@ -38,7 +38,7 @@ router.post('/aws/get-signed-request-for-upload-to-s3', async (req, res, next) =
   }
 });
 
-router.post('/user/update-profile', async (req, res, next) => {
+router.post('/user/update-profile', async (req: any, res, next) => {
   try {
     const { name, avatarUrl } = req.body;
 
@@ -54,7 +54,7 @@ router.post('/user/update-profile', async (req, res, next) => {
   }
 });
 
-router.post('/user/toggle-theme', async (req, res, next) => {
+router.post('/user/toggle-theme', async (req: any, res, next) => {
   try {
     const { darkTheme } = req.body;
 
@@ -85,7 +85,7 @@ async function loadTeamData(team, userId) {
   return data;
 }
 
-router.post('/get-initial-data', async (req, res, next) => {
+router.post('/get-initial-data', async (req: any, res, next) => {
   try {
     const teams = await Team.getAllTeamsForUser(req.user.id);
 
@@ -107,7 +107,7 @@ router.post('/get-initial-data', async (req, res, next) => {
   }
 });
 
-router.get('/teams', async (req, res, next) => {
+router.get('/teams', async (req: any, res, next) => {
   try {
     const teams = await Team.getAllTeamsForUser(req.user.id);
 
@@ -119,7 +119,7 @@ router.get('/teams', async (req, res, next) => {
   }
 });
 
-router.get('/teams/get-members', async (req, res, next) => {
+router.get('/teams/get-members', async (req: any, res, next) => {
   try {
     const users = await User.getMembersForTeam({
       userId: req.user.id,

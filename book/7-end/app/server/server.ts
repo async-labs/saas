@@ -27,6 +27,10 @@ app.prepare().then(() => {
     app.render(req, res, '/team-settings', { teamSlug });
   });
 
+  server.get('/invitation', (req, res) => {
+    app.render(req, res, '/invitation', { token: req.query.token as string });
+  });
+
   server.all('*', (req, res) => {
     handle(req, res);
   });
