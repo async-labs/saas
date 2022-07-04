@@ -117,8 +117,8 @@ function LayoutWrapper({
                   },
                   {
                     text: 'Log out',
-                    href: `${process.env.URL_API}/logout`,
-                    as: `${process.env.URL_API}/logout`,
+                    href: `${process.env.NEXT_PUBLIC_URL_API}/logout`,
+                    as: `${process.env.NEXT_PUBLIC_URL_API}/logout`,
                     externalServer: true,
                   },
                 ]}
@@ -167,8 +167,6 @@ class Layout extends React.Component<Props> {
     const { children, isMobile, firstGridItem, store, teamRequired } = this.props;
 
     const { currentUser, currentTeam } = store;
-
-    const isThemeDark = currentUser && currentUser.darkTheme === true;
 
     // console.log(this.props.store.currentUser.darkTheme);
 

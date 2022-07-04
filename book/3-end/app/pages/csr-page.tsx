@@ -15,6 +15,6 @@ const CSRPage = () => (
   </div>
 );
 
-console.log(process.env.URL_APP);
+console.log(process.env.NEXT_PUBLIC_URL_APP);
 
 export default CSRPage;

@@ -102,7 +102,7 @@ class DiscussionActionMenu extends React.Component<Props, State> {
     }
 
     const selectedDiscussion = currentTeam.discussions.find((d) => d._id === id);
-    const discussionUrl = `${process.env.URL_APP}/team/${currentTeam.slug}/discussions/${selectedDiscussion.slug}`;
+    const discussionUrl = `${process.env.NEXT_PUBLIC_URL_APP}/team/${currentTeam.slug}/discussions/${selectedDiscussion.slug}`;
 
     try {
       if (window.navigator) {

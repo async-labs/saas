@@ -50,7 +50,7 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(process.env.PORT_APP, () => {
-    console.log(`> Ready on ${process.env.URL_APP}`);
+  server.listen(process.env.NEXT_PUBLIC_PORT_APP, () => {
+    console.log(`> Ready on ${process.env.NEXT_PUBLIC_URL_APP}`);
   });
 });

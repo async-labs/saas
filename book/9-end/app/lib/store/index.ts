@@ -146,7 +146,7 @@ function initializeStore(initialState = {}) {
 
   const socket = isServer
     ? null
-    : io(process.env.URL_API, {
+    : io(process.env.NEXT_PUBLIC_URL_API, {
         reconnection: true,
         autoConnect: true,
         transports: ['polling', 'websocket'],

@@ -15,7 +15,7 @@ class LoginButton extends React.PureComponent<any, State> {
   }
 
   public render() {
-    const url = `${process.env.URL_API}/auth/google`;
+    const url = `${process.env.NEXT_PUBLIC_URL_API}/auth/google`;
 
     console.log(url);
 

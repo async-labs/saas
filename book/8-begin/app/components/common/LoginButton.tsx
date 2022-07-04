@@ -19,7 +19,7 @@ class LoginButton extends React.PureComponent<Props, State> {
   public render() {
     const { invitationToken } = this.props;
 
-    let url = `${process.env.URL_API}/auth/google`;
+    let url = `${process.env.NEXT_PUBLIC_URL_API}/auth/google`;
     const qs = makeQueryString({ invitationToken });
 
     if (qs) {

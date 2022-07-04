@@ -15,7 +15,9 @@ import { fetchCheckoutSessionApiMethod } from '../lib/api/team-leader';
 const dev = process.env && process.env.NODE_ENV && process.env.NODE_ENV !== 'production';
 
 const stripePromise = loadStripe(
-  dev ? process.env.STRIPE_TEST_PUBLISHABLEKEY : process.env.STRIPE_LIVE_PUBLISHABLEKEY,
+  dev
+    ? process.env.NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY
+    : process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY,
 );
 
 type Props = {

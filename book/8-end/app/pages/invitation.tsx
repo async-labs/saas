@@ -80,8 +80,8 @@ class InvitationPageComp extends React.Component<Props> {
 
     if (user && team) {
       Router.push(
-        `${process.env.URL_API}/logout?invitationToken=${token}`,
-        `${process.env.URL_API}/logout`,
+        `${process.env.NEXT_PUBLIC_URL_API}/logout?invitationToken=${token}`,
+        `${process.env.NEXT_PUBLIC_URL_API}/logout`,
       );
     }
   }

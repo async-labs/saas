@@ -3,7 +3,7 @@ import React from 'react';
 
 class MyDocument extends Document {
   public render() {
-    console.log(process.env.URL_APP);
+    console.log(process.env.NEXT_PUBLIC_URL_APP);
     return (
       <Html lang="en">
         <Head>

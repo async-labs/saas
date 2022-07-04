@@ -13,11 +13,11 @@ export default async function sendRequestAndGetResponse(path, opts: any = {}) {
   const qs = opts.qs || '';
 
   const response = await fetch(
-    `${process.env.URL_API}${path}${qs}`,
+    `${process.env.NEXT_PUBLIC_URL_API}${path}${qs}`,
     Object.assign({ method: 'POST', credentials: 'include' }, opts, { headers }),
   );
 
-  // console.log(`${process.env.URL_API}${path}${qs}`);
+  // console.log(`${process.env.NEXT_PUBLIC_URL_API}${path}${qs}`);
   // console.log(response.status);
   // console.log(response.statusText);
 

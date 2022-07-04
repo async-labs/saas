@@ -239,7 +239,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
         await discussion.sendDataToLambda({
           discussionName: discussion.name,
-          discussionLink: `${process.env.URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
+          discussionLink: `${process.env.NEXT_PUBLIC_URL_APP}/team/${discussion.team.slug}/discussions/${discussion.slug}`,
           postContent: post.content,
           authorName: post.user.displayName,
           userIds: userIdsForLambda,
