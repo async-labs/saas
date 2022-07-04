@@ -32,12 +32,15 @@ function setupGoogle({ server }) {
         avatarUrl,
       });
 
+      let teamSlugOfInvitedTeam;
       if (user && req.session.invitationToken) {
-        await Invitation.addUserToTeam({
+        teamSlugOfInvitedTeam = await Invitation.addUserToTeam({
           token: req.session.invitationToken,
           user,
         }).catch((err) => console.error(err));
       }
+
+      user.defaultTeamSlug = teamSlugOfInvitedTeam ? teamSlugOfInvitedTeam : user.defaultTeamSlug;
 
       done(null, user);
     } catch (err) {
@@ -92,11 +95,29 @@ function setupGoogle({ server }) {
       failureRedirect: '/login',
     }),
     async (req, res) => {
-      if (req.user && !req.user.defaultTeamSlug) {
-        res.redirect(`${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/create-team`);
+      let teamSlugOfInvitedTeam;
+
+      if (req.user && req.session.invitationToken) {
+        teamSlugOfInvitedTeam = await Invitation.addUserToTeam({
+          token: req.session.invitationToken,
+          user: req.user,
+        }).catch((err) => console.error(err));
+
+        req.session.invitationToken = null;
       }
 
-      res.redirect(`${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}/your-settings`);
+      let redirectUrlAfterLogin;
+      const defaultTeamSlug = req.user && req.user.defaultTeamSlug;
+
+      if (teamSlugOfInvitedTeam || defaultTeamSlug) {
+        redirectUrlAfterLogin = `/your-settings`;
+      } else {
+        redirectUrlAfterLogin = `/create-team`;
+      }
+
+      res.redirect(
+        `${dev ? process.env.URL_APP : process.env.PRODUCTION_URL_APP}${redirectUrlAfterLogin}`,
+      );
     },
   );
 }

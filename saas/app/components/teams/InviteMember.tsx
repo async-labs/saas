@@ -40,6 +40,7 @@ class InviteMember extends React.Component<Props, State> {
         <DialogContent>
           <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
             <TextField
+              disabled
               autoComplete="off"
               value={this.state.email}
               placeholder="Email"
@@ -52,7 +53,7 @@ class InviteMember extends React.Component<Props, State> {
             <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
               Cancel
             </Button>{' '}
-            <Button type="submit" variant="contained" color="primary">
+            <Button disabled type="submit" variant="contained" color="primary">
               Invite
             </Button>
           </form>

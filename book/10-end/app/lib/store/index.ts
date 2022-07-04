@@ -116,33 +116,6 @@ class Store {
     }
   }
 
-  public addTeamToLocalCache(data): Team {
-    const teamObj = new Team({ user: this.currentUser, store: this, ...data });
-    this.teams.unshift(teamObj);
-
-    return teamObj;
-  }
-
-  public editTeamFromLocalCache(data) {
-    const team = this.teams.find((item) => item._id === data._id);
-
-    if (team) {
-      if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
-        team.changeLocalCache(data);
-      } else {
-        this.removeTeamFromLocalCache(data._id);
-      }
-    } else if (data.memberIds && data.memberIds.includes(this.currentUser._id)) {
-      this.addTeamToLocalCache(data);
-    }
-  }
-
-  public removeTeamFromLocalCache(teamId: string) {
-    const team = this.teams.find((t) => t._id === teamId);
-
-    this.teams.remove(team);
-  }
-
   private setInitialTeamsStoreMethod(teams: any[]) {
     // console.log(initialTeams);
 
