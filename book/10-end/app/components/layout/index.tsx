@@ -64,7 +64,6 @@ function LayoutWrapper({
             style={{
               borderRight: '1px #707070 solid',
               justifyContent: 'center',
-              height: '100%',
               overflow: 'hidden',
             }}
           >
