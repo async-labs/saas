@@ -37,12 +37,13 @@ Check out projects built with the help of this open source app. Feel free to add
 
 - [Features](#features)
 - [Run locally](#running-api-locally)
-- [Deploy](#deploy-with-heroku)
+- [Deploy](#deploy-to-heroku-aws-elastic-beanstalk-api-gateway-and-aws-lambda)
 - [Built with](#built-with)
 - [Screenshots](#screenshots)
-- [Showcase](#showcase)
 - [Contributing](#contributing)
 - [Team](#team)
+- [License](#license)
+- [Project structure](#project-structure)
 
 ## Features
 
