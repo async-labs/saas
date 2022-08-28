@@ -275,7 +275,7 @@ Payment history:
 
 ## Contributing
 
-Want to support this project? Consider buying our [books](https://builderbook.org/). If you represent company, consider becoming a recurring sponsor for this repo. Our two most popular repos get >1000 unique visitor per week, mostly comprised of people who are building their SaaS web applications.
+Want to support this project? Consider buying our [books](https://builderbook.org/).
 
 
 ## Team
