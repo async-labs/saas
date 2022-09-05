@@ -7,14 +7,7 @@ require('dotenv').config();
 
 describe('slugify', () => {
   beforeAll(async (done) => {
-    const options = {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-      useUnifiedTopology: true,
-    };
-
-    await mongoose.connect(process.env.MONGO_URL_TEST, options);
+    await mongoose.connect(process.env.MONGO_URL_TEST);
 
     const mockUsers = [
       {
