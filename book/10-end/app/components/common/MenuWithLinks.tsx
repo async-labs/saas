@@ -14,6 +14,7 @@ type Props = {
     separator: boolean;
   }[];
   router: NextRouter;
+  children: any;
 };
 
 type State = {

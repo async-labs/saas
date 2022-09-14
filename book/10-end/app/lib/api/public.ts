@@ -31,4 +31,3 @@ export const getTeamByTokenApiMethod = (token: string, request) =>
     method: 'GET',
     qs: { token },
   });
-
