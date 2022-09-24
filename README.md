@@ -27,10 +27,10 @@ The open source project is located in the `saas` folder. If you purchased our bo
 
 Check out projects built with the help of this open source app. Feel free to add your own project by creating a pull request.
 
-- [Async](https://async-await.com/): Urgent vs non-urgent communication tool for small teams.
+- [Async](https://async-await.com/): Open source web app for team communication, separate urgent vs. non-urgent conversations.
 - [workinbiotech.com](https://workinbiotech.com): Work in biotech, job board for small and young biotech companies
 - [Retaino](https://retaino.com) by [Earl Lee](https://github.com/earllee): Save, annotate, review, and share great web content. Receive smart email digests to retain key information.
-- [Builder Book](https://github.com/async-labs/builderbook): Open source web app to publish documentation or books. Built with React, Material-UI, Next, Express, Mongoose, MongoDB.
+- [Builder Book](https://github.com/async-labs/builderbook): Open source web app to publish documentation or books.
 
 
 ## Contents
@@ -47,7 +47,7 @@ Check out projects built with the help of this open source app. Feel free to add
 
 ## Features
 
-- Server-side rendering for [fast initial load and SEO](https://async-await.com/article/server-side-vs-client-side-rendering-in-react-apps).
+- Server-side rendering for fast initial load and SEO.
 - User authentication with Google OAuth API and Passwordless, cookie, and session.
 - Production-ready Express server with compression, parser, and helmet.
 - Transactional emails (`AWS SES`): welcome, team invitation, and payment.
