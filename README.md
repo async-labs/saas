@@ -69,7 +69,6 @@ Check out projects built with the help of this open source app. Feel free to add
 - Production-ready, scalable architecture:
   - `app` - user-facing web app with Next/Express server, responsible for rendering pages (either client-side or server-side rendered). `app` sends requests via API methods to `api` Express server.
   - `api` - server-only code, Express server, responsible for processing requests for internal and external API infrastructures.
-  - we prepared both apps for easy deployment to `now` by vercel.
 - **Subscriptions with `Stripe`**:
   - subscribe/unsubscribe Team to plan,
   - update card information,
@@ -283,7 +282,7 @@ Want to support this project? Consider buying our [books](https://builderbook.or
 - [Kelly Burke](https://github.com/klyburke)
 - [Timur Zhiyentayev](https://github.com/tima101)
 
-You can contact us at team@builderbook.org
+You can contact us at team@async-labs.com.
 
 If you are interested in working with us, check out [Async Labs](https://async-labs.com/).
 
