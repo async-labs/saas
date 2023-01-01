@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 
 import * as he from 'he';
-import * as hljs from 'highlight.js';
+import hljs from 'highlight.js';
 import { marked } from 'marked';
 
 import Discussion from './Discussion';
