@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import Error from 'next/error';
 import Head from 'next/head';
 import Router from 'next/router';
+import { NextPageContext } from 'next';
 import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
@@ -12,25 +13,24 @@ import { Team } from '../lib/store/team';
 import { Store } from '../lib/store';
 import withAuth from '../lib/withAuth';
 
-type Props = { store: Store; team: Team; token: string };
+export async function getServerSideProps(context: NextPageContext) {
+  const { token } = context.query;
 
-class InvitationPageComp extends React.Component<Props> {
-  public static async getInitialProps(ctx) {
-    const { token } = ctx.query;
-    if (!token) {
-      return {};
+  try {
+    const { team } = await getTeamByTokenApiMethod(token as string, context.req);
+
+    if (team && token) {
+      return { props: { team, token } };
+    } else {
+      return { props: {} };
     }
-
-    try {
-      const { team } = await getTeamByTokenApiMethod(token, ctx.req);
-
-      return { team, token };
-    } catch (error) {
-      console.log(error);
-      return {};
-    }
+  } catch (error) {
+    console.log(error);
+    return { props: {} };
   }
+}
 
+class InvitationPageComp extends React.Component<{ store: Store; team: Team; token: string }> {
   public render() {
     const { team, token, store } = this.props;
 
@@ -73,7 +73,7 @@ class InvitationPageComp extends React.Component<Props> {
     );
   }
 
-  public async componentDidMount() {
+  public componentDidMount() {
     const { store, team, token } = this.props;
 
     const user = store.currentUser;
