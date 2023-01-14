@@ -86,21 +86,38 @@ function InvitationPageComp({ store, isMobile, firstGridItem, teamRequired, team
   );
 }
 
-InvitationPageComp.getInitialProps = async (ctx: NextPageContext) => {
-  const { token } = ctx.query;
+// InvitationPageComp.getInitialProps = async (ctx: NextPageContext) => {
+//   const { token } = ctx.query;
 
-  if (!token) {
-    return {};
-  }
+//   if (!token) {
+//     return {};
+//   }
+
+//   try {
+//     const { team } = await getTeamByTokenApiMethod(token as string, ctx.req);
+
+//     return { team, token };
+//   } catch (error) {
+//     console.log(error);
+//     return {};
+//   }
+// };
+
+export async function getServerSideProps(context: NextPageContext) {
+  const { token } = context.query;
 
   try {
-    const { team } = await getTeamByTokenApiMethod(token as string, ctx.req);
+    const { team } = await getTeamByTokenApiMethod(token as string, context.req);
 
-    return { team, token };
+    if (team && token) {
+      return { props: { team, token } };
+    } else {
+      return { props: {} };
+    }
   } catch (error) {
     console.log(error);
-    return {};
+    return { props: {} };
   }
-};
+}
 
 export default withAuth(observer(InvitationPageComp), { loginRequired: false });
