@@ -1,7 +1,7 @@
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Link from 'next/link';
-import { NextRouter, withRouter } from 'next/router';
+import Router, { NextRouter, withRouter } from 'next/router';
 import React from 'react';
 
 type Props = {
@@ -66,17 +66,16 @@ class MenuWithLinks extends React.PureComponent<Props, State> {
                 {option.text}
               </MenuItem>
             ) : (
-              <Link key={option.href} href={option.href} as={option.as} passHref>
-                <MenuItem
-                  key={option.href}
-                  style={{
-                    fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
-                    fontSize: '14px',
-                  }}
-                >
-                  {option.text}
-                </MenuItem>
-              </Link>
+              <MenuItem
+                key={option.href}
+                style={{
+                  fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
+                  fontSize: '14px',
+                }}
+                onClick={() => Router.push(option.href, option.as)}
+              >
+                {option.text}
+              </MenuItem>
             ),
           )}
         </Menu>
