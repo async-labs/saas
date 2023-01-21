@@ -15,7 +15,11 @@
     "baseUrl": ".",
     "experimentalDecorators": true,
     "typeRoots": ["./node_modules/@types"],
-    "lib": ["es2015", "es2016"]
+    "target": "es2020",
+    "lib": ["es2020"],
+    "module": "commonjs",
+    "outDir": "production-server/",
+    "downlevelIteration": true,
   },
-  "exclude": ["production-server", "node_modules"]
+  "include": ["./server/**/*.ts"]
 }

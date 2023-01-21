@@ -13,7 +13,7 @@ const dev = process.env.NODE_ENV !== 'production';
 
 const stripeInstance = new Stripe(
   dev ? process.env.STRIPE_TEST_SECRETKEY : process.env.STRIPE_LIVE_SECRETKEY,
-  { apiVersion: '2020-08-27' },
+  { apiVersion: '2022-11-15' },
 );
 
 function createSession({

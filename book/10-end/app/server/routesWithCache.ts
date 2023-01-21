@@ -3,7 +3,7 @@ import LRUCache from 'lru-cache';
 export default function routesWithCache({ server, app }) {
   const ssrCache = new LRUCache({
     max: 100, // 100 items
-    maxAge: 1000 * 60 * 60, // 1 hour
+    ttl: 1000 * 60 * 60, // in ms, 1hr
   });
 
   function getCacheKey(req) {

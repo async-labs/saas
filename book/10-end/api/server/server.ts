@@ -1,9 +1,10 @@
-import * as mongoSessionStore from 'connect-mongo';
 import * as cors from 'cors';
 import * as express from 'express';
 import * as session from 'express-session';
 import * as httpModule from 'http';
 import * as mongoose from 'mongoose';
+
+import mongoSessionStore = require('connect-mongo');
 
 import api from './api';
 import { setupGoogle } from './google-auth';
@@ -14,20 +15,20 @@ import { stripeWebhookAndCheckoutCallback } from './stripe';
 import logger from './logger';
 
 import * as compression from 'compression';
-import * as helmet from 'helmet';
+import helmet from 'helmet';
 
 // eslint-disable-next-line
 require('dotenv').config();
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 8000;
-
-mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL);
+const MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
 
 // check connection
 (async () => {
   try {
-    await mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL);
+    mongoose.set('strictQuery', false);
+    await mongoose.connect(MONGO_URL);
     logger.info('connected to db');
 
     // async tasks, for ex, inserting email templates to db
@@ -54,16 +55,12 @@ stripeWebhookAndCheckoutCallback({ server });
 
 server.use(express.json());
 
-const MongoStore = mongoSessionStore(session);
-
 const sessionOptions = {
   name: process.env.SESSION_NAME,
   secret: process.env.SESSION_SECRET,
-  store: new MongoStore({
-    mongooseConnection: mongoose.connection,
+  store: mongoSessionStore.create({
+    mongoUrl: MONGO_URL,
     ttl: 14 * 24 * 60 * 60, // save session 14 days
-    autoRemove: 'interval',
-    autoRemoveInterval: 1440, // clears every day
   }),
   resave: false,
   saveUninitialized: false,
