@@ -86,38 +86,40 @@ function InvitationPageComp({ store, isMobile, firstGridItem, teamRequired, team
   );
 }
 
-// InvitationPageComp.getInitialProps = async (ctx: NextPageContext) => {
-//   const { token } = ctx.query;
+InvitationPageComp.getInitialProps = async (ctx: NextPageContext) => {
+  const { token } = ctx.query;
 
-//   if (!token) {
-//     return {};
-//   }
-
-//   try {
-//     const { team } = await getTeamByTokenApiMethod(token as string, ctx.req);
-
-//     return { team, token };
-//   } catch (error) {
-//     console.log(error);
-//     return {};
-//   }
-// };
-
-export async function getServerSideProps(context: NextPageContext) {
-  const { token } = context.query;
+  if (!token) {
+    return {};
+  }
 
   try {
-    const { team } = await getTeamByTokenApiMethod(token as string, context.req);
+    const { team } = await getTeamByTokenApiMethod(token as string, ctx.req);
 
-    if (team && token) {
-      return { props: { team, token } };
-    } else {
-      return { props: {} };
-    }
+    return { team, token };
   } catch (error) {
     console.log(error);
-    return { props: {} };
+    return {};
   }
-}
+};
+
+// export async function getServerSideProps(context: NextPageContext) {
+//   const { token } = context.query;
+
+//   try {
+//     const { team } = await getTeamByTokenApiMethod(token as string, context.req);
+
+//     if (team && token) {
+//       return { props: { team, token } };
+//     } else {
+//       return { props: {} };
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     return { props: {} };
+//   }
+// }
+
+// see our explanation for not using getServerSideProps at this time: https://github.com/async-labs/saas/issues/193
 
 export default withAuth(observer(InvitationPageComp), { loginRequired: false });

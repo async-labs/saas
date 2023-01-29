@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import Error from 'next/error';
 import Head from 'next/head';
 import Router from 'next/router';
-import { NextPageContext } from 'next';
+// import { NextPageContext } from 'next';
 import React from 'react';
 
 import LoginButton from '../components/common/LoginButton';
@@ -15,24 +15,23 @@ import withAuth from '../lib/withAuth';
 
 const dev = process.env.NODE_ENV !== 'production';
 
-export async function getServerSideProps(context: NextPageContext) {
-  const { token } = context.query;
-
-  try {
-    const { team } = await getTeamByTokenApiMethod(token as string, context.req);
-
-    if (team && token) {
-      return { props: { team, token } };
-    } else {
-      return { props: {} };
-    }
-  } catch (error) {
-    console.log(error);
-    return { props: {} };
-  }
-}
-
 class InvitationPageComp extends React.Component<{ store: Store; team: Team; token: string }> {
+  public static async getInitialProps(ctx) {
+    const { token } = ctx.query;
+    if (!token) {
+      return {};
+    }
+
+    try {
+      const { team } = await getTeamByTokenApiMethod(token, ctx.req);
+
+      return { team, token };
+    } catch (error) {
+      console.log(error);
+      return {};
+    }
+  }
+
   public render() {
     const { team, token, store } = this.props;
 
@@ -75,7 +74,7 @@ class InvitationPageComp extends React.Component<{ store: Store; team: Team; tok
     );
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     const { store, team, token } = this.props;
 
     const user = store.currentUser;
@@ -92,5 +91,24 @@ class InvitationPageComp extends React.Component<{ store: Store; team: Team; tok
     }
   }
 }
+
+// export async function getServerSideProps(context: NextPageContext) {
+//   const { token } = context.query;
+
+//   try {
+//     const { team } = await getTeamByTokenApiMethod(token as string, context.req);
+
+//     if (team && token) {
+//       return { props: { team, token } };
+//     } else {
+//       return { props: {} };
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     return { props: {} };
+//   }
+// }
+
+// see our explanation for not using getServerSideProps at this time: https://github.com/async-labs/saas/issues/193
 
 export default withAuth(observer(InvitationPageComp), { loginRequired: false });
