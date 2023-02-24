@@ -3,7 +3,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Head from 'next/head';
 import Router from 'next/router';
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 import { observer } from 'mobx-react';
 
@@ -86,10 +86,12 @@ function DiscussionPageCompFunctional({
       if (!isServer && discussion) {
         discussion.loadPosts().catch((err) => notify(err));
       }
-
+      
       if (discussion) {
         discussion.joinSocketRooms();
       }
+      
+      store.socket.on('postEvent', handlePostEvent);
     }
 
     return () => {
