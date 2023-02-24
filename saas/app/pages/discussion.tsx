@@ -90,6 +90,8 @@ function DiscussionPageCompFunctional({
       if (discussion) {
         discussion.joinSocketRooms();
       }
+      
+      store.socket.on('postEvent', handlePostEvent);
     }
 
     return () => {
