@@ -109,7 +109,7 @@ function TeamSettings({ store, isMobile, firstGridItem, teamRequired, teamSlug }
 
       await currentTeam.updateTheme({
         name: newName,
-        avatarUrl: newAvatarUrl,
+        avatarUrl: responseFromApiServerForUpload.url,
       });
 
       notify('You successfully uploaded new Team logo.');
