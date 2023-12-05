@@ -6,7 +6,7 @@ import { generateSlug } from '../../../server/utils/slugify';
 require('dotenv').config();
 
 describe('slugify', () => {
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     await mongoose.connect(process.env.MONGO_URL_TEST);
 
     const mockUsers = [
@@ -34,8 +34,6 @@ describe('slugify', () => {
     ];
 
     await User.insertMany(mockUsers);
-
-    done();
   });
 
   test('not duplicated', async () => {
@@ -56,10 +54,8 @@ describe('slugify', () => {
     await expect(generateSlug(User, 'John & Johnson@#$')).resolves.toEqual('john-johnson-2');
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await User.deleteMany({ slug: { $in: ['john', 'john-johnson', 'john-johnson-1'] } });
     await mongoose.disconnect();
-
-    done();
   });
 });
