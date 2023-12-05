@@ -36,11 +36,15 @@ function setupPasswordless({ server }) {
 
   server.use((req, __, next) => {
     if (req.user && typeof req.user === 'string') {
-      User.findById(req.user, User.publicFields()).exec((err, user) => {
-        req.user = user;
-        console.log('passwordless middleware');
-        next(err);
-      });
+      User.findById(req.user, User.publicFields())
+        .then((user) => {
+          req.user = user;
+          console.log('passwordless middleware');
+          next();
+        })
+        .catch((err) => {
+          next(err);
+        });
     } else {
       next();
     }
@@ -78,10 +82,14 @@ function setupPasswordless({ server }) {
     passwordless.acceptToken(),
     (req, __, next) => {
       if (req.user && typeof req.user === 'string') {
-        User.findById(req.user, User.publicFields()).exec((err, user) => {
-          req.user = user;
-          next(err);
-        });
+        User.findById(req.user, User.publicFields())
+          .then((user) => {
+            req.user = user;
+            next();
+          })
+          .catch((err) => {
+            next(err);
+          });
       } else {
         next();
       }
