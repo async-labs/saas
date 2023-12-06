@@ -52,16 +52,19 @@ function markdownToHtml(content) {
     `;
   };
 
+  renderer.code = (code, infostring: string) => {
+    const [lang] = infostring.split(' | ');
+
+    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+
+    return `<pre><code class="hljs language-${lang}">${
+      hljs.highlight(code, { language }).value
+    }</code></pre>`;
+  };
+
   marked.setOptions({
     renderer,
     breaks: true,
-    highlight(code, lang) {
-      if (!lang) {
-        return hljs.highlightAuto(code).value;
-      }
-
-      return hljs.highlight(lang, code).value;
-    },
   });
 
   return marked(he.decode(content));

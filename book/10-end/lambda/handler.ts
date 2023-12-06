@@ -25,12 +25,7 @@ export const sendEmailForNewPost = async (event) => {
 
   console.log(discussionName, discussionLink, postContent, authorName, userIds);
 
-  await mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-  });
+  await mongoose.connect(dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL);
 
   try {
     const emailTemplate = await getEmailTemplate('newPost', {
