@@ -66,7 +66,7 @@ function updateSubscription(subscriptionId: string, params: Stripe.SubscriptionU
 
 function cancelSubscription({ subscriptionId }) {
   console.log('cancel subscription', subscriptionId);
-  return stripeInstance.subscriptions.del(subscriptionId);
+  return stripeInstance.subscriptions.cancel(subscriptionId);
 }
 
 function getListOfInvoices({ customerId }) {
