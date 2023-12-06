@@ -81,7 +81,7 @@ class Team {
       }
     }
 
-    for (const invitation of invitations) {
+    for (const invitation of invitations || []) {
       this.invitations.set(invitation._id, new Invitation(invitation));
     }
 

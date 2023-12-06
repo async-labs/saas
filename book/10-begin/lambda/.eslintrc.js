@@ -18,11 +18,10 @@ module.exports = {
     ],
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
     'prefer-arrow-callback': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
  },
   plugins: [
-    "prettier",
+    "prettier"
   ]
 }

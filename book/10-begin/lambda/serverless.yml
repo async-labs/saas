@@ -2,7 +2,7 @@ service: saas-boilerplate
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs16.x
   stage: production
   region: us-east-1
   memorySize: 2048 # optional, in MB, default is 1024
