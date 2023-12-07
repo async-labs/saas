@@ -1,12 +1,12 @@
 branch-defaults:
   default:
-    environment: api-saas-boilerplate-env
+    environment: app-saas-boilerplate-env
 environment-defaults:
-  api-saas-boilerplate-env:
+  app-saas-boilerplate-env:
     branch: null
     repository: null
 global:
-  application_name: api-saas-boilerplate-app
+  application_name: app-saas-boilerplate-app
   default_ec2_keyname: null
   default_platform: Node.js 18 running on 64bit Amazon Linux 2
   default_region: us-east-1
