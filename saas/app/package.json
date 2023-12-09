@@ -31,6 +31,7 @@
     "mobx-react": "^9.1.0",
     "moment": "^2.29.4",
     "next": "^14.0.4",
+    "next-transpile-modules": "^10.0.1",
     "nprogress": "0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -55,7 +56,6 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-react": "^7.33.2",
-    "next-transpile-modules": "^10.0.1",
     "nodemon": "^3.0.2",
     "prettier": "^3.1.0",
     "ts-node": "^10.9.1"
