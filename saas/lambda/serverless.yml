@@ -1,4 +1,5 @@
 service: saas-boilerplate 
+
 useDotenv: true
 provider:
   name: aws
@@ -8,6 +9,7 @@ provider:
   memorySize: 2048 # optional, in MB, default is 1024
   timeout: 30 # optional, in seconds, default is 6
   # profile: saas
+
 
 plugins:
   - serverless-plugin-typescript

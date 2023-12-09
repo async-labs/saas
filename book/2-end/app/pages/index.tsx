@@ -20,7 +20,7 @@ class Index extends React.Component {
         <div style={{ padding: '0px 30px', fontSize: '15px', height: '100%' }}>
           <p>Content on Index page</p>
           <Link href="/csr-page" as="/csr-page">
-            <a>Go to CSR page</a>
+            Go to CSR page
           </Link>
           <p />
           <Button

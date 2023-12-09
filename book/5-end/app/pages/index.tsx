@@ -33,7 +33,7 @@ class Index extends React.Component<Props> {
         <div style={{ padding: '0px 30px', fontSize: '15px', height: '100%' }}>
           <p>Content on Index page</p>
           <Link href="/your-settings" as="/your-settings">
-            <a>Go to Your Settings page</a>
+            Go to Your Settings page
           </Link>
           <p />
           <Button

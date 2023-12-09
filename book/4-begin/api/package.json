@@ -7,29 +7,21 @@
     "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
-    "aws-sdk": "^2.796.0",
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "lodash": "^4.17.20",
-    "mongoose": "^6.3.5",
-    "typescript": "^4.7.3"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "typescript": "^5.3.2"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
-    "@types/express": "^4.11.1",
-    "@types/jest": "^22.2.3",
-    "@types/lodash": "^4.14.108",
-    "@types/node": "^12.12.2",
-    "@typescript-eslint/eslint-plugin": "^4.2.0",
-    "@typescript-eslint/parser": "^4.2.0",
-    "eslint": "^7.25.0",
-    "eslint-config-prettier": "^6.9.0",
-    "eslint-plugin-prettier": "^3.3.1",
-    "jest": "^26.4.2",
-    "nodemon": "^2.0.7",
-    "prettier": "^2.2.1",
-    "ts-jest": "^26.4.4",
-    "ts-node": "^10.8.1"
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.1",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.1.0",
+    "ts-node": "^10.9.1"
   }
 }

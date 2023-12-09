@@ -1,10 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const MongoStore = require('connect-mongo');
+
 import * as cors from 'cors';
 import * as express from 'express';
 import * as session from 'express-session';
 import * as httpModule from 'http';
 import * as mongoose from 'mongoose';
-
-import mongoSessionStore = require('connect-mongo');
 
 import api from './api';
 import { setupGoogle } from './google-auth';
@@ -58,7 +59,7 @@ server.use(express.json());
 const sessionOptions = {
   name: process.env.SESSION_NAME,
   secret: process.env.SESSION_SECRET,
-  store: mongoSessionStore.create({
+  store: MongoStore.create({
     mongoUrl: MONGO_URL,
     ttl: 14 * 24 * 60 * 60, // save session 14 days
   }),
