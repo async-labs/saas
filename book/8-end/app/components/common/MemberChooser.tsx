@@ -55,6 +55,7 @@ class MemberChooser extends React.Component<Props, State> {
             variant="standard"
             label="Find team member by name"
             placeholder="Select participants"
+            helperText={this.props.helperText}
           />
         )}
         onChange={this.handleChange}
