@@ -19,7 +19,7 @@
     "lib": ["es2020"],
     "module": "commonjs",
     "outDir": "production-server/",
-    "downlevelIteration": true,
+    "downlevelIteration": true
   },
   "include": ["./server/**/*.ts"]
 }
