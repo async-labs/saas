@@ -1,0 +1,16 @@
+{
+  "name": "wise365-app",
+  "version": "1.0.0",
+  "description": "Frontend for Wise365 SaaS app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^13.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "firebase": "^9.14.0"
+  }
