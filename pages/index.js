@@ -1,67 +1,56 @@
-import { useState, useEffect } from 'react';
+// Add these imports at the top of index.js
 import { useRouter } from 'next/router';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, setDoc, doc } from 'firebase/firestore';
 
-export default function Home() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+// Add this near your other state declarations
+const [error, setError] = useState('');
+const router = useRouter();
 
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Redirect logged-in users to the dashboard
-        router.push('/dashboard');
-      }
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError('');
+  try {
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    await signInWithEmailAndPassword(auth, email, password);
+    router.push('/dashboard');
+  } catch (error) {
+    console.error('Login error:', error);
+    setError(error.message);
+  }
+  setIsLoading(false);
+};
+
+const handleRegister = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError('');
+  try {
+    const email = e.target['register-email'].value;
+    const password = e.target['register-password'].value;
+    const confirmPassword = e.target['confirm-password'].value;
+    
+    if (password !== confirmPassword) {
+      throw new Error('Passwords do not match');
+    }
+    
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Initialize user document in Firestore
+    const db = getFirestore();
+    await setDoc(doc(db, 'users', user.uid), {
+      email,
+      uid: user.uid,
+      role: 'user',
+      createdAt: new Date().toISOString(),
     });
 
-    return () => unsubscribe();
-  }, [router]);
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const auth = getAuth();
-    setLoading(true);
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push('/dashboard'); // Redirect to dashboard on successful login
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div>
-      <h1>Welcome</h1>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <p>
-        Don’t have an account? <a href="/register">Register</a>
-      </p>
-    </div>
-  );
-}
+    router.push('/dashboard');
+  } catch (error) {
+    console.error('Registration error:', error);
+    setError(error.message);
+  }
+  setIsLoading(false);
+};
