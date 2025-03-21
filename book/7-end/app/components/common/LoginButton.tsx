@@ -1,10 +1,10 @@
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import React from 'react';
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import React from "react";
 
-import { emailLoginLinkApiMethod } from '../../lib/api/public';
-import notify from '../../lib/notify';
-import { makeQueryString } from '../../lib/api/makeQueryString';
+import { emailLoginLinkApiMethod } from "../../lib/api/public";
+import notify from "../../lib/notify";
+import { makeQueryString } from "../../lib/api/makeQueryString";
 
 type Props = { invitationToken?: string };
 type State = { email: string };
@@ -13,7 +13,7 @@ class LoginButton extends React.PureComponent<Props, State> {
   constructor(props) {
     super(props);
 
-    this.state = { email: '' };
+    this.state = { email: "" };
   }
 
   public render() {
@@ -31,15 +31,12 @@ class LoginButton extends React.PureComponent<Props, State> {
     return (
       <React.Fragment>
         <Button variant="contained" color="secondary" href={url}>
-          <img
-            src="https://storage.googleapis.com/async-await-all/G.svg"
-            alt="Log in with Google"
-          />
+          <img src="https://storage.googleapis.com/async-await-all/G.svg" alt="Log in with Google" />
           &nbsp;&nbsp;&nbsp; Log in with Google
         </Button>
         <p />
         <br />
-        <hr style={{ width: '60px' }} /> <h4>OR</h4> <hr style={{ width: '60px' }} />
+        <hr style={{ width: "60px" }} /> <h4>OR</h4> <hr style={{ width: "60px" }} />
         <p />
         <br />
         <div>
@@ -52,7 +49,7 @@ class LoginButton extends React.PureComponent<Props, State> {
               onChange={(event) => {
                 this.setState({ email: event.target.value });
               }}
-              style={{ width: '300px' }}
+              style={{ width: "300px" }}
             />
             <p />
             <Button variant="contained" color="primary" type="submit">
@@ -72,13 +69,13 @@ class LoginButton extends React.PureComponent<Props, State> {
     const { invitationToken } = this.props;
 
     if (!email) {
-      notify('Email is required');
+      notify("Email is required");
     }
 
     try {
       await emailLoginLinkApiMethod({ email, invitationToken });
-      this.setState({ email: '' });
-      notify('SaaS boilerplate emailed you a login link.');
+      this.setState({ email: "" });
+      notify("SaaS boilerplate emailed you a login link.");
     } catch (error) {
       notify(error);
     }
