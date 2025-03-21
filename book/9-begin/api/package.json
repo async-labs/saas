@@ -27,7 +27,7 @@
     "lodash": "^4.17.21",
     "marked": "^15.0.7",
     "mongoose": "^8.12.1",
-    "node-fetch": "3.3.2",
+    "node-fetch": "2",
     "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",
     "passwordless": "^1.1.3",
