@@ -1,5 +1,5 @@
-import Snackbar from '@material-ui/core/Snackbar';
-import React from 'react';
+import Snackbar from "@mui/material/Snackbar";
+import React from "react";
 
 export let openSnackbarExternal;
 
@@ -15,24 +15,22 @@ class Notifier extends React.PureComponent<any, State> {
 
     this.state = {
       open: false,
-      message: '',
+      message: "",
     };
   }
 
   public render() {
-    const message = (
-      <span id="snackbar-message-id" dangerouslySetInnerHTML={{ __html: this.state.message }} />
-    );
+    const message = <span id="snackbar-message-id" dangerouslySetInnerHTML={{ __html: this.state.message }} />;
 
     return (
       <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         message={message}
         autoHideDuration={5000}
         onClose={this.handleSnackbarClose}
         open={this.state.open}
         ContentProps={{
-          'aria-describedby': 'snackbar-message-id',
+          "aria-describedby": "snackbar-message-id",
         }}
       />
     );
@@ -41,7 +39,7 @@ class Notifier extends React.PureComponent<any, State> {
   public handleSnackbarClose = () => {
     this.setState({
       open: false,
-      message: '',
+      message: "",
     });
   };
 
