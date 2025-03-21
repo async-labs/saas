@@ -1,14 +1,14 @@
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import TextField from '@material-ui/core/TextField';
-import { inject, observer } from 'mobx-react';
-import NProgress from 'nprogress';
-import React from 'react';
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+import { inject, observer } from "mobx-react";
+import NProgress from "nprogress";
+import React from "react";
 
-import notify from '../../lib/notify';
-import { Store } from '../../lib/store';
+import notify from "../../lib/notify";
+import { Store } from "../../lib/store";
 
 type Props = {
   store: Store;
@@ -26,7 +26,7 @@ class InviteMember extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      email: '',
+      email: "",
       disabled: false,
     };
   }
@@ -38,7 +38,7 @@ class InviteMember extends React.Component<Props, State> {
       <Dialog onClose={this.handleClose} aria-labelledby="invite-member-dialog-title" open={open}>
         <DialogTitle id="invite-member-dialog-title">Invite member</DialogTitle>
         <DialogContent>
-          <form onSubmit={this.onSubmit} style={{ padding: '20px' }}>
+          <form onSubmit={this.onSubmit} style={{ padding: "20px" }}>
             <TextField
               autoComplete="off"
               value={this.state.email}
@@ -51,13 +51,8 @@ class InviteMember extends React.Component<Props, State> {
             <br />
             <Button variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
               Cancel
-            </Button>{' '}
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={this.state.disabled}
-            >
+            </Button>{" "}
+            <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
               Invite
             </Button>
           </form>
@@ -67,7 +62,7 @@ class InviteMember extends React.Component<Props, State> {
   }
 
   private handleClose = () => {
-    this.setState({ email: '', disabled: false });
+    this.setState({ email: "", disabled: false });
     this.props.onClose();
   };
 
@@ -77,14 +72,14 @@ class InviteMember extends React.Component<Props, State> {
     const { store } = this.props;
 
     if (!store.currentTeam) {
-      notify('Team have not selected');
+      notify("Team have not selected");
       return;
     }
 
     const { email } = this.state;
 
     if (!email) {
-      notify('Email is required');
+      notify("Email is required");
       return;
     }
 
@@ -93,8 +88,8 @@ class InviteMember extends React.Component<Props, State> {
       this.setState({ disabled: true });
       await store.currentTeam.inviteMember(email);
 
-      this.setState({ email: '' });
-      notify('You successfully sent invitation.');
+      this.setState({ email: "" });
+      notify("You successfully sent invitation.");
       NProgress.done();
     } catch (error) {
       console.log(error);
@@ -107,4 +102,4 @@ class InviteMember extends React.Component<Props, State> {
   };
 }
 
-export default inject('store')(observer(InviteMember));
+export default inject("store")(observer(InviteMember));

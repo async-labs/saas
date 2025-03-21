@@ -1,26 +1,23 @@
-import { inject, observer } from 'mobx-react';
-import * as React from 'react';
+import { inject, observer } from "mobx-react";
+import * as React from "react";
 
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import Head from 'next/head';
-import Router from 'next/router';
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import Head from "next/head";
+import Router from "next/router";
 
-import {
-  getSignedRequestForUploadApiMethod,
-  uploadFileUsingSignedPutRequestApiMethod,
-} from '../lib/api/team-member';
-import notify from '../lib/notify';
-import { resizeImage } from '../lib/resizeImage';
-import { Store } from '../lib/store';
-import withAuth from '../lib/withAuth';
+import { getSignedRequestForUploadApiMethod, uploadFileUsingSignedPutRequestApiMethod } from "../lib/api/team-member";
+import notify from "../lib/notify";
+import { resizeImage } from "../lib/resizeImage";
+import { Store } from "../lib/store";
+import withAuth from "../lib/withAuth";
 
-import Layout from '../components/layout';
+import Layout from "../components/layout";
 
 const styleGrid = {
-  height: '100%',
+  height: "100%",
 };
 
 type Props = { store: Store; isMobile: boolean; teamRequired: boolean };
@@ -32,8 +29,8 @@ class CreateTeam extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      newName: '',
-      newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
+      newName: "",
+      newAvatarUrl: "https://storage.googleapis.com/async-await/default-user.png?v=1",
       disabled: false,
     };
   }
@@ -49,14 +46,9 @@ class CreateTeam extends React.Component<Props, State> {
           <title>Create Team</title>
           <meta name="description" content="Create a new Team at SaaS Boilerplate" />
         </Head>
-        <div style={{ padding: '0px', fontSize: '14px', height: '100%' }}>
+        <div style={{ padding: "0px", fontSize: "14px", height: "100%" }}>
           <Grid container style={styleGrid}>
-            <Grid
-              item
-              sm={12}
-              xs={12}
-              style={{ padding: this.props.isMobile ? '0px' : '0px 30px' }}
-            >
+            <Grid item sm={12} xs={12} style={{ padding: this.props.isMobile ? "0px" : "0px 30px" }}>
               <h3>Create team</h3>
               <p />
               <form onSubmit={this.onSubmit}>
@@ -70,12 +62,12 @@ class CreateTeam extends React.Component<Props, State> {
                   }}
                 />
                 <p />
-                <h4 style={{ marginTop: '40px' }}>Team logo (optional)</h4>
+                <h4 style={{ marginTop: "40px" }}>Team logo (optional)</h4>
                 <Avatar
                   src={newAvatarUrl}
                   style={{
-                    display: 'inline-flex',
-                    verticalAlign: 'middle',
+                    display: "inline-flex",
+                    verticalAlign: "middle",
                     marginRight: 20,
                     width: 60,
                     height: 60,
@@ -91,18 +83,13 @@ class CreateTeam extends React.Component<Props, State> {
                   name="upload-file"
                   id="upload-file"
                   type="file"
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   onChange={this.previewTeamLogo}
                 />
                 <p />
                 <br />
                 <br />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={this.state.disabled}
-                >
+                <Button variant="contained" color="primary" type="submit" disabled={this.state.disabled}>
                   Create new team
                 </Button>
               </form>
@@ -122,16 +109,16 @@ class CreateTeam extends React.Component<Props, State> {
     const { store } = this.props;
 
     if (!newName) {
-      notify('Team name is required.');
+      notify("Team name is required.");
       return;
     }
 
-    const file = (document.getElementById('upload-file') as HTMLFormElement).files[0];
+    const file = (document.getElementById("upload-file") as HTMLFormElement).files[0];
 
     try {
       this.setState({ disabled: true });
 
-      const defaultAvatarUrl = 'https://storage.googleapis.com/async-await/default-user.png?v=1';
+      const defaultAvatarUrl = "https://storage.googleapis.com/async-await/default-user.png?v=1";
       const team = await store.addTeam({
         name: newName,
         avatarUrl: defaultAvatarUrl,
@@ -141,7 +128,7 @@ class CreateTeam extends React.Component<Props, State> {
 
       if (file == null) {
         Router.push(`/team/${team.slug}/team-settings`);
-        notify('You successfully created Team.<p />Redirecting...');
+        notify("You successfully created Team.<p />Redirecting...");
         return;
       }
 
@@ -159,28 +146,24 @@ class CreateTeam extends React.Component<Props, State> {
 
       const resizedFile = await resizeImage(file, 128, 128);
 
-      await uploadFileUsingSignedPutRequestApiMethod(
-        resizedFile,
-        responseFromApiServerForUpload.signedRequest,
-        {
-          'Cache-Control': 'max-age=2592000',
-        },
-      );
+      await uploadFileUsingSignedPutRequestApiMethod(resizedFile, responseFromApiServerForUpload.signedRequest, {
+        "Cache-Control": "max-age=2592000",
+      });
 
       const uploadedAvatarUrl = responseFromApiServerForUpload.url;
 
       await team.updateTheme({ name: team.name, avatarUrl: uploadedAvatarUrl });
 
       this.setState({
-        newName: '',
-        newAvatarUrl: 'https://storage.googleapis.com/async-await/default-user.png?v=1',
+        newName: "",
+        newAvatarUrl: "https://storage.googleapis.com/async-await/default-user.png?v=1",
       });
 
-      (document.getElementById('upload-file') as HTMLFormElement).value = '';
+      (document.getElementById("upload-file") as HTMLFormElement).value = "";
 
       Router.push(`/team/${team.slug}/team-settings`);
 
-      notify('You successfully created Team. Redirecting ...');
+      notify("You successfully created Team. Redirecting ...");
     } catch (error) {
       console.log(error);
       notify(error);
@@ -190,7 +173,7 @@ class CreateTeam extends React.Component<Props, State> {
   };
 
   private previewTeamLogo = () => {
-    const file = (document.getElementById('upload-file') as HTMLFormElement).files[0];
+    const file = (document.getElementById("upload-file") as HTMLFormElement).files[0];
     if (!file) {
       return;
     }
@@ -205,4 +188,4 @@ class CreateTeam extends React.Component<Props, State> {
   };
 }
 
-export default withAuth(inject('store')(observer(CreateTeam)));
+export default withAuth(inject("store")(observer(CreateTeam)));

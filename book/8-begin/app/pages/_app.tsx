@@ -1,15 +1,15 @@
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider } from '@material-ui/styles';
-import { Provider } from 'mobx-react';
-import App from 'next/app';
-import Head from 'next/head';
-import React from 'react';
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider } from "@mui/material/styles";
+import { Provider } from "mobx-react";
+import App from "next/app";
+import Head from "next/head";
+import React from "react";
 
-import { themeDark, themeLight } from '../lib/theme';
-import { getUserApiMethod } from '../lib/api/public';
-import { getInitialDataApiMethod } from '../lib/api/team-member';
-import { isMobile } from '../lib/isMobile';
-import { getStore, initializeStore, Store } from '../lib/store';
+import { themeDark, themeLight } from "../lib/theme";
+import { getUserApiMethod } from "../lib/api/public";
+import { getInitialDataApiMethod } from "../lib/api/team-member";
+import { isMobile } from "../lib/isMobile";
+import { getStore, initializeStore, Store } from "../lib/store";
 
 class MyApp extends App {
   public static async getInitialProps({ Component, ctx }) {
@@ -17,17 +17,17 @@ class MyApp extends App {
     let teamRequired = false;
 
     if (
-      ctx.pathname.includes('/login') ||
-      ctx.pathname.includes('/create-team') ||
-      ctx.pathname.includes('/invitation')
+      ctx.pathname.includes("/login") ||
+      ctx.pathname.includes("/create-team") ||
+      ctx.pathname.includes("/invitation")
     ) {
       firstGridItem = false;
     }
 
     if (
-      ctx.pathname.includes('/team-settings') ||
-      ctx.pathname.includes('/discussion') ||
-      ctx.pathname.includes('/billing')
+      ctx.pathname.includes("/team-settings") ||
+      ctx.pathname.includes("/discussion") ||
+      ctx.pathname.includes("/billing")
     ) {
       teamRequired = true;
     }
@@ -87,7 +87,7 @@ class MyApp extends App {
 
   public componentDidMount() {
     // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
+    const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles && jssStyles.parentNode) {
       jssStyles.parentNode.removeChild(jssStyles);
     }
@@ -98,7 +98,7 @@ class MyApp extends App {
   constructor(props) {
     super(props);
 
-    console.log('MyApp.constructor');
+    console.log("MyApp.constructor");
 
     this.store = initializeStore(props.initialState);
   }
@@ -113,10 +113,7 @@ class MyApp extends App {
       <ThemeProvider theme={isThemeDark ? themeDark : themeLight}>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <link
-            rel="stylesheet"
-            href="https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1"
-          />
+          <link rel="stylesheet" href="https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1" />
         </Head>
         <CssBaseline />
         <Provider store={store}>

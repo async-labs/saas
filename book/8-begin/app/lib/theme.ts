@@ -1,35 +1,35 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from "@mui/material/styles";
 
-const themeDark = createMuiTheme({
+const themeDark = createTheme({
   palette: {
-    primary: { main: '#238636' },
-    secondary: { main: '#b62324' },
-    type: 'dark',
-    background: { default: '#0d1117' },
+    primary: { main: "#238636" },
+    secondary: { main: "#b62324" },
+    type: "dark",
+    background: { default: "#0d1117" },
     text: {
-      primary: '#c9d1d9',
+      primary: "#c9d1d9",
     },
   },
   typography: {
     button: {
-      textTransform: 'none',
+      textTransform: "none",
     },
   },
 });
 
-const themeLight = createMuiTheme({
+const themeLight = createTheme({
   palette: {
-    primary: { main: '#238636' },
-    secondary: { main: '#b62324' },
-    type: 'light',
-    background: { default: '#fff' },
+    primary: { main: "#238636" },
+    secondary: { main: "#b62324" },
+    type: "light",
+    background: { default: "#fff" },
     text: {
-      primary: '#222',
+      primary: "#222",
     },
   },
   typography: {
     button: {
-      textTransform: 'none',
+      textTransform: "none",
     },
   },
 });
