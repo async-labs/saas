@@ -1,8 +1,8 @@
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Link from 'next/link';
-import { NextRouter, withRouter } from 'next/router';
-import React from 'react';
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Link from "next/link";
+import { NextRouter, withRouter } from "next/router";
+import React from "react";
 
 type Props = {
   options: {
@@ -35,25 +35,19 @@ class MenuWithLinks extends React.PureComponent<Props, State> {
     const { anchorEl } = this.state;
 
     return (
-      <div style={{ textAlign: 'center' }}>
+      <div style={{ textAlign: "center" }}>
         <div
-          aria-controls={anchorEl ? 'simple-menu' : null}
+          aria-controls={anchorEl ? "simple-menu" : null}
           aria-haspopup="true"
           onClick={this.handleClick}
           onKeyPress={this.handleClick}
         >
           {children}
         </div>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={this.handleClose}
-          keepMounted
-        >
+        <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleClose} keepMounted>
           {options.map((option, i) =>
             option.separator ? (
-              <hr style={{ width: '95%', margin: '10px auto' }} key={`separated-${i}`} />
+              <hr style={{ width: "95%", margin: "10px auto" }} key={`separated-${i}`} />
             ) : option.externalServer ? (
               <MenuItem
                 onClick={(event) => {
@@ -71,13 +65,13 @@ class MenuWithLinks extends React.PureComponent<Props, State> {
                   key={option.href}
                   style={{
                     fontWeight: router.asPath.includes(option.highlighterSlug) ? 600 : 300,
-                    fontSize: '14px',
+                    fontSize: "14px",
                   }}
                 >
                   {option.text}
                 </MenuItem>
               </Link>
-            ),
+            )
           )}
         </Menu>
       </div>
