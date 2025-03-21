@@ -1,24 +1,12 @@
-import { ServerStyleSheets } from '@material-ui/styles';
-import Document, { Head, Html, Main, NextScript } from 'next/document';
-import React from 'react';
+import Document, { Head, Html, Main, NextScript } from "next/document";
+import React from "react";
 
 class MyDocument extends Document {
   public static getInitialProps = async (ctx) => {
-    // Render app and page and get the context of the page with collected side effects.
-    const sheets = new ServerStyleSheets();
-    const originalRenderPage = ctx.renderPage;
-
-    ctx.renderPage = () =>
-      originalRenderPage({
-        enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
-      });
-
     const initialProps = await Document.getInitialProps(ctx);
 
     return {
       ...initialProps,
-      // Styles fragment is rendered after the app and page rendering finish.
-      styles: [...React.Children.toArray(initialProps.styles), sheets.getStyleElement()],
     };
   };
 
@@ -32,10 +20,7 @@ class MyDocument extends Document {
           <meta name="google" content="notranslate" />
           <meta name="theme-color" content="#303030" />
 
-          <link
-            rel="shortcut icon"
-            href="https://storage.googleapis.com/async-await/async-favicon32.png"
-          />
+          <link rel="shortcut icon" href="https://storage.googleapis.com/async-await/async-favicon32.png" />
 
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
           <link rel="stylesheet" href="https://storage.googleapis.com/async-await/vs2015.min.css" />
