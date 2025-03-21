@@ -1,22 +1,22 @@
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import he from 'he';
-import { marked } from 'marked';
-import { observer } from 'mobx-react';
-import NProgress from 'nprogress';
-import React from 'react';
-import { Mention, MentionsInput } from 'react-mentions';
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import he from "he";
+import { marked } from "marked";
+import { observer } from "mobx-react";
+import NProgress from "nprogress";
+import React from "react";
+import { Mention, MentionsInput } from "react-mentions";
 
 import {
   getSignedRequestForUploadApiMethod,
   uploadFileUsingSignedPutRequestApiMethod,
-} from '../../lib/api/team-member';
-import notify from '../../lib/notify';
-import { resizeImage } from '../../lib/resizeImage';
-import { Store } from '../../lib/store';
-import { User } from '../../lib/store/user';
+} from "../../lib/api/team-member";
+import notify from "../../lib/notify";
+import { resizeImage } from "../../lib/resizeImage";
+import { Store } from "../../lib/store";
+import { User } from "../../lib/store/user";
 
-import PostContent from './PostContent';
+import PostContent from "./PostContent";
 
 function getImageDimension(file): Promise<{ width: number; height: number }> {
   const reader = new FileReader();
@@ -52,7 +52,7 @@ class PostEditor extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      htmlContent: '',
+      htmlContent: "",
     };
   }
 
@@ -64,57 +64,55 @@ class PostEditor extends React.Component<Props, State> {
     const membersMinusCurrentUser = members.filter((member) => member._id !== currentUser._id);
 
     const isThemeDark = store && store.currentUser && store.currentUser.darkTheme === true;
-    const textareaBackgroundColor = isThemeDark ? '#0d1117' : '#fff';
+    const textareaBackgroundColor = isThemeDark ? "#0d1117" : "#fff";
 
     return (
-      <div style={{ marginTop: '20px' }}>
-        <div style={{ display: 'inline-flex' }}>
+      <div style={{ marginTop: "20px" }}>
+        <div style={{ display: "inline-flex" }}>
           <Button
             onClick={this.showMarkdownContent}
             variant="text"
-            style={{ fontWeight: htmlContent ? 300 : 600, color: '#58a6ff' }}
+            style={{ fontWeight: htmlContent ? 300 : 600, color: "#58a6ff" }}
           >
             Markdown
-          </Button>{' '}
+          </Button>{" "}
           <Button
             onClick={this.showHtmlContent}
             variant="text"
-            style={{ fontWeight: htmlContent ? 600 : 300, color: '#58a6ff' }}
+            style={{ fontWeight: htmlContent ? 600 : 300, color: "#58a6ff" }}
           >
             HTML
           </Button>
         </div>
 
-        <div style={{ display: 'inline', float: 'left' }}>
-          <label htmlFor={'upload-file-post-editor-' + parentComponent}>
+        <div style={{ display: "inline", float: "left" }}>
+          <label htmlFor={"upload-file-post-editor-" + parentComponent}>
             <Button component="span">
-              <i className="material-icons" style={{ fontSize: '22px', color: '#58a6ff' }}>
+              <i className="material-icons" style={{ fontSize: "22px", color: "#58a6ff" }}>
                 insert_photo
               </i>
             </Button>
           </label>
           <input
             accept="image/*"
-            name={'upload-file-post-editor-' + parentComponent}
-            id={'upload-file-post-editor-' + parentComponent}
+            name={"upload-file-post-editor-" + parentComponent}
+            id={"upload-file-post-editor-" + parentComponent}
             type="file"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             onChange={async (event) => {
               const file = event.target.files[0];
               await this.uploadFile(file);
-              event.target.value = '';
+              event.target.value = "";
             }}
           />
         </div>
         <br />
         <div
           style={{
-            width: '100%',
-            height: '100vh',
-            padding: '10px 15px',
-            border: isThemeDark
-              ? '1px solid rgba(255, 255, 255, 0.5)'
-              : '1px solid rgba(0, 0, 0, 0.5)',
+            width: "100%",
+            height: "100vh",
+            padding: "10px 15px",
+            border: isThemeDark ? "1px solid rgba(255, 255, 255, 0.5)" : "1px solid rgba(0, 0, 0, 0.5)",
           }}
         >
           {htmlContent ? (
@@ -123,33 +121,33 @@ class PostEditor extends React.Component<Props, State> {
             <MentionsInput
               style={{
                 input: {
-                  border: 'none',
-                  outline: 'none',
-                  color: isThemeDark ? '#fff' : '#000',
+                  border: "none",
+                  outline: "none",
+                  color: isThemeDark ? "#fff" : "#000",
                   fontWeight: 300,
-                  height: '100vh',
-                  lineHeight: '1.5em',
-                  backgroundColor: content ? textareaBackgroundColor : 'transparent',
+                  height: "100vh",
+                  lineHeight: "1.5em",
+                  backgroundColor: content ? textareaBackgroundColor : "transparent",
                 },
                 suggestions: {
                   list: {
-                    backgroundColor: '#222',
-                    color: '#fff',
+                    backgroundColor: "#222",
+                    color: "#fff",
                   },
 
                   item: {
-                    padding: '5px 15px',
-                    borderBottom: '1px solid rgba(0,0,0,0.15)',
+                    padding: "5px 15px",
+                    borderBottom: "1px solid rgba(0,0,0,0.15)",
 
-                    '&focused': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    "&focused": {
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
                     },
                   },
                 },
               }}
               autoFocus
               value={content}
-              placeholder={this.props.placeholder ? this.props.placeholder : 'Compose new post'}
+              placeholder={this.props.placeholder ? this.props.placeholder : "Compose new post"}
               onChange={(event) => {
                 this.props.onChanged(event.target.value);
               }}
@@ -161,7 +159,7 @@ class PostEditor extends React.Component<Props, State> {
                   display: u.displayName,
                   // you: u._id === currentUser._id ? true : false,
                 }))}
-                markup={'[`@#__display__`](__id__)'}
+                markup={"[`@#__display__`](__id__)"}
                 displayTransform={(_, display) => {
                   return `@${display}`;
                 }}
@@ -172,14 +170,14 @@ class PostEditor extends React.Component<Props, State> {
                       src={suggestion.id}
                       alt={suggestion.display}
                       style={{
-                        width: '24px',
-                        height: '24px',
-                        marginRight: '10px',
-                        display: 'inline-flex',
-                        verticalAlign: 'middle',
+                        width: "24px",
+                        height: "24px",
+                        marginRight: "10px",
+                        display: "inline-flex",
+                        verticalAlign: "middle",
                       }}
                     />
-                    <span style={{ marginRight: '5px' }}>{suggestion.display}</span>
+                    <span style={{ marginRight: "5px" }}>{suggestion.display}</span>
                   </React.Fragment>
                 )}
               />
@@ -191,7 +189,7 @@ class PostEditor extends React.Component<Props, State> {
   }
 
   public showMarkdownContent = () => {
-    this.setState({ htmlContent: '' });
+    this.setState({ htmlContent: "" });
   };
 
   public showHtmlContent = async () => {
@@ -201,10 +199,10 @@ class PostEditor extends React.Component<Props, State> {
       const renderer = new marked.Renderer();
 
       renderer.link = (href, title, text) => {
-        const t = title ? ` title="${title}"` : '';
+        const t = title ? ` title="${title}"` : "";
 
-        if (text.startsWith('<code>@#')) {
-          return `${text.replace('<code>@#', '<code>@')} `;
+        if (text.startsWith("<code>@#")) {
+          return `${text.replace("<code>@#", "<code>@")} `;
         }
 
         return `
@@ -222,18 +220,18 @@ class PostEditor extends React.Component<Props, State> {
       return marked(he.decode(postContent));
     }
 
-    const htmlContent = content ? markdownToHtml(content) : '<span>Nothing to preview.</span>';
+    const htmlContent = content ? markdownToHtml(content) : "<span>Nothing to preview.</span>";
     this.setState({ htmlContent });
   };
 
   private uploadFile = async (file: File) => {
     if (!file) {
-      notify('No file selected.');
+      notify("No file selected.");
       return;
     }
 
-    if (!file.type || (!file.type.startsWith('image/') && file.type !== 'application/pdf')) {
-      notify('Wrong file.');
+    if (!file.type || (!file.type.startsWith("image/") && file.type !== "application/pdf")) {
+      notify("Wrong file.");
       return;
     }
 
@@ -258,40 +256,34 @@ class PostEditor extends React.Component<Props, State> {
       let fileHtmlOrMarkdown;
       let fileUrl;
 
-      if (file.type.startsWith('image/')) {
+      if (file.type.startsWith("image/")) {
         const { width } = await getImageDimension(file);
         const resizedFile = await resizeImage(file, 1024, 1024);
 
-        await uploadFileUsingSignedPutRequestApiMethod(
-          resizedFile,
-          responseFromApiServerForUpload.signedRequest,
-        );
+        await uploadFileUsingSignedPutRequestApiMethod(resizedFile, responseFromApiServerForUpload.signedRequest);
 
         fileUrl = responseFromApiServerForUpload.url;
 
         console.log(fileUrl);
 
-        const finalWidth = width > 768 ? '100%' : `${width}px`;
+        const finalWidth = width > 768 ? "100%" : `${width}px`;
 
         fileHtmlOrMarkdown = `
           <div>
             <img style="max-width: ${finalWidth}; width:100%" src="${fileUrl}" alt="Async" class="s3-image" />
           </div>`;
       } else {
-        await uploadFileUsingSignedPutRequestApiMethod(
-          file,
-          responseFromApiServerForUpload.signedRequest,
-        );
+        await uploadFileUsingSignedPutRequestApiMethod(file, responseFromApiServerForUpload.signedRequest);
 
         fileUrl = responseFromApiServerForUpload.url;
         fileHtmlOrMarkdown = `[${file.name}](${fileUrl})`;
       }
 
-      const content = `${this.props.content}\n${fileHtmlOrMarkdown.replace(/\s+/g, ' ')}`;
+      const content = `${this.props.content}\n${fileHtmlOrMarkdown.replace(/\s+/g, " ")}`;
 
       this.props.onChanged(content);
 
-      notify('You successfully uploaded file.');
+      notify("You successfully uploaded file.");
     } catch (error) {
       console.log(error);
       notify(error);

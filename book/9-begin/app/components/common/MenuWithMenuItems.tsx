@@ -1,6 +1,6 @@
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import React from "react";
 
 type Props = {
   menuOptions: any;
@@ -25,24 +25,19 @@ class MenuWithMenuItems extends React.PureComponent<Props, State> {
     const { menuElem } = this.state;
 
     return (
-      <div style={{ verticalAlign: 'middle' }}>
+      <div style={{ verticalAlign: "middle" }}>
         <i
           aria-controls={menuElem ? menuOptions.id : null}
           data-id={menuOptions.dataId}
           aria-haspopup="true"
-          style={{ fontSize: '14px', opacity: 0.7, cursor: 'pointer' }}
+          style={{ fontSize: "14px", opacity: 0.7, cursor: "pointer" }}
           className="material-icons"
           onClick={(e) => this.handleClick(e)}
         >
           more_vert
         </i>
 
-        <Menu
-          id={menuOptions.id}
-          anchorEl={menuElem}
-          open={Boolean(menuElem)}
-          onClose={this.handleClose}
-        >
+        <Menu id={menuOptions.id} anchorEl={menuElem} open={Boolean(menuElem)} onClose={this.handleClose}>
           {itemOptions.map((option, i) => (
             <MenuItem
               key={option.dataId + i}

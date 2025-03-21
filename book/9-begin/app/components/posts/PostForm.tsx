@@ -1,17 +1,17 @@
-import Button from '@material-ui/core/Button';
-import he from 'he';
-import { marked } from 'marked';
-import { observer } from 'mobx-react';
-import NProgress from 'nprogress';
-import React from 'react';
+import Button from "@mui/material/Button";
+import he from "he";
+import { marked } from "marked";
+import { observer } from "mobx-react";
+import NProgress from "nprogress";
+import React from "react";
 
-import notify from '../../lib/notify';
-import { Store } from '../../lib/store';
-import { Discussion } from '../../lib/store/discussion';
-import { Post } from '../../lib/store/post';
-import { User } from '../../lib/store/user';
+import notify from "../../lib/notify";
+import { Store } from "../../lib/store";
+import { Discussion } from "../../lib/store/discussion";
+import { Post } from "../../lib/store/post";
+import { User } from "../../lib/store/user";
 
-import PostEditor from './PostEditor';
+import PostEditor from "./PostEditor";
 
 type Props = {
   store: Store;
@@ -35,7 +35,7 @@ class PostForm extends React.Component<Props, State> {
 
     this.state = {
       postId: null,
-      content: '',
+      content: "",
       disabled: false,
     };
   }
@@ -53,7 +53,7 @@ class PostForm extends React.Component<Props, State> {
 
     return {
       postId: (post && post._id) || null,
-      content: (post && post.content) || '',
+      content: (post && post.content) || "",
     };
   }
 
@@ -61,31 +61,26 @@ class PostForm extends React.Component<Props, State> {
     const { store, members, post, isMobile, showMarkdownToNonCreator } = this.props;
     const isEditingPost = !!post;
 
-    let title = 'Add Post';
+    let title = "Add Post";
     if (showMarkdownToNonCreator) {
-      title = 'Showing Markdown';
+      title = "Showing Markdown";
     } else if (isEditingPost) {
-      title = 'Edit Post';
+      title = "Edit Post";
     }
 
     return (
-      <div style={{ height: '100%', margin: '0px 20px' }}>
+      <div style={{ height: "100%", margin: "0px 20px" }}>
         <p />
         <br />
         <h3>{title}</h3>
-        <form style={{ width: '100%', height: '100%' }} onSubmit={this.onSubmit} autoComplete="off">
+        <form style={{ width: "100%", height: "100%" }} onSubmit={this.onSubmit} autoComplete="off">
           <p />
           <br />
           <div>
             {showMarkdownToNonCreator ? null : (
               <React.Fragment>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={this.state.disabled}
-                >
-                  {isEditingPost ? 'Save changes' : 'Publish Post'}
+                <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
+                  {isEditingPost ? "Save changes" : "Publish Post"}
                 </Button>
                 {isMobile ? <p /> : null}
               </React.Fragment>
@@ -95,9 +90,9 @@ class PostForm extends React.Component<Props, State> {
                 variant="outlined"
                 onClick={this.closeForm}
                 disabled={this.state.disabled}
-                style={{ marginLeft: '10px' }}
+                style={{ marginLeft: "10px" }}
               >
-                {showMarkdownToNonCreator ? 'Go back' : 'Cancel'}
+                {showMarkdownToNonCreator ? "Go back" : "Cancel"}
               </Button>
             ) : null}
           </div>
@@ -112,15 +107,15 @@ class PostForm extends React.Component<Props, State> {
             parentComponent="PF"
           />
           <p />
-          <div style={{ margin: '20px 0px' }}>
+          <div style={{ margin: "20px 0px" }}>
             {isEditingPost ? (
               <Button
                 variant="outlined"
                 onClick={this.closeForm}
                 disabled={this.state.disabled}
-                style={{ marginLeft: '10px' }}
+                style={{ marginLeft: "10px" }}
               >
-                {showMarkdownToNonCreator ? 'Go back' : 'Cancel'}
+                {showMarkdownToNonCreator ? "Go back" : "Cancel"}
               </Button>
             ) : null}
           </div>
@@ -140,7 +135,7 @@ class PostForm extends React.Component<Props, State> {
     const isEditingPost = !!post;
 
     if (!content) {
-      notify('Add content to your Post');
+      notify("Add content to your Post");
       return;
     }
 
@@ -149,7 +144,7 @@ class PostForm extends React.Component<Props, State> {
       NProgress.start();
       try {
         await post.editPost({ content, htmlContent });
-        notify('You successfully edited Post');
+        notify("You successfully edited Post");
       } catch (error) {
         console.log(error);
         notify(error);
@@ -167,7 +162,7 @@ class PostForm extends React.Component<Props, State> {
 
     const { currentTeam } = store;
     if (!currentTeam) {
-      notify('Team is not selected or does not exist.');
+      notify("Team is not selected or does not exist.");
       return;
     }
 
@@ -177,8 +172,8 @@ class PostForm extends React.Component<Props, State> {
     try {
       await discussion.addPost(content);
 
-      this.setState({ content: '' });
-      notify('You successfully published new Post.');
+      this.setState({ content: "" });
+      notify("You successfully published new Post.");
     } catch (error) {
       console.log(error);
       notify(error);
@@ -197,7 +192,7 @@ class PostForm extends React.Component<Props, State> {
   };
 
   private closeForm = () => {
-    this.setState({ postId: null, content: '' });
+    this.setState({ postId: null, content: "" });
 
     const { onFinished } = this.props;
     if (onFinished) {

@@ -1,29 +1,26 @@
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import Hidden from '@material-ui/core/Hidden';
-import TextField from '@material-ui/core/TextField';
-import { inject, observer } from 'mobx-react';
-import Head from 'next/head';
-import NProgress from 'nprogress';
-import * as React from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Hidden from "@mui/material/Hidden";
+import TextField from "@mui/material/TextField";
+import { inject, observer } from "mobx-react";
+import Head from "next/head";
+import NProgress from "nprogress";
+import * as React from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 
-import Layout from '../components/layout';
-import InviteMember from '../components/teams/InviteMember';
-import {
-  getSignedRequestForUploadApiMethod,
-  uploadFileUsingSignedPutRequestApiMethod,
-} from '../lib/api/team-member';
-import confirm from '../lib/confirm';
-import notify from '../lib/notify';
-import { resizeImage } from '../lib/resizeImage';
-import { Store } from '../lib/store';
-import withAuth from '../lib/withAuth';
+import Layout from "../components/layout";
+import InviteMember from "../components/teams/InviteMember";
+import { getSignedRequestForUploadApiMethod, uploadFileUsingSignedPutRequestApiMethod } from "../lib/api/team-member";
+import confirm from "../lib/confirm";
+import notify from "../lib/notify";
+import { resizeImage } from "../lib/resizeImage";
+import { Store } from "../lib/store";
+import withAuth from "../lib/withAuth";
 
 type Props = { isMobile: boolean; store: Store; teamSlug: string };
 
@@ -57,12 +54,9 @@ class TeamSettings extends React.Component<Props, State> {
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+          <div style={{ padding: isMobile ? "0px" : "0px 30px" }}>
             <p>You did not select any team.</p>
-            <p>
-              To access this page, please select existing team or create new team if you have no
-              teams.
-            </p>
+            <p>To access this page, please select existing team or create new team if you have no teams.</p>
           </div>
         </Layout>
       );
@@ -71,7 +65,7 @@ class TeamSettings extends React.Component<Props, State> {
     if (!isTeamLeader) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+          <div style={{ padding: isMobile ? "0px" : "0px 30px" }}>
             <p>Only the Team Leader can access this page.</p>
             <p>Create your own team to become a Team Leader.</p>
           </div>
@@ -83,12 +77,9 @@ class TeamSettings extends React.Component<Props, State> {
       <Layout {...this.props}>
         <Head>
           <title>Team Settings</title>
-          <meta
-            name="description"
-            content={`Edit team settings. Add or edit members for Team ${currentTeam.name}`}
-          />
+          <meta name="description" content={`Edit team settings. Add or edit members for Team ${currentTeam.name}`} />
         </Head>
-        <div style={{ padding: isMobile ? '0px' : '0px 30px', fontSize: '15px', height: '100%' }}>
+        <div style={{ padding: isMobile ? "0px" : "0px 30px", fontSize: "15px", height: "100%" }}>
           <h3>Team Settings</h3>
           <p />
           <br />
@@ -103,12 +94,7 @@ class TeamSettings extends React.Component<Props, State> {
             />
             <br />
             <br />
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={this.state.disabled}
-            >
+            <Button variant="contained" color="primary" type="submit" disabled={this.state.disabled}>
               Update username
             </Button>
           </form>
@@ -118,20 +104,15 @@ class TeamSettings extends React.Component<Props, State> {
           <Avatar
             src={newAvatarUrl}
             style={{
-              display: 'inline-flex',
-              verticalAlign: 'middle',
+              display: "inline-flex",
+              verticalAlign: "middle",
               marginRight: 20,
               width: 60,
               height: 60,
             }}
           />
           <label htmlFor="upload-file-team-logo">
-            <Button
-              variant="contained"
-              color="primary"
-              component="span"
-              disabled={this.state.disabled}
-            >
+            <Button variant="contained" color="primary" component="span" disabled={this.state.disabled}>
               Update logo
             </Button>
           </label>
@@ -140,20 +121,20 @@ class TeamSettings extends React.Component<Props, State> {
             name="upload-file-team-logo"
             id="upload-file-team-logo"
             type="file"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             onChange={this.uploadFile}
           />
           <p />
           <br />
           <br />
-          <h4 style={{ marginRight: 20, display: 'inline' }}>
+          <h4 style={{ marginRight: 20, display: "inline" }}>
             Team Members ( {Array.from(currentTeam.members.values()).length} / 20 )
           </h4>
           <Button
             onClick={this.openInviteMember}
             variant="contained"
             color="primary"
-            style={{ float: 'right', marginTop: '-20px' }}
+            style={{ float: "right", marginTop: "-20px" }}
             disabled={this.state.disabled}
           >
             Invite member
@@ -174,7 +155,7 @@ class TeamSettings extends React.Component<Props, State> {
                   .map((userId) => currentTeam.members.get(userId))
                   .map((m) => (
                     <TableRow key={m._id}>
-                      <TableCell style={{ width: '300px' }}>
+                      <TableCell style={{ width: "300px" }}>
                         <Hidden smDown>
                           <Avatar
                             role="presentation"
@@ -182,19 +163,17 @@ class TeamSettings extends React.Component<Props, State> {
                             alt={(m.displayName || m.email)[0]}
                             key={m._id}
                             style={{
-                              margin: '0px 5px',
-                              display: 'inline-flex',
-                              width: '30px',
-                              height: '30px',
-                              verticalAlign: 'middle',
+                              margin: "0px 5px",
+                              display: "inline-flex",
+                              width: "30px",
+                              height: "30px",
+                              verticalAlign: "middle",
                             }}
                           />
                         </Hidden>
                         {m.email}
                       </TableCell>
-                      <TableCell>
-                        {isTeamLeader && m._id !== currentUser._id ? 'Team Member' : 'Team Leader'}
-                      </TableCell>
+                      <TableCell>{isTeamLeader && m._id !== currentUser._id ? "Team Member" : "Team Leader"}</TableCell>
                       <TableCell>
                         {isTeamLeader && m._id !== currentUser._id ? (
                           <i
@@ -202,11 +181,11 @@ class TeamSettings extends React.Component<Props, State> {
                             data-id={m._id}
                             onClick={this.removeMember}
                             style={{
-                              marginLeft: '20px',
-                              fontSize: '16px',
+                              marginLeft: "20px",
+                              fontSize: "16px",
                               opacity: 0.6,
-                              cursor: 'pointer',
-                              verticalAlign: 'middle',
+                              cursor: "pointer",
+                              verticalAlign: "middle",
                             }}
                             className="material-icons"
                           >
@@ -239,7 +218,7 @@ class TeamSettings extends React.Component<Props, State> {
                   <TableBody>
                     {Array.from(currentTeam.invitations.values()).map((i) => (
                       <TableRow key={i._id}>
-                        <TableCell style={{ width: '300px' }}>{i.email}</TableCell>
+                        <TableCell style={{ width: "300px" }}>{i.email}</TableCell>
                         <TableCell>Sent</TableCell>
                       </TableRow>
                     ))}
@@ -267,7 +246,7 @@ class TeamSettings extends React.Component<Props, State> {
     const { currentTeam } = this.props.store;
 
     if (!newName) {
-      notify('Team name is required');
+      notify("Team name is required");
       return;
     }
 
@@ -278,7 +257,7 @@ class TeamSettings extends React.Component<Props, State> {
 
       await currentTeam.updateTheme({ name: newName, avatarUrl: newAvatarUrl });
 
-      notify('You successfully updated Team name.');
+      notify("You successfully updated Team name.");
     } catch (error) {
       notify(error);
     } finally {
@@ -291,11 +270,11 @@ class TeamSettings extends React.Component<Props, State> {
     const { store } = this.props;
     const { currentTeam } = store;
 
-    const fileElement = document.getElementById('upload-file-team-logo') as HTMLFormElement;
+    const fileElement = document.getElementById("upload-file-team-logo") as HTMLFormElement;
     const file = fileElement.files[0];
 
     if (file == null) {
-      notify('No file selected for upload.');
+      notify("No file selected for upload.");
       return;
     }
 
@@ -320,11 +299,9 @@ class TeamSettings extends React.Component<Props, State> {
 
       const resizedFile = await resizeImage(file, 128, 128);
 
-      await uploadFileUsingSignedPutRequestApiMethod(
-        resizedFile,
-        responseFromApiServerForUpload.signedRequest,
-        { 'Cache-Control': 'max-age=2592000' },
-      );
+      await uploadFileUsingSignedPutRequestApiMethod(resizedFile, responseFromApiServerForUpload.signedRequest, {
+        "Cache-Control": "max-age=2592000",
+      });
 
       this.setState({
         newAvatarUrl: responseFromApiServerForUpload.url,
@@ -335,7 +312,7 @@ class TeamSettings extends React.Component<Props, State> {
         avatarUrl: this.state.newAvatarUrl,
       });
 
-      notify('You successfully uploaded new Team logo.');
+      notify("You successfully uploaded new Team logo.");
     } catch (error) {
       notify(error);
     } finally {
@@ -347,7 +324,7 @@ class TeamSettings extends React.Component<Props, State> {
   private openInviteMember = async () => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
-      notify('You have not selected a Team.');
+      notify("You have not selected a Team.");
       return;
     }
 
@@ -361,19 +338,19 @@ class TeamSettings extends React.Component<Props, State> {
   private removeMember = (event) => {
     const { currentTeam } = this.props.store;
     if (!currentTeam) {
-      notify('You have not selected a Team.');
+      notify("You have not selected a Team.");
       return;
     }
 
     const userId = event.currentTarget.dataset.id;
     if (!userId) {
-      notify('Select user.');
+      notify("Select user.");
       return;
     }
 
     confirm({
-      title: 'Are you sure?',
-      message: '',
+      title: "Are you sure?",
+      message: "",
       onAnswer: async (answer) => {
         if (answer) {
           try {
@@ -387,4 +364,4 @@ class TeamSettings extends React.Component<Props, State> {
   };
 }
 
-export default withAuth(inject('store')(observer(TeamSettings)));
+export default withAuth(inject("store")(observer(TeamSettings)));
