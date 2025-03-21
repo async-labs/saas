@@ -1,23 +1,23 @@
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import { observer } from 'mobx-react';
-import Head from 'next/head';
-import Router from 'next/router';
-import NProgress from 'nprogress';
-import React from 'react';
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import { observer } from "mobx-react";
+import Head from "next/head";
+import Router from "next/router";
+import NProgress from "nprogress";
+import React from "react";
 
-import notify from '../../lib/notify';
-import { Store } from '../../lib/store';
-import MemberChooser from '../common/MemberChooser';
-import PostEditor from '../posts/PostEditor';
+import notify from "../../lib/notify";
+import { Store } from "../../lib/store";
+import MemberChooser from "../common/MemberChooser";
+import PostEditor from "../posts/PostEditor";
 
 type Props = {
   isMobile: boolean;
@@ -39,11 +39,11 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      name: '',
+      name: "",
       memberIds: [],
       disabled: false,
-      content: '',
-      notificationType: 'default',
+      content: "",
+      notificationType: "default",
     };
   }
 
@@ -51,9 +51,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     const { open, isMobile, store } = this.props;
     const { currentTeam, currentUser } = store;
 
-    const membersMinusCreator = Array.from(currentTeam.members.values()).filter(
-      (user) => user._id !== currentUser._id,
-    );
+    const membersMinusCreator = Array.from(currentTeam.members.values()).filter((user) => user._id !== currentUser._id);
 
     return (
       <React.Fragment>
@@ -63,16 +61,11 @@ class CreateDiscussionForm extends React.Component<Props, State> {
             <meta name="description" content="Create new discussion" />
           </Head>
         ) : null}
-        <Dialog
-          onClose={this.handleClose}
-          aria-labelledby="simple-dialog-title"
-          open={open}
-          fullScreen={true}
-        >
+        <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open} fullScreen={true}>
           <DialogTitle id="simple-dialog-title">Create new Discussion</DialogTitle>
           <DialogContent>
             <br />
-            <form style={{ width: '100%', height: '60%' }} onSubmit={this.onSubmit}>
+            <form style={{ width: "100%", height: "60%" }} onSubmit={this.onSubmit}>
               <p />
               <br />
               <TextField
@@ -106,19 +99,12 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                   <MenuItem value="default">Default: without email notification.</MenuItem>
                   <MenuItem value="email">Email: with email notification.</MenuItem>
                 </Select>
-                <FormHelperText>
-                  Choose how to notify members about new Posts inside Discussion.
-                </FormHelperText>
+                <FormHelperText>Choose how to notify members about new Posts inside Discussion.</FormHelperText>
               </FormControl>
               <p />
               <br />
               <div>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={this.state.disabled}
-                >
+                <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
                   Create Discussion
                 </Button>
                 {isMobile ? <p /> : null}
@@ -126,10 +112,10 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                   variant="outlined"
                   onClick={this.handleClose}
                   disabled={this.state.disabled}
-                  style={{ marginLeft: isMobile ? '0px' : '20px' }}
+                  style={{ marginLeft: isMobile ? "0px" : "20px" }}
                 >
                   Cancel
-                </Button>{' '}
+                </Button>{" "}
               </div>
               <p />
               <PostEditor
@@ -141,12 +127,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
               />
               <p />
               <div>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={this.state.disabled}
-                >
+                <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
                   Create Discussion
                 </Button>
                 {isMobile ? <p /> : null}
@@ -154,10 +135,10 @@ class CreateDiscussionForm extends React.Component<Props, State> {
                   variant="outlined"
                   onClick={this.handleClose}
                   disabled={this.state.disabled}
-                  style={{ marginLeft: isMobile ? '0px' : '20px' }}
+                  style={{ marginLeft: isMobile ? "0px" : "20px" }}
                 >
                   Cancel
-                </Button>{' '}
+                </Button>{" "}
                 <p />
                 <br />
                 <br />
@@ -175,17 +156,17 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
   public handleClose = () => {
     this.setState({
-      name: '',
+      name: "",
       memberIds: [],
       disabled: false,
-      content: '',
-      notificationType: 'default',
+      content: "",
+      notificationType: "default",
     });
     this.props.onClose();
   };
 
   private onContentChanged = (content: string) => {
-    console.log('onContentChanged', content);
+    console.log("onContentChanged", content);
     this.setState({ content });
   };
 
@@ -196,29 +177,29 @@ class CreateDiscussionForm extends React.Component<Props, State> {
     const { currentTeam } = store;
 
     if (!currentTeam) {
-      notify('Team have not selected');
+      notify("Team have not selected");
       return;
     }
 
     const { name, memberIds, content, notificationType } = this.state;
 
     if (!name) {
-      notify('Name is required');
+      notify("Name is required");
       return;
     }
 
     if (!content) {
-      notify('Content is required');
+      notify("Content is required");
       return;
     }
 
     if (!memberIds || memberIds.length < 1) {
-      notify('Please assign at least one person to this Discussion.');
+      notify("Please assign at least one person to this Discussion.");
       return;
     }
 
     if (!notificationType) {
-      notify('Please select notification type.');
+      notify("Please select notification type.");
       return;
     }
 
@@ -234,7 +215,7 @@ class CreateDiscussionForm extends React.Component<Props, State> {
 
       const post = await discussion.addPost(content);
 
-      if (discussion.notificationType === 'email') {
+      if (discussion.notificationType === "email") {
         const userIdsForLambda = discussion.memberIds.filter((m) => m !== discussion.createdUserId);
 
         await discussion.sendDataToLambda({
@@ -246,13 +227,13 @@ class CreateDiscussionForm extends React.Component<Props, State> {
         });
       }
 
-      this.setState({ name: '', memberIds: [], content: '', notificationType: 'default' });
+      this.setState({ name: "", memberIds: [], content: "", notificationType: "default" });
 
-      notify('You successfully added new Discussion.');
+      notify("You successfully added new Discussion.");
 
       Router.push(
         `/discussion?teamSlug=${currentTeam.slug}&discussionSlug=${discussion.slug}`,
-        `/team/${currentTeam.slug}/discussions/${discussion.slug}`,
+        `/team/${currentTeam.slug}/discussions/${discussion.slug}`
       );
     } catch (error) {
       console.log(error);
