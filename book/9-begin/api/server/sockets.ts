@@ -16,6 +16,7 @@ function setupSockets({ httpServer, origin, sessionMiddleware }) {
         credentials: true,
       },
       cookie: {
+        name: 'io',
         httpOnly: true,
         maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
         domain: 'localhost',
@@ -29,7 +30,7 @@ function setupSockets({ httpServer, origin, sessionMiddleware }) {
 
     io.use(wrap(sessionMiddleware));
 
-    io.on('connection', (socket) => {
+    io.on('connection', (socket: any) => {
       if (
         !socket.request.session ||
         ((!socket.request.session.passport || !socket.request.session.passport.user) &&

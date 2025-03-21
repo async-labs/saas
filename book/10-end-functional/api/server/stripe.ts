@@ -13,7 +13,7 @@ const dev = process.env.NODE_ENV !== 'production';
 
 const stripeInstance = new Stripe(
   dev ? process.env.STRIPE_TEST_SECRETKEY : process.env.STRIPE_LIVE_SECRETKEY,
-  { apiVersion: '2022-11-15' },
+  { apiVersion: '2023-10-16' },
 );
 
 function createSession({
@@ -93,7 +93,7 @@ function updateSubscription(subscriptionId: string, params: Stripe.SubscriptionU
 
 function cancelSubscription({ subscriptionId }: { subscriptionId: string }) {
   logger.debug('cancel subscription', subscriptionId);
-  return stripeInstance.subscriptions.del(subscriptionId);
+  return stripeInstance.subscriptions.cancel(subscriptionId);
 }
 
 function getListOfInvoices({ customerId }: { customerId: string }) {
@@ -120,7 +120,6 @@ function stripeWebhookAndCheckoutCallback({ server }: { server: express.Applicat
         // Occurs whenever an invoice payment attempt fails, due either to a declined payment or to the lack of a stored payment method.
 
         if (event.type === 'invoice.payment_failed') {
-          // @ts-expect-error subscription does not exist on type Object
           const { subscription } = event.data.object;
           logger.debug(JSON.stringify(subscription));
 

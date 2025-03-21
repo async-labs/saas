@@ -29,6 +29,8 @@ We've used this `saas` project to build:
 
 [![aws-activate-logo](https://user-images.githubusercontent.com/26158226/138565715-4311ddda-fb77-452a-8755-d53eb18f8645.png)](https://aws.amazon.com/activate/)
 
+![aws-open-source (2)](https://github.com/user-attachments/assets/50f5b67a-0c95-4304-817f-1606adb46c81)
+
 [![1password-logo](https://user-images.githubusercontent.com/26158226/138565841-ad435374-7330-477a-b6f3-2542109c3217.png)](https://1password.com/)
 
 ## Showcase

@@ -1,4 +1,4 @@
-import LRUCache from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 
 export default function routesWithCache({ server, app }) {
   const ssrCache = new LRUCache({
