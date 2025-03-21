@@ -8,9 +8,11 @@
     "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.4",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@material-ui/lab": "^4.0.0-alpha.61",
-    "@material-ui/styles": "^4.11.5",
+    "@mui/material": "^6.4.8",
+    "@mui/system": "^6.4.8",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "he": "^1.2.0",

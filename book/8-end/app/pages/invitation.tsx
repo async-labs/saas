@@ -1,17 +1,17 @@
-import Avatar from '@material-ui/core/Avatar';
-import { observer } from 'mobx-react';
-import Error from 'next/error';
-import Head from 'next/head';
-import Router from 'next/router';
+import Avatar from "@mui/material/Avatar";
+import { observer } from "mobx-react";
+import Error from "next/error";
+import Head from "next/head";
+import Router from "next/router";
 // import { NextPageContext } from 'next';
-import React from 'react';
+import React from "react";
 
-import LoginButton from '../components/common/LoginButton';
-import Layout from '../components/layout';
-import { getTeamByTokenApiMethod } from '../lib/api/public';
-import { Team } from '../lib/store/team';
-import { Store } from '../lib/store';
-import withAuth from '../lib/withAuth';
+import LoginButton from "../components/common/LoginButton";
+import Layout from "../components/layout";
+import { getTeamByTokenApiMethod } from "../lib/api/public";
+import { Team } from "../lib/store/team";
+import { Store } from "../lib/store";
+import withAuth from "../lib/withAuth";
 
 class InvitationPageComp extends React.Component<{ store: Store; team: Team; token: string }> {
   public static async getInitialProps(ctx) {
@@ -49,18 +49,16 @@ class InvitationPageComp extends React.Component<{ store: Store; team: Team; tok
           <title>Invitation to {team.name}</title>
           <meta name="description" content={`Invitation to join ${team.name}`} />
         </Head>
-        <div style={{ textAlign: 'center', margin: '0 20px' }}>
+        <div style={{ textAlign: "center", margin: "0 20px" }}>
           <br />
           <Avatar
-            src={`${
-              team.avatarUrl || 'https://storage.googleapis.com/async-await/default-user.png?v=1'
-            }`}
+            src={`${team.avatarUrl || "https://storage.googleapis.com/async-await/default-user.png?v=1"}`}
             alt="Team logo"
             style={{
-              verticalAlign: 'middle',
-              display: 'inline-flex',
+              verticalAlign: "middle",
+              display: "inline-flex",
             }}
-          />{' '}
+          />{" "}
           <h2>{team.name}</h2>
           <p>
             Join <b>{team.name}</b> by logging in or signing up.
@@ -80,7 +78,7 @@ class InvitationPageComp extends React.Component<{ store: Store; team: Team; tok
     if (user && team) {
       Router.push(
         `${process.env.NEXT_PUBLIC_URL_API}/logout?invitationToken=${token}`,
-        `${process.env.NEXT_PUBLIC_URL_API}/logout`,
+        `${process.env.NEXT_PUBLIC_URL_API}/logout`
       );
     }
   }

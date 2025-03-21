@@ -1,30 +1,30 @@
-import Avatar from '@material-ui/core/Avatar';
-import Paper from '@material-ui/core/Paper';
-import Tooltip from '@material-ui/core/Tooltip';
-import { observer } from 'mobx-react';
-import moment from 'moment';
-import React from 'react';
+import Avatar from "@mui/material/Avatar";
+import Paper from "@mui/material/Paper";
+import Tooltip from "@mui/material/Tooltip";
+import { observer } from "mobx-react";
+import moment from "moment";
+import React from "react";
 
-import confirm from '../../lib/confirm';
-import notify from '../../lib/notify';
-import { Store } from '../../lib/store';
-import { Post } from '../../lib/store/post';
-import { User } from '../../lib/store/user';
+import confirm from "../../lib/confirm";
+import notify from "../../lib/notify";
+import { Store } from "../../lib/store";
+import { Post } from "../../lib/store/post";
+import { User } from "../../lib/store/user";
 
-import MenuWithMenuItems from '../common/MenuWithMenuItems';
+import MenuWithMenuItems from "../common/MenuWithMenuItems";
 
-import PostContent from './PostContent';
+import PostContent from "./PostContent";
 
 const stylePaper = {
-  margin: '10px 0px',
-  padding: '20px',
+  margin: "10px 0px",
+  padding: "20px",
 };
 
 const styleLineSeparator = {
-  verticalAlign: 'text-bottom',
+  verticalAlign: "text-bottom",
   fontWeight: 300,
-  fontSize: '16px',
-  margin: '0px 5px',
+  fontSize: "16px",
+  margin: "0px 5px",
   opacity: 0.75,
 };
 
@@ -38,7 +38,7 @@ const getMenuItemOptions = (post: Post, currentUser: User, component) => {
 
   if (post.createdUserId !== currentUser._id) {
     items.push({
-      text: 'Show Markdown',
+      text: "Show Markdown",
       dataId: post._id,
       onClick: component.showMarkdown,
     });
@@ -48,14 +48,14 @@ const getMenuItemOptions = (post: Post, currentUser: User, component) => {
     const isFirstPost = post.discussion.posts.indexOf(post) === 0;
 
     items.push({
-      text: 'Edit',
+      text: "Edit",
       dataId: post._id,
       onClick: component.editPost,
     });
 
     if (!isFirstPost) {
       items.push({
-        text: 'Delete',
+        text: "Delete",
         dataId: post._id,
         onClick: component.deletePost,
       });
@@ -81,15 +81,15 @@ class PostDetail extends React.Component<Props> {
   }
 
   public renderPostDetail(post: Post, isMobile) {
-    const createdDate = moment(post.createdAt).local().format('MMM Do YYYY');
+    const createdDate = moment(post.createdAt).local().format("MMM Do YYYY");
     const lastUpdatedDate = moment(post.lastUpdatedAt).fromNow();
 
     return (
       <React.Fragment>
         <div
           style={{
-            float: 'left',
-            margin: '-12px 10px 0px -15px',
+            float: "left",
+            margin: "-12px 10px 0px -15px",
             zIndex: 1000,
           }}
         >
@@ -97,36 +97,31 @@ class PostDetail extends React.Component<Props> {
         </div>
         <div id={`post-${post._id}`}>
           {post.user && (
-            <Tooltip
-              title={post.user.displayName}
-              placement="top"
-              disableFocusListener
-              disableTouchListener
-            >
+            <Tooltip title={post.user.displayName} placement="top" disableFocusListener disableTouchListener>
               <Avatar
                 src={post.user.avatarUrl}
                 alt={post.user.displayName}
                 style={{
-                  width: '40px',
-                  height: '40px',
-                  margin: '0px 10px 0px 5px',
-                  cursor: 'pointer',
-                  float: 'left',
+                  width: "40px",
+                  height: "40px",
+                  margin: "0px 10px 0px 5px",
+                  cursor: "pointer",
+                  float: "left",
                 }}
               />
             </Tooltip>
           )}
           <div
             style={{
-              margin: isMobile ? '0px' : '0px 20px 0px 70px',
+              margin: isMobile ? "0px" : "0px 20px 0px 70px",
               fontWeight: 300,
-              lineHeight: '1em',
+              lineHeight: "1em",
             }}
           >
-            <span style={{ fontSize: '12px', fontWeight: 400 }}>
-              {`By: ${post.user && post.user.displayName}` || 'User'}
+            <span style={{ fontSize: "12px", fontWeight: 400 }}>
+              {`By: ${post.user && post.user.displayName}` || "User"}
               <span style={styleLineSeparator}>|</span>
-              {`Created: ${post.createdAt && createdDate}` || ''}
+              {`Created: ${post.createdAt && createdDate}` || ""}
 
               {post.isEdited ? (
                 <React.Fragment>
@@ -176,13 +171,13 @@ class PostDetail extends React.Component<Props> {
 
   public deletePost = () => {
     confirm({
-      title: 'Are you sure?',
-      message: '',
+      title: "Are you sure?",
+      message: "",
       onAnswer: async (answer) => {
         if (answer) {
           const { post } = this.props;
           await post.discussion.deletePost(post);
-          notify('You successfully deleted Post.');
+          notify("You successfully deleted Post.");
         }
       },
     });

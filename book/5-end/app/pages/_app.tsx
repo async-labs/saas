@@ -1,16 +1,16 @@
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider } from '@material-ui/styles';
-import App from 'next/app';
-import Head from 'next/head';
-import React from 'react';
-import { isMobile } from '../lib/isMobile';
-import { themeDark, themeLight } from '../lib/theme';
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider } from "@mui/material";
+import App from "next/app";
+import Head from "next/head";
+import React from "react";
+import { isMobile } from "../lib/isMobile";
+import { themeDark, themeLight } from "../lib/theme";
 
 class MyApp extends App {
   public static async getInitialProps({ Component, ctx }) {
     let firstGridItem = true;
 
-    if (ctx.pathname.includes('/login')) {
+    if (ctx.pathname.includes("/login")) {
       firstGridItem = false;
     }
 
@@ -25,7 +25,7 @@ class MyApp extends App {
 
   public componentDidMount() {
     // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
+    const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles && jssStyles.parentNode) {
       jssStyles.parentNode.removeChild(jssStyles);
     }
@@ -37,10 +37,7 @@ class MyApp extends App {
       <ThemeProvider theme={false ? themeDark : themeLight}>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <link
-            rel="stylesheet"
-            href="https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1"
-          />
+          <link rel="stylesheet" href="https://storage.googleapis.com/async-await/nprogress-dark.min.css?v=1" />
         </Head>
         <CssBaseline />
         <Component {...pageProps} />

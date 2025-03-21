@@ -1,23 +1,23 @@
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import { observer } from 'mobx-react';
-import NProgress from 'nprogress';
-import React from 'react';
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import { observer } from "mobx-react";
+import NProgress from "nprogress";
+import React from "react";
 
-import notify from '../../lib/notify';
-import { Store } from '../../lib/store';
-import { Discussion } from '../../lib/store/discussion';
-import MemberChooser from '../common/MemberChooser';
+import notify from "../../lib/notify";
+import { Store } from "../../lib/store";
+import { Discussion } from "../../lib/store/discussion";
+import MemberChooser from "../common/MemberChooser";
 
 type Props = {
   store: Store;
@@ -40,11 +40,11 @@ class EditDiscussionForm extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      name: '',
+      name: "",
       memberIds: [],
       disabled: false,
-      discussionId: '',
-      notificationType: 'default',
+      discussionId: "",
+      notificationType: "default",
     };
   }
 
@@ -56,10 +56,10 @@ class EditDiscussionForm extends React.Component<Props, State> {
     }
 
     return {
-      name: (discussion && discussion.name) || '',
+      name: (discussion && discussion.name) || "",
       memberIds: (discussion && discussion.memberIds) || [],
       discussionId: discussion._id,
-      notificationType: discussion.notificationType || 'default',
+      notificationType: discussion.notificationType || "default",
     };
   }
 
@@ -67,9 +67,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
     const { open, store } = this.props;
     const { currentTeam, currentUser } = store;
 
-    const membersMinusCreator = Array.from(currentTeam.members.values()).filter(
-      (user) => user._id !== currentUser._id,
-    );
+    const membersMinusCreator = Array.from(currentTeam.members.values()).filter((user) => user._id !== currentUser._id);
 
     // console.log(currentTeam.members);
 
@@ -110,27 +108,15 @@ class EditDiscussionForm extends React.Component<Props, State> {
                 <MenuItem value="default">Default: without email notification.</MenuItem>
                 <MenuItem value="email">Email: with email notification.</MenuItem>
               </Select>
-              <FormHelperText>
-                Choose how to notify members about new Posts inside Discussion.
-              </FormHelperText>
+              <FormHelperText>Choose how to notify members about new Posts inside Discussion.</FormHelperText>
             </FormControl>
             <p />
             <br />
             <DialogActions>
-              <Button
-                color="primary"
-                variant="outlined"
-                onClick={this.handleClose}
-                disabled={this.state.disabled}
-              >
+              <Button color="primary" variant="outlined" onClick={this.handleClose} disabled={this.state.disabled}>
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={this.state.disabled}
-              >
+              <Button type="submit" variant="contained" color="primary" disabled={this.state.disabled}>
                 Update Discussion
               </Button>
             </DialogActions>
@@ -145,7 +131,7 @@ class EditDiscussionForm extends React.Component<Props, State> {
   };
 
   public handleClose = () => {
-    this.setState({ name: '', memberIds: [], disabled: false, notificationType: 'default' });
+    this.setState({ name: "", memberIds: [], disabled: false, notificationType: "default" });
     this.props.onClose();
   };
 
@@ -157,14 +143,14 @@ class EditDiscussionForm extends React.Component<Props, State> {
     const { notificationType } = this.state;
 
     if (!currentTeam) {
-      notify('Team have not selected');
+      notify("Team have not selected");
       return;
     }
 
     const { name, memberIds } = this.state;
 
     if (!name) {
-      notify('Please name this Discussion.');
+      notify("Please name this Discussion.");
       return;
     }
 
@@ -173,12 +159,12 @@ class EditDiscussionForm extends React.Component<Props, State> {
     }
 
     if (!memberIds || memberIds.length < 1) {
-      notify('Please assign at least one person to this Discussion.');
+      notify("Please assign at least one person to this Discussion.");
       return;
     }
 
     if (!notificationType) {
-      notify('Please select notification type.');
+      notify("Please select notification type.");
       return;
     }
 
@@ -186,8 +172,8 @@ class EditDiscussionForm extends React.Component<Props, State> {
     try {
       await discussion.editDiscussion({ name, memberIds, notificationType });
 
-      this.setState({ name: '', memberIds: [], disabled: false, notificationType: 'default' });
-      notify('You successfully edited Discussion.');
+      this.setState({ name: "", memberIds: [], disabled: false, notificationType: "default" });
+      notify("You successfully edited Discussion.");
     } catch (error) {
       console.log(error);
       notify(error);

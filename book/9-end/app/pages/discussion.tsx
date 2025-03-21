@@ -1,19 +1,19 @@
-import Avatar from '@material-ui/core/Avatar';
-import Tooltip from '@material-ui/core/Tooltip';
-import Head from 'next/head';
-import Router from 'next/router';
-import * as React from 'react';
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
+import Head from "next/head";
+import Router from "next/router";
+import * as React from "react";
 
-import { observer } from 'mobx-react';
+import { observer } from "mobx-react";
 
-import Layout from '../components/layout';
-import PostDetail from '../components/posts/PostDetail';
-import PostForm from '../components/posts/PostForm';
-import notify from '../lib/notify';
-import { Store } from '../lib/store';
-import { Discussion } from '../lib/store/discussion';
-import withAuth from '../lib/withAuth';
-import { Post } from 'lib/store/post';
+import Layout from "../components/layout";
+import PostDetail from "../components/posts/PostDetail";
+import PostForm from "../components/posts/PostForm";
+import notify from "../lib/notify";
+import { Store } from "../lib/store";
+import { Discussion } from "../lib/store/discussion";
+import withAuth from "../lib/withAuth";
+import { Post } from "lib/store/post";
 
 type Props = {
   store: Store;
@@ -50,7 +50,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
           <Head>
             <title>No Team is found.</title>
           </Head>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>No Team is found.</div>
+          <div style={{ padding: isMobile ? "0px" : "0px 30px" }}>No Team is found.</div>
         </Layout>
       );
     }
@@ -64,7 +64,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
             <Head>
               <title>Loading...</title>
             </Head>
-            <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+            <div style={{ padding: isMobile ? "0px" : "0px 30px" }}>
               <p>Loading Discussions...</p>
             </div>
           </Layout>
@@ -75,7 +75,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
             <Head>
               <title>No Discussion is found.</title>
             </Head>
-            <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+            <div style={{ padding: isMobile ? "0px" : "0px 30px" }}>
               <p>No Discussion is found.</p>
             </div>
           </Layout>
@@ -83,39 +83,33 @@ class DiscussionPageComp extends React.Component<Props, State> {
       }
     }
 
-    const title = discussion ? `${discussion.name} · Discussion` : 'Discussions';
+    const title = discussion ? `${discussion.name} · Discussion` : "Discussions";
 
     return (
       <Layout {...this.props}>
         <Head>
           <title>{title}</title>
         </Head>
-        <div style={{ padding: isMobile ? '0px' : '0px 30px', height: '100vh' }}>
+        <div style={{ padding: isMobile ? "0px" : "0px 30px", height: "100vh" }}>
           <h4>
             <span style={{ fontWeight: 300 }}>Discussion : </span>
-            {(discussion && discussion.name) || 'No Discussion is found.'}
-          </h4>{' '}
-          Visible to :{' '}
+            {(discussion && discussion.name) || "No Discussion is found."}
+          </h4>{" "}
+          Visible to :{" "}
           {discussion
             ? discussion.members.map((m) => (
-                <Tooltip
-                  title={m.displayName}
-                  placement="right"
-                  disableFocusListener
-                  disableTouchListener
-                  key={m._id}
-                >
+                <Tooltip title={m.displayName} placement="right" disableFocusListener disableTouchListener key={m._id}>
                   <Avatar
                     role="presentation"
                     src={m.avatarUrl}
                     alt={m.avatarUrl}
                     key={m._id}
                     style={{
-                      margin: '0px 5px',
-                      display: 'inline-flex',
-                      width: '30px',
-                      height: '30px',
-                      verticalAlign: 'middle',
+                      margin: "0px 5px",
+                      display: "inline-flex",
+                      width: "30px",
+                      height: "30px",
+                      verticalAlign: "middle",
                     }}
                   />
                 </Tooltip>
@@ -154,7 +148,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
     if (!slug && currentTeam.discussions.length > 0) {
       Router.replace(
         `/discussion?teamSlug=${teamSlug}&discussionSlug=${currentTeam.orderedDiscussions[0].slug}`,
-        `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`,
+        `/team/${teamSlug}/discussions/${currentTeam.orderedDiscussions[0].slug}`
       );
       return;
     }
@@ -175,9 +169,9 @@ class DiscussionPageComp extends React.Component<Props, State> {
       return <p>Empty Discussion.</p>;
     }
 
-    let loading = 'loading Posts ...';
+    let loading = "loading Posts ...";
     if (discussion.posts.length > 0) {
-      loading = 'checking for newer Posts ...';
+      loading = "checking for newer Posts ...";
     }
 
     return (
@@ -209,7 +203,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
                   isMobile={this.props.isMobile}
                   store={store}
                 />
-              ),
+              )
             )
           : null}
 
@@ -241,9 +235,9 @@ class DiscussionPageComp extends React.Component<Props, State> {
 
     console.log(store.socket);
 
-    store.socket.on('discussionEvent', this.handleDiscussionEvent);
-    store.socket.on('postEvent', this.handlePostEvent);
-    store.socket.on('reconnect', this.handleSocketReconnect);
+    store.socket.on("discussionEvent", this.handleDiscussionEvent);
+    store.socket.on("postEvent", this.handlePostEvent);
+    store.socket.on("reconnect", this.handleSocketReconnect);
   }
 
   public componentWillUnmount() {
@@ -255,9 +249,9 @@ class DiscussionPageComp extends React.Component<Props, State> {
       discussion.leaveSocketRooms();
     }
 
-    store.socket.off('discussionEvent', this.handleDiscussionEvent);
-    store.socket.off('postEvent', this.handlePostEvent);
-    store.socket.off('reconnect', this.handleSocketReconnect);
+    store.socket.off("discussionEvent", this.handleDiscussionEvent);
+    store.socket.off("postEvent", this.handlePostEvent);
+    store.socket.off("reconnect", this.handleSocketReconnect);
   }
 
   public componentDidUpdate(prevProps: Props) {
@@ -284,7 +278,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
   }
 
   private handleDiscussionEvent = (data) => {
-    console.log('discussion realtime event', data);
+    console.log("discussion realtime event", data);
 
     const discussion = this.getDiscussion(this.props.discussionSlug);
     if (discussion) {
@@ -293,7 +287,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
   };
 
   private handlePostEvent = (data) => {
-    console.log('post realtime event', data);
+    console.log("post realtime event", data);
 
     const discussion = this.getDiscussion(this.props.discussionSlug);
     if (discussion) {
@@ -302,7 +296,7 @@ class DiscussionPageComp extends React.Component<Props, State> {
   };
 
   private handleSocketReconnect = () => {
-    console.log('pages/discussion.tsx: socket re-connected');
+    console.log("pages/discussion.tsx: socket re-connected");
 
     const discussion = this.getDiscussion(this.props.discussionSlug);
     if (discussion) {

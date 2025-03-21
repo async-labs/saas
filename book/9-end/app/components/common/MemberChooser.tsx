@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
-import { User } from '../../lib/store/user';
+import { User } from "../../lib/store/user";
 
 type Props = {
   onChange: (item) => void;
@@ -26,9 +26,7 @@ class MemberChooser extends React.Component<Props, State> {
       id: user._id,
     }));
 
-    const selectedItems = suggestions.filter(
-      (s) => this.props.selectedMemberIds.indexOf(s.id) !== -1,
-    );
+    const selectedItems = suggestions.filter((s) => this.props.selectedMemberIds.indexOf(s.id) !== -1);
 
     this.state = {
       selectedItems: selectedItems || [],

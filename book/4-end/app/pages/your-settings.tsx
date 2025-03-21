@@ -1,21 +1,18 @@
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Head from 'next/head';
-import NProgress from 'nprogress';
-import * as React from 'react';
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Head from "next/head";
+import NProgress from "nprogress";
+import * as React from "react";
 
-import Layout from '../components/layout';
+import Layout from "../components/layout";
 
-import { getUserBySlugApiMethod, updateProfileApiMethod } from '../lib/api/public';
-import {
-  getSignedRequestForUploadApiMethod,
-  uploadFileUsingSignedPutRequestApiMethod,
-} from '../lib/api/team-member';
+import { getUserBySlugApiMethod, updateProfileApiMethod } from "../lib/api/public";
+import { getSignedRequestForUploadApiMethod, uploadFileUsingSignedPutRequestApiMethod } from "../lib/api/team-member";
 
-import { resizeImage } from '../lib/resizeImage';
+import { resizeImage } from "../lib/resizeImage";
 
-import notify from '../lib/notify';
+import notify from "../lib/notify";
 
 type Props = {
   isMobile: boolean;
@@ -26,7 +23,7 @@ type State = { newName: string; newAvatarUrl: string; disabled: boolean };
 
 class YourSettings extends React.Component<Props, State> {
   public static async getInitialProps() {
-    const slug = 'team-builder-book';
+    const slug = "team-builder-book";
 
     const user = await getUserBySlugApiMethod(slug);
 
@@ -57,13 +54,13 @@ class YourSettings extends React.Component<Props, State> {
         </Head>
         <div
           style={{
-            padding: this.props.isMobile ? '0px' : '0px 30px',
-            fontSize: '15px',
-            height: '100%',
+            padding: this.props.isMobile ? "0px" : "0px 30px",
+            fontSize: "15px",
+            height: "100%",
           }}
         >
           <h3>Your Settings</h3>
-          <h4 style={{ marginTop: '40px' }}>Your account</h4>
+          <h4 style={{ marginTop: "40px" }}>Your account</h4>
           <ul>
             <li>
               Your email: <b>{user.email}</b>
@@ -84,12 +81,7 @@ class YourSettings extends React.Component<Props, State> {
             />
             <br />
             <br />
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={this.state.disabled}
-            >
+            <Button variant="contained" color="primary" type="submit" disabled={this.state.disabled}>
               Update username
             </Button>
           </form>
@@ -99,20 +91,15 @@ class YourSettings extends React.Component<Props, State> {
           <Avatar
             src={newAvatarUrl}
             style={{
-              display: 'inline-flex',
-              verticalAlign: 'middle',
+              display: "inline-flex",
+              verticalAlign: "middle",
               marginRight: 20,
               width: 60,
               height: 60,
             }}
           />
           <label htmlFor="upload-file-user-avatar">
-            <Button
-              variant="outlined"
-              color="primary"
-              component="span"
-              disabled={this.state.disabled}
-            >
+            <Button variant="outlined" color="primary" component="span" disabled={this.state.disabled}>
               Update avatar
             </Button>
           </label>
@@ -121,7 +108,7 @@ class YourSettings extends React.Component<Props, State> {
             name="upload-file-user-avatar"
             id="upload-file-user-avatar"
             type="file"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             onChange={this.uploadFile}
           />
           <p />
@@ -139,7 +126,7 @@ class YourSettings extends React.Component<Props, State> {
     console.log(newName);
 
     if (!newName) {
-      notify('Name is required');
+      notify("Name is required");
       return;
     }
 
@@ -152,7 +139,7 @@ class YourSettings extends React.Component<Props, State> {
         avatarUrl: newAvatarUrl,
       });
 
-      notify('You successfully updated your profile.');
+      notify("You successfully updated your profile.");
     } catch (error) {
       notify(error);
     } finally {
@@ -162,11 +149,11 @@ class YourSettings extends React.Component<Props, State> {
   };
 
   private uploadFile = async () => {
-    const fileElement = document.getElementById('upload-file-user-avatar') as HTMLFormElement;
+    const fileElement = document.getElementById("upload-file-user-avatar") as HTMLFormElement;
     const file = fileElement.files[0];
 
     if (file == null) {
-      notify('No file selected for upload.');
+      notify("No file selected for upload.");
       return;
     }
 
@@ -178,7 +165,7 @@ class YourSettings extends React.Component<Props, State> {
 
     const bucket = process.env.NEXT_PUBLIC_BUCKET_FOR_AVATARS;
 
-    const prefix = 'team-builder-book';
+    const prefix = "team-builder-book";
 
     try {
       const responseFromApiServerForUpload = await getSignedRequestForUploadApiMethod({
@@ -193,11 +180,9 @@ class YourSettings extends React.Component<Props, State> {
       console.log(file);
       console.log(resizedFile);
 
-      await uploadFileUsingSignedPutRequestApiMethod(
-        resizedFile,
-        responseFromApiServerForUpload.signedRequest,
-        { 'Cache-Control': 'max-age=2592000' },
-      );
+      await uploadFileUsingSignedPutRequestApiMethod(resizedFile, responseFromApiServerForUpload.signedRequest, {
+        "Cache-Control": "max-age=2592000",
+      });
 
       this.setState({
         newAvatarUrl: responseFromApiServerForUpload.url,
@@ -208,11 +193,11 @@ class YourSettings extends React.Component<Props, State> {
         avatarUrl: this.state.newAvatarUrl,
       });
 
-      notify('You successfully uploaded new avatar.');
+      notify("You successfully uploaded new avatar.");
     } catch (error) {
       notify(error);
     } finally {
-      fileElement.value = '';
+      fileElement.value = "";
       this.setState({ disabled: false });
       NProgress.done();
     }
