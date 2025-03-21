@@ -1,23 +1,21 @@
-import { observer } from 'mobx-react';
-import moment from 'moment';
-import Head from 'next/head';
-import * as React from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import Button from '@material-ui/core/Button';
-import NProgress from 'nprogress';
+import { observer } from "mobx-react";
+import moment from "moment";
+import Head from "next/head";
+import * as React from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import Button from "@mui/material/Button";
+import NProgress from "nprogress";
 
-import Layout from '../components/layout';
-import notify from '../lib/notify';
-import { Store } from '../lib/store';
-import withAuth from '../lib/withAuth';
-import { fetchCheckoutSessionApiMethod } from '../lib/api/team-leader';
+import Layout from "../components/layout";
+import notify from "../lib/notify";
+import { Store } from "../lib/store";
+import withAuth from "../lib/withAuth";
+import { fetchCheckoutSessionApiMethod } from "../lib/api/team-leader";
 
-const dev = process.env && process.env.NODE_ENV && process.env.NODE_ENV !== 'production';
+const dev = process.env && process.env.NODE_ENV && process.env.NODE_ENV !== "production";
 
 const stripePromise = loadStripe(
-  dev
-    ? process.env.NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY
-    : process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY,
+  dev ? process.env.NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY : process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY
 );
 
 type Props = {
@@ -44,12 +42,9 @@ class Billing extends React.Component<Props, State> {
     if (!currentTeam || currentTeam.slug !== this.props.teamSlug) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+          <div style={{ padding: isMobile ? "0px" : "0px 30px" }}>
             <p>You did not select any team.</p>
-            <p>
-              To access this page, please select existing team or create new team if you have no
-              teams.
-            </p>
+            <p>To access this page, please select existing team or create new team if you have no teams.</p>
           </div>
         </Layout>
       );
@@ -58,7 +53,7 @@ class Billing extends React.Component<Props, State> {
     if (!isTeamLeader) {
       return (
         <Layout {...this.props}>
-          <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+          <div style={{ padding: isMobile ? "0px" : "0px 30px" }}>
             <p>Only the Team Leader can access this page.</p>
             <p>Create your own team to become a Team Leader.</p>
           </div>
@@ -71,10 +66,10 @@ class Billing extends React.Component<Props, State> {
         <Head>
           <title>Your Billing</title>
         </Head>
-        <div style={{ padding: isMobile ? '0px' : '0px 30px' }}>
+        <div style={{ padding: isMobile ? "0px" : "0px 30px" }}>
           <h3>Your Billing</h3>
           <p />
-          <h4 style={{ marginTop: '40px' }}>Paid plan</h4>
+          <h4 style={{ marginTop: "40px" }}>Paid plan</h4>
           {this.renderSubscriptionButton()}
           <p />
           <br />
@@ -112,10 +107,8 @@ class Billing extends React.Component<Props, State> {
     let subscriptionDate;
     let billingDay;
     if (currentTeam && currentTeam.stripeSubscription) {
-      subscriptionDate = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format(
-        'MMM Do YYYY',
-      );
-      billingDay = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format('Do');
+      subscriptionDate = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format("MMM Do YYYY");
+      billingDay = moment(currentTeam.stripeSubscription.billing_cycle_anchor * 1000).format("Do");
     }
 
     if (currentTeam && !currentTeam.isSubscriptionActive && currentTeam.isPaymentFailed) {
@@ -125,15 +118,15 @@ class Billing extends React.Component<Props, State> {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => this.handleCheckoutClick('subscription')}
+            onClick={() => this.handleCheckoutClick("subscription")}
             disabled={this.state.disabled}
           >
             Buy subscription
           </Button>
           <p />
           <p>
-            Team was automatically unsubscribed due to failed payment. You will be prompt to update
-            card information if you choose to re-subscribe Team.
+            Team was automatically unsubscribed due to failed payment. You will be prompt to update card information if
+            you choose to re-subscribe Team.
           </p>
         </>
       );
@@ -141,14 +134,11 @@ class Billing extends React.Component<Props, State> {
       return (
         <React.Fragment>
           <p>You are not a paying customer.</p>
-          <p>
-            Buy subscription using your current card, see below section for current card
-            information.
-          </p>
+          <p>Buy subscription using your current card, see below section for current card information.</p>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => this.handleCheckoutClick('subscription')}
+            onClick={() => this.handleCheckoutClick("subscription")}
             disabled={this.state.disabled}
           >
             Buy subscription
@@ -159,17 +149,17 @@ class Billing extends React.Component<Props, State> {
       return (
         <React.Fragment>
           <span>
-            {' '}
-            <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
+            {" "}
+            <i className="material-icons" color="action" style={{ verticalAlign: "text-bottom" }}>
               done
-            </i>{' '}
+            </i>{" "}
             Subscription is active.
             <p>
               You subscribed <b>{currentTeam.name}</b> on <b>{subscriptionDate}</b>.
             </p>
             <p>
-              You will be billed $50 on <b>{billingDay} day</b> of each month unless you cancel
-              subscription or subscription is cancelled automatically due to failed payment.
+              You will be billed $50 on <b>{billingDay} day</b> of each month unless you cancel subscription or
+              subscription is cancelled automatically due to failed payment.
             </p>
           </span>
           <p />
@@ -187,7 +177,7 @@ class Billing extends React.Component<Props, State> {
     }
   }
 
-  private handleCheckoutClick = async (mode: 'subscription' | 'setup') => {
+  private handleCheckoutClick = async (mode: "subscription" | "setup") => {
     try {
       const { currentTeam } = this.props.store;
 
@@ -221,7 +211,7 @@ class Billing extends React.Component<Props, State> {
 
     try {
       await currentTeam.cancelSubscription({ teamId: currentTeam._id });
-      notify('Success!');
+      notify("Success!");
     } catch (err) {
       notify(err);
     } finally {
@@ -236,10 +226,10 @@ class Billing extends React.Component<Props, State> {
     if (currentUser && currentUser.hasCardInformation) {
       return (
         <span>
-          {' '}
-          <i className="material-icons" color="action" style={{ verticalAlign: 'text-bottom' }}>
+          {" "}
+          <i className="material-icons" color="action" style={{ verticalAlign: "text-bottom" }}>
             done
-          </i>{' '}
+          </i>{" "}
           Your default payment method:
           <li>
             {currentUser.stripeCard.brand}, {currentUser.stripeCard.funding} card
@@ -252,7 +242,7 @@ class Billing extends React.Component<Props, State> {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => this.handleCheckoutClick('setup')}
+            onClick={() => this.handleCheckoutClick("setup")}
             disabled={this.state.disabled}
           >
             Update card
@@ -260,7 +250,7 @@ class Billing extends React.Component<Props, State> {
         </span>
       );
     } else {
-      return 'You have not added a card.';
+      return "You have not added a card.";
     }
   }
 
@@ -279,9 +269,8 @@ class Billing extends React.Component<Props, State> {
             <React.Fragment key={i}>
               <p>Your history of payments:</p>
               <li>
-                ${invoice.amount_paid / 100} was paid on{' '}
-                {moment(invoice.created * 1000).format('MMM Do YYYY')} for Team '{invoice.teamName}'
-                -{' '}
+                ${invoice.amount_paid / 100} was paid on {moment(invoice.created * 1000).format("MMM Do YYYY")} for Team
+                '{invoice.teamName}' -{" "}
                 <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">
                   See invoice
                 </a>
@@ -291,7 +280,7 @@ class Billing extends React.Component<Props, State> {
         </React.Fragment>
       );
     } else {
-      return 'You have no history of payments.';
+      return "You have no history of payments.";
     }
   }
 

@@ -1,37 +1,36 @@
-import * as bodyParser from 'body-parser';
-import Stripe from 'stripe';
+import * as bodyParser from "body-parser";
+import Stripe from "stripe";
 
-import Team from './models/Team';
-import User from './models/User';
+import Team from "./models/Team";
+import User from "./models/User";
 
-const dev = process.env.NODE_ENV !== 'production';
+const dev = process.env.NODE_ENV !== "production";
 
-const stripeInstance = new Stripe(
-  dev ? process.env.STRIPE_TEST_SECRETKEY : process.env.STRIPE_LIVE_SECRETKEY,
-  { apiVersion: '2023-10-16' },
-);
+const stripeInstance = new Stripe(dev ? process.env.STRIPE_TEST_SECRETKEY : process.env.STRIPE_LIVE_SECRETKEY, {
+  apiVersion: "2025-02-24.acacia",
+});
 
 function createSession({ userId, teamId, teamSlug, customerId, subscriptionId, userEmail, mode }) {
   const params: Stripe.Checkout.SessionCreateParams = {
     customer_email: customerId ? undefined : userEmail,
     customer: customerId,
-    payment_method_types: ['card'],
+    payment_method_types: ["card"],
     mode,
     success_url: `${process.env.URL_API}/stripe/checkout-completed/{CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.URL_APP}/team/${teamSlug}/billing?redirectMessage=Checkout%20canceled`,
     metadata: { userId, teamId },
   };
 
-  if (mode === 'subscription') {
+  if (mode === "subscription") {
     params.line_items = [
       {
         price: dev ? process.env.STRIPE_TEST_PRICEID : process.env.STRIPE_LIVE_PRICEID,
         quantity: 1,
       },
     ];
-  } else if (mode === 'setup') {
+  } else if (mode === "setup") {
     if (!customerId || !subscriptionId) {
-      throw new Error('customerId and subscriptionId required');
+      throw new Error("customerId and subscriptionId required");
     }
 
     params.setup_intent_data = {
@@ -45,45 +44,45 @@ function createSession({ userId, teamId, teamSlug, customerId, subscriptionId, u
 function retrieveSession({ sessionId }: { sessionId: string }) {
   return stripeInstance.checkout.sessions.retrieve(sessionId, {
     expand: [
-      'setup_intent',
-      'setup_intent.payment_method',
-      'customer',
-      'subscription',
-      'subscription.default_payment_method',
+      "setup_intent",
+      "setup_intent.payment_method",
+      "customer",
+      "subscription",
+      "subscription.default_payment_method",
     ],
   });
 }
 
 function updateCustomer(customerId, params: Stripe.CustomerUpdateParams) {
-  console.log('updating customer', customerId);
+  console.log("updating customer", customerId);
   return stripeInstance.customers.update(customerId, params);
 }
 
 function updateSubscription(subscriptionId: string, params: Stripe.SubscriptionUpdateParams) {
-  console.log('updating subscription', subscriptionId);
+  console.log("updating subscription", subscriptionId);
   return stripeInstance.subscriptions.update(subscriptionId, params);
 }
 
 function cancelSubscription({ subscriptionId }) {
-  console.log('cancel subscription', subscriptionId);
+  console.log("cancel subscription", subscriptionId);
   return stripeInstance.subscriptions.cancel(subscriptionId);
 }
 
 function getListOfInvoices({ customerId }) {
-  console.log('getting list of invoices for customer', customerId);
+  console.log("getting list of invoices for customer", customerId);
   return stripeInstance.invoices.list({ customer: customerId, limit: 100 });
 }
 
 function stripeWebhookAndCheckoutCallback({ server }) {
   server.post(
-    '/api/v1/public/stripe-invoice-payment-failed',
-    bodyParser.raw({ type: 'application/json' }),
+    "/api/v1/public/stripe-invoice-payment-failed",
+    bodyParser.raw({ type: "application/json" }),
     async (req, res, next) => {
       try {
         const event = stripeInstance.webhooks.constructEvent(
           req.body,
-          req.headers['stripe-signature'],
-          dev ? process.env.STRIPE_TEST_ENDPOINTSECRET : process.env.STRIPE_LIVE_ENDPOINTSECRET,
+          req.headers["stripe-signature"],
+          dev ? process.env.STRIPE_TEST_ENDPOINTSECRET : process.env.STRIPE_LIVE_ENDPOINTSECRET
         );
 
         console.log(`${event.id}, ${event.type}`);
@@ -92,7 +91,7 @@ function stripeWebhookAndCheckoutCallback({ server }) {
         // data.object is an invoice
         // Occurs whenever an invoice payment attempt fails, due either to a declined payment or to the lack of a stored payment method.
 
-        if (event.type === 'invoice.payment_failed') {
+        if (event.type === "invoice.payment_failed") {
           const { subscription } = event.data.object;
           console.log(JSON.stringify(subscription));
 
@@ -106,41 +105,41 @@ function stripeWebhookAndCheckoutCallback({ server }) {
         console.log(`Webhook error: ${err.message}`);
         next(err);
       }
-    },
+    }
   );
 
-  server.get('/stripe/checkout-completed/:sessionId', async (req, res) => {
+  server.get("/stripe/checkout-completed/:sessionId", async (req, res) => {
     const { sessionId } = req.params;
 
     const session = await retrieveSession({ sessionId });
     if (!session || !session.metadata || !session.metadata.userId || !session.metadata.teamId) {
-      throw new Error('Wrong session.');
+      throw new Error("Wrong session.");
     }
 
     const user = await User.findById(
       session.metadata.userId,
-      '_id stripeCustomer email displayName isSubscriptionActive stripeSubscription',
+      "_id stripeCustomer email displayName isSubscriptionActive stripeSubscription"
     ).setOptions({ lean: true });
 
     const team = await Team.findById(
       session.metadata.teamId,
-      'isSubscriptionActive stripeSubscription teamLeaderId slug',
+      "isSubscriptionActive stripeSubscription teamLeaderId slug"
     ).setOptions({ lean: true });
 
     if (!user) {
-      throw new Error('User not found.');
+      throw new Error("User not found.");
     }
 
     if (!team) {
-      throw new Error('Team not found.');
+      throw new Error("Team not found.");
     }
 
     if (team.teamLeaderId !== user._id.toString()) {
-      throw new Error('Permission denied');
+      throw new Error("Permission denied");
     }
 
     try {
-      if (session.mode === 'setup' && session.setup_intent) {
+      if (session.mode === "setup" && session.setup_intent) {
         const si: Stripe.SetupIntent = session.setup_intent as Stripe.SetupIntent;
         const pm: Stripe.PaymentMethod = si.payment_method as Stripe.PaymentMethod;
 
@@ -155,23 +154,19 @@ function stripeWebhookAndCheckoutCallback({ server }) {
         }
 
         await User.changeStripeCard({ session, user });
-      } else if (session.mode === 'subscription') {
+      } else if (session.mode === "subscription") {
         await User.saveStripeCustomerAndCard({ session, user });
         await Team.subscribeTeam({ session, team });
-        await User.getListOfInvoicesForCustomer({ userId: user._id });
+        await User.getListOfInvoicesForCustomer({ userId: user._id.toString() });
       } else {
-        throw new Error('Wrong session.');
+        throw new Error("Wrong session.");
       }
 
       res.redirect(`${process.env.URL_APP}/team/${team.slug}/billing`);
     } catch (err) {
       console.error(err);
 
-      res.redirect(
-        `${process.env.URL_APP}/team/${team.slug}/billing?redirectMessage=${
-          err.message || err.toString()
-        }`,
-      );
+      res.redirect(`${process.env.URL_APP}/team/${team.slug}/billing?redirectMessage=${err.message || err.toString()}`);
     }
   });
 }

@@ -1,14 +1,14 @@
-import Tooltip from '@material-ui/core/Tooltip';
-import { observer } from 'mobx-react';
-import React from 'react';
+import Tooltip from "@mui/material/Tooltip";
+import { observer } from "mobx-react";
+import React from "react";
 
-import { Store } from '../../lib/store';
-import { Team } from '../../lib/store/team';
+import { Store } from "../../lib/store";
+import { Team } from "../../lib/store/team";
 
-import CreateDiscussionForm from './CreateDiscussionForm';
-import DiscussionListItem from './DiscussionListItem';
+import CreateDiscussionForm from "./CreateDiscussionForm";
+import DiscussionListItem from "./DiscussionListItem";
 
-import notify from '../../lib/notify';
+import notify from "../../lib/notify";
 
 type Props = { store: Store; team: Team; isMobile: boolean };
 
@@ -42,18 +42,18 @@ class DiscussionList extends React.Component<Props, State> {
       <div>
         Discussions
         <Tooltip title="Add Discussion" placement="right" disableFocusListener disableTouchListener>
-          <a onClick={this.addDiscussion} style={{ float: 'right', padding: '0px 10px' }}>
+          <a onClick={this.addDiscussion} style={{ float: "right", padding: "0px 10px" }}>
             <i
               className="material-icons"
               color="action"
-              style={{ fontSize: 14, opacity: 0.7, color: isThemeDark ? '#fff' : '#000' }}
+              style={{ fontSize: 14, opacity: 0.7, color: isThemeDark ? "#fff" : "#000" }}
             >
               add_circle_outline
-            </i>{' '}
+            </i>{" "}
           </a>
         </Tooltip>
         <p />
-        <ul style={{ listStyle: 'none', padding: '0px' }}>
+        <ul style={{ listStyle: "none", padding: "0px" }}>
           {team &&
             team.orderedDiscussions.map((d) => {
               return (
