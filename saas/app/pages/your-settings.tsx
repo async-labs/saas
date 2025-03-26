@@ -114,7 +114,7 @@ function YourSettings({ store, isMobile, firstGridItem, teamRequired }: Props) {
 
       await currentUser.updateProfile({
         name: newName,
-        avatarUrl: newAvatarUrl,
+        avatarUrl: responseFromApiServerForUpload.url,
       });
 
       notify('You successfully uploaded new avatar.');
