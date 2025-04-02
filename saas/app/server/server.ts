@@ -1,5 +1,8 @@
 import express from 'express';
 import next from 'next';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 import setupSitemapAndRobots from './setupSitemapAndRobots';
 
