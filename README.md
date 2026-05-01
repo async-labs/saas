@@ -445,3 +445,10 @@ All code in this repository is provided under the [MIT License](https://github.c
 ├── package.json
 ├── yarn.lock
 ```
+
+
+## Roadmap
+
+- [ ] Improve documentation
+- [ ] Add more examples
+- [ ] Add testing guide
